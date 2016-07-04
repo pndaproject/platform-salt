@@ -1,0 +1,7 @@
+server:
+    type: simple
+    applicationContextPath: /
+    connector:
+        type: http
+        bindHost: 127.0.0.1
+        port: 8000

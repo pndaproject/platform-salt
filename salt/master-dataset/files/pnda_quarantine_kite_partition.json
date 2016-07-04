@@ -1,0 +1,6 @@
+[
+    {"type": "identity", "source": "topic", "name": "source_topic"},
+    {"type": "year",     "source": "timestamp"},
+    {"type": "month",    "source": "timestamp"},
+    {"type": "day",      "source": "timestamp"}
+]
