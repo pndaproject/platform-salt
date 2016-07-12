@@ -45,21 +45,31 @@ def pause_until_api_up(api):
     sys.exit(-1)
 
 def connect(cm_api, cm_username, cm_password, use_proxy=False):
+    '''
+    Wait for two minutes for CM to come up
+    '''
 
-    # change name of proxy if necessary
-    proxy = urllib2.ProxyHandler({'http': 'proxy'})
+    for _ in xrange(24):
+        try:
+            logging.info("Checking CM availability....")
+            # change name of proxy if necessary
+            proxy = urllib2.ProxyHandler({'http': 'proxy'})
 
-    api = ApiResource(cm_api, username=cm_username, password=cm_password)
+            api = ApiResource(cm_api, username=cm_username, password=cm_password)
 
-    if use_proxy:
-        # pylint: disable=W0212
-        api._client._opener.add_handler(proxy)
+            if use_proxy:
+            # pylint: disable=W0212
+                api._client._opener.add_handler(proxy)
 
-    cloudera_manager = api.get_cloudera_manager()
-    api.get_user(cm_username)
+            cloudera_manager = api.get_cloudera_manager()
+            api.get_user(cm_username)
 
-    return api, cloudera_manager
-
+            return api, cloudera_manager
+        except Exception as exception:
+            logging.warning("CM is not up")
+            time.sleep(5)
+    logging.error("CM did not come UP")
+    sys.exit(-1)
 
 def create_hosts(api, cloudera_manager, user, nodes, key_name):
 
