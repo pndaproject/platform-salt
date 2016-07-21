@@ -6,9 +6,9 @@ include:
 cloudera-manager-add_cloudera_manager_repository:
   pkgrepo.managed:
     - humanname: Cloudera Manager
-    - name: deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm{{cm_ver}} contrib
+    - name: deb [arch=amd64] https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm{{cm_ver}} contrib
     - dist: trusty-cm{{cm_ver}}
-    - key_url: http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key
+    - key_url: https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key
     - refresh: True
     - file: /etc/apt/sources.list.d/cloudera.list
 
