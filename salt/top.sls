@@ -46,6 +46,7 @@
     - match: grain
     - console-backend.data-logger
     - console-backend.data-manager
+    - graphite
 
   'roles:grafana':
     - match: grain
