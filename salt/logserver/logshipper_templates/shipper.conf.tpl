@@ -57,6 +57,40 @@ input {
           add_field => {"source" => "hadoop"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
+   file {
+          path => ["/var/log/pnda/hadoop-yarn/*.log.out"]
+          add_field => {"source" => "hadoop-yarn"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/hadoop-mapreduce/*.log",
+                  "/var/log/pnda/hadoop-mapreduce/*.log.out"]
+          add_field => {"source" => "hadoop-mapreduce"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/hbase/*.log.out"]
+          add_field => {"source" => "hbase"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/impala/*.ERROR",
+                  "/var/log/pnda/impala/*.WARNING",
+                  "/var/log/pnda/impala/*.INFO"]
+          add_field => {"source" => "impala"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/hue/*.log"]
+          add_field => {"source" => "hue"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/oozie/*.log",
+                  "/var/log/pnda/oozie/*.log.out"]
+          add_field => {"source" => "oozie"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
 }
 
 output {
