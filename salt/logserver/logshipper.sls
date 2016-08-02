@@ -8,7 +8,9 @@ include:
 
 logshipper-lbc6:
   pkg.installed:
-    - name: libc6-dev
+    - pkgs:
+      - libc6-dev
+      - acl
 
 logshipper-dl-and-extract:
   archive.extracted:
@@ -49,6 +51,13 @@ logger:
 logshipper-add_salt_permissions:
   cmd.run:
     - name: 'chmod -R 755 /var/log/salt'
+
+logshipper-yarnperms-add_crontab_entry:
+  cron.present:
+    - identifier: YARN-PERMISSIONS
+    - name: setfacl -Rm u:logger:rx /var/log/pnda/hadoop-yarn/container
+    - user: root
+    - minute: '*'
 
 logshipper-create_sincedb_folder:
   file.directory:
