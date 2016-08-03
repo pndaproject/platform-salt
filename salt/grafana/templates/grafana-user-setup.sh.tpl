@@ -1,7 +1,7 @@
 #!/bin/bash
-{% set pnda_user = pillar['pnda']['user'] %}
-{% set pnda_password = pillar['pnda']['password'] %}
-while ! nc -z localhost 3000; do   
+set -e
+
+while ! nc -z localhost 3000; do
   sleep 1
 done
 sleep 1
