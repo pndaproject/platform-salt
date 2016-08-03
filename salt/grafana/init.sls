@@ -31,3 +31,14 @@ grafana-login_script_run:
         pnda_user: {{ pillar['pnda']['user'] }}
         pnda_password: {{ pillar['pnda']['password'] }}
     - cwd: /
+
+grafana-create_datasources_run_script:
+  cmd.script:
+    - name: salt://grafana/templates/grafana-datasources-setup.sh.tpl
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
+    - cwd: /
+    - require:
+      - cmd: grafana-login_script_run
