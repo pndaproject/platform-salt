@@ -60,6 +60,11 @@ jupyter-create_hub_configuration:
     - source: salt://jupyter/templates/jupyterhub_config.py.tpl
     - template: jinja
 
+jupyter-copy_simple_initial_notebook:
+  file.managed:
+    - source: 'salt://jupyter/files/PNDA minimal notebook.ipynb'
+    - name: '/home/{{ pillar['pnda']['user'] }}/PNDA minimal notebook.ipynb'
+
 # install jupyterhub kernels (python2, python3, and pyspark)
 jupyter-create_kernels_dir:
   file.directory:
