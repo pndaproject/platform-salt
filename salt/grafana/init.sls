@@ -23,15 +23,11 @@ grafana-server_start:
     - watch:
       - pkg: grafana-server_pkg
 
-grafana-login_script_copy:
-  file.managed:
-    - name: /tmp/grafana-user-setup.sh
-    - source: salt://grafana/templates/grafana-user-setup.sh.tpl
-    - mode: 755
-    - template: jinja
-
 grafana-login_script_run:
   cmd.script:
-    - name: grafana-user-setup
-    - source: /tmp/grafana-user-setup.sh
+    - name: salt://grafana/templates/grafana-user-setup.sh.tpl
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
     - cwd: /
