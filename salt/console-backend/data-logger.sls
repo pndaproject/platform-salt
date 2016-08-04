@@ -68,6 +68,7 @@ console-backend-copy_data_logger_upstart:
     - source: salt://console-backend/templates/backend_nodejs_app.conf.tpl
     - template: jinja
     - defaults:
+        no_console_log: True
         host_ip: {{ host_ip }}
         backend_app_port: {{ backend_app_port }}
         app_dir: {{ app_dir }}
