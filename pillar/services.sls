@@ -46,8 +46,8 @@ kafkamanager:
   release_version: 1.3.0.8
 
 opentsdb:
-  version: 2.2.0RC1
-  release_hash: sha256=199f60f31c8f72948d0e5a2c4695aedcb114360a77c4246b16587f07028f8068
+  version: 2.2.0
+  release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
 
 grafana:
   version: 2.1.3
