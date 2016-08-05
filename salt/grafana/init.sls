@@ -5,6 +5,9 @@
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
 {% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
 
+{% set pnda_graphite_port = 8013 %}
+{% set pnda_graphite_host = salt['pnda.ip_addresses']('console_backend')[0] %}
+
 grafana-server_pkg:
   pkg.installed:
     - sources:
@@ -33,6 +36,8 @@ grafana-create_datasources_run_script:
     - context:
         pnda_user: {{ pillar['pnda']['user'] }}
         pnda_password: {{ pillar['pnda']['password'] }}
+        pnda_graphite_host: {{ pnda_graphite_host  }}
+        pnda_graphite_port: {{ pnda_graphite_port }}
     - cwd: /
     - require:
       - cmd: grafana-login_script_run
