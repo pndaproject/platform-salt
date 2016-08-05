@@ -50,8 +50,8 @@ opentsdb:
   release_hash: sha256=199f60f31c8f72948d0e5a2c4695aedcb114360a77c4246b16587f07028f8068
 
 grafana:
-  version: 2.1.3
-  release_hash: sha256=7142e7239de5357e3769a286cd3b0c2c63a36234d30516ba9b96e7d088ece5bc
+  version: 3.1.1-1470047149
+  release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
 
 gobblin:
   release_version: 0.1.0

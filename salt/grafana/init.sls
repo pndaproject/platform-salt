@@ -1,6 +1,6 @@
 {% set settings = salt['pillar.get']('grafana', {}) -%}
-{% set grafana_version = settings.get('version', '2.1.3') %}
-{% set grafana_hash = settings.get('release_hash', 'sha256=7142e7239de5357e3769a286cd3b0c2c63a36234d30516ba9b96e7d088ece5bc') %}
+{% set grafana_version = settings.get('version', '3.1.1-1470047149') %}
+{% set grafana_hash = settings.get('release_hash', 'sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328') %}
 
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
 {% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
