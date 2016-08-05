@@ -5,12 +5,6 @@
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
 {% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
 
-grafana-download-grafana-package:
-  file.managed:
-    - name: /tmp/{{ grafana_deb_package }}
-    - source: {{ grafana_deb_location }}
-    - source_hash: {{ grafana_hash }}
-
 grafana-server_pkg:
   pkg.installed:
     - sources:
