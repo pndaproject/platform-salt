@@ -9,12 +9,6 @@ include:
   - gnuplot
   - java
 
-opentsdb-download-opentsdb-package:
-  file.managed:
-    - name: /tmp/{{ opentsdb_deb_package }}
-    - source: {{ opentsdb_deb_location }}
-    - source_hash: {{ opentsdb_hash }}
-
 opentsdb-server:
   pkg.installed:
     - sources:
@@ -28,4 +22,4 @@ opentsdb-service_start:
     - watch:
       - file: /etc/opentsdb/opentsdb.conf
       - file: /etc/default/opentsdb
-      - file: opentsdb-download-opentsdb-package
+      - pkg: opentsdb-server
