@@ -54,7 +54,7 @@ grafana:
   release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
 
 gobblin:
-  release_version: PNDA
+  release_version: develop
 
 console_frontend:
   release_version: develop
