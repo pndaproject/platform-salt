@@ -1,5 +1,5 @@
 NAME=zookeeper
-ZOOCFGDIR=/etc/$NAME/conf
+ZOOCFGDIR={{ conf_dir }}
 
 # TODO this is really ugly
 # How to find out, which jars are needed?
