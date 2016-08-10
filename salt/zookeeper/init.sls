@@ -2,6 +2,30 @@
 {% set zookeeper_version = settings.get('version', '3.4.6') %}
 {% set zookeeper_url  = 'http://www-us.apache.org/dist/zookeeper/zookeeper-' + zookeeper_version + '/zookeeper-' + zookeeper_version + '.tar.gz' %}
 {% set install_dir = '/opt/pnda' %}
+{% set zookeeper_data_dir = '/var/lib/zookeeper' %}
+
+zookeeper-user-group:
+  group.present:
+    - name: zookeeper
+  user.present:
+    - name: zookeeper
+    - gid_from_name: True
+    - groups:
+      - zookeeper
+
+zookeeper-data-dir:
+  file.directory:
+    - name: {{ zookeeper_data_dir }}
+    - user: zookeeper
+    - group: zookeeper
+    - mode: 755
+    - makedirs: True
+    - recurse:
+      - user
+      - group
+      - mode
+    - require:
+      - user: zookeeper-user-group
 
 zookeeper-dl-and-extract:
   archive.extracted:
@@ -17,7 +41,7 @@ zookeeper-dl-and-extract:
 
 zookeeper-myid:
   file.managed:
-    - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf/myid
+    - name: {{ zookeeper_data_dir }}/myid
     - source: salt://zookeeper/files/templates/zookeeper-myid.tpl
     - template: jinja
     - context:
@@ -29,6 +53,8 @@ zookeeper-myid:
           fqdn: {{ node.fqdn }}
       {%- endfor %}
     - mode: 644
+    - require:
+      - file: zookeeper-data-dir
 
 zookeeper-configuration:
   file.managed:
@@ -43,6 +69,7 @@ zookeeper-configuration:
           ip: {{ node.ip }}
           fqdn: {{ node.fqdn }}
       {%- endfor %}
+      data_dir: {{ zookeeper_data_dir }}
     - mode: 644
 
 zookeeper-environment:
@@ -51,7 +78,7 @@ zookeeper-environment:
     - source: salt://zookeeper/files/templates/environment.tpl
     - template: jinja
     - context:
-      conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+      install_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
     - mode: 644
 
 zookeeper-link:
@@ -69,6 +96,8 @@ zookeeper-upstart:
     - context:
       conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
     - mode: 644
+    - require:
+      - file: zookeeper-data-dir
 
 zookeeper-ensure-service-running:
   service.running:
