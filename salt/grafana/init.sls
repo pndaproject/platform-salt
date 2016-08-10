@@ -8,6 +8,11 @@
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('console_backend')[0] %}
 
+{% set dashboard_list = ['PNDA Deployment Manager.json',
+                         'PNDA Hadoop.json',
+                         'PNDA Kafka Brokers.json',
+                         'PNDA.json'] %}
+
 grafana-server_pkg:
   pkg.installed:
     - sources:
@@ -41,3 +46,24 @@ grafana-create_datasources_run_script:
     - cwd: /
     - require:
       - cmd: grafana-login_script_run
+
+{% for dash in dashboard_list %}
+grafana-copy_dashboard_{{ dash }}:
+  file.managed:
+    - source: salt://grafana/files/dashboards/{{ dash }}
+    - name: /tmp/{{ dash }}.salt.tmp
+    - require:
+      - cmd: grafana-create_datasources_run_script
+
+grafana-import_dashboard-{{ dash }}:
+  cmd.script:
+    - name: salt://grafana/templates/grafana-import-dashboards.sh.tpl
+    - args: "'/tmp/{{ dash }}.salt.tmp'"
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
+    - cwd: /
+    - require:
+      - file: grafana-copy_dashboard_{{ dash }}
+{% endfor %}
