@@ -27,6 +27,9 @@ jupyterhub:
   version: 0.6.1
   confdir: /etc/jupyterhub
 
+zookeeper:
+  version: 3.4.6
+
 kafka:
   version: 0.9.0.1
   config:
