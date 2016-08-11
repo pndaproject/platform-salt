@@ -15,7 +15,7 @@ platform-libraries-download_egg_file:
 
 platform-libaries-easy-install:
   cmd.run:
-    - name: /opt/cloudera/parcels/Anaconda-4.0.0/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
+    - name: /opt/cloudera/parcels/Anaconda/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
 
 platform-libraries-create-conf-dir:
   file.directory:
