@@ -38,6 +38,8 @@ jupyter-install_jupyterhub:
 jupyter-enable_widget_nbextensions:
   cmd.run:
     - name: jupyter nbextension enable --py widgetsnbextension
+    - require:
+      - pip: jupyter-install_notebook
 
 jupyter-create_nbconfig_dir:
   file.directory:
@@ -48,17 +50,23 @@ jupyter-create_notebook_config:
   file.managed:
     - source: salt://jupyter/files/notebook.json
     - name: {{ jupyter_config_dir }}/nbconfig/notebook.json
+    - require:
+      - file: jupyter-create_nbconfig_dir
 
 # set up jupyterhub environment configuration
 jupyter-create_jupyterhub_config_dir:
   file.directory:
     - name: {{ jupyterhub_config_dir }}
+    - require:
+      - pip: jupyter-install_jupyterhub
 
 jupyter-create_hub_configuration:
   file.managed:
     - name: {{ jupyterhub_config_dir }}/jupyterhub_config.py
     - source: salt://jupyter/templates/jupyterhub_config.py.tpl
     - template: jinja
+    - require:
+      - file: jupyter-create_jupyterhub_config_dir
 
 jupyter-copy_simple_initial_notebook:
   file.managed:
@@ -77,12 +85,16 @@ jupyter-install_python2_kernel:
 jupyter-create_pyspark_kernel_dir:
   file.directory:
     - name: {{ jupyter_kernels_dir }}/pyspark
+    - require:
+      - file: jupyter-create_kernels_dir
 
 jupyter-copy_pyspark_kernel:
   file.managed:
     - source: salt://jupyter/templates/pyspark_kernel.json.tpl
     - name: {{ jupyter_kernels_dir }}/pyspark/kernel.json
     - template: jinja
+    - require:
+      - file: jupyter-create_pyspark_kernel_dir
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:
