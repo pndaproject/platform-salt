@@ -101,15 +101,15 @@ jupyter-copy_upstart:
     - context:
       jupyterhub_config_dir: {{ jupyterhub_config_dir }}
 
-# safely start jupyterhub service
-jupyter-stop_jupyterhub:
-  cmd.run:
-    - name: 'initctl stop jupyterhub || echo app already stopped'
-    - user: root
-    - group: root
-
-jupyter-start_jupyterhub:
-  cmd.run:
-    - name: 'initctl start jupyterhub'
-    - user: root
-    - group: root
+jupyter-service_started:
+  service.running:
+    - name: jupyterhub
+    - enable: True
+    - reload: False
+    - require:
+      - pip: jupyter-install_jupyterhub
+      - file: jupyter-copy_upstart
+    - watch:
+      - file: jupyter-copy_upstart
+      - pip: jupyter-install_jupyterhub
+      - file: jupyter-create_hub_configuration
