@@ -6,12 +6,19 @@
 {% set cm_password = pillar['admin_login']['password'] %}
 {% set cm_ip = salt['pnda.ip_addresses']('cloudera_manager')[0] %}
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
- 
+
+platform-libraries-create_target_dir:
+  file.directory:
+    - name: {{ platformlib_target_directory }}
+    - makedirs: True
+
 platform-libraries-download_egg_file:
   file.managed:
     - name: {{ platformlib_target_directory }}/{{ platformlib_package }}
     - source: {{ package_server }}/platform/releases/platform-libraries/{{ platformlib_package }}
     - source_hash: {{ package_server }}/platform/releases/platform-libraries/{{ platformlib_package }}.sha512.txt
+    - require:
+      - file: platform-libraries-create_target_dir
 
 platform-libaries-easy-install:
   cmd.run:
