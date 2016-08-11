@@ -2,7 +2,7 @@
 {% set package_repository_version = salt['pillar.get']('package_repository:release_version', '1.0.0') %}
 {% set package_repository_directory_name = 'package-repository-' + package_repository_version %}
 {% set package_repository_package = 'package-repository-' + package_repository_version + '.tar.gz' %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 include:
   - python-pip

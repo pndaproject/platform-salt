@@ -3,7 +3,7 @@
 {% set app_directory_name = 'data-service-' + app_version %}
 {% set app_package = 'data-service-' + app_version + '.tar.gz' %}
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 include:
   - python-pip

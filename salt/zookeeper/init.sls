@@ -1,7 +1,7 @@
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
 {% set zookeeper_version = settings.get('version', '3.4.6') %}
 {% set zookeeper_url  = 'http://www-us.apache.org/dist/zookeeper/zookeeper-' + zookeeper_version + '/zookeeper-' + zookeeper_version + '.tar.gz' %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 {% set zookeeper_data_dir = '/var/lib/zookeeper' %}
 
 zookeeper-user-group:
