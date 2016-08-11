@@ -419,7 +419,7 @@
           "valueMaps": [
             {
               "op": "=",
-              "text": "There is no",
+              "text": "There are no",
               "value": "0"
             }
           ],
@@ -497,7 +497,7 @@
           "valueMaps": [
             {
               "op": "=",
-              "text": "There is no",
+              "text": "There are no",
               "value": "0"
             }
           ],
