@@ -291,7 +291,7 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 # 
 # `~` will be expanded to the user's home directory `%U` will be expanded to the
 # user's username
-#c.Spawner.notebook_dir = '/opt/jupyter_dir/notebooks'
+c.Spawner.notebook_dir = '~/jupyter_notebooks'
 
 # An HTML form for options a user can specify on launching their server. The
 # surrounding `<form>` element and the submit button are already provided.
