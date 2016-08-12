@@ -278,13 +278,13 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(deployment-manager.packages_available_time_ms, '$interval', 'sum'), 'Response Time')",
+              "target": "alias(smartSummarize(deployment-manager.packages_available_time_ms, '$interval', 'avg'), 'Response Time')",
               "textEditor": false
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Available Packages response time",
+          "title": "Available Packages response time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -354,12 +354,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(deployment-manager.packages_deployed_time_ms, '$interval', 'sum'), 'Response time')"
+              "target": "alias(smartSummarize(deployment-manager.packages_deployed_time_ms, '$interval', 'avg'), 'Response time')"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Deployed Packages response time",
+          "title": "Deployed Packages response time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,

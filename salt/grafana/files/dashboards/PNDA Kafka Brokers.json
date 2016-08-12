@@ -115,12 +115,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(kafka.brokers.*.system.SystemLoadAverage, '$interval', 'sum'), 'Load Average')"
+              "target": "alias(smartSummarize(kafka.brokers.*.system.SystemLoadAverage, '$interval', 'avg'), 'Load Average')"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Load Average",
+          "title": "Load Average ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -199,7 +199,7 @@
               "errors": {},
               "hide": false,
               "refId": "A",
-              "target": "alias(smartSummarize(kafka.brokers.*.UnderReplicatedPartitions, '$interval', 'sum'), 'UnderReplicated partitions')",
+              "target": "alias(kafka.brokers.*.UnderReplicatedPartitions, 'UnderReplicated partitions')",
               "textEditor": false
             }
           ],
@@ -266,7 +266,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "1.BytesOutPerSec",
+              "alias": "BytesOutPerSec",
               "transform": "negative-Y"
             }
           ],
@@ -279,7 +279,7 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "aliasByNode(smartSummarize(derivative(kafka.brokers.*.topics.avro.*.*.BytesInPerSec.Count), '$interval', 'sum'), 2, 7)",
+              "target": "aliasByNode(smartSummarize(derivative(kafka.brokers.*.topics.avro.*.*.BytesInPerSec.Count), '$interval', 'avg'), 2, 7)",
               "textEditor": false
             },
             {
@@ -287,12 +287,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "B",
-              "target": "aliasByNode(smartSummarize(derivative(kafka.brokers.*.topics.avro.*.*.BytesOutPerSec.Count), '$interval', 'sum'), 2, 7)"
+              "target": "aliasByNode(smartSummarize(derivative(kafka.brokers.*.topics.avro.*.*.BytesOutPerSec.Count), '$interval', 'avg'), 2, 7)"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Bytes",
+          "title": "Bytes ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
