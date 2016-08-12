@@ -1,0 +1,7 @@
+*.log
+*.pem
+*.pyc
+hosts.txt
+cli/ssh_config
+
+cli/socks_proxy
