@@ -57,14 +57,14 @@ gobblin:
   release_version: 0.1.0
 
 console_frontend:
-  release_version: 0.1.0
+  release_version: PNDA-820
 
 console_backend_data_logger:
-  release_version: 0.1.0
+  release_version: PNDA-820
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.1.0
+  release_version: PNDA-820
   bind_port: 3123
 
 deployment_manager:
