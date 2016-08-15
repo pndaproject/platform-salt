@@ -122,18 +122,18 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.HBASE.create_table_time_ms, '$interval', 'sum'), 'CREATE')",
+              "target": "alias(smartSummarize(hadoop.HBASE.create_table_time_ms, '$interval', 'avg'), 'CREATE')",
               "textEditor": true
             },
             {
               "refId": "B",
-              "target": "alias(smartSummarize(hadoop.HBASE.drop_table_time_ms, '$interval', 'sum'), 'DROP')",
+              "target": "alias(smartSummarize(hadoop.HBASE.drop_table_time_ms, '$interval', 'avg'), 'DROP')",
               "textEditor": true
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "HBASE table CREATE/DROP time",
+          "title": "HBASE table CREATE/DROP time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -208,7 +208,7 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.HBASE.read_time_ms, '$interval', 'sum'), 'READ')",
+              "target": "alias(smartSummarize(hadoop.HBASE.read_time_ms, '$interval', 'avg'), 'READ')",
               "textEditor": true
             },
             {
@@ -216,13 +216,13 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "B",
-              "target": "alias(smartSummarize(hadoop.HBASE.write_time_ms, '$interval', 'sum'), 'WRITE')",
+              "target": "alias(smartSummarize(hadoop.HBASE.write_time_ms, '$interval', 'avg'), 'WRITE')",
               "textEditor": true
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "HBASE Read/Write latency",
+          "title": "HBASE Read/Write latency ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -566,12 +566,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.HIVE.create_metadata_time_ms, '$interval', 'sum'), 'Creation time')"
+              "target": "alias(smartSummarize(hadoop.HIVE.create_metadata_time_ms, '$interval', 'avg'), 'Creation time')"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Hive metadata creation time",
+          "title": "Hive metadata creation time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -640,12 +640,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.HIVE.drop_table_time_ms, '$interval', 'sum'), 'Drop time')"
+              "target": "alias(smartSummarize(hadoop.HIVE.drop_table_time_ms, '$interval', 'avg'), 'Drop time')"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Hive table drop time",
+          "title": "Hive table drop time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -714,13 +714,13 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.HIVE.connection_time_ms, '$interval', 'sum'), 'Connection time')",
+              "target": "alias(smartSummarize(hadoop.HIVE.connection_time_ms, '$interval', 'avg'), 'Connection time')",
               "textEditor": false
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Hive connection time",
+          "title": "Hive connection time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -811,12 +811,12 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.IMPALA.read_time_ms, '$interval', 'sum'), 'Read time')"
+              "target": "alias(smartSummarize(hadoop.IMPALA.read_time_ms, '$interval', 'avg'), 'Read time')"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Impala read time",
+          "title": "Impala read time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -885,13 +885,13 @@
               "downsampleAggregator": "avg",
               "errors": {},
               "refId": "A",
-              "target": "alias(smartSummarize(hadoop.IMPALA.connection_time_ms, '$interval', 'sum'), 'Connection time')",
+              "target": "alias(smartSummarize(hadoop.IMPALA.connection_time_ms, '$interval', 'avg'), 'Connection time')",
               "textEditor": false
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Impala connection time",
+          "title": "Impala connection time ($interval average)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
