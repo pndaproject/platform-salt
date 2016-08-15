@@ -15,10 +15,12 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 ## On AWS
 1. Obtain an AWS account.
-1. Create buckets in S3 for PNDA applications (pnda-apps/releases) and for archived data (pnda-archive). AWS credientials should be created for an IAM user with access to these specific S3 buckets only.
+1. Create buckets in S3 for PNDA applications (pnda-apps/releases) and for archived data (pnda-archive). AWS credientials should be created for an IAM user with access to these specific S3 buckets only. For help creating a user with these permissions, please refer [here](s3help.md).
 
 ## From a local clone of this repo
-1. Edit client_env.sh with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) and an Ubuntu 14.04 image ID. The AWS credientials should be those created for the IAM user with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS.
+1. Edit client_env.sh with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) and an Ubuntu 14.04 image ID. Two sets of AWS credientials should be supplied:
+ - One set with access to EC2 and cloud formation used to create PNDA, these are only ever stored on the client machine.
+ - One set created for the IAM user with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
 1. Edit pnda_env.sh with the package server IP address. A package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a package server.
 1. Create an ssh keypair to use when creating the EC2 instances for PNDA [(link)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) as key_name. Place the private key key_name.pem in the root of the pnda-aws-templates directory.
 1. Install pip packages required by the CLI ```pip install -r cli/requirements.txt``` 
