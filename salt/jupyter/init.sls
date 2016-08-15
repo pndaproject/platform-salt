@@ -7,6 +7,7 @@
 {% set jupyter_kernels_dir = salt['pillar.get']('jupyter:kerneldir', '') %}
 {% set jupyterhub_config_dir = salt['pillar.get']('jupyterhub:confdir', '') %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
+{% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
 include:
   - python-pip.pip3
@@ -68,10 +69,17 @@ jupyter-create_hub_configuration:
     - require:
       - file: jupyter-create_jupyterhub_config_dir
 
+jupyter-create_notebooks_directory:
+  file.directory:
+    - name: '{{ pnda_home_directory }}/jupyter_notebooks'
+    - user: {{ pillar['pnda']['user'] }}
+
 jupyter-copy_simple_initial_notebook:
   file.managed:
     - source: 'salt://jupyter/files/PNDA minimal notebook.ipynb'
-    - name: '/home/{{ pillar['pnda']['user'] }}/PNDA minimal notebook.ipynb'
+    - name: '{{ pnda_home_directory }}/jupyter_notebooks/PNDA minimal notebook.ipynb'
+    - require:
+      - file: jupyter-create_notebooks_directory
 
 # install jupyterhub kernels (python2, python3, and pyspark)
 jupyter-create_kernels_dir:

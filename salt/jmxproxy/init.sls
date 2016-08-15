@@ -2,7 +2,7 @@
 {% set jmxproxy_hash = salt['pillar.get']('jmxproxy:release_hash', '') %}
 {% set jmxproxy_jar = 'jmxproxy-' + jmxproxy_version + '.jar' %}
 
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 
 jmxproxy-create_release_dir:

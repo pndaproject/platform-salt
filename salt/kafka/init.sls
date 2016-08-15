@@ -1,5 +1,5 @@
 {%- from 'kafka/settings.sls' import kafka with context %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 kafka-kafka:
   group.present:

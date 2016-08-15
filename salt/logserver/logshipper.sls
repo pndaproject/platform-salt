@@ -1,7 +1,7 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 include:
   - java
