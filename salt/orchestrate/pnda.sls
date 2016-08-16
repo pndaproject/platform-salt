@@ -104,14 +104,15 @@ cdh-install_hdfs_cleaner:
     - tgt_type: compound
     - sls: hdfs-cleaner
 
-km-create_topics:
+kafka-create_topics:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:tools'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:kafka and G@broker_id:0'
     - tgt_type: compound
-    - sls: kafka-manager.pnda_create_topics
+    - sls: platform-testing.create_topic
 
 cdh-data_service-create_datasets:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:data_service'
     - tgt_type: compound
     - sls: data-service.create_datasets
+
