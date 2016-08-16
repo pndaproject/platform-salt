@@ -7,6 +7,8 @@
 {%- endfor -%}
 
 {% set topic = 'avro.internal.testbot' %}
+{% set partitions = '1' %}
+{%- set replication = salt['pnda.kafka_brokers_ips']()|length -%}
 
 platform-testing-topic-check-script:
   file.managed:
@@ -16,7 +18,7 @@ platform-testing-topic-check-script:
 
 platform-testing-create-topic:
   cmd.run:
-    - name: {{ prefix }}/bin/kafka-topics.sh --zookeeper {{ kafka_zookeepers|join(',') }} --create --topic {{ topic }} --partitions 1 --replication-factor 2
+    - name: {{ prefix }}/bin/kafka-topics.sh --zookeeper {{ kafka_zookeepers|join(',') }} --create --topic {{ topic }} --partitions {{ partitions }} --replication-factor {{ replication }}
     - unless: 
       - {{ prefix }}/topic-check.sh {{ prefix }} {{ kafka_zookeepers|join(',') }} {{ topic }}
 
