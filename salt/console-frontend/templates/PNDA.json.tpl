@@ -34,6 +34,9 @@
     "data-manager": {
       "version": "{{data_manager_version}}",
       "host": "{{data_manager_host}}", "port": "{{data_manager_port}}"
+    },
+    "graphite": {
+      "host": "{{data_manager_host}}", "port": "8013"
     }
   },
   "disable_ldap_login": true

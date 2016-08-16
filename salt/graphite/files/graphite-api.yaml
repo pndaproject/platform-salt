@@ -7,3 +7,5 @@ functions:
 whisper:
   directories:
     - /var/lib/graphite/whisper
+allowed_origins:
+  - *
