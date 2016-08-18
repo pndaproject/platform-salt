@@ -38,7 +38,7 @@ jupyter-install_jupyterhub:
 # set up jupyter environment configuration
 jupyter-enable_widget_nbextensions:
   cmd.run:
-    - name: jupyter nbextension enable --py widgetsnbextension
+    - name: jupyter nbextension enable --py widgetsnbextension --system
     - require:
       - pip: jupyter-install_notebook
 
@@ -46,13 +46,6 @@ jupyter-create_nbconfig_dir:
   file.directory:
     - name: {{ jupyter_config_dir }}/nbconfig
     - makedirs: True
-
-jupyter-create_notebook_config:
-  file.managed:
-    - source: salt://jupyter/files/notebook.json
-    - name: {{ jupyter_config_dir }}/nbconfig/notebook.json
-    - require:
-      - file: jupyter-create_nbconfig_dir
 
 # set up jupyterhub environment configuration
 jupyter-create_jupyterhub_config_dir:
