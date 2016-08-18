@@ -1,11 +1,11 @@
 {% set namenodes_ips = salt['pnda.namenodes_ips']() %}
 # Only take the first one
 {% set namenode_ip = namenodes_ips[0] %}
-{% set jupyter_notebook_version = salt['pillar.get']('jupyter:version', '') %}
-{% set jupyterhub_version = salt['pillar.get']('jupyterhub:version', '') %}
-{% set jupyter_config_dir = salt['pillar.get']('jupyter:confdir', '') %}
-{% set jupyter_kernels_dir = salt['pillar.get']('jupyter:kerneldir', '') %}
-{% set jupyterhub_config_dir = salt['pillar.get']('jupyterhub:confdir', '') %}
+{% set jupyter_notebook_version = pillar['jupyter']['version'] %}
+{% set jupyter_config_dir = pillar['jupyter']['confdir'] %}
+{% set jupyter_kernels_dir = pillar['jupyter']['kerneldir'] %}
+{% set jupyterhub_version = pillar['jupyterhub']['version'] %}
+{% set jupyterhub_config_dir = pillar['jupyterhub']['confdir'] %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
