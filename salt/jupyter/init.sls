@@ -74,10 +74,10 @@ jupyter-create_notebooks_directory:
     - name: '{{ pnda_home_directory }}/jupyter_notebooks'
     - user: {{ pillar['pnda']['user'] }}
 
-jupyter-copy_simple_initial_notebook:
-  file.managed:
-    - source: 'salt://jupyter/files/PNDA minimal notebook.ipynb'
-    - name: '{{ pnda_home_directory }}/jupyter_notebooks/PNDA minimal notebook.ipynb'
+jupyter-copy_initial_notebooks:
+  file.recurse:
+    - source: 'salt://jupyter/files/notebooks'
+    - name: '{{ pnda_home_directory }}/jupyter_notebooks'
     - require:
       - file: jupyter-create_notebooks_directory
 
