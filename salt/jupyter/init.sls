@@ -12,6 +12,7 @@
 include:
   - python-pip.pip3
   - .jupyter_deps
+  - .extensions
   - cdh.cloudera-api
   - pnda.platform-libraries
 
@@ -24,6 +25,8 @@ jupyter-install_notebook:
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip3
+    - require_in:
+      - cmd: jupyter-extension_jupyter_spark
 
 # install jupyterhub
 jupyter-install_jupyterhub:
