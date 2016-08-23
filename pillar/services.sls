@@ -31,7 +31,7 @@ zookeeper:
   version: 3.4.6
 
 kafka:
-  version: 0.9.0.1
+  version: 0.10.0.1
   config:
     log_dirs:
       - '/var/kafka-logs'
@@ -46,7 +46,7 @@ admin_login:
 
 kafkamanager:
   release_directory: /opt/pnda
-  release_version: 1.3.0.8
+  release_version: 1.3.1.6
 
 opentsdb:
   version: 2.2.0
