@@ -4,7 +4,8 @@ export PLATFORM_GIT_BRANCH=master
 export PNDA_APPS_CONTAINER=pnda-apps
 export PNDA_APPS_FOLDER=releases
 export PNDA_ARCHIVE_CONTAINER=pnda-archive
-#export CLOUDERA_MIRROR
 export PACKAGES_SERVER_IP=x.x.x.x
+#export CLOUDERA_MIRROR=http://$PACKAGES_SERVER_IP/cloudera_repo
+#export ANACONDA_MIRROR=http://$PACKAGES_SERVER_IP/anaconda_repo
 export JAVA_MIRROR=http://$PACKAGES_SERVER_IP/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
 export PACKAGES_SERVER_URI=http://$PACKAGES_SERVER_IP/packages
