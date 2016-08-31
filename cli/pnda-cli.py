@@ -53,9 +53,12 @@ VALIDATION_RULES = None
 START = datetime.datetime.now()
 
 def banner():
-    print "🐼  🐼  🐼  🐼  🐼  🐼  🐼"
-    print "   P N D A - C L I"
-    print "🐼  🐼  🐼  🐼  🐼  🐼  🐼"
+    print r"    ____  _   ______  ___ "
+    print r"   / __ \/ | / / __ \/   |"
+    print r"  / /_/ /  |/ / / / / /| |"  
+    print r" / ____/ /|  / /_/ / ___ |"   
+    print r"/_/   /_/ |_/_____/_/  |_|"
+    print r""
 
 def run_cmd(cmd):
     print cmd
