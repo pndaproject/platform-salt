@@ -18,7 +18,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 1. Create buckets in S3 for PNDA applications (pnda-apps/releases) and for archived data (pnda-archive). AWS credientials should be created for an IAM user with access to these specific S3 buckets only. For help creating a user with these permissions, please refer [here](s3help.md).
 
 ## From a local clone of this repo
-1. Edit client_env.sh with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) and an Ubuntu 14.04 image ID. Regarding the AMI, you should select an AMI with type HVM as we are using instance type t2 and m3 (for more details, you can find more details on [AWS Virtualization types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html)) Two sets of AWS credientials should be supplied:
+1. Edit client_env.sh with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) and an Ubuntu 14.04 image ID. Regarding the AMI, you should select an AMI with type HVM as we are using instance type t2 and m3 (for more details, you can find more details on [AWS Virtualization types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html)). Two sets of AWS credientials should be supplied:
  - One set with access to EC2 and cloud formation used to create PNDA, these are only ever stored on the client machine.
  - One set created for the IAM user with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
 
