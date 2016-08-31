@@ -1,4 +1,4 @@
-{{ env }}:
+{{ saltenv }}:
   '*':
     - pnda
     - services
