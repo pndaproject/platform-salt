@@ -63,5 +63,5 @@ To create an API key with access only to the specific S3 buckets:
 }
 ```
 
- - An finally, go back to users list, select the user just created on 1 and attach the policy to the user using the permissions tab:
+ - Go back to users list, select the user just created on 1 and attach the policy to the user using the permissions tab:
 ![](images/attach-policy.png)
