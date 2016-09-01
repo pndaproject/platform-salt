@@ -1,17 +1,18 @@
 {% set namenodes_ips = salt['pnda.namenodes_ips']() %}
 # Only take the first one
 {% set namenode_ip = namenodes_ips[0] %}
-{% set jupyter_notebook_version = salt['pillar.get']('jupyter:version', '') %}
-{% set jupyterhub_version = salt['pillar.get']('jupyterhub:version', '') %}
-{% set jupyter_config_dir = salt['pillar.get']('jupyter:confdir', '') %}
-{% set jupyter_kernels_dir = salt['pillar.get']('jupyter:kerneldir', '') %}
-{% set jupyterhub_config_dir = salt['pillar.get']('jupyterhub:confdir', '') %}
+{% set jupyter_notebook_version = pillar['jupyter']['version'] %}
+{% set jupyter_config_dir = pillar['jupyter']['confdir'] %}
+{% set jupyter_kernels_dir = pillar['jupyter']['kerneldir'] %}
+{% set jupyterhub_version = pillar['jupyterhub']['version'] %}
+{% set jupyterhub_config_dir = pillar['jupyterhub']['confdir'] %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
 include:
   - python-pip.pip3
   - .jupyter_deps
+  - .extensions
   - cdh.cloudera-api
   - pnda.platform-libraries
 
@@ -24,6 +25,8 @@ jupyter-install_notebook:
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip3
+    - require_in:
+      - cmd: jupyter-extension_jupyter_spark
 
 # install jupyterhub
 jupyter-install_jupyterhub:
@@ -38,7 +41,7 @@ jupyter-install_jupyterhub:
 # set up jupyter environment configuration
 jupyter-enable_widget_nbextensions:
   cmd.run:
-    - name: jupyter nbextension enable --py widgetsnbextension
+    - name: jupyter nbextension enable --py widgetsnbextension --system
     - require:
       - pip: jupyter-install_notebook
 
@@ -46,13 +49,6 @@ jupyter-create_nbconfig_dir:
   file.directory:
     - name: {{ jupyter_config_dir }}/nbconfig
     - makedirs: True
-
-jupyter-create_notebook_config:
-  file.managed:
-    - source: salt://jupyter/files/notebook.json
-    - name: {{ jupyter_config_dir }}/nbconfig/notebook.json
-    - require:
-      - file: jupyter-create_nbconfig_dir
 
 # set up jupyterhub environment configuration
 jupyter-create_jupyterhub_config_dir:
@@ -74,10 +70,10 @@ jupyter-create_notebooks_directory:
     - name: '{{ pnda_home_directory }}/jupyter_notebooks'
     - user: {{ pillar['pnda']['user'] }}
 
-jupyter-copy_simple_initial_notebook:
-  file.managed:
-    - source: 'salt://jupyter/files/PNDA minimal notebook.ipynb'
-    - name: '{{ pnda_home_directory }}/jupyter_notebooks/PNDA minimal notebook.ipynb'
+jupyter-copy_initial_notebooks:
+  file.recurse:
+    - source: 'salt://jupyter/files/notebooks'
+    - name: '{{ pnda_home_directory }}/jupyter_notebooks'
     - require:
       - file: jupyter-create_notebooks_directory
 

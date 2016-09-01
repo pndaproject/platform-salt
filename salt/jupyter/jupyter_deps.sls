@@ -40,7 +40,7 @@ jupyter-install_pip3_deps:
 
 jupyter-install_anaconda_deps:
   cmd.run:
-    - name: export PATH=/opt/cloudera/parcels/Anaconda/bin:$PATH;pip install cm_api avro
+    - name: /opt/cloudera/parcels/Anaconda/bin/pip install cm_api avro
 
 jupyter-install_anaconda_ipywidgets:
   cmd.run:
