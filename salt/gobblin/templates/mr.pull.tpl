@@ -10,6 +10,8 @@ job.name=PullFromKafkaMR
 job.group=PNDA
 job.description=Pulls data from all kafka topics to HDFS
 
+mr.job.max.mappers={{ max_mappers }}
+
 # ==== Kafka Source ====
 source.class=gobblin.source.extractor.extract.kafka.KafkaSimpleSource
 source.timezone=UTC
