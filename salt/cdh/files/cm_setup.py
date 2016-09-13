@@ -649,19 +649,19 @@ def setup_hadoop(
         cluster_name,
         cm_username='admin',
         cm_password='admin',
-        flavour='standard',
+        flavor='standard',
         parcel_repo=None,
-        parcel_version=None, 
+        parcel_version=None,
         anaconda_repo=None,
         anaconda_version=None):
 
     global _CFG
     isHA_enabled = False
 
-    if flavour == 'standard':
+    if flavor == 'standard':
         import cfg_standard as _CFG
         isHA_enabled = True
-    # Add additional flavours here
+    # Add additional flavors here
 
     try:
         api, cloudera_manager = connect(cm_api, 'admin', 'admin')

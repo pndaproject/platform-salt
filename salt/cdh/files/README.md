@@ -19,7 +19,7 @@ It is assumed that some hosts exist with key-based ssh access configured and Clo
 
 ## Overview ##
 
-This section describes the make-up of the Hadoop cluster that is created and a brief description of the various services. The description here applies to the "standard" flavour intended for PoC usage.
+This section describes the make-up of the Hadoop cluster that is created and a brief description of the various services. The description here applies to the "standard" flavor intended for PoC usage.
 
 ### Hadoop Services
 
@@ -61,7 +61,7 @@ If any of the set of hosts supplied to the script are already part of a cluster 
 If the hosts are entirely new and not part of any existing cluster then a new cluster is created, using the entire set of hosts.
 
 ## Configuration Files ##
-Files starting cfg_<flavour> contain role -> host mappings and configuration blocks for a particular flavour of cluster.
+Files starting cfg_<flavor> contain role -> host mappings and configuration blocks for a particular flavor of cluster.
 
 The "roles" array specifies role "type" (values as defined by Cloudera Manager), to install on hosts of type "target" (as specified in the list of hosts supplied to cm_setup).
 
@@ -76,7 +76,7 @@ The parameters to setup_hadoop() are:
 - nodes: details of the hosts to use (see below)
 - key_name: file name of a private key file that can be used (without passphrase) to access each host. This should be placed in the same directory as cm_setup.py.
 - cluster_name: name of the cluster to create
-- flavour: determines which cfg file to use (see Configuration Files)
+- flavor: determines which cfg file to use (see Configuration Files)
 
 Nodes must be an array with each object containing:
 - type: Used to define assignment of roles to hosts: EDGE, CM, MGR01, MGR02, DATANODE.
