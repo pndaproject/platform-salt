@@ -1,6 +1,6 @@
 """
 Name:       cfg_standard
-Purpose:    Configuration for this particular flavour of PNDA
+Purpose:    Configuration for this particular flavor of PNDA
 
 Author:     PNDA team
 
