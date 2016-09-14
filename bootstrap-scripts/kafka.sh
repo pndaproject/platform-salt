@@ -3,6 +3,8 @@
 set -e
 
 cat > /etc/salt/grains <<EOF
+pnda:
+  flavor: $PNDA_FLAVOR
 roles:
   - kafka
 pnda_cluster: $PNDA_CLUSTER
