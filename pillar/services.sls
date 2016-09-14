@@ -36,10 +36,6 @@ kafka:
     log_dirs:
       - '/var/kafka-logs'
 
-kafkacontrib:
-  release_directory: /opt/pnda
-  release_version: logstash-1.4.2-contrib-kafka-0.7.5
-
 admin_login:
   user: admin
   password: admin
