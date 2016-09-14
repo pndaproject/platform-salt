@@ -3,8 +3,8 @@
 set -e
 
 cat > /etc/salt/grains <<EOF
-cloudera:
-  cluster_flavour: $PNDA_FLAVOR
+pnda:
+  flavor: $PNDA_FLAVOR
 roles:
   - logserver
 pnda_cluster: $PNDA_CLUSTER
