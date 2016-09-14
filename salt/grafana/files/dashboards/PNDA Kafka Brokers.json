@@ -266,7 +266,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "BytesOutPerSec",
+              "alias": "/BytesOutPerSec/",
               "transform": "negative-Y"
             }
           ],
