@@ -17,9 +17,12 @@
     - match: grain
     - kafka.server
 
-  'roles:tools':
+  'roles:kafka_manager':
     - match: grain
     - kafka-manager
+
+  'roles:platform_testing_general':
+    - match: grain
     - jmxproxy
     - platform-testing.general
 
@@ -32,9 +35,8 @@
   'roles:logserver':
     - match: grain
     - logserver.logserver
-    - elasticsearch
-    - curator
-    - kibana
+
+  'roles:kibana_dashboard':
     - kibana.kibana-dashboard
 
   'roles:console_frontend':
@@ -42,10 +44,17 @@
     - nginx
     - console-frontend
 
-  'roles:console_backend':
+  'roles:console_backend_data_logger':
     - match: grain
     - console-backend.data-logger
     - console-backend.data-manager
+
+  'roles:console_backend_data_manager':
+    - match: grain
+    - console-backend.data-manager
+
+  'roles:graphite':
+    - match: grain
     - graphite
 
   'roles:grafana':
@@ -55,26 +64,28 @@
   'roles:opentsdb':
     - match: grain
     - pnda_opentsdb.install
-
-  'G@roles:cloudera_* or G@roles:opentsdb':
-    - match: compound
     - snappy
 
   'roles:cloudera_*':
     - match: grain
     - cdh.create_data_dirs
+    - snappy
+    - gobblin.user
 
   'roles:cloudera_manager':
     - match: grain
     - cdh.cloudera-keys
     - cdh.cloudera-manager
+
+  'roles:platform_testing_general':
+    - match: grain
     - platform-testing.cdh
 
-  'roles:cloudera_management':
+  'roles:mysql_connector':
     - match: grain
     - mysql.connector
     
-  'roles:cloudera_oozie_database':
+  'roles:oozie_database':
     - match: grain
     - cdh.oozie_mysql
 
