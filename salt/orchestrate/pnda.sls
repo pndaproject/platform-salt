@@ -14,7 +14,7 @@ cdh-install_hadoop:
 
 cdh-create_master_dataset:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:master_dataset'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
     - tgt_type: compound
     - sls: master-dataset
 
