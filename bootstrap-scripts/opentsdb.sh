@@ -9,7 +9,7 @@ pnda_cluster: $PNDA_CLUSTER
 roles:
   - opentsdb
 EOF
-if [ $1 = 1 ]; then
+if [ $1 = 0 ]; then
 cat >> /etc/salt/grains <<EOF
   - grafana
 EOF

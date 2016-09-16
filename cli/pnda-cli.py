@@ -79,19 +79,19 @@ def generate_template_file(filepath, datanodes, opentsdbs, kafkas, zookeepers):
         instance_kafka = json.dumps(template_data['Resources'].pop('instanceKafka'))
         instance_zookeeper = json.dumps(template_data['Resources'].pop('instanceZookeeper'))
 
-        for datanode in range(1, datanodes + 1):
+        for datanode in range(0, datanodes):
             instance_cdh_dn_n = instance_cdh_dn.replace('$node_idx$', str(datanode))
             template_data['Resources']['instanceCdhDn%s' % datanode] = json.loads(instance_cdh_dn_n)
 
-        for opentsdb in range(1, opentsdbs + 1):
+        for opentsdb in range(0, opentsdbs):
             instance_open_tsdb_n = instance_open_tsdb.replace('$node_idx$', str(opentsdb))
             template_data['Resources']['instanceOpenTsdb%s' % opentsdb] = json.loads(instance_open_tsdb_n)
 
-        for kafka in range(1, kafkas + 1):
+        for kafka in range(0, kafkas):
             instance_kafka_n = instance_kafka.replace('$node_idx$', str(kafka))
             template_data['Resources']['instanceKafka%s' % kafka] = json.loads(instance_kafka_n)
 
-        for zookeeper in range(1, zookeepers + 1):
+        for zookeeper in range(0, zookeepers):
             instance_zookeeper_n = instance_zookeeper.replace('$node_idx$', str(zookeeper))
             template_data['Resources']['instanceZookeeper%s' % zookeeper] = json.loads(instance_zookeeper_n)
 
@@ -378,8 +378,8 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname):
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     bootstrap_threads = []
     for _, instance in instance_map.iteritems():
-        if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) > old_datanodes
-             or instance['node_type'] == 'kafka' and int(instance['node_idx']) > old_kafka)):
+        if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
+             or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
             thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor])
             bootstrap_threads.append(thread)
 
