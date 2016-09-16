@@ -8,7 +8,7 @@
 {% set keystone_tenant = salt['pillar.get']('keystone.tenant', "") %}
 {% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
 {% set region = salt['pillar.get']('keystone.region_name', "") %}
-{% set mysql_host = salt['pnda.ip_addresses']('cloudera_oozie_database')[0] %}
+{% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
 {% set aws_key = salt['pillar.get']('aws.key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.secret', '') %}
 

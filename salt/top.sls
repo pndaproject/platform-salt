@@ -37,6 +37,7 @@
     - logserver.logserver
 
   'roles:kibana_dashboard':
+    - match: grain
     - kibana.kibana-dashboard
 
   'roles:console_frontend':
@@ -66,7 +67,7 @@
     - pnda_opentsdb.install
     - snappy
 
-  'roles:cloudera_*':
+  'roles:cloudera_* or roles:mysql_connector':
     - match: grain
     - cdh.create_data_dirs
     - snappy
@@ -77,7 +78,7 @@
     - cdh.cloudera-keys
     - cdh.cloudera-manager
 
-  'roles:platform_testing_general':
+  'roles:platform_testing_cdh':
     - match: grain
     - platform-testing.cdh
 

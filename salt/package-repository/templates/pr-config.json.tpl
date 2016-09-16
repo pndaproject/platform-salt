@@ -10,7 +10,7 @@
 {% set apps_container = salt['pillar.get']('pnda.apps_container', 'apps') %}
 {% set apps_folder = salt['pillar.get']('pnda.apps_folder', 'releases') %}
 
-{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend')[0] -%}
+{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 
 
