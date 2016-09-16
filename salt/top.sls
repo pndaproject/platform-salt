@@ -67,7 +67,7 @@
     - pnda_opentsdb.install
     - snappy
 
-  'roles:cloudera_* or roles:mysql_connector':
+  'cloudera:*':
     - match: grain
     - cdh.create_data_dirs
     - snappy
