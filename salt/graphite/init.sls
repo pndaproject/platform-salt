@@ -1,5 +1,8 @@
 # based on http://graphite-api.readthedocs.io/en/latest/deployment.html#nginx-uwsgi
 
+include:
+  - python-pip
+
 graphite-reqs:
   pkg.installed:
     - refresh: True
