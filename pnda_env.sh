@@ -1,6 +1,6 @@
 export OS_USER=ubuntu
 export PLATFORM_GIT_REPO_URI=https://github.com/pndaproject/platform-salt.git
-export PLATFORM_GIT_BRANCH=PNDA-2114
+export PLATFORM_GIT_BRANCH=master
 export PNDA_APPS_CONTAINER=pnda-apps
 export PNDA_APPS_FOLDER=releases
 export PNDA_ARCHIVE_CONTAINER=pnda-archive
