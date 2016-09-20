@@ -22,13 +22,13 @@
 {%- do opentsdb.append(ip+':4242') -%}
 {%- endfor -%}
 
-{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend')[0] -%}
+{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 
 {%- set cm_node_ip = salt['pnda.cloudera_manager_ip']() -%}
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
-{%- set km_ip = salt['pnda.ip_addresses']('tools')[0] -%}
+{%- set km_ip = salt['pnda.ip_addresses']('kafka_manager')[0] -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
 
 {%- set repository_manager_ip = salt['pnda.ip_addresses']('package_repository')[0] -%}

@@ -2,7 +2,7 @@
 
 cdh-run_cloudera_user:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
     - tgt_type: compound
     - sls: cdh.cloudera_user
 
@@ -14,29 +14,21 @@ cdh-install_hadoop:
 
 cdh-create_master_dataset:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:master_dataset'
     - tgt_type: compound
     - sls: master-dataset
 
 cdh-impala_wrapper:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:impala-shell'
     - tgt_type: compound
     - sls: cdh.impala-shell
 
 cdh-hue_setup:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:role:MGR04'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hue'
     - tgt_type: compound
     - sls: cdh.hue-login
-
-# We need to create the gobblin user on the namenode to have the HDFS mapping
-# between user and groups
-cdh-create_gobblin_user_on_namenodes:
-  salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_*'
-    - tgt_type: compound
-    - sls: gobblin.user
 
 cdh-install_gobblin:
   salt.state:
@@ -52,9 +44,9 @@ cdh-install_jupyter:
 
 cdh-configure_yarn_for_spark:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:yarn-gateway'
     - tgt_type: compound
-    - sls: cdh.yarn
+    - sls: cdh.create-yarn-home
 
 cdh-install_deployment_manager:
   salt.state:
@@ -76,13 +68,13 @@ cdh-install_package_repository:
 
 cdh-create_hbase_opentsdb_tables:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hbase_opentsdb_tables'
     - tgt_type: compound
     - sls: opentsdb.hbase_tables
 
 km-create_cluster:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:tools'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:kafka_manager'
     - tgt_type: compound
     - sls: kafka-manager.pnda_create_cluster
 
@@ -100,7 +92,7 @@ cdh-install_opentsdb:
 
 cdh-install_hdfs_cleaner:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_edge'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hdfs_cleaner'
     - tgt_type: compound
     - sls: hdfs-cleaner
 

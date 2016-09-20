@@ -8,7 +8,7 @@
 {% set keystone_tenant = salt['pillar.get']('keystone.tenant', "") %}
 {% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
 {% set region = salt['pillar.get']('keystone.region_name', "") %}
-{% set mysql_host = salt['pnda.ip_addresses']('cloudera_oozie_database')[0] %}
+{% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
 {% set aws_key = salt['pillar.get']('aws.key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.secret', '') %}
 
@@ -48,8 +48,8 @@ cdh-create_cloudera_configuration_script:
     - source: salt://cdh/templates/cloudera_config.py.tpl
     - template: jinja
     - defaults:
-        ips: {{ salt['mine.get']('G@roles:cloudera_* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
-        cloudera_config: {{ salt['mine.get']('G@roles:cloudera_* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
+        ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
+        cloudera_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         private_key_filename: {{ ssh_prv_key }}
         cluster_name: {{ pnda_cluster }}
         parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}

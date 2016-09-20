@@ -22,7 +22,7 @@
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
-{%- for ip in salt['pnda.ip_addresses']('console_backend') -%}
+{%- for ip in salt['pnda.ip_addresses']('console_backend_data_logger') -%}
 {%- do console_hosts.append(ip + ':' + console_port) -%}
 {%- endfor -%}
 

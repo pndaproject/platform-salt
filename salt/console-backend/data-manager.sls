@@ -6,7 +6,7 @@
 {% set app_config_dir = app_dir + '/conf' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
-{% set host_ip = salt['pnda.ip_addresses']('console_backend')[0] %}
+{% set host_ip = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 
 # get host id of the instance where the console backend is running on the cluster
 {% set host_id = '' %}

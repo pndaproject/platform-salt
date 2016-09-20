@@ -5,7 +5,7 @@
 {% set app_dir = install_dir + '/console-backend-data-logger' %}
 {% set app_config_dir = app_dir + '/conf' %}
 
-{% set host_ip = salt['pnda.ip_addresses']('console_backend')[0] %}
+{% set host_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] %}
 
 {% set backend_app_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') %}
 
