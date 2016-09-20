@@ -7,6 +7,14 @@ Author:     PNDA team
 Created:    20-09-2016
 """
 
+CM_CFG = {
+    "hosts_config": {
+        'host_agent_parcel_directory_free_space_absolute_thresholds': '{\"warning\":\"never\",\"critical\":\"never\"}',
+        'memory_overcommit_threshold': '0.85',
+        'host_agent_log_directory_free_space_absolute_thresholds': '{\"warning\":209715200,\"critical\":104857600}'
+    }
+}
+
 OOZIE_CFG = {"service": "OOZIE",
              "name": "oozie01",
              "config": {'mapreduce_yarn_service': 'yarn01',

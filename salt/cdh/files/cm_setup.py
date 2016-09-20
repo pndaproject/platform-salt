@@ -725,10 +725,7 @@ def setup_hadoop(
         services = create_services(user, key_name, cluster, nodes, isHA_enabled)
         # there isn't much space for parcels but we know we are not going to
         # install any so it's safe to disable this warning
-        cfg = {
-            'host_agent_parcel_directory_free_space_absolute_thresholds': '{"warning":"-2.0","critical":"6000000000"}',
-            'memory_overcommit_threshold': '0.85'}
-        cloudera_manager.update_all_hosts_config(cfg)
+        cloudera_manager.update_all_hosts_config(_CFG.CM_CFG['hosts_config'])
         # Install system shared libs into defined deployment path
         setup_sharedlib(nodes, user, key_name, services['hdfs'], cm_api)
 
