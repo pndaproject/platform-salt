@@ -8,9 +8,7 @@ pnda:
 cloudera:
   role: MGR03
 roles:
-  - cloudera_management
-  - cloudera_oozie_database
-
+  - mysql_connector
 pnda_cluster: $PNDA_CLUSTER
 EOF
 
