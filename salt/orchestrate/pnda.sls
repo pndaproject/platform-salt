@@ -20,7 +20,7 @@ cdh-create_master_dataset:
 
 cdh-impala_wrapper:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:impala'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:impala-shell'
     - tgt_type: compound
     - sls: cdh.impala-shell
 
@@ -44,9 +44,9 @@ cdh-install_jupyter:
 
 cdh-configure_yarn_for_spark:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:yarn'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:yarn-gateway'
     - tgt_type: compound
-    - sls: cdh.yarn
+    - sls: cdh.create-yarn-home
 
 cdh-install_deployment_manager:
   salt.state:
