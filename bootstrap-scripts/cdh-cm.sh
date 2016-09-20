@@ -8,8 +8,9 @@ pnda:
 cloudera:
   role: CM
 roles:
-  - cloudera_management
   - cloudera_manager
+  - platform_testing_cdh
+  - mysql_connector
 pnda_cluster: $PNDA_CLUSTER
 EOF
 

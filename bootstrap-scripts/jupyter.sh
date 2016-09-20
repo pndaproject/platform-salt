@@ -8,7 +8,6 @@ pnda:
 cloudera:
   role: EDGE
 roles:
-  - cloudera_edge_jupyter
   - jupyter
 pnda_cluster: $PNDA_CLUSTER
 EOF
