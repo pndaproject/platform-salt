@@ -265,50 +265,9 @@ def create_cms(cloudera_manager, nodes):
 
     try:
         cms = cloudera_manager.create_mgmt_service(ApiServiceSetupInfo())
-
-        roles = [
-            {
-                "name": "cms-ap",
-                "type": "ALERTPUBLISHER",
-                "target": "CM"
-            },
-            {
-                "name": "cms-es",
-                "type": "EVENTSERVER",
-                "target": "CM"
-            },
-            {
-                "name": "cms-hm",
-                "type": "HOSTMONITOR",
-                "target": "CM"
-            },
-            {
-                "name": "cms-sm",
-                "type": "SERVICEMONITOR",
-                "target": "CM"
-            }
-        ]
-
-        role_cfg = [{"type": "ACTIVITYMONITOR",
-                     "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
-                    {"type": "ALERTPUBLISHER",
-                     "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher'}},
-                    {"type": "EVENTSERVER",
-                     "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
-                    {"type": "HOSTMONITOR",
-                     "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
-                    {"type": "SERVICEMONITOR",
-                     "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}}]
-
         cloudera_manager.auto_configure()
-
-        assign_roles(cms, roles, nodes)
-
-        apply_role_config(cms, role_cfg)
-
+        assign_roles(cms, _CFG.CMS_CFG['roles'], nodes)
+        apply_role_config(cms, _CFG.CMS_CFG['role_cfg'])
     except Exception as exception:
         logging.error("Error while creating CMS", exc_info=True)
         raise

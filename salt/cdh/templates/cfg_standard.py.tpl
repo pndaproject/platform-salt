@@ -14,6 +14,39 @@ CM_CFG = {
     }
 }
 
+CMS_CFG = {
+    "service": "MGMT",
+    "name": "mgmt",
+    "roles": [
+        {"name": "cms-ap",
+         "type": "ALERTPUBLISHER",
+         "target": "CM"},
+        {"name": "cms-es",
+         "type": "EVENTSERVER",
+         "target": "CM"},
+        {"name": "cms-hm",
+         "type": "HOSTMONITOR",
+         "target": "CM"},
+        {"name": "cms-sm",
+         "type": "SERVICEMONITOR",
+         "target": "CM"}
+     ],
+     "role_cfg": [
+         {"type": "ACTIVITYMONITOR",
+          "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
+         {"type": "ALERTPUBLISHER",
+          "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher'}},
+         {"type": "EVENTSERVER",
+          "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
+         {"type": "HOSTMONITOR",
+          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
+         {"type": "SERVICEMONITOR",
+          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}}]
+}
+
 OOZIE_CFG = {"service": "OOZIE",
              "name": "oozie01",
              "config": {'mapreduce_yarn_service': 'yarn01',
