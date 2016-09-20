@@ -17,8 +17,8 @@ roles:
   - deployment_manager
   - package_repository
   - data_service
-  - impala
-  - yarn
+  - impala-shell
+  - yarn-gateway
   - hbase_opentsdb_tables
   - hdfs_cleaner
   - master_dataset
