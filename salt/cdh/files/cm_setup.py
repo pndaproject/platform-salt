@@ -18,6 +18,9 @@ from cm_api.endpoints.services import ApiServiceSetupInfo
 from cm_api.api_client import ApiResource
 from cm_api.endpoints import users
 
+# Import Flavor configuration file
+import cfg_flavor as _CFG
+
 DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.5.2/'
 DEFAULT_PARCEL_VERSION = '5.5.2-1.cdh5.5.2.p0.4'
 
@@ -614,13 +617,7 @@ def setup_hadoop(
         anaconda_repo=None,
         anaconda_version=None):
 
-    global _CFG
-    isHA_enabled = False
-
-    if flavor == 'standard':
-        import cfg_standard as _CFG
-        isHA_enabled = True
-    # Add additional flavors here
+    isHA_enabled = _CFG.isHA_enabled
 
     try:
         api, cloudera_manager = connect(cm_api, 'admin', 'admin')

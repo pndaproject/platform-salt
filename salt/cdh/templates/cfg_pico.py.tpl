@@ -7,6 +7,8 @@ Author:     PNDA team
 Created:    20-09-2016
 """
 
+isHA_enabled = False
+
 CM_CFG = {
     "hosts_config": {
         'host_agent_parcel_directory_free_space_absolute_thresholds': '{\"warning\":\"never\",\"critical\":\"never\"}',

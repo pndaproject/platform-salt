@@ -26,6 +26,7 @@ cdh-copy_cm_config:
   file.managed:
     - source: salt://cdh/templates/{{ flavor_cfg.template_file }}.tpl
     - name: {{ scripts_location }}/{{ flavor_cfg.template_file }}
+    - name: {{ scripts_location }}/cfg_flavor.py
     - template: jinja
     - defaults:
       keystone_user: {{ keystone_user }}
