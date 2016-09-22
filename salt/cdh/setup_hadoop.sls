@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set scripts_location = '/tmp' %}
 {% set ssh_prv_key = scripts_location + '/cloudera.pem' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
@@ -20,10 +22,11 @@ cdh-copy_script_manager_installation_script:
     - source: salt://cdh/files/cm_setup.py
     - name: {{ scripts_location }}/cm_setup.py
 
-cdh-copy_cm_config_standard:
+cdh-copy_cm_config:
   file.managed:
-    - source: salt://cdh/templates/cfg_standard.py.tpl
-    - name: {{ scripts_location }}/cfg_standard.py
+    - source: salt://cdh/templates/{{ flavor_cfg.template_file }}.tpl
+    - name: {{ scripts_location }}/{{ flavor_cfg.template_file }}
+    - name: {{ scripts_location }}/cfg_flavor.py
     - template: jinja
     - defaults:
       keystone_user: {{ keystone_user }}

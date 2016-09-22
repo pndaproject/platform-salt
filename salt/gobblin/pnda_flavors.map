@@ -1,8 +1,0 @@
-{% set gobblin = salt['grains.filter_by']({
-    'standard': {
-        'max_mappers': 50
-    },
-    'pico': {
-        'max_mappers': 5
-    }
-}, grain='pnda:flavor', merge=salt['pillar.get']('pnda_flavor:gobblin'), default='standard', base='standard') %}
