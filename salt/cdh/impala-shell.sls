@@ -1,4 +1,4 @@
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 include:
   - python-pip

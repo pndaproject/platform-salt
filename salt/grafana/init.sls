@@ -1,15 +1,17 @@
 {% set settings = salt['pillar.get']('grafana', {}) -%}
-{% set grafana_version = settings.get('version', '2.1.3') %}
-{% set grafana_hash = settings.get('release_hash', 'sha256=7142e7239de5357e3769a286cd3b0c2c63a36234d30516ba9b96e7d088ece5bc') %}
+{% set grafana_version = settings.get('version', '3.1.1-1470047149') %}
+{% set grafana_hash = settings.get('release_hash', 'sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328') %}
 
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
 {% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
 
-grafana-download-grafana-package:
-  file.managed:
-    - name: /tmp/{{ grafana_deb_package }}
-    - source: {{ grafana_deb_location }}
-    - source_hash: {{ grafana_hash }}
+{% set pnda_graphite_port = 8013 %}
+{% set pnda_graphite_host = salt['pnda.ip_addresses']('console_backend')[0] %}
+
+{% set dashboard_list = ['PNDA Deployment Manager.json',
+                         'PNDA Hadoop.json',
+                         'PNDA Kafka Brokers.json',
+                         'PNDA.json'] %}
 
 grafana-server_pkg:
   pkg.installed:
@@ -23,15 +25,45 @@ grafana-server_start:
     - watch:
       - pkg: grafana-server_pkg
 
-grafana-login_script_copy:
-  file.managed:
-    - name: /tmp/grafana-user-setup.sh
-    - source: salt://grafana/templates/grafana-user-setup.sh.tpl
-    - mode: 755
-    - template: jinja
-
 grafana-login_script_run:
   cmd.script:
-    - name: grafana-user-setup
-    - source: /tmp/grafana-user-setup.sh
+    - name: salt://grafana/templates/grafana-user-setup.sh.tpl
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
     - cwd: /
+
+grafana-create_datasources_run_script:
+  cmd.script:
+    - name: salt://grafana/templates/grafana-datasources-setup.sh.tpl
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
+        pnda_graphite_host: {{ pnda_graphite_host  }}
+        pnda_graphite_port: {{ pnda_graphite_port }}
+    - cwd: /
+    - require:
+      - cmd: grafana-login_script_run
+
+{% for dash in dashboard_list %}
+grafana-copy_dashboard_{{ dash }}:
+  file.managed:
+    - source: salt://grafana/files/dashboards/{{ dash }}
+    - name: /tmp/{{ dash }}.salt.tmp
+    - require:
+      - cmd: grafana-create_datasources_run_script
+
+grafana-import_dashboard-{{ dash }}:
+  cmd.script:
+    - name: salt://grafana/templates/grafana-import-dashboards.sh.tpl
+    - args: "'/tmp/{{ dash }}.salt.tmp'"
+    - template: jinja
+    - context:
+        pnda_user: {{ pillar['pnda']['user'] }}
+        pnda_password: {{ pillar['pnda']['password'] }}
+    - cwd: /
+    - require:
+      - file: grafana-copy_dashboard_{{ dash }}
+{% endfor %}

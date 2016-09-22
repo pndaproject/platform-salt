@@ -27,15 +27,14 @@ jupyterhub:
   version: 0.6.1
   confdir: /etc/jupyterhub
 
+zookeeper:
+  version: 3.4.6
+
 kafka:
-  version: 0.9.0.1
+  version: 0.10.0.1
   config:
     log_dirs:
       - '/var/kafka-logs'
-
-kafkacontrib:
-  release_directory: /opt/pnda
-  release_version: logstash-1.4.2-contrib-kafka-0.7.5
 
 admin_login:
   user: admin
@@ -43,52 +42,52 @@ admin_login:
 
 kafkamanager:
   release_directory: /opt/pnda
-  release_version: 1.3.0.8
+  release_version: 1.3.1.6
 
 opentsdb:
-  version: 2.2.0RC1
-  release_hash: sha256=199f60f31c8f72948d0e5a2c4695aedcb114360a77c4246b16587f07028f8068
+  version: 2.2.0
+  release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
 
 grafana:
-  version: 2.1.3
-  release_hash: sha256=7142e7239de5357e3769a286cd3b0c2c63a36234d30516ba9b96e7d088ece5bc
+  version: 3.1.1-1470047149
+  release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
 
 gobblin:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 console_frontend:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 console_backend_data_logger:
-  release_version: 0.1.0
+  release_version: 0.2.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.1.0
+  release_version: 0.2.0
   bind_port: 3123
 
 deployment_manager:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 package_repository:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 data-service:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 hdfs_cleaner:
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 0.1.0
+  release_version: 0.1.1
 
 ntp:
   servers:
     - "ntp.esl.cisco.com iburst"
 
 platformlib:
-  release_version: 0.1.0
+  release_version: 0.1.1
   target_directory: "/opt/pnda"
 
 nginx:

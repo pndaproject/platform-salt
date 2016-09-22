@@ -60,7 +60,7 @@ def ip_addresses(role):
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
     result = __salt__['mine.get'](query, 'grains.items', 'compound').values()
     if len(result) > 0 and 'ec2' in result[0]:
-        result = [r['ec2']['public_hostname'] for r in result]
+        result = [r['ec2']['public_hostname'] if 'public_hostname' in r['ec2'] else r['ec2']['local_ipv4'] for r in result]
         return result
 
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)

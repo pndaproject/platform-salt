@@ -45,21 +45,31 @@ def pause_until_api_up(api):
     sys.exit(-1)
 
 def connect(cm_api, cm_username, cm_password, use_proxy=False):
+    '''
+    Wait for two minutes for CM to come up
+    '''
 
-    # change name of proxy if necessary
-    proxy = urllib2.ProxyHandler({'http': 'proxy'})
+    for _ in xrange(24):
+        try:
+            logging.info("Checking CM availability....")
+            # change name of proxy if necessary
+            proxy = urllib2.ProxyHandler({'http': 'proxy'})
 
-    api = ApiResource(cm_api, username=cm_username, password=cm_password)
+            api = ApiResource(cm_api, username=cm_username, password=cm_password)
 
-    if use_proxy:
-        # pylint: disable=W0212
-        api._client._opener.add_handler(proxy)
+            if use_proxy:
+            # pylint: disable=W0212
+                api._client._opener.add_handler(proxy)
 
-    cloudera_manager = api.get_cloudera_manager()
-    api.get_user(cm_username)
+            cloudera_manager = api.get_cloudera_manager()
+            api.get_user(cm_username)
 
-    return api, cloudera_manager
-
+            return api, cloudera_manager
+        except Exception as exception:
+            logging.warning("CM is not up")
+            time.sleep(5)
+    logging.error("CM did not come UP")
+    sys.exit(-1)
 
 def create_hosts(api, cloudera_manager, user, nodes, key_name):
 
@@ -147,6 +157,7 @@ def create_cluster(api, cluster_name):
         cluster.add_hosts([host.hostId for host in hosts])
     except Exception as exception:
         logging.error("Error while creating cluster", exc_info=True)
+        raise
 
     return cluster
 
@@ -300,6 +311,7 @@ def create_cms(cloudera_manager, nodes):
 
     except Exception as exception:
         logging.error("Error while creating CMS", exc_info=True)
+        raise
 
     return cms
 
@@ -345,7 +357,7 @@ def create_mysql_connector_symlink(user, key, ip_addr, target_dir):
         setup_remotehost(config)
     except Exception as exception:
         logging.error("Error while creating mysql symlink", exc_info=True)
-
+        raise
 
 def create_hdfs_dirs(yarn):
     wait_on_success(yarn.create_yarn_job_history_dir())
@@ -366,7 +378,7 @@ def create_hive_tmp(user, key, ip_addr):
         setup_remotehost(config)
     except Exception as exception:
         logging.error("Error while creating hive temporary directory", exc_info=True)
-
+        raise
 
 def assign_roles(service, roles, nodes):
 
@@ -452,6 +464,8 @@ def expand_services(cluster, nodes):
 
     except Exception as exception:
         logging.error("Error while expanding services", exc_info=True)
+        raise
+
     return {'hdfs': hdfs, 'hbase': hbase, 'mapred': mapred, 'impala': impala}
 
 
@@ -613,6 +627,8 @@ def create_services(user, key, cluster, nodes, isHA_enabled):
 
     except Exception as exception:
         logging.error("Error while creating services", exc_info=True)
+        raise
+
     return {
         'hdfs': hdfs,
         'zookeeper': zoo_k,
@@ -633,19 +649,19 @@ def setup_hadoop(
         cluster_name,
         cm_username='admin',
         cm_password='admin',
-        flavour='standard',
+        flavor='standard',
         parcel_repo=None,
-        parcel_version=None, 
+        parcel_version=None,
         anaconda_repo=None,
         anaconda_version=None):
 
     global _CFG
     isHA_enabled = False
 
-    if flavour == 'standard':
+    if flavor == 'standard':
         import cfg_standard as _CFG
         isHA_enabled = True
-    # Add additional flavours here
+    # Add additional flavors here
 
     try:
         api, cloudera_manager = connect(cm_api, 'admin', 'admin')

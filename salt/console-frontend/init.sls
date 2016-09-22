@@ -2,7 +2,7 @@
 {% set console_frontend_version = pillar['console_frontend']['release_version'] %}
 {% set console_frontend_package = 'console-frontend-' + console_frontend_version + '.tar.gz' %}
 {% set nginx_config_location = '/etc/nginx/sites-enabled' %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 {% set console_dir = install_dir + '/console-frontend' %}
 {% set console_config_dir = console_dir + '/conf' %}
 {% set console_demo_dir = console_dir + '/js/demo' %}

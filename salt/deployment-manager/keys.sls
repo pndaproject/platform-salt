@@ -1,7 +1,7 @@
 {% set deployment_manager_version = salt['pillar.get']('deployment_manager:release_version', '1.0.0') %}
 {% set deployment_manager_directory_name = 'deployment-manager-' + deployment_manager_version %}
 {% set cluster = salt['pnda.cluster_name']() %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 
 cdh-install_pub_key:

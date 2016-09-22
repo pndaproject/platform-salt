@@ -1,14 +1,16 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
-{% set install_dir = '/opt/pnda' %}
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 include:
   - java
 
 logshipper-lbc6:
   pkg.installed:
-    - name: libc6-dev
+    - pkgs:
+      - libc6-dev
+      - acl
 
 logshipper-dl-and-extract:
   archive.extracted:
@@ -49,6 +51,13 @@ logger:
 logshipper-add_salt_permissions:
   cmd.run:
     - name: 'chmod -R 755 /var/log/salt'
+
+logshipper-yarnperms-add_crontab_entry:
+  cron.present:
+    - identifier: YARN-PERMISSIONS
+    - name: setfacl -Rm u:logger:rx /var/log/pnda/hadoop-yarn/container
+    - user: root
+    - minute: '*'
 
 logshipper-create_sincedb_folder:
   file.directory:
