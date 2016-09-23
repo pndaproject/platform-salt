@@ -9,5 +9,6 @@ cloudera-key-upload-to-master:
   module.run:
     - name: cp.push
     - path: /tmp/cloudera.pem.pub
+    - upload_path: /keys/cloudera.pem.pub
     - onchanges:
       - cmd: cloudera-key-generate-cloudera-keys
