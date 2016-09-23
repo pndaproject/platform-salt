@@ -50,6 +50,7 @@ deployment-manager-push_key:
   module.run:
     - name: cp.push
     - path: '{{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem.pub'
+    - upload_path: '/keys/dm.pem.pub'
 
 deployment-manager-copy_upstart:
   file.managed:
