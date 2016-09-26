@@ -2,9 +2,7 @@
 
 set -e
 
-cat > /etc/salt/grains <<EOF
-pnda:
-  flavor: $PNDA_FLAVOR
+cat >> /etc/salt/grains <<EOF
 cloudera:
   role: EDGE
 roles:

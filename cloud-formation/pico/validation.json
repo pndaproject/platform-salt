@@ -1,0 +1,6 @@
+{
+  "zk-nodes":"0",
+  "kafka-nodes":"1",
+  "opentsdb-nodes":"0",
+  "datanodes":"1-3"  
+}

@@ -1,0 +1,5 @@
+{
+  "salt-master-instance":"cdh-edge",
+  "bastion-instance":"cdh-edge",
+  "console-instance":"cdh-edge"
+}

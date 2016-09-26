@@ -37,3 +37,8 @@ sh install_salt.sh -D -U stable 2015.8.10
 cat > /etc/salt/minion <<EOF
 master: $PNDA_SALTMASTER_IP
 EOF
+
+cat >> /etc/salt/grains <<EOF
+pnda:
+  flavor: $PNDA_FLAVOR
+EOF

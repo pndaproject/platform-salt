@@ -1,0 +1,202 @@
+{
+  "Parameters" : {
+    "instancetypeKafka" : {
+      "Type" : "String",
+      "Default" : "m3.large",
+      "Description" : "Instance type for databus combined instance"
+    },
+    "instancetypeCdhMgr" : {
+      "Type" : "String",
+      "Default" : "m3.large",
+      "Description" : "Instance type for CDH management"
+    },
+    "instancetypeCdhDn" : {
+      "Type" : "String",
+      "Default" : "m3.large",
+      "Description" : "Instance type for CDH datanode"
+    },
+    "instancetypeEdge" : {
+      "Type" : "String",
+      "Default" : "m3.large",
+      "Description" : "Instance type for cluster edge node"
+    }
+  },
+  "Resources": {
+    "instanceKafka": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeKafka" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },        
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "kafka" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "kafka"
+          },
+          {
+            "Key": "node_idx",
+            "Value": ""
+          }
+
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },         
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }         
+        ],       
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceCdhDn": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeCdhDn" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-dn-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "cdh-dn"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          },                   
+          {
+              "DeviceName"  : "/dev/sdd",
+              "Ebs" : { "VolumeSize" : "35" }
+          }
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceCdhEdge": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeEdge" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-edge" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "cdh-edge"
+          },
+          {
+            "Key": "node_idx",
+            "Value": ""
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {"Ref": "PublicSubnet"},
+            "GroupSet": [{"Ref": "sshSg"}],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]      }
+    },
+    "instanceCdhMgr1": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeCdhMgr" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-1" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "cdh-mgr"
+          },
+          {
+            "Key": "node_idx",
+            "Value": ""
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    }
+  }
+}
