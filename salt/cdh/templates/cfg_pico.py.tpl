@@ -175,7 +175,7 @@ MAPRED_CFG = {
                 {
                     'mr2_jobhistory_log_dir': '/var/log/pnda/hadoop-mapreduce',
                     'mapreduce_jobhistory_max_age_ms': '86400000',
-                    'mr2_jobhistory_java_heapsize': '8589934592',
+                    'mr2_jobhistory_java_heapsize': '1073741824',
                     'log_directory_free_space_absolute_thresholds': '{\"warning\":1073741824,\"critical\":1073741824}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100'
@@ -187,7 +187,7 @@ MAPRED_CFG = {
                 {
                     'resourcemanager_config_safety_valve':
                         '<property> \r\n<name>yarn.resourcemanager.proxy-user-privileges.enabled</name>\r\n<value>true</value>\r\n</property>',
-                    'resource_manager_java_heapsize': '4294967296',
+                    'resource_manager_java_heapsize': '1073741824',
                     'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn',
                     'log_directory_free_space_absolute_thresholds': '{\"warning\":1073741824,\"critical\":1073741824}',
                     'yarn_scheduler_increment_allocation_mb': '64',
@@ -231,6 +231,11 @@ HDFS_CFG = {
                 "target": "MGR01"
             },
             {
+                "name": "hdfs-snn",
+                "type": "SECONDARYNAMENODE",
+                "target": "MGR01"
+            },
+            {
                 "name": "hdfs-dn",
                 "type": "DATANODE",
                 "target": "DATANODE"
@@ -255,10 +260,14 @@ HDFS_CFG = {
                            'dfs_namenode_service_handler_count': 60,
                            'dfs_namenode_servicerpc_address': 8022,
                            'namenode_log_dir': '/var/log/pnda/hadoop/nn',
-                           'namenode_java_heapsize': 3221225472,
+                           'namenode_java_heapsize': 1073741824,
                            'dfs_qjournal_write_txns_timeout_ms': 120000,
                            'log_directory_free_space_absolute_thresholds': '{\"warning\":4294967296,\"critical\":3221225472}',
                            'namenode_data_directories_free_space_absolute_thresholds': '{\"warning\":4294967296,\"critical\":3221225472}'}
+            },
+            {
+                "type": "SECONDARYNAMENODE",
+                "config": {'fs_checkpoint_dir_list': '/data0/snn', 'secondarynamenode_log_dir': '/var/log/panda/hadoop/snn'}
             },
             {
                 "type": "DATANODE",
