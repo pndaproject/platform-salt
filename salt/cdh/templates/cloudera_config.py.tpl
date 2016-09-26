@@ -21,6 +21,9 @@ flavor = '{{ grains['pnda']['flavor'] }}'
 roles = {}
 {% for host, minion_grains in cloudera_config.items() -%}
 roles['{{ host }}'] = '{{ minion_grains['cloudera']['role'] }}'
+{% if 'cloudera_manager' in minion_grains['roles'] %}
+manager = ips['{{ host }}']
+{% endif %}
 {% endfor %}
 
 nodes = []
@@ -29,14 +32,6 @@ for host in ips.keys():
         'id': None,
         'private_addr': ips[host],
         'public_addr': ips[host]})
-
-# Find CM node
-manager = None
-
-for host, role in roles.items():
-    if role == 'CM':
-        manager = ips[host]
-        break
 
 {%- if parcel_repo %}
 parcel_repo = "{{ parcel_repo }}"
