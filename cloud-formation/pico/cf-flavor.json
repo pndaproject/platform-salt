@@ -1,5 +1,10 @@
 {
   "Parameters" : {
+    "instancetypeBastion" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for the access bastion"
+    },    
     "instancetypeKafka" : {
       "Type" : "String",
       "Default" : "m3.large",
@@ -27,6 +32,55 @@
     }    
   },
   "Resources": {
+    "instanceBastion": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeBastion" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "bastion" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "bastion"
+          },
+          {
+            "Key": "node_idx",
+            "Value": ""
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {"Ref": "PublicSubnet"},
+            "GroupSet": [{"Ref": "sshSg"}],
+            "AssociatePublicIpAddress": "true"
+          }
+        ]
+      }
+    },    
     "instanceKafka": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -121,6 +175,7 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeEdge" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },        
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
@@ -151,16 +206,8 @@
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
           }
         ],
-        "NetworkInterfaces": [
-          {
-            "DeleteOnTermination": "true",
-            "Description": "Primary network interface",
-            "DeviceIndex": 0,
-            "SubnetId": {"Ref": "PublicSubnet"},
-            "GroupSet": [{"Ref": "sshSg"}],
-            "AssociatePublicIpAddress": "true"
-          }
-        ]      }
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
     },
     "instanceCdhMgr1": {
       "Type": "AWS::EC2::Instance",
