@@ -116,7 +116,6 @@ pnda:
 cloudera:
   role: EDGE
 roles:
-  - bastion
   - cloudera_edge
   - console_frontend
   - console_backend_data_logger
