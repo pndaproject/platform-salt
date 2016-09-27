@@ -17,7 +17,7 @@
     },
     "instancetypeEdge" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m3.xlarge",
       "Description" : "Instance type for cluster edge node"
     },
     "logVolumeSizeGb" : {
