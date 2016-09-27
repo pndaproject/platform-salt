@@ -7,19 +7,24 @@
     },
     "instancetypeCdhMgr" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m3.xlarge",
       "Description" : "Instance type for CDH management"
     },
     "instancetypeCdhDn" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "c4.xlarge",
       "Description" : "Instance type for CDH datanode"
     },
     "instancetypeEdge" : {
       "Type" : "String",
       "Default" : "m3.large",
       "Description" : "Instance type for cluster edge node"
-    }
+    },
+    "logVolumeSizeGb" : {
+      "Type" : "String",
+      "Default" : "1",
+      "Description" : "Size in GB for the log volume"
+    }    
   },
   "Resources": {
     "instanceKafka": {
