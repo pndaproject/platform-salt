@@ -82,10 +82,6 @@ platform_testing:
   release_directory: /opt/pnda
   release_version: develop
 
-ntp:
-  servers:
-    - "ntp.esl.cisco.com iburst"
-
 platformlib:
   release_version: develop
   target_directory: "/opt/pnda"
