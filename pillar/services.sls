@@ -82,18 +82,9 @@ platform_testing:
   release_directory: /opt/pnda
   release_version: develop
 
-ntp:
-  servers:
-    - "ntp.esl.cisco.com iburst"
-
 platformlib:
   release_version: develop
   target_directory: "/opt/pnda"
-
-nginx:
-  admin_user: admin
-  admin_password: admin
-  certificates_email: pnda.team@external.cisco.com
 
 jmxproxy:
   release_version: "3.2.0"
