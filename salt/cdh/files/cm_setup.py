@@ -33,10 +33,10 @@ logging.basicConfig(filename=DEFAULT_LOG_FILE,
 
 def pause_until_api_up(api):
     '''
-    Wait for two minutes for CM API to come up
+    Wait for ten minutes for CM API to come up
     '''
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             logging.info("Checking API availability....")
             api.get_all_hosts()
@@ -49,10 +49,10 @@ def pause_until_api_up(api):
 
 def connect(cm_api, cm_username, cm_password, use_proxy=False):
     '''
-    Wait for two minutes for CM to come up
+    Wait for ten minutes for CM to come up
     '''
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             logging.info("Checking CM availability....")
             # change name of proxy if necessary
@@ -222,7 +222,7 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
 
     time.sleep(5)
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             parcel = cluster.get_parcel(product, parcel_version)
             break
