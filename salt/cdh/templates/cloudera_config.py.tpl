@@ -21,7 +21,7 @@ flavor = '{{ grains['pnda']['flavor'] }}'
 roles = {}
 {% for host, minion_grains in cloudera_config.items() -%}
 roles['{{ host }}'] = '{{ minion_grains['cloudera']['role'] }}'
-{% if 'cloudera_manager' in minion_grains['roles'] %}
+{% if 'cloudera_manager' in minion_grains.get('roles', []) %}
 manager = ips['{{ host }}']
 {% endif %}
 {% endfor %}
