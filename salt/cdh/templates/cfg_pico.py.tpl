@@ -267,7 +267,11 @@ HDFS_CFG = {
             },
             {
                 "type": "SECONDARYNAMENODE",
-                "config": {'fs_checkpoint_dir_list': '/data0/snn', 'secondarynamenode_log_dir': '/var/log/panda/hadoop/snn'}
+                "config": {'fs_checkpoint_dir_list': '/data0/snn',
+                           'secondarynamenode_log_dir': '/var/log/pnda/hadoop/snn',
+                           'secondary_namenode_java_heapsize': 3221225472,
+                           'log_directory_free_space_absolute_thresholds': '{\"warning\":4294967296,\"critical\":3221225472}',
+                           'secondarynamenode_checkpoint_directories_free_space_absolute_thresholds': '{\"warning\":4294967296,\"critical\":3221225472}'}
             },
             {
                 "type": "DATANODE",
