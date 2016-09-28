@@ -356,7 +356,6 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
     ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate',
-         'sleep 20',
          'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda' % cluster,
          'sudo salt "*-%s" state.sls hostsfile' % bastion],
         saltmaster['private_ip_address'])
@@ -418,7 +417,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname):
     bastion = NODE_CONFIG['bastion-instance']
     ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate',
          'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand' % cluster,
-         'sudo salt "*-" %s state.sls hostsfile' % bastion],
+         'sudo salt "*-%s" state.sls hostsfile' % bastion],
         saltmaster)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
