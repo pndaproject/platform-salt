@@ -5,8 +5,6 @@ set -e
 cat >> /etc/salt/grains <<EOF
 cloudera:
   role: DATANODE
-roles:
-  - cloudera_datanode
 pnda_cluster: $PNDA_CLUSTER
 EOF
 
