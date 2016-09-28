@@ -90,11 +90,6 @@ platformlib:
   release_version: develop
   target_directory: "/opt/pnda"
 
-nginx:
-  admin_user: admin
-  admin_password: admin
-  certificates_email: pnda.team@external.cisco.com
-
 jmxproxy:
   release_version: "3.2.0"
   release_hash: "sha512=97e69d7922f6515bc5ecaa9ab7326e2d61d275dd8d419bdb2fb246ec36dbc21cb8df45881a991623f1a8785744a618198094f16f37d5b66f3029516d8824b7a1"
