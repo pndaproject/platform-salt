@@ -23,16 +23,16 @@ CMS_CFG = {
     "roles": [
         {"name": "cms-ap",
          "type": "ALERTPUBLISHER",
-         "target": "CM"},
+         "target": "EDGE"},
         {"name": "cms-es",
          "type": "EVENTSERVER",
-         "target": "CM"},
+         "target": "EDGE"},
         {"name": "cms-hm",
          "type": "HOSTMONITOR",
-         "target": "CM"},
+         "target": "EDGE"},
         {"name": "cms-sm",
          "type": "SERVICEMONITOR",
-         "target": "CM"}
+         "target": "EDGE"}
      ],
      "role_cfg": [
          {"type": "ACTIVITYMONITOR",
@@ -81,7 +81,7 @@ OOZIE_CFG = {"service": "OOZIE",
                         'zookeeper_service': 'zk01'},
              "roles": [{"name": "oozie-s",
                         "type": "OOZIE_SERVER",
-                        "target": "MGR04"}],
+                        "target": "MGR01"}],
              "role_cfg": [{"type": "OOZIE_SERVER",
                            "config": {'oozie_data_dir': '/data0/var/lib/oozie/data',
                                       'oozie_log_dir': '/var/log/pnda/oozie',
@@ -96,13 +96,7 @@ ZK_CFG = {"service": "ZOOKEEPER",
           "config": {'zookeeper_datadir_autocreate': 'true'},
           "roles": [{"name": "zk-s",
                      "type": "SERVER",
-                     "target": "MGR02"},
-                    {"name": "zk-s",
-                     "type": "SERVER",
-                     "target": "MGR01"},
-                    {"name": "zk-s",
-                     "type": "SERVER",
-                     "target": "MGR04"}],
+                     "target": "MGR01"}],
           "role_cfg": [{"type": "SERVER",
                         "config": {'dataDir': '/data0/var/lib/zookeeper',
                                    'dataLogDir': '/data0/var/lib/zookeeper',
@@ -122,17 +116,12 @@ MAPRED_CFG = {
         {
             "name": "yarn-jh",
             "type": "JOBHISTORY",
-            "target": "MGR04"
+            "target": "MGR01"
         },
         {
             "name": "yarn-rm",
             "type": "RESOURCEMANAGER",
             "target": "MGR01"
-        },
-        {
-            "name": "yarn-rm2",
-            "type": "RESOURCEMANAGER",
-            "target": "MGR02"
         },
         {
             "name": "yarn-nm",
@@ -248,7 +237,7 @@ HDFS_CFG = {
             {
                 "name": "hdfs-snn",
                 "type": "SECONDARYNAMENODE",
-                "target": "MGR02"
+                "target": "MGR01"
             },
             {
                 "name": "hdfs-dn",
@@ -258,7 +247,7 @@ HDFS_CFG = {
             {
                 "name": "hdfs-httpfs",
                 "type": "HTTPFS",
-                "target": "MGR03"
+                "target": "MGR01"
             },
             {
                 "name": "hdfs-gw",
@@ -319,12 +308,7 @@ HBASE_CFG = {
             {
                 "name": "master",
                 "type": "MASTER",
-                "target": "MGR03"
-            },
-            {
-                "name": "master_sec",
-                "type": "MASTER",
-                "target": "MGR04"
+                "target": "MGR01"
             },
             {
                 "name": "regionserver",
@@ -337,19 +321,14 @@ HBASE_CFG = {
                 "target": "EDGE"
             },
             {
-                "name": "hbase-gw2",
-                "type": "GATEWAY",
-                "target": "CM"
-            },
-            {
                 "name": "hbase-restserver",
                 "type": "HBASERESTSERVER",
-                "target": "MGR03"
+                "target": "MGR01"
             },
             {
                 "name": "hbase-thriftserver",
                 "type": "HBASETHRIFTSERVER",
-                "target": "MGR03"
+                "target": "MGR01"
             }
         ],
     "role_cfg": [
@@ -415,12 +394,12 @@ HIVE_CFG = {
             {
                 "name": "hive-metastore",
                 "type": "HIVEMETASTORE",
-                "target": "MGR03"
+                "target": "MGR01"
             },
             {
                 "name": "hive-server",
                 "type": "HIVESERVER2",
-                "target": "MGR03"
+                "target": "MGR01"
             }
         ],
     "role_cfg":
@@ -463,9 +442,9 @@ IMPALA_CFG = {
         'rm_dirty': True
     },
     'roles': [
-        {'name': 'impala-CATALOGSERVER', 'type': 'CATALOGSERVER', 'target': 'MGR03'},
+        {'name': 'impala-CATALOGSERVER', 'type': 'CATALOGSERVER', 'target': 'MGR01'},
         {'name': 'impala-IMPALAD', 'type': 'IMPALAD', 'target': 'DATANODE'},
-        {'name': 'impala-STATESTORE', 'type': 'STATESTORE', 'target': 'MGR03'}
+        {'name': 'impala-STATESTORE', 'type': 'STATESTORE', 'target': 'MGR01'}
     ],
     'role_cfg': [
         {'type': 'IMPALAD', 'config': {'impalad_memory_limit': '1073741824',
@@ -511,7 +490,7 @@ HUE_CFG = {
             {
                 "name": "hue-server",
                 "type": "HUE_SERVER",
-                "target": "MGR04"
+                "target": "MGR01"
             }
         ],
     "role_cfg":
@@ -531,7 +510,7 @@ SPARK_CFG = {
         'yarn_service': MAPRED_CFG['name']
     },
     'roles': [
-        {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR03'},
+        {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR01'},
         {'name': 'spark_gw', 'type': 'GATEWAY', 'target': 'EDGE'}
     ],
     'role_cfg': [
