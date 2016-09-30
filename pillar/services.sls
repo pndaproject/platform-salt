@@ -67,10 +67,10 @@ console_backend_data_manager:
   bind_port: 3123
 
 deployment_manager:
-  release_version: PNDA-2198
+  release_version: develop
 
 package_repository:
-  release_version: PNDA-2199
+  release_version: develop
   fs_location_path: /tmp/packages
 
 data-service:
