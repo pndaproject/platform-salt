@@ -13,6 +13,7 @@
 {%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 
+{%- set fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/tmp/packages') -%}
 
 {
     "SwiftRepository": {
@@ -25,6 +26,11 @@
         "container": {
             "container": "{{ apps_container }}",
             "path": "{{ apps_folder }}"
+        }
+    },
+    "FsRepository": {
+        "location": {
+            "path": "{{ fs_location_path }}"
         }
     },
     "S3Repository": {
