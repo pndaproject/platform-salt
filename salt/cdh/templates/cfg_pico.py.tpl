@@ -155,7 +155,7 @@ MAPRED_CFG = {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
                     'yarn_nodemanager_local_dirs': '/var/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
-                    'yarn_nodemanager_resource_cpu_vcores': '4',
+                    'yarn_nodemanager_resource_cpu_vcores': '8',
                     'yarn_nodemanager_resource_memory_mb': '4096',
                     'yarn_nodemanager_localizer_cache_target_size_mb': '1024',
                     'yarn_nodemanager_log_retain_seconds': '7200',
@@ -515,7 +515,7 @@ SPARK_CFG = {
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},
         {'type': 'GATEWAY', 'config': {
             'spark_history_enabled': 'false',
-            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.driver.memory=512m\nspark.executor.memory=512m\nspark.yarn.am.memory=512m\nspark.executor.cores=1',
-            'spark_dynamic_allocation_max_executors': '4'}}
+            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.yarn.executor.memoryOverhead=128m\nspark.driver.memory=384m\nspark.executor.memory=384m\nspark.yarn.am.memory=384m\nspark.executor.cores=1',
+            'spark_dynamic_allocation_max_executors': '8'}}
     ]
 }
