@@ -4,13 +4,21 @@ set -e
 
 cat >> /etc/salt/grains <<EOF
 roles:
-  - kafka_manager
-  - platform_testing_general
-  - elk
   - zookeeper
   - kafka
+EOF
 
+if [ $1 = 0 ]; then
+cat >> /etc/salt/grains <<EOF
+  - platform_testing_general
+  - kafka_manager
+  - elk
+EOF
+fi
+
+cat >> /etc/salt/grains <<EOF
 pnda_cluster: $PNDA_CLUSTER
+cluster: zk$PNDA_CLUSTER
 broker_id: $1
 EOF
 
