@@ -460,6 +460,7 @@ IMPALA_CFG = {
 									      'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
 									      'max_log_size': '100'}},
         {'type': 'LLAMA', 'config': {'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                                     'llama_log_dir': '/var/log/pnda/impala-llama',
 									 'max_log_backup_index': '2',
 									 'max_log_size': '100'}}
     ]
