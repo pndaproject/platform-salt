@@ -94,7 +94,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "kafka" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "kafka-$node_idx$" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -106,7 +106,7 @@
           },
           {
             "Key": "node_idx",
-            "Value": ""
+            "Value": "$node_idx$"
           }
 
         ],

@@ -135,7 +135,7 @@ def get_instance_map(cluster):
 
 def get_current_node_counts(cluster):
     CONSOLE.debug('Counting existing instances')
-    node_counts = {}
+    node_counts = {'zk':0, 'kafka':0, 'cdh-dn':0, 'opentsdb':0}
     for _, instance in get_instance_map(cluster).iteritems():
         if instance['node_type'] in node_counts:
             current_count = node_counts[instance['node_type']]
