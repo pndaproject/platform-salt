@@ -137,18 +137,16 @@ MAPRED_CFG = {
     "role_cfg": [
         {
             "type": "GATEWAY",
-            "config": {'mapred_reduce_tasks': 4, 'mapred_submit_replication': 1,
+            "config": {'mapred_reduce_tasks': 3, 'mapred_submit_replication': 1,
                        'io_sort_mb': '128',
                        'mapred_reduce_tasks': '4',
-                       'mapreduce_client_java_heapsize': '268435456',
-                       'mapreduce_map_java_opts': '-Djava.net.preferIPv4Stack=true -Xmx256m',
-                       'mapreduce_map_java_opts_max_heap': '134217728',
-                       'mapreduce_map_memory_mb': '200',
-                       'mapreduce_reduce_java_opts': '-Djava.net.preferIPv4Stack=true -Xmx256m',
-                       'mapreduce_reduce_java_opts_max_heap': '134217728',
-                       'mapreduce_reduce_memory_mb': '200',
-                       'yarn_app_mapreduce_am_max_heap': '134217728',
-                       'yarn_app_mapreduce_am_resource_mb': '200'}
+                       'mapreduce_client_java_heapsize': '213909504',                                                          
+                       'mapreduce_map_java_opts_max_heap': '213909504',
+                       'mapreduce_map_memory_mb': '256',
+                       'mapreduce_reduce_java_opts_max_heap': '427819008',
+                       'mapreduce_reduce_memory_mb': '512',
+                       'yarn_app_mapreduce_am_max_heap': '427819008',
+                       'yarn_app_mapreduce_am_resource_mb': '512'}
         },
         {
             "type": "NODEMANAGER",
@@ -157,7 +155,7 @@ MAPRED_CFG = {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
                     'yarn_nodemanager_local_dirs': '/var/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
-                    'yarn_nodemanager_resource_cpu_vcores': '4',
+                    'yarn_nodemanager_resource_cpu_vcores': '8',
                     'yarn_nodemanager_resource_memory_mb': '4096',
                     'yarn_nodemanager_localizer_cache_target_size_mb': '1024',
                     'yarn_nodemanager_log_retain_seconds': '7200',
@@ -193,10 +191,10 @@ MAPRED_CFG = {
                     'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100',
-                    'yarn_scheduler_increment_allocation_mb': '64',
-                    'yarn_scheduler_maximum_allocation_mb': '600',
+                    'yarn_scheduler_increment_allocation_mb': '256',
+                    'yarn_scheduler_maximum_allocation_mb': '4096',
                     'yarn_scheduler_maximum_allocation_vcores': '2',
-                    'yarn_scheduler_minimum_allocation_mb': '32'
+                    'yarn_scheduler_minimum_allocation_mb': '256'
                 }
         }
     ]
@@ -518,7 +516,7 @@ SPARK_CFG = {
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},
         {'type': 'GATEWAY', 'config': {
             'spark_history_enabled': 'false',
-            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.executor.memory=200m\nspark.yarn.am.memory=200m\nspark.executor.cores=1',
-            'spark_dynamic_allocation_max_executors': '3'}}
+            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.yarn.executor.memoryOverhead=256\nspark.driver.memory=384m\nspark.executor.memory=384m\nspark.yarn.am.memory=384m\nspark.executor.cores=1',
+            'spark_dynamic_allocation_max_executors': '4'}}
     ]
 }
