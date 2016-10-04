@@ -93,8 +93,3 @@ jmxproxy:
 anaconda:
   parcel_version: "4.0.0"
   parcel_repo: "https://repo.continuum.io/pkgs/misc/parcels/"
-
-sshfs:
-  fs_location_path: "/opt/pnda/packages"
-  device: "cloud-user@127.0.0.1:/opt/packages"
-  identity_file: "/opt/pnda/id_rsa"
