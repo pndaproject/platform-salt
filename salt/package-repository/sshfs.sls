@@ -9,10 +9,16 @@ sshfs-install:
 sshfs-create_directory:
   file.directory:
     - name: {{ sshfs_fs_location_path }}
-    - user: cloud-user
-    - group: cloud-user
+    - user: {{ os_user }}
+    - group: {{ os_user }}
     - mode: 755
     - makedirs: True
+
+sshfs-know_hosts:
+  ssh_known_hosts:
+    - name: {{ sshfs_host }}
+    - present
+    - user: root
  
 sshfs-mount_directory:
   mount.mounted:
