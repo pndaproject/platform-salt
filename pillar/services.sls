@@ -71,6 +71,7 @@ deployment_manager:
 
 package_repository:
   release_version: develop
+  fs_location_path: /tmp/packages
 
 data-service:
   release_version: develop

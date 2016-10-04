@@ -1,3 +1,4 @@
+{%- set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '/tmp/packages') -%}
 
 {
 {% if package_repository_fs_type == 'swift' %}
@@ -32,7 +33,6 @@
         }
     },
 {% endif %}
-
     "config": {
         "log_level":"INFO",
         "package_callback": "http://{{ data_logger_ip }}:{{ data_logger_port }}/packages"

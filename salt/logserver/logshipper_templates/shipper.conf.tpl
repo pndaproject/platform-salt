@@ -76,7 +76,8 @@ input {
    file {
           path => ["/var/log/pnda/impala/*.ERROR",
                   "/var/log/pnda/impala/*.WARNING",
-                  "/var/log/pnda/impala/*.INFO"]
+                  "/var/log/pnda/impala/*.INFO",
+                  "/var/log/pnda/impala-llama/*.log"]
           add_field => {"source" => "impala"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }

@@ -4,6 +4,7 @@
 {% set package_repository_package = 'package-repository-' + package_repository_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
+{% set package_repository_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/tmp/packages') %}
 
 include:
   - python-pip
@@ -28,6 +29,11 @@ package-repository-create_package_repository_link:
   file.symlink:
     - name: {{ install_dir }}/package_repository
     - target: {{ install_dir }}/{{ package_repository_directory_name }}
+
+package-repository-create_fs_location_path:
+  file.directory:
+    - name: {{ package_repository_fs_location_path }}
+    - makedirs: True
 
 package-repository-copy_configuration:
   file.managed:

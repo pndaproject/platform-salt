@@ -389,7 +389,8 @@ IMPALA_CFG = {
                                        'scratch_dirs': '/impala/impalad',
                                        'log_dir': '/var/log/pnda/impala'}},
         {'type': 'CATALOGSERVER', 'config': {'log_dir': '/var/log/pnda/impala'}},
-        {'type': 'STATESTORE', 'config': {'log_dir': '/var/log/pnda/impala'}}
+        {'type': 'STATESTORE', 'config': {'log_dir': '/var/log/pnda/impala'}},
+        {'type': 'LLAMA', 'config': {'llama_log_dir': '/var/log/pnda/impala-llama'}}
     ]
 }
 
