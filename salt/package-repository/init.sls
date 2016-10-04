@@ -3,6 +3,7 @@
 {% set package_repository_directory_name = 'package-repository-' + package_repository_version %}
 {% set package_repository_package = 'package-repository-' + package_repository_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
+{% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
 include:
   - python-pip
@@ -47,6 +48,10 @@ package-repository-stop_package_repository:
     - name: 'initctl stop package-repository || echo app already stopped'
     - user: root
     - group: root
+
+{% if package_repository_fs_type == 'sshfs' %}
+{% include "package-repository/sshfs.sls" %}
+{% endif %}
 
 package-repository-start_package_repository:
   cmd.run:
