@@ -95,6 +95,6 @@ anaconda:
   parcel_repo: "https://repo.continuum.io/pkgs/misc/parcels/"
 
 sshfs:
-  fs_location_path: "/tmp/packages"
-  device: "cloud-user@127.0.0.1:/home/cloud-user/packages"
-  identity_file: "/home/cloud-user/.ssh/id_rsa"
+  fs_location_path: "/opt/pnda/packages"
+  device: "cloud-user@127.0.0.1:/opt/packages"
+  identity_file: "/opt/pnda/id_rsa"
