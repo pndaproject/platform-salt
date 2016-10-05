@@ -31,7 +31,7 @@
 {% else %}
     "FsRepository": {
         "location": {
-            "path": "{{ salt['pillar.get']('package_repository:fs_location_path', '/tmp/packages') }}"
+            "path": "{{ salt['pillar.get']('package_repository:fs_location_path', '/mnt/packages') }}"
         }
     },
 {% endif %}
