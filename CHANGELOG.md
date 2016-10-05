@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [x.x.x] xxxx-xx-xx
+### Added
+- PNDA-2233 Jupyter notebook plugin added to deployment manager
+
 ## [0.2.0] 2016-09-07
 ### Added
 - Install Jupyter-Spark extension
