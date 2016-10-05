@@ -3,7 +3,7 @@
 {% set package_repository_directory_name = 'package-repository-' + package_repository_version %}
 {% set package_repository_package = 'package-repository-' + package_repository_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
-{% set package_repository_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/tmp/packages') %}
+{% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
 include:
   - python-pip
@@ -29,11 +29,6 @@ package-repository-create_package_repository_link:
     - name: {{ install_dir }}/package_repository
     - target: {{ install_dir }}/{{ package_repository_directory_name }}
 
-package-repository-create_fs_location_path:
-  file.directory:
-    - name: {{ package_repository_fs_location_path }}
-    - makedirs: True
-
 package-repository-copy_configuration:
   file.managed:
     - name: {{ install_dir }}/{{ package_repository_directory_name }}/pr-config.json
@@ -53,6 +48,18 @@ package-repository-stop_package_repository:
     - name: 'initctl stop package-repository || echo app already stopped'
     - user: root
     - group: root
+
+{% if package_repository_fs_type == 'sshfs' %}
+{% include "package-repository/sshfs.sls" %}
+
+{% elif package_repository_fs_type == 'local' %}    
+{% set package_repository_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/mnt/packages') %}
+package-repository-create_fs_location_path:
+  file.directory:
+    - name: {{ package_repository_fs_location_path }}
+    - makedirs: True
+
+{% endif %}
 
 package-repository-start_package_repository:
   cmd.run:
