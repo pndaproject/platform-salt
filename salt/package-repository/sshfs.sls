@@ -1,6 +1,10 @@
 {% set sshfs_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/opt/pnda/packages') %}
-{% set sshfs_device = salt['pillar.get']('package_repository:device', 'cloud-user@127.0.0.1:/opt/packages') %}
-{% set sshfs_identity_file = salt['pillar.get']('package_repository:identity_file', '/opt/pnda/id_rsa') %}
+{% set pr_sshfs_identity_file = salt['pillar.get']('package_repository:sshfs_key', 'id_rsa') %}
+{% set pr_sshfs_user = salt['pillar.get']('package_repository:sshfs_user', 'cloud-user')%}
+{% set pr_sshfs_host = salt['pillar.get']('package_repository:sshfs_host', '127.0.0.1')%}
+{% set pr_sshfs_path = salt['pillar.get']('package_repository:sshfs_path', '/tmp/packages')%}
+{% set pr_sshfs_device = pr_sshfs_user+'@'+pr_sshfs_host+':'+'pr_sshfs_path' %}
+
 
 sshfs-install:
   pkg.installed:
@@ -14,17 +18,22 @@ sshfs-create_directory:
     - mode: 755
     - makedirs: True
 
+ssfhs-copy-key:
+  file.managed:
+    - name: /opt/pnda/{{ pr_sshfs_identity_file }}
+    - source: salt://package-repository/files/{{ pr_sshfs_identity_file }}
+
 sshfs-know_hosts:
   ssh_known_hosts:
-    - name: {{ sshfs_host }}
+    - name: {{ pr_sshfs_host }}
     - present
     - user: root
  
 sshfs-mount_directory:
   mount.mounted:
     - name: {{ sshfs_fs_location_path }}
-    - device: {{ sshfs_device }}
-    - opts: IdentityFile={{ sshfs_identity_file }}
+    - device: {{ pr_sshfs_device }}
+    - opts: IdentityFile=/opt/pnda/{{ pr_sshfs_identity_file }}
     - fstype: fuse.sshfs
     - persist: True
     - mkmnt: True
