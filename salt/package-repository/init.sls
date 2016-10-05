@@ -52,7 +52,7 @@ package-repository-stop_package_repository:
 {% if package_repository_fs_type == 'sshfs' %}
 {% include "package-repository/sshfs.sls" %}
 
-{% elif package_repository_fs_type == 'volume' %}    
+{% elif package_repository_fs_type == 'local' %}    
 {% set package_repository_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/mnt/packages') %}
 package-repository-create_fs_location_path:
   file.directory:
