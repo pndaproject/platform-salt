@@ -90,3 +90,6 @@
     - match: grain
     - cdh.oozie_mysql
 
+  'roles:package_repository':
+    - match: grain
+    - package-repository

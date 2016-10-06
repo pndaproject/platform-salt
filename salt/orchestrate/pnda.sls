@@ -60,12 +60,6 @@ cdh-install_deployment_manager_keys:
     - tgt_type: compound
     - sls: deployment-manager.keys
 
-cdh-install_package_repository:
-  salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:package_repository'
-    - tgt_type: compound
-    - sls: package-repository
-
 cdh-create_hbase_opentsdb_tables:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hbase_opentsdb_tables'
