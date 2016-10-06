@@ -1,11 +1,9 @@
-{% set keystone_user = salt['pillar.get']('keystone.user', '') %}
-{% set keystone_password = salt['pillar.get']('keystone.password', '') %}
-{% set keystone_account = salt['pillar.get']('keystone.tenant', '') %}
-{% set keystone_url = salt['pillar.get']('keystone.auth_url', '') %}
-
-{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
-
-{% set pnda_cluster = salt['pnda.cluster_name']() %}
+{%- set keystone_user = salt['pillar.get']('keystone.user', '') -%}
+{%- set keystone_password = salt['pillar.get']('keystone.password', '') -%}
+{%- set keystone_account = salt['pillar.get']('keystone.tenant', '') -%}
+{%- set keystone_url = salt['pillar.get']('keystone.auth_url', '') -%}
+{%- set os_user = salt['pillar.get']('os_user', 'cloud-user') -%}
+{%- set pnda_cluster = salt['pnda.cluster_name']() -%}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}
@@ -21,6 +19,9 @@
 {%- for ip in salt['pnda.ip_addresses']('opentsdb') -%}
 {%- do opentsdb.append(ip+':4242') -%}
 {%- endfor -%}
+
+{%- set jupyter_host = salt['pnda.ip_addresses']('jupyter')[0] -%}
+{%- set pnda_home_directory = pillar['pnda']['homedir'] -%}
 
 {%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
@@ -45,7 +46,9 @@
         "opentsdb" : "{{ opentsdb|join(',') }}",
         "kafka_manager" : "http://{{ km_ip }}:9000/clusters/{{ pnda_cluster }}",
         "namespace": "platform_app",
-        "metric_logger_url": "http://{{ data_logger_ip }}:{{ data_logger_port }}/metrics"
+        "metric_logger_url": "http://{{ data_logger_ip }}:{{ data_logger_port }}/metrics",
+        "jupyter_host": "{{ jupyter_host }}",
+        "jupyter_notebook_directory": "{{ pnda_home_directory }}/jupyter_notebooks"
     },
     "HDFSRegistrar": {
         "records_path": "user/deployment/record.json",
