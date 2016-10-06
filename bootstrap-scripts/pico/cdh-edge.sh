@@ -108,6 +108,34 @@ packages_server:
 EOF
 fi
 
+if [ "$PR_FS_TYPE" == "swift" ] ; then
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+package_repository:
+  fs_type: 'swift'
+EOF
+elif [ "$PR_FS_TYPE" == "s3" ] ; then
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+package_repository:
+  fs_type: 's3'
+EOF
+elif [ "$PR_FS_TYPE" == "sshfs" ] ; then
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+package_repository:
+  fs_type: "sshfs"
+  fs_location_path: "$PR_FS_LOCATION_PATH"
+  sshfs_user: "$PR_SSHFS_USER"
+  sshfs_host: "$PR_SSHFS_HOST"
+  sshfs_path: "$PR_SSHFS_PATH"
+  sshfs_key: "$PR_SSHFS_KEY"
+EOF
+else
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+package_repository:
+  fs_type: "$PR_FS_TYPE"
+  fs_location_path: "$PR_FS_LOCATION_PATH"
+EOF
+fi
+
 restart salt-master
 
 cat > /etc/salt/grains <<EOF
