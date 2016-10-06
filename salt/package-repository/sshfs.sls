@@ -37,3 +37,6 @@ sshfs-mount_directory:
     - fstype: fuse.sshfs
     - persist: True
     - mkmnt: True
+    - require:
+      - file: ssfhs-copy-key
+      - ssh_known_hosts: sshfs-know_hosts
