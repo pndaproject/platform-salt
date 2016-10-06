@@ -4,7 +4,7 @@
 {% set pr_sshfs_host = salt['pillar.get']('package_repository:sshfs_host', '127.0.0.1')%}
 {% set pr_sshfs_path = salt['pillar.get']('package_repository:sshfs_path', '/mnt/packages')%}
 {% set pr_sshfs_device = pr_sshfs_user+'@'+pr_sshfs_host+':'+'pr_sshfs_path' %}
-
+{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 
 sshfs-install:
   pkg.installed:
