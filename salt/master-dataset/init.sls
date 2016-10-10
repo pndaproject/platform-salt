@@ -62,5 +62,13 @@ master-dataset-update_PNDA_quarantine_dataset_perms:
 
 master-bulk-ingest:
   cmd.run:
-    - name: sudo -u hdfs hdfs dfs -mkdir /user/pnda/PNDA_datasets/bulk/
-    - unless: sudo -u hdfs hdfs dfs -test -d /user/pnda/PNDA_datasets/bulk/
+    - name: hdfs dfs -mkdir /user/pnda/PNDA_datasets/bulk/
+    - user: hdfs
+    - unless: hdfs dfs -test -d /user/pnda/PNDA_datasets/bulk/
+
+master-bulk-ingest-perms:
+  cmd.run:
+    - name: hdfs dfs -chown {{ pnda_user }} /user/pnda/PNDA_datasets/bulk
+    - user: hdfs
+    - onchanges:
+      - cmd: master-bulk-ingest
