@@ -8,6 +8,8 @@
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
 {% set pnda_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_master_dataset_location %}
 
+{% set pnda_master_bulk_location = pillar['pnda']['master_dataset']['bulk_directory'] %}
+
 {% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
 {% set pnda_quarantine_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_quarantine_dataset_location %}
 
@@ -68,13 +70,13 @@ master-dataset-update_PNDA_quarantine_dataset_perms:
 
 master-bulk-ingest:
   cmd.run:
-    - name: hdfs dfs -mkdir /user/pnda/PNDA_datasets/bulk/
-    - user: hdfs
-    - unless: hdfs dfs -test -d /user/pnda/PNDA_datasets/bulk/
+    - name: hdfs dfs -mkdir {{ pnda_master_bulk_location }}
+    - user: {{ pnda_user }}
+    - unless: hdfs dfs -test -d {{ pnda_master_bulk_location }}
 
 master-bulk-ingest-perms:
   cmd.run:
-    - name: hdfs dfs -chown {{ pnda_user }} /user/pnda/PNDA_datasets/bulk
+    - name: hdfs dfs -chmod 770 {{ pnda_master_bulk_location }}
     - user: hdfs
     - onchanges:
       - cmd: master-bulk-ingest

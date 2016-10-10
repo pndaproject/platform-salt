@@ -8,4 +8,4 @@ pnda:
   master_dataset:
     directory: /user/pnda/PNDA_datasets/datasets
     quarantine_directory: /user/pnda/PNDA_datasets/quarantine
-
+    bulk_directory: /user/pnda/PNDA_datasets/bulk
