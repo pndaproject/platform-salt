@@ -29,6 +29,9 @@ master-dataset-create_PNDA_master_kite_dataset:
     - name: kite-dataset create --schema /tmp/pnda.avsc {{ pnda_kite_dataset_uri }} --partition-by /tmp/pnda_kite_partition.json
     - user: {{ pnda_user }}
     - unless: kite-dataset info {{ pnda_kite_dataset_uri }}
+    - requires:
+      - file: master-dataset_copy_pnda_avro_schema
+      - file: master-dataset_copy_kite_parition_conf
 
 master-dataset-update_PNDA_master_kite_dataset_perms:
   cmd.run:
@@ -52,6 +55,9 @@ master-dataset-create_PNDA_error_kite_dataset:
     - name: kite-dataset create --schema /tmp/quarantine.avsc {{ pnda_quarantine_kite_dataset_uri }} --partition-by /tmp/pnda_quarantine_kite_partition.json
     - user: {{ pnda_user }}
     - unless: kite-dataset info {{ pnda_quarantine_kite_dataset_uri }}
+    - requires:
+      - file: master-dataset-quarantine_dataset_copy_avro_schema
+      - file: master-dataset-quarantine_dataset_copy_kite_partition
 
 master-dataset-update_PNDA_quarantine_dataset_perms:
   cmd.run:
