@@ -155,7 +155,7 @@ def ssh(cmds, host):
     cmd = "ssh -F cli/ssh_config %s" % host
     parts = cmd.split(' ')
     parts.append(';'.join(cmds))
-    CONSOLE.debug(parts)
+    CONSOLE.debug(json.dumps(parts))
     ret_val = subprocess_to_log.call(parts, LOG, host, scan_for_errors=['lost connection'])
     if ret_val != 0:
         raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (host, LOG_FILE_NAME))
@@ -176,9 +176,9 @@ def bootstrap(instance, saltmaster, cluster, flavor):
              'export PNDA_CLUSTER=%s' % cluster,
              'export PNDA_FLAVOR=%s' % flavor,
              'sudo chmod a+x /tmp/base.sh',
-             'sudo -E /tmp/base.sh',
+             'sudo -E /tmp/base.sh | tee -a pnda-bootstrap.log',
              'sudo chmod a+x /tmp/%s.sh' % node_type,
-             'sudo -E /tmp/%s.sh %s' % (node_type, node_idx)], ip_address)
+             'sudo -E /tmp/%s.sh %s | tee -a pnda-bootstrap.log' % (node_type, node_idx)], ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
     return ret_val
@@ -333,7 +333,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
-         'sudo -E /tmp/%s.sh' % saltmaster['node_type']],
+         'sudo -E /tmp/%s.sh | tee -a pnda-bootstrap.log' % saltmaster['node_type']],
         saltmaster['private_ip_address'])
 
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
@@ -355,9 +355,9 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
     time.sleep(30)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
-    ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate',
-         'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda' % cluster,
-         'sudo salt "*-%s" state.sls hostsfile' % bastion],
+    ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate | tee -a pnda-salt.log',
+         'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda | tee -a pnda-salt.log' % cluster,
+         'sudo salt "*-%s" state.sls hostsfile | tee -a pnda-salt.log' % bastion],
         saltmaster['private_ip_address'])
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
@@ -415,9 +415,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname):
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
-    ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate',
-         'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand' % cluster,
-         'sudo salt "*-%s" state.sls hostsfile' % bastion],
+    ssh(['sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate | tee -a pnda-salt.log',
+         'sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand  | tee -a pnda-salt.log' % cluster,
+         'sudo salt "*-%s" state.sls hostsfile | tee -a pnda-salt.log' % bastion],
         saltmaster)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
