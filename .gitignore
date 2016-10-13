@@ -6,3 +6,4 @@ cli/ssh_config
 cli/socks_proxy
 client_env.sh
 pnda_env.sh
+*.tar.gz

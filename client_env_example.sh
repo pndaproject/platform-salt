@@ -1,3 +1,6 @@
+# Local platform salt to use instead of PLATFORM_GIT_REPO_URI in pnda_env.sh
+# PLATFORM_GIT_REPO_URI should be removed from pnda_env.sh if PLATFORM_GIT_LOCAL is used
+# export PLATFORM_GIT_LOCAL=/path/to/platform-salt
 # API key for full API access for use creating PNDA
 export AWS_ACCESS_KEY_ID=xxxx
 export AWS_SECRET_ACCESS_KEY=xxxx

@@ -27,6 +27,7 @@ import logging
 import atexit
 import traceback
 import datetime
+import tarfile
 from threading import Thread
 
 import requests
@@ -324,6 +325,18 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
+
+    if 'PLATFORM_GIT_LOCAL' in os.environ:
+        local_salt_path = os.environ['PLATFORM_GIT_LOCAL']
+        local_salt_tar_name = 'platform-salt.tar.gz'
+        with tarfile.open(local_salt_tar_name, mode='w:gz') as archive:
+            archive.add(local_salt_path, arcname='platform-salt', recursive=True)    
+        scp([local_salt_tar_name], saltmaster['private_ip_address'])
+        ssh(['sudo mkdir /srv/salt',
+             'sudo mv /tmp/%s /srv/salt' % local_salt_tar_name,
+             'cd /srv/salt',
+             'sudo tar zxf %s' % local_salt_tar_name], saltmaster['private_ip_address'])
+
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
         sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])

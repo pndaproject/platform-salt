@@ -58,8 +58,6 @@ elif [ "x$PLATFORM_URI" != "x" ] ; then
   mkdir -p /srv/salt/platform-salt && cd /srv/salt/platform-salt && \
   wget -q -O - $PLATFORM_URI | tar -zvxf - --strip=1 && ls -al && \
   cd -
-else
-  exit 2
 fi
 
 cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
