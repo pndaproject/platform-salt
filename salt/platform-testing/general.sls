@@ -48,7 +48,7 @@ platform-testing-general-install_python_deps:
     - require:
       - pip: python-pip-install_python_pip
 
-platform-testing-cdh-dl-and-extract:
+platform-testing-general-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }} 
     - source: {{ packages_server }}/platform/releases/platform-testing/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
