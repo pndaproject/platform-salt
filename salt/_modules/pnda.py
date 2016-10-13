@@ -54,7 +54,7 @@ def ldap_ip():
     result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
     # Only get first ip address
     return result[0][0] if len(result) > 0 else None
-
+       
 def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
@@ -68,3 +68,10 @@ def ip_addresses(role):
     # Only get first ip address
     result = [r[0] for r in result]
     return result if len(result) > 0 else None
+
+def generate_http_link(role, suffix):
+    nodes = ip_addresses(role)
+    if nodes is not None and len(nodes) > 0:
+        return 'http://%s%s' % (nodes[0], suffix)
+    else:
+        return ''

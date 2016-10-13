@@ -15,24 +15,29 @@
 {%- do kafka_zookeepers.append(ip+':2181') -%}
 {%- endfor -%}
 
-{%- set opentsdb = [] -%}
-{%- for ip in salt['pnda.ip_addresses']('opentsdb') -%}
-{%- do opentsdb.append(ip+':4242') -%}
-{%- endfor -%}
+{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
+{% set km_link = salt['pnda.generate_http_link']('kafka_manager',':9000/clusters/'+pnda_cluster) %}
 
-{%- set jupyter_host = salt['pnda.ip_addresses']('jupyter')[0] -%}
+{%- set jupyter_nodes = salt['pnda.ip_addresses']('jupyter') -%}
+{%- set jupyter_host = '' -%}
+{%- if jupyter_nodes is not none and jupyter_nodes|length > 1 -%}   
+    {%- set jupyter_host = jupyter_nodes[0] -%}
+{%- else -%}
+    {%- set jupyter_host = '' -%}
+{%- endif -%}
+
 {%- set pnda_home_directory = pillar['pnda']['homedir'] -%}
 
-{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
+{%- set data_logger_link = salt['pnda.generate_http_link']('console_backend_data_logger',':'+data_logger_port|string) -%}
 
 {%- set cm_node_ip = salt['pnda.cloudera_manager_ip']() -%}
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
-{%- set km_ip = salt['pnda.ip_addresses']('kafka_manager')[0] -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
 
-{%- set repository_manager_ip = salt['pnda.ip_addresses']('package_repository')[0] -%}
+{% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
+
 {
     "environment": {
         "queue_name":"default",
@@ -43,10 +48,10 @@
         "cluster_private_key" : "./dm.pem",
         "kafka_zookeeper" : "{{ kafka_zookeepers|join(',') }}",
         "kafka_brokers" : "{{ kafka_brokers|join(',') }}",
-        "opentsdb" : "{{ opentsdb|join(',') }}",
-        "kafka_manager" : "http://{{ km_ip }}:9000/clusters/{{ pnda_cluster }}",
+        "opentsdb" : "{{ opentsdb_link }}",
+        "kafka_manager" : "{{ km_link }}",
         "namespace": "platform_app",
-        "metric_logger_url": "http://{{ data_logger_ip }}:{{ data_logger_port }}/metrics",
+        "metric_logger_url": "{{ data_logger_link }}/metrics",
         "jupyter_host": "{{ jupyter_host }}",
         "jupyter_notebook_directory": "{{ pnda_home_directory }}/jupyter_notebooks"
     },
@@ -59,8 +64,8 @@
         "plugins_path": "plugins",
         "log_level": "INFO",
         "deployer_thread_limit": 100,
-        "package_callback": "http://{{ data_logger_ip }}:{{ data_logger_port }}/packages",
-        "application_callback": "http://{{ data_logger_ip }}:{{ data_logger_port }}/applications",
-        "package_repository": "http://{{ repository_manager_ip }}:8888"
+        "package_callback": "{{ data_logger_link }}/packages",
+        "application_callback": "{{ data_logger_link }}/applications",
+        "package_repository": "{{ repository_manager_link }}"
     }
 }
