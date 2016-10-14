@@ -4,31 +4,31 @@
   "user_interfaces": [
     {
       "name": "Cloudera Manager",
-      "link": "http://{{ cloudera_manager_ip }}:7180"
+      "link": "{{ cloudera_manager_link }}"
     },
     {
       "name": "Kafka Manager",
-      "link": "http://{{ kafka_manager_ip }}:9000/clusters/{{ clustername }}"
+      "link": "{{ kafka_manager_link }}"
     },
     {
       "name": "OpenTSDB",
-      "link": "http://{{ opentsdb }}:4242"
+      "link": "{{ opentsdb_link }}"
     },
     {
       "name": "Grafana",
-      "link": "http://{{ grafana }}:3000"
+      "link": "{{ grafana_link }}"
     },
     {
       "name": "PNDA logserver",
-      "link": "http://{{ kibana }}:5601"
+      "link": "{{ kibana_link }}"
     },
     {
       "name": "Jupyter",
-      "link": "http://{{ jupyter_ip }}:8000"
+      "link": "{{ jupyter_link }}"
     }
   ],
   "frontend": {
-    "version": "{{frontend_version}}"
+    "version": "{{ frontend_version }}"
   },
   "backend": {
     "data-manager": {
