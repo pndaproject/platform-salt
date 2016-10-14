@@ -326,8 +326,8 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
 
-    if 'PLATFORM_GIT_LOCAL' in os.environ:
-        local_salt_path = os.environ['PLATFORM_GIT_LOCAL']
+    if 'PLATFORM_SALT_LOCAL' in os.environ:
+        local_salt_path = os.environ['PLATFORM_SALT_LOCAL']
         local_salt_tar_name = 'platform-salt.tar.gz'
         with tarfile.open(local_salt_tar_name, mode='w:gz') as archive:
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)    
