@@ -55,8 +55,8 @@ START = datetime.datetime.now()
 def banner():
     print r"    ____  _   ______  ___ "
     print r"   / __ \/ | / / __ \/   |"
-    print r"  / /_/ /  |/ / / / / /| |"  
-    print r" / ____/ /|  / /_/ / ___ |"   
+    print r"  / /_/ /  |/ / / / / /| |"
+    print r" / ____/ /|  / /_/ / ___ |"
     print r"/_/   /_/ |_/_____/_/  |_|"
     print r""
 
@@ -79,7 +79,7 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
     flavor_filepath = 'cloud-formation/%s/cf-flavor.json' % flavor
     with open(flavor_filepath, 'r') as template_file:
         flavor_data = json.loads(template_file.read())
- 
+
     for element in flavor_data:
         if element not in template_data:
             template_data[element] = flavor_data[element]
@@ -160,7 +160,7 @@ def ssh(cmds, host):
     if ret_val != 0:
         raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (host, LOG_FILE_NAME))
 
-def bootstrap(instance, saltmaster, cluster, flavor):
+def bootstrap(instance, saltmaster, cluster, flavor, branch):
     ret_val = None
     try:
         ip_address = instance['private_ip_address']
@@ -175,6 +175,7 @@ def bootstrap(instance, saltmaster, cluster, flavor):
              'export PNDA_SALTMASTER_IP=%s' % saltmaster,
              'export PNDA_CLUSTER=%s' % cluster,
              'export PNDA_FLAVOR=%s' % flavor,
+             'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
              'sudo chmod a+x /tmp/base.sh',
              'sudo -E /tmp/base.sh | tee -a pnda-bootstrap.log',
              'sudo chmod a+x /tmp/%s.sh' % node_type,
@@ -217,7 +218,7 @@ def check_aws_connection():
     region = os.environ['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
     if conn is None:
-        CONSOLE.info('AWS connection... ERROR')        
+        CONSOLE.info('AWS connection... ERROR')
         CONSOLE.error('Failed to query cloud formation API, verify config in "client_env.sh" and try again.')
         sys.exit(1)
 
@@ -274,7 +275,7 @@ def write_ssh_config(bastion_ip, os_user, keyfile):
         config_file.write('ssh-add %s\n' % keyfile)
         config_file.write('ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A -D 9999 %s@%s\n' % (keyfile, os_user, bastion_ip))
 
-def create(template_data, cluster, flavor, keyname, no_config_check):
+def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     keyfile = '%s.pem' % keyname
     #load these from env variables from client_env.sh
 
@@ -325,13 +326,14 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
-        sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])    
+        sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
     scp([sm_script, 'pnda_env.sh', 'client_env.sh', 'git.pem'], saltmaster['private_ip_address'])
     ssh(['source /tmp/client_env.sh',
          'source /tmp/pnda_env.sh',
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
+         'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
          'sudo -E /tmp/%s.sh | tee -a pnda-bootstrap.log' % saltmaster['node_type']],
         saltmaster['private_ip_address'])
@@ -340,7 +342,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
     bootstrap_threads = []
     for key, instance in instance_map.iteritems():
         if '-' + NODE_CONFIG['salt-master-instance'] not in key:
-            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -361,7 +363,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check):
         saltmaster['private_ip_address'])
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
-def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname):
+def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
     keyfile = '%s.pem' % keyname
     #load these from env variables from client_env.sh
     region = os.environ['AWS_REGION']
@@ -399,7 +401,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname):
     for _, instance in instance_map.iteritems():
         if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
              or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
-            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -512,6 +514,7 @@ def get_args():
     parser.add_argument('-f', '--flavour', help='PNDA flavor: "standard"', choices=['standard', 'pico'])
     parser.add_argument('-s', '--keyname', help='Keypair name')
     parser.add_argument('-x', '--no-config-check', action='store_true', help='Skip config verifiction checks')
+    parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides pnda_env.sh')
 
     args = parser.parse_args()
     return args
@@ -526,6 +529,7 @@ def main():
     zknodes = args.zk_nodes
     flavor = args.flavour
     keyname = args.keyname
+    branch = args.branch
     no_config_check = args.no_config_check
     os.chdir('../')
     if not os.path.isfile('git.pem'):
@@ -594,7 +598,7 @@ def main():
                 print "Increasing the number of kafkanodes from %s to %s" % (node_counts['kafka'], kafkanodes)
 
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'])
-            expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname)
+            expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, branch)
             sys.exit(0)
         else:
             print 'expand command must specify pnda_cluster, e.g.\npnda-cli.py expand -e squirrel-land -f standard -s keyname -n 5'
@@ -655,14 +659,14 @@ def main():
     if kafkanodes is None:
         kafkanodes = 0
     if zknodes is None:
-        zknodes = 0                        
+        zknodes = 0
     node_limit("datanodes", datanodes)
     node_limit("opentsdb-nodes", tsdbnodes)
     node_limit("kafka-nodes", kafkanodes)
     node_limit("zk-nodes", zknodes)
 
     template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes)
-    console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check)
+    console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')
     CONSOLE.info('  - The script ./socks_proxy opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost')
