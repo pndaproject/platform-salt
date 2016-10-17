@@ -15,7 +15,12 @@
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
 
 # edge node IP
-{% set edge_node_ip = salt['pnda.ip_addresses']('cloudera_edge')[0] %}
+{% set edge_nodes = salt['pnda.ip_addresses']('cloudera_edge') %}
+{%- if edge_nodes is not none and edge_nodes|length > 1 -%}   
+    {%- set edge_node_ip = edge_nodes[0] -%}
+{%- else -%}
+    {%- set edge_node_ip = '' -%}
+{%- endif -%}
 
 # Set links
 {% set cloudera_manager_link = salt['pnda.generate_http_link']('cloudera_manager',':7180') %}
