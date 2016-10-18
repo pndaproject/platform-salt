@@ -30,7 +30,8 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 5. Install pip packages required by the CLI 
     ```sh
-    sudo pip install -r cli/requirements.txt
+    cd cli
+    sudo pip install -r requirements.txt
     ```
     
 6. Load local environment variables 
@@ -40,6 +41,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
     
 7. Create a cluster:
     ```sh
-    cli/pnda-cli.py create -e <cluster_name> -s <key_name> -f standard -o 2 -n 3 -k 2 -z 3
+    cd cli
+    pnda-cli.py create -e <cluster_name> -s <key_name> -f standard -o 2 -n 3 -k 2 -z 3
     ``` 
 The options shown select the standard flavor, 2 open tsdb instances, 3 hadoop datanodes, 2 kafka brokers, and 3 zookeeper nodes. If you need to operate within the default EC2 instance quota of 20 instances then you can reduce this to 1 kafka and 1 zookeeper instance.
