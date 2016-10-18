@@ -531,6 +531,11 @@ def main():
     keyname = args.keyname
     branch = args.branch
     no_config_check = args.no_config_check
+
+    if not os.path.basename(os.getcwd()) == "cli":
+        print 'Please run from inside the /cli directory'
+        sys.exit(1)
+
     os.chdir('../')
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
