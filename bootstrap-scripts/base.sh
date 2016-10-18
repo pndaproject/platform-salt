@@ -32,7 +32,7 @@ mount -a
 
 export DEBIAN_FRONTEND=noninteractive
 wget -O install_salt.sh https://bootstrap.saltstack.com
-sh install_salt.sh -D -U stable 2015.8.10
+sh install_salt.sh -D -U stable 2015.8.11
 
 cat > /etc/salt/minion <<EOF
 master: $PNDA_SALTMASTER_IP

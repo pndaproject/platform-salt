@@ -39,7 +39,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt-get -y install python-pip
 apt-get -y install python-git
 wget -O install_salt.sh https://bootstrap.saltstack.com
-sh install_salt.sh -D -U -M stable 2015.8.10
+sh install_salt.sh -D -U -M stable 2015.8.11
 apt-get -y install unzip
 
 cat << EOF > /etc/salt/master
