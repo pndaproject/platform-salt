@@ -289,7 +289,8 @@ HDFS_CFG = {
             },
             {
                 "type": "HTTPFS",
-                "config": {'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                "config": {'httpfs_log_dir': '/var/log/pnda/hadoop-httpfs',
+                           'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
 						   'max_log_backup_index': '2',
 						   'max_log_size': '100'}
             }

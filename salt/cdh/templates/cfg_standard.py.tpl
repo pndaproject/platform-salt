@@ -251,6 +251,10 @@ HDFS_CFG = {
             {
                 "type": "GATEWAY",
                 "config": {}
+            },
+            {
+                "type": "HTTPFS",
+                "config": {'httpfs_log_dir': '/var/log/pnda/hadoop-httpfs'}
             }
         ]
 }
