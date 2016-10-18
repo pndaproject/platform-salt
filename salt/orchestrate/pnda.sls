@@ -56,7 +56,7 @@ cdh-install_deployment_manager:
 
 cdh-install_deployment_manager_keys:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@cloudera:* or G@roles:opentsdb )'
     - tgt_type: compound
     - sls: deployment-manager.keys
 
