@@ -20,8 +20,11 @@ libffi-dev:
 libapache2-mod-wsgi:
   pkg.installed
 
-graphite-api:
-  pip.installed
+install-graphite-api:
+  pip.installed:
+    - pkgs:
+      - cairocffi == 0.6
+      - graphite-api == 1.1.3
 
 graphite-carbon:
   pkg.installed
