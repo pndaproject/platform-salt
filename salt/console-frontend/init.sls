@@ -16,7 +16,7 @@
 
 # edge node IP
 {% set edge_nodes = salt['pnda.ip_addresses']('cloudera_edge') %}
-{%- if edge_nodes is not none and edge_nodes|length > 1 -%}   
+{%- if edge_nodes is not none and edge_nodes|length > 0 -%}   
     {%- set edge_node_ip = edge_nodes[0] -%}
 {%- else -%}
     {%- set edge_node_ip = '' -%}
