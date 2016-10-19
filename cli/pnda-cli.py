@@ -16,6 +16,7 @@
 #
 #   Purpose: Script to create PNDA on Amazon Web Services EC2
 
+import uuid
 import re
 import subprocess
 import sys
@@ -326,16 +327,14 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
 
+    platform_salt_tarball = None
     if 'PLATFORM_SALT_LOCAL' in os.environ:
         local_salt_path = os.environ['PLATFORM_SALT_LOCAL']
-        local_salt_tar_name = 'platform-salt.tar.gz'
-        with tarfile.open(local_salt_tar_name, mode='w:gz') as archive:
-            archive.add(local_salt_path, arcname='platform-salt', recursive=True)    
-        scp([local_salt_tar_name], saltmaster['private_ip_address'])
-        ssh(['sudo mkdir /srv/salt',
-             'sudo mv /tmp/%s /srv/salt' % local_salt_tar_name,
-             'cd /srv/salt',
-             'sudo tar zxf %s' % local_salt_tar_name], saltmaster['private_ip_address'])
+        platform_salt_tarball = '%s.tmp' % str(uuid.uuid1())
+        with tarfile.open(platform_salt_tarball, mode='w:gz') as archive:
+            archive.add(local_salt_path, arcname='platform-salt', recursive=True)
+        scp([platform_salt_tarball], saltmaster['private_ip_address'])
+        os.remove(platform_salt_tarball)
 
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
@@ -347,6 +346,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
          'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
+         'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
          'sudo -E /tmp/%s.sh | tee -a pnda-bootstrap.log' % saltmaster['node_type']],
         saltmaster['private_ip_address'])
