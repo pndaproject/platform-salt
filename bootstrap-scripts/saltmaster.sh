@@ -79,13 +79,14 @@ EOF
 mkdir -p /srv/salt
 cd /srv/salt
 
-
 if [ "x$PLATFORM_GIT_REPO_URI" != "x" ]; then
   git clone -q --branch $PLATFORM_GIT_BRANCH $PLATFORM_GIT_REPO_URI
 elif [ "x$PLATFORM_URI" != "x" ] ; then
   mkdir -p /srv/salt/platform-salt && cd /srv/salt/platform-salt && \
   wget -q -O - $PLATFORM_URI | tar -zvxf - --strip=1 && ls -al && \
   cd -
+elif [ "x$PLATFORM_SALT_LOCAL" != "x" ]; then
+  tar zxf /tmp/$PLATFORM_SALT_TARBALL -C /srv/salt
 else
   exit 2
 fi

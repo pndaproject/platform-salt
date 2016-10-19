@@ -1,4 +1,6 @@
 export OS_USER=ubuntu
+# URI of platform salt git repository
+# PLATFORM_SALT_LOCAL should be removed from client_env.sh if PLATFORM_GIT_REPO_URI is used
 export PLATFORM_GIT_REPO_URI=https://github.com/pndaproject/platform-salt.git
 export PLATFORM_GIT_BRANCH=master
 export PNDA_APPS_CONTAINER=pnda-apps
