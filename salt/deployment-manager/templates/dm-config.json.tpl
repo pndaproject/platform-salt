@@ -20,7 +20,7 @@
 
 {%- set jupyter_nodes = salt['pnda.ip_addresses']('jupyter') -%}
 {%- set jupyter_host = '' -%}
-{%- if jupyter_nodes is not none and jupyter_nodes|length > 1 -%}   
+{%- if jupyter_nodes is not none and jupyter_nodes|length > 0 -%}   
     {%- set jupyter_host = jupyter_nodes[0] -%}
 {%- else -%}
     {%- set jupyter_host = '' -%}
