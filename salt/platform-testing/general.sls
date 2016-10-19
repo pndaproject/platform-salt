@@ -144,7 +144,7 @@ platform-testing-general-crontab-zookeeper-blackbox:
     - user: root
     - name: sudo service platform-testing-general-zookeeper-blackbox start
 
-{%- if dm_hosts is not none and dm_hosts|length > 0 -%}   
+{%- if dm_hosts is not none and dm_hosts|length > 0 %}   
 platform-testing-general-install-requirements-dm-blackbox:
   pip.installed:
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/dm_blackbox/requirements.txt
