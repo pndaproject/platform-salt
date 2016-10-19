@@ -49,7 +49,7 @@ input {
                    "/var/log/pnda/hadoop-yarn/container/application_*/container_*/syslog",
                    "/var/log/pnda/hadoop-yarn/container/application_*/container_*/spark.log"]
           add_field => {"source" => "yarn"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db",
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           discover_interval => "5"
    }
    file {
