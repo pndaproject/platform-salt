@@ -56,6 +56,7 @@ logshipper-copy_permission_script:
   file.managed:
     - name: {{ install_dir }}/logstash/open_yarn_log_permissions.sh
     - source: salt://logserver/logshipper_files/open_yarn_log_permissions.sh
+    - mode: 755
 
 logshipper-yarnperms-add_crontab_entry:
   cron.present:
