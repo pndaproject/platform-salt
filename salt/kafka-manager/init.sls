@@ -2,6 +2,7 @@
 {% set release_directory = salt['pillar.get']('kafkamanager:release_directory', '/srv') %}
 {% set release_version = salt['pillar.get']('kafkamanager:release_version', '1.3.0.4') %}
 {% set release_filename = 'kafka-manager-' + release_version + '.zip' %}
+{% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
 {%- set zk_servers = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
@@ -43,7 +44,10 @@ kafka-manager-install-application_configuration:
 kafka-manager-install-kafka-manager-upstart-script:
   file.managed:
     - name: /etc/init/kafka-manager.conf
-    - source: salt://kafka-manager/files/kafka-manager.conf
+    - source: salt://kafka-manager/templates/kafka-manager.conf.tpl
+    - template: jinja
+    - context:
+      kafka_manager_port: {{ km_port }}
 
 kafka-manager-update-kafka-manager:
   file.managed:

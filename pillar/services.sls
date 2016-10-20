@@ -43,6 +43,7 @@ admin_login:
 kafkamanager:
   release_directory: /opt/pnda
   release_version: 1.3.1.6
+  bind_port: 10900
 
 opentsdb:
   version: 2.2.0
