@@ -1,6 +1,7 @@
 {% set cluster = salt['pnda.cluster_name']() %}
 {% set kafka_version = '0.9.0.1' %}
 {% set jmx_enabled = 'true' %}
+{% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
 {%- set zk_servers = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
@@ -15,7 +16,7 @@ kafka-manager_restart-service:
 
 kafka-manager_create_cluster:
   http.query:
-    - name: 'http://localhost:9000/clusters'
+    - name: 'http://localhost:{{ km_port }}/clusters'
     - method: 'POST'
     - status: 200
     - text: False
