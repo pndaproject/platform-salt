@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [x.x.x] xxxx-xx-xx
 ### Added
+- PNDA-2320 Kafka manager port is now in pillar
 - PNDA-2272 review formulas in order to ensure no issue on deployment even if there is not all roles
 - PNDA-2233 Jupyter notebook plugin added to deployment manager
 
