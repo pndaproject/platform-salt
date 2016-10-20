@@ -54,6 +54,21 @@ NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
 START = datetime.datetime.now()
 
+RUNFILE = None
+def init_runfile(cluster):
+    global RUNFILE
+    RUNFILE = 'cli/logs/%s.%s.run' % (cluster, int(time.time()))
+
+def to_runfile(pairs):
+    '''
+    Append arbitrary pairs to a JSON dict on disk from anywhere in the code
+    '''
+    mode = 'w' if not os.path.isfile(RUNFILE) else 'r'
+    with open(RUNFILE, mode) as rf:
+        jrf = json.load(rf) if mode == 'r' else {}
+        jrf.update(pairs)
+        json.dump(jrf, rf)
+
 def banner():
     print r"    ____  _   ______  ___ "
     print r"   / __ \/ | / / __ \/   |"
@@ -278,6 +293,13 @@ def write_ssh_config(bastion_ip, os_user, keyfile):
         config_file.write('ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A -D 9999 %s@%s\n' % (keyfile, os_user, bastion_ip))
 
 def create(template_data, cluster, flavor, keyname, no_config_check, branch):
+
+    init_runfile(cluster)
+
+    to_runfile({'cmdline':sys.argv,
+                'bastion':NODE_CONFIG['bastion-instance'],
+                'saltmaster':NODE_CONFIG['salt-master-instance']})
+
     keyfile = '%s.pem' % keyname
     #load these from env variables from client_env.sh
 
