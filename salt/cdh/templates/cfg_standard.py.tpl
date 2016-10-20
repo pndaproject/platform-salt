@@ -236,7 +236,7 @@ HDFS_CFG = {
             },
             {
                 "type": "JOURNALNODE",
-                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data'}
+                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data', 'journalnode_log_dir': '/var/log/pnda/hadoop/jn'}
             },
             {
                 "type": "SECONDARYNAMENODE",
