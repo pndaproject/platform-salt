@@ -52,10 +52,16 @@ logshipper-add_salt_permissions:
   cmd.run:
     - name: 'chmod -R 755 /var/log/salt'
 
+logshipper-copy_permission_script:
+  file.managed:
+    - name: {{ install_dir }}/logstash/open_yarn_log_permissions.sh
+    - source: salt://logserver/logshipper_files/open_yarn_log_permissions.sh
+    - mode: 755
+
 logshipper-yarnperms-add_crontab_entry:
   cron.present:
     - identifier: YARN-PERMISSIONS
-    - name: setfacl -Rm u:logger:rx /var/log/pnda/hadoop-yarn/container
+    - name: {{ install_dir }}/logstash/open_yarn_log_permissions.sh
     - user: root
     - minute: '*'
 

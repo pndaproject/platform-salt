@@ -86,7 +86,7 @@ ZK_CFG = {"service": "ZOOKEEPER",
 MAPRED_CFG = {
     "service": "YARN",
     "name": "yarn01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'yarn_log_aggregation_retain_seconds': '265000'},
+    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'yarn_log_aggregation_retain_seconds': '265000', 'yarn_log_aggregation_enable': 'false'},
     "roles": [
         {
             "name": "yarn-jh",
