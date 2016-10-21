@@ -3,9 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [x.x.x] xxxx-xx-xx
 ### Added
+- Multi-flavor mechanism, with pico flavor
 - PNDA-2320 Kafka manager port is now in pillar
 - PNDA-2272 review formulas in order to ensure no issue on deployment even if there is not all roles
 - PNDA-2233 Jupyter notebook plugin added to deployment manager
+
+### Fixed
+- Some logs were not in /var/log/pnda and so, were not shipped to the logserver
+- The 'bulk' directory in HDFS is now owned by the 'pnda' user
 
 ## [0.2.0] 2016-09-07
 ### Added
