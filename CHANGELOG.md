@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Some logs were not in /var/log/pnda and so, were not shipped to the logserver
 - The 'bulk' directory in HDFS is now owned by the 'pnda' user
+- Prevent Gobblin from ingesting internal kafka __consumer_offsets topic
 
 ## [0.2.0] 2016-09-07
 ### Added
