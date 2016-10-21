@@ -574,7 +574,7 @@ def main():
     os.chdir('../')
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
-            git_key_file.write('If authenticated acess to the platform-salt git repository is required then' +
+            git_key_file.write('If authenticated access to the platform-salt git repository is required then' +
                                ' replace this file with a key that grants access to the git server.\n')
 
     if args.command == 'destroy':
