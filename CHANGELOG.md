@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [x.x.x] xxxx-xx-xx
+## [Unreleased]
 ### Added
 - Multi-flavor mechanism, with pico flavor
 - PNDA-2320 Kafka manager port is now in pillar
