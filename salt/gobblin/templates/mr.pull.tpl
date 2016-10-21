@@ -41,3 +41,8 @@ kite.writer.dataset.uri={{ kite_dataset_uri }}
 # ==== Metrics ====
 metrics.enabled=true
 metrics.reporting.file.enabled=true
+
+# ==== Blacklist topics ====
+# Recent Kafka version uses internal __consumer_offsets topic, which we don't
+# want to ingest
+topic.blacklist=__consumer_offsets
