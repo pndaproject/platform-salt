@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.0.0] 2016-10-21
 ### Added
 - PNDA-2113: Pico flavor for small footprint clusters suitable for development or learning
 - PNDA-2266: Save provisioning logs on the cloud instances in the /home/ubuntu folder
