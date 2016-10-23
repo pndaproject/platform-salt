@@ -246,7 +246,7 @@ def check_aws_connection():
 
 def check_java_mirror():
     try:
-        java_mirror = pnda_env['JAVA_MIRROR']
+        java_mirror = pnda_env['mirrors']['mandatory']['JAVA_MIRROR']
         response = requests.head(java_mirror)
         response.raise_for_status()
         CONSOLE.info('Java mirror...... OK')
@@ -262,7 +262,7 @@ def check_java_mirror():
 
 def check_package_server():
     try:
-        package_uri = '%s/%s' % (pnda_env['PACKAGES_SERVER_URI'], 'platform/releases/')
+        package_uri = '%s/%s' % (pnda_env['pnda_component_packages']['PACKAGES_SERVER_URI'], 'platform/releases/')
         response = requests.head(package_uri)
         if response.status_code != 403 and response.status_code != 200:
             raise Exception("Unexpected status code from %s: %s" % (package_uri, response.status_code))
