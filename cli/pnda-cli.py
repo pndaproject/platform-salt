@@ -188,7 +188,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
         if not os.path.isfile(type_script):
             type_script = 'bootstrap-scripts/%s.sh' % (node_type)
         node_idx = instance['node_idx']
-        scp(['pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script], ip_address)
+        scp(['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script], ip_address)
         ssh(['source /tmp/pnda_env_%s.sh',
              'export PNDA_SALTMASTER_IP=%s' % saltmaster,
              'export PNDA_CLUSTER=%s' % cluster,
@@ -275,7 +275,7 @@ def check_package_server():
 
 def write_pnda_env_sh(cluster):
     client_only = ['AWS_EC2_ACCESS_KEY_ID', 'AWS_EC2_SECRET_ACCESS_KEY']
-    with open('pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
+    with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
         for section in pnda_env:
             for setting in pnda_env[section]:
                 if setting not in client_only:
@@ -357,7 +357,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
         sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
-    scp([sm_script, 'pnda_env_%s.sh' % cluster, 'git.pem'], saltmaster['private_ip_address'])
+    scp([sm_script, 'cli/pnda_env_%s.sh' % cluster, 'git.pem'], saltmaster['private_ip_address'])
     ssh(['source /tmp/pnda_env_%s.sh' % cluster,
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
          'export PNDA_CLUSTER=%s' % cluster,
