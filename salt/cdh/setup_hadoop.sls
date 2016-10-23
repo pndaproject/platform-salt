@@ -11,8 +11,8 @@
 {% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
 {% set region = salt['pillar.get']('keystone.region_name', "") %}
 {% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
-{% set aws_key = salt['pillar.get']('aws.key', '') %}
-{% set aws_secret_key = salt['pillar.get']('aws.secret', '') %}
+{% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
+{% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 
 include:
   - .cloudera-api
