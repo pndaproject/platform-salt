@@ -273,13 +273,13 @@ def check_package_server():
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
-def write_pnda_env_sh():
+def write_pnda_env_sh(cluster):
     client_only = ['AWS_EC2_ACCESS_KEY_ID', 'AWS_EC2_SECRET_ACCESS_KEY']
-    with open('pnda_env_%s.sh', 'w') as pnda_env_sh_file:
+    with open('pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
         for section in pnda_env:
-            for setting in section:
+            for setting in pnda_env[section]:
                 if setting not in client_only:
-                    pnda_env_sh_file.write('export %s=%s' % (setting, section[setting]))
+                    pnda_env_sh_file.write('export %s=%s' % (setting, pnda_env[section][setting]))
 
 def write_ssh_config(bastion_ip, os_user, keyfile):
     with open('cli/ssh_config', 'w') as config_file:
@@ -574,7 +574,7 @@ def main():
         pnda_env = yaml.load(infile)
         os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_EC2_ACCESS_KEY_ID']
         os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_EC2_SECRET_ACCESS_KEY']
-        write_pnda_env_sh()
+        write_pnda_env_sh(pnda_cluster)
 
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
