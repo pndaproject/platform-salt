@@ -1,14 +1,14 @@
 ec2_access:
   # API key for full API access for use creating PNDA
   # These keys are only ever stored on the client
-  AWS_EC2_ACCESS_KEY_ID=xxxx
-  AWS_EC2_SECRET_ACCESS_KEY=xxxx
-
-  # The user name to use when logging into the AWS ec2 instances
-  OS_USER: ubuntu
+  AWS_EC2_ACCESS_KEY_ID: xxxx
+  AWS_EC2_SECRET_ACCESS_KEY: xxxx
 
   # AWS region to create PNDA ec2 instances in
   AWS_EC2_REGION: eu-west-1
+
+  # The user name to use when logging into the AWS ec2 instances
+  OS_USER: ubuntu
 
   # Base image to use, should be a standard 64-bit Ubuntu 14.04
   AWS_IMAGE_ID: ami-f95ef58a
@@ -70,16 +70,15 @@ pnda_data_archive:
 pnda_component_packages:
   # HTTP server containing the compiled binary packages for the components
   # required to provision PNDA
-  PACKAGES_SERVER_IP: x.x.x.x
-  PACKAGES_SERVER_URI: http://$PACKAGES_SERVER_IP/packages
+  PACKAGES_SERVER_URI: http://x.x.x.x/packages
 
 mirrors:
   optional:
     # These mirrors are optional and may be hosted on any HTTP server, including the PNDA component package server
-    # CLOUDERA_MIRROR: http://$PACKAGES_SERVER_IP/cloudera_repo
-    # ANACONDA_MIRROR: http://$PACKAGES_SERVER_IP/anaconda_repo
+    # CLOUDERA_MIRROR: http://x.x.x.x/cloudera_repo
+    # ANACONDA_MIRROR: http://x.x.x.x/anaconda_repo
 
   mandatory:
     # These mirrors are mandatory and may be hosted on any HTTP server, including the PNDA component package server
-    JAVA_MIRROR: http://$PACKAGES_SERVER_IP/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
+    JAVA_MIRROR: http://x.x.x.x/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
 
