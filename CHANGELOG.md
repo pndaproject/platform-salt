@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 - PNDA-2159: Additional .run log file saved in cli/logs
 
 ### Changed
+- PNDA-2325: Use single pnda_env.yaml file instead of client_env.sh and pnda_env.sh
+
+### Fixed
+- PNDA-2333: Allow multiple clusters to be created in parallel from the same clone of pnda-aws-templates
+
+### Changed
 - PNDA-2272: Move to Salt 2015.8.11 in order to get the fix on orchestrate #33467
 
 ## [0.1.0] 2016-09-07
