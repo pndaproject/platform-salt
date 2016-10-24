@@ -714,10 +714,10 @@ def main():
     console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')
-    CONSOLE.info('  - The script ./socks_proxy-%s opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost' % pnda_cluster)
-    CONSOLE.info('  - Please review ./socks_proxy-%s and ensure it complies with your local security policies before use' % pnda_cluster)
-    CONSOLE.info('  - Set up a socks proxy with: chmod +x socks_proxy-%s; ./socks_proxy-%s', (pnda_cluster, pnda_cluster))
-    CONSOLE.info('  - SSH to a node with: ssh -F ssh_config-%s <private_ip>' % pnda_cluster)
+    CONSOLE.info('  - The script ./socks_proxy-%s opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost', pnda_cluster)
+    CONSOLE.info('  - Please review ./socks_proxy-%s and ensure it complies with your local security policies before use', pnda_cluster)
+    CONSOLE.info('  - Set up a socks proxy with: chmod +x socks_proxy-%s; ./socks_proxy-%s', pnda_cluster, pnda_cluster)
+    CONSOLE.info('  - SSH to a node with: ssh -F ssh_config-%s <private_ip>', pnda_cluster)
 
 if __name__ == "__main__":
     try:
