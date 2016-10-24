@@ -23,6 +23,7 @@ import sys
 import os
 import os.path
 import json
+import yaml
 import time
 import logging
 import atexit
@@ -132,7 +133,7 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
 
 def get_instance_map(cluster):
     CONSOLE.debug('Checking details of created instances')
-    region = os.environ['AWS_REGION']
+    region = pnda_env['ec2_access']['AWS_EC2_REGION']
     ec2 = boto.ec2.connect_to_region(region)
     reservations = ec2.get_all_reservations()
     instance_map = {}
@@ -187,8 +188,8 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
         if not os.path.isfile(type_script):
             type_script = 'bootstrap-scripts/%s.sh' % (node_type)
         node_idx = instance['node_idx']
-        scp(['pnda_env.sh', 'bootstrap-scripts/base.sh', type_script], ip_address)
-        ssh(['source /tmp/pnda_env.sh',
+        scp(['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script], ip_address)
+        ssh(['source /tmp/pnda_env_%s.sh',
              'export PNDA_SALTMASTER_IP=%s' % saltmaster,
              'export PNDA_CLUSTER=%s' % cluster,
              'export PNDA_FLAVOR=%s' % flavor,
@@ -201,14 +202,9 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
     return ret_val
 
-def check_environment_variables():
-    try:
-        region = os.environ['AWS_REGION']
-        CONSOLE.debug('AWS region is %s', region)
-        CONSOLE.info('Env variables.... OK')
-    except:
-        CONSOLE.info('Env variables.... ERROR')
-        CONSOLE.error('Missing required environment variables, run "source ../client_env.sh" and try again.')
+def check_config_file():
+    if not os.path.exists('pnda_env.yaml'):
+        CONSOLE.error('Missing required pnda_env.yaml config file, make a copy of pnda_env_example.yaml named pnda_env.yaml, fill it out and try again.')
         sys.exit(1)
 
 def check_keypair(keyname, keyfile):
@@ -218,7 +214,7 @@ def check_keypair(keyname, keyfile):
         sys.exit(1)
 
     try:
-        region = os.environ['AWS_REGION']
+        region = pnda_env['ec2_access']['AWS_EC2_REGION']
         ec2 = boto.ec2.connect_to_region(region)
         stored_key = ec2.get_key_pair(keyname)
         if stored_key is None:
@@ -232,11 +228,11 @@ def check_keypair(keyname, keyfile):
 
 
 def check_aws_connection():
-    region = os.environ['AWS_REGION']
+    region = pnda_env['ec2_access']['AWS_EC2_REGION']
     conn = boto.cloudformation.connect_to_region(region)
     if conn is None:
         CONSOLE.info('AWS connection... ERROR')
-        CONSOLE.error('Failed to query cloud formation API, verify config in "client_env.sh" and try again.')
+        CONSOLE.error('Failed to connect to cloud formation API, verify ec2_access settings in "pnda_env.yaml" and try again.')
         sys.exit(1)
 
     try:
@@ -244,38 +240,46 @@ def check_aws_connection():
         CONSOLE.info('AWS connection... OK')
     except:
         CONSOLE.info('AWS connection... ERROR')
-        CONSOLE.error('Failed to query cloud formation API, verify config in "client_env.sh" and try again.')
+        CONSOLE.error('Failed to query cloud formation API, verify ec2_access settings in "pnda_env.yaml" and try again.')
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
-def check_java_mirror(pnda_env):
+def check_java_mirror():
     try:
-        java_mirror = pnda_env['JAVA_MIRROR']
+        java_mirror = pnda_env['mirrors']['mandatory']['JAVA_MIRROR']
         response = requests.head(java_mirror)
         response.raise_for_status()
         CONSOLE.info('Java mirror...... OK')
     except KeyError:
         CONSOLE.info('Java mirror...... WARN')
-        CONSOLE.warning('Java mirror was not defined in pnda_env.sh,' +
+        CONSOLE.warning('Java mirror was not defined in pnda_env.yaml,' +
                         ' provisioning will be more reliable and quicker if you host this in the same AWS availability zone.')
     except:
         CONSOLE.info('Java mirror...... ERROR')
-        CONSOLE.error('Failed to connect to java mirror. Verify connection to %s, update config in pnda_env.sh if required and try again.', '')
+        CONSOLE.error('Failed to connect to java mirror. Verify connection to %s, update config in pnda_env.yaml if required and try again.', '')
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
-def check_package_server(pnda_env):
+def check_package_server():
     try:
-        package_uri = '%s/%s' % (pnda_env['PACKAGES_SERVER_URI'], 'platform/releases/')
+        package_uri = '%s/%s' % (pnda_env['pnda_component_packages']['PACKAGES_SERVER_URI'], 'platform/releases/')
         response = requests.head(package_uri)
         if response.status_code != 403 and response.status_code != 200:
             raise Exception("Unexpected status code from %s: %s" % (package_uri, response.status_code))
         CONSOLE.info('Package server... OK')
     except:
         CONSOLE.info('Package server... ERROR')
-        CONSOLE.error('Failed to connect to package server. Verify connection to %s, update URL in pnda_env.sh if required and try again.', package_uri)
+        CONSOLE.error('Failed to connect to package server. Verify connection to %s, update URL in pnda_env.yaml if required and try again.', package_uri)
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
+
+def write_pnda_env_sh(cluster):
+    client_only = ['AWS_EC2_ACCESS_KEY_ID', 'AWS_EC2_SECRET_ACCESS_KEY']
+    with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
+        for section in pnda_env:
+            for setting in pnda_env[section]:
+                if setting not in client_only:
+                    pnda_env_sh_file.write('export %s=%s\n' % (setting, pnda_env[section][setting]))
 
 def write_ssh_config(bastion_ip, os_user, keyfile):
     with open('cli/ssh_config', 'w') as config_file:
@@ -301,24 +305,16 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
                 'saltmaster':NODE_CONFIG['salt-master-instance']})
 
     keyfile = '%s.pem' % keyname
-    #load these from env variables from client_env.sh
+
+    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
+    whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
 
     if not no_config_check:
-        CONSOLE.info('Checking configuration...')
-        check_environment_variables()
-
-    region = os.environ['AWS_REGION']
-    image_id = os.environ['AWS_IMAGE_ID']
-    whitelist = os.environ['AWS_ACCESS_WHITELIST']
-
-    if not no_config_check:
-        settings_file_name = 'pnda_env.sh'
-        settings_file_contents = subprocess.Popen(['bash', '-c', 'source {} && env'.format(settings_file_name)], stdout=subprocess.PIPE).stdout
-        pnda_env = {entry_parts[0].strip(): entry_parts[1].strip() for entry_parts in [entry.strip().split('=', 1) for entry in settings_file_contents]}
         check_aws_connection()
         check_keypair(keyname, keyfile)
-        check_package_server(pnda_env)
-        check_java_mirror(pnda_env)
+        check_package_server()
+        check_java_mirror()
 
     CONSOLE.info('Creating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
@@ -343,15 +339,15 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], pnda_env['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
 
     platform_salt_tarball = None
-    if 'PLATFORM_SALT_LOCAL' in os.environ:
-        local_salt_path = os.environ['PLATFORM_SALT_LOCAL']
+    if 'PLATFORM_SALT_LOCAL' in pnda_env['platform_salt']:
+        local_salt_path = pnda_env['platform_salt']['PLATFORM_SALT_LOCAL']
         platform_salt_tarball = '%s.tmp' % str(uuid.uuid1())
         with tarfile.open(platform_salt_tarball, mode='w:gz') as archive:
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)
@@ -361,9 +357,8 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
         sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
-    scp([sm_script, 'pnda_env.sh', 'client_env.sh', 'git.pem'], saltmaster['private_ip_address'])
-    ssh(['source /tmp/client_env.sh',
-         'source /tmp/pnda_env.sh',
+    scp([sm_script, 'cli/pnda_env_%s.sh' % cluster, 'git.pem'], saltmaster['private_ip_address'])
+    ssh(['source /tmp/pnda_env_%s.sh' % cluster,
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
@@ -400,10 +395,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
     keyfile = '%s.pem' % keyname
-    #load these from env variables from client_env.sh
-    region = os.environ['AWS_REGION']
-    image_id = os.environ['AWS_IMAGE_ID']
-    whitelist = os.environ['AWS_ACCESS_WHITELIST']
+
+    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
+    whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
 
     CONSOLE.info('Updating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
@@ -428,7 +423,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], pnda_env['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
 
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
@@ -460,7 +455,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
 
 def destroy(cluster):
     CONSOLE.info('Deleting Cloud Formation stack')
-    region = os.environ['AWS_REGION']
+    region = pnda_env['ec2_access']['AWS_EC2_REGION']
     conn = boto.cloudformation.connect_to_region(region)
 
     stack_status = 'DELETING'
@@ -549,7 +544,7 @@ def get_args():
     parser.add_argument('-f', '--flavour', help='PNDA flavor: "standard"', choices=['standard', 'pico'])
     parser.add_argument('-s', '--keyname', help='Keypair name')
     parser.add_argument('-x', '--no-config-check', action='store_true', help='Skip config verifiction checks')
-    parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides pnda_env.sh')
+    parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides value in pnda_env.yaml')
 
     args = parser.parse_args()
     return args
@@ -572,6 +567,15 @@ def main():
         sys.exit(1)
 
     os.chdir('../')
+
+    global pnda_env
+    check_config_file()
+    with open('pnda_env.yaml', 'r') as infile:
+        pnda_env = yaml.load(infile)
+        os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_EC2_ACCESS_KEY_ID']
+        os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_EC2_SECRET_ACCESS_KEY']
+        write_pnda_env_sh(pnda_cluster)
+
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
             git_key_file.write('If authenticated access to the platform-salt git repository is required then' +
