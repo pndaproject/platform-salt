@@ -62,7 +62,7 @@ pnda_data_archive:
   # AWS region that contains the PNDA_ARCHIVE_CONTAINER bucket
   PNDA_ARCHIVE_REGION: eu-west-1
 
-  # API key for s3 access to PNDA_APPS_CONTAINER. These keys are stored on the cloud instances so should be restricted
+  # API key for s3 access to PNDA_ARCHIVE_CONTAINER. These keys are stored on the cloud instances so should be restricted
   # only allow access to the PNDA_ARCHIVE_CONTAINER bucket
   PNDA_ARCHIVE_ACCESS_KEY_ID: xxxx
   PNDA_ARCHIVE_SECRET_ACCESS_KEY: xxxx
