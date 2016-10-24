@@ -129,7 +129,7 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
 
 def get_instance_map(cluster):
     CONSOLE.debug('Checking details of created instances')
-    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    region = pnda_env['ec2_access']['AWS_REGION']
     ec2 = boto.ec2.connect_to_region(region)
     reservations = ec2.get_all_reservations()
     instance_map = {}
@@ -210,7 +210,7 @@ def check_keypair(keyname, keyfile):
         sys.exit(1)
 
     try:
-        region = pnda_env['ec2_access']['AWS_EC2_REGION']
+        region = pnda_env['ec2_access']['AWS_REGION']
         ec2 = boto.ec2.connect_to_region(region)
         stored_key = ec2.get_key_pair(keyname)
         if stored_key is None:
@@ -224,7 +224,7 @@ def check_keypair(keyname, keyfile):
 
 
 def check_aws_connection():
-    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    region = pnda_env['ec2_access']['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
     if conn is None:
         CONSOLE.info('AWS connection... ERROR')
@@ -270,7 +270,7 @@ def check_package_server():
         sys.exit(1)
 
 def write_pnda_env_sh(cluster):
-    client_only = ['AWS_EC2_ACCESS_KEY_ID', 'AWS_EC2_SECRET_ACCESS_KEY']
+    client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
     with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
         for section in pnda_env:
             for setting in pnda_env[section]:
@@ -302,7 +302,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     keyfile = '%s.pem' % keyname
 
-    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    region = pnda_env['ec2_access']['AWS_REGION']
     image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
     whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
 
@@ -392,7 +392,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
     keyfile = '%s.pem' % keyname
 
-    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    region = pnda_env['ec2_access']['AWS_REGION']
     image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
     whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
 
@@ -451,7 +451,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
 
 def destroy(cluster):
     CONSOLE.info('Deleting Cloud Formation stack')
-    region = pnda_env['ec2_access']['AWS_EC2_REGION']
+    region = pnda_env['ec2_access']['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
 
     stack_status = 'DELETING'
@@ -568,9 +568,12 @@ def main():
     check_config_file()
     with open('pnda_env.yaml', 'r') as infile:
         pnda_env = yaml.load(infile)
-        os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_EC2_ACCESS_KEY_ID']
-        os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_EC2_SECRET_ACCESS_KEY']
-        write_pnda_env_sh(pnda_cluster)
+        os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
+        os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
+        print 'Using ec2 credentials:'
+        print '  AWS_REGION = %s' % pnda_env['ec2_access']['AWS_REGION']
+        print '  AWS_ACCESS_KEY_ID = %s' % pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
+        print '  AWS_SECRET_ACCESS_KEY = %s' % pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
 
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
@@ -590,6 +593,8 @@ def main():
         if not re.match(NAME_REGEX, pnda_cluster):
             print "pnda cluster name may contain only  a-z 0-9 and '-'"
             pnda_cluster = None
+
+    write_pnda_env_sh(pnda_cluster)
 
     while flavor is None:
         flavor = raw_input("Enter a flavor (standard/pico): ")

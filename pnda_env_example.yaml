@@ -1,11 +1,11 @@
 ec2_access:
   # API key for full API access for use creating PNDA
   # These keys are only ever stored on the client
-  AWS_EC2_ACCESS_KEY_ID: xxxx
-  AWS_EC2_SECRET_ACCESS_KEY: xxxx
+  AWS_ACCESS_KEY_ID: xxxx
+  AWS_SECRET_ACCESS_KEY: xxxx
 
   # AWS region to create PNDA ec2 instances in
-  AWS_EC2_REGION: eu-west-1
+  AWS_REGION: eu-west-1
 
   # The user name to use when logging into the AWS ec2 instances
   OS_USER: ubuntu
