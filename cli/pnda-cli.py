@@ -575,9 +575,9 @@ def main():
         os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
         os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
         print 'Using ec2 credentials:'
-        print '  AWS_REGION = %s' % AWS_REGION
-        print '  AWS_ACCESS_KEY_ID = %s' % AWS_ACCESS_KEY_ID
-        print '  AWS_SECRET_ACCESS_KEY = %s' % AWS_SECRET_ACCESS_KEY
+        print '  AWS_REGION = %s' % pnda_env['ec2_access']['AWS_REGION']
+        print '  AWS_ACCESS_KEY_ID = %s' % pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
+        print '  AWS_SECRET_ACCESS_KEY = %s' % pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
 
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
