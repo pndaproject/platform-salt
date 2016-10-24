@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 - The 'bulk' directory in HDFS is now owned by the 'pnda' user
 - Prevent Gobblin from ingesting internal kafka __consumer_offsets topic
 
+### Changed
+- ntp:servers pillar default was removed, but can still be set
+
 ## [0.2.0] 2016-09-07
 ### Added
 - Install Jupyter-Spark extension
