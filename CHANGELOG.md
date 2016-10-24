@@ -8,9 +8,11 @@ All notable changes to this project will be documented in this file.
 - PNDA-2275: '-b' branch CLI parameter to select a branch of platform-salt to use
 - PNDA-2276: Allow a local copy of platform-salt to be used instead of a git URL to clone
 - PNDA-2159: Additional .run log file saved in cli/logs
+
 ### Changed
 - PNDA-2325: Use single pnda_env.yaml file instead of client_env.sh and pnda_env.sh
 - PNDA-2272: Move to Salt 2015.8.11 in order to get the fix on orchestrate #33467
+
 ### Fixed
 - PNDA-2333: Allow multiple clusters to be created in parallel from the same clone of pnda-aws-templates
 
