@@ -77,10 +77,6 @@ def banner():
     print r"/_/   /_/ |_/_____/_/  |_|"
     print r""
 
-def run_cmd(cmd):
-    print cmd
-    os.spawnvpe(os.P_WAIT, cmd[0], cmd, os.environ)
-
 @atexit.register
 def display_elasped():
     blue = '\033[94m'
@@ -161,15 +157,15 @@ def get_current_node_counts(cluster):
         node_counts[instance['node_type']] = current_count + 1
     return node_counts
 
-def scp(files, host):
-    cmd = "scp -F cli/ssh_config %s %s:%s" % (' '.join(files), host, '/tmp')
+def scp(files, cluster, host):
+    cmd = "scp -F cli/ssh_config-%s %s %s:%s" % (cluster, ' '.join(files), host, '/tmp')
     CONSOLE.debug(cmd)
     ret_val = subprocess_to_log.call(cmd.split(' '), LOG, host)
     if ret_val != 0:
         raise Exception("Error transferring files to new host %s via SCP. See debug log (%s) for details." % (host, LOG_FILE_NAME))
 
-def ssh(cmds, host):
-    cmd = "ssh -F cli/ssh_config %s" % host
+def ssh(cmds, cluster, host):
+    cmd = "ssh -F cli/ssh_config-%s %s" % (cluster, host)
     parts = cmd.split(' ')
     parts.append(';'.join(cmds))
     CONSOLE.debug(json.dumps(parts))
@@ -187,7 +183,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
         if not os.path.isfile(type_script):
             type_script = 'bootstrap-scripts/%s.sh' % (node_type)
         node_idx = instance['node_idx']
-        scp(['pnda_env.sh', 'bootstrap-scripts/base.sh', type_script], ip_address)
+        scp(['pnda_env.sh', 'bootstrap-scripts/base.sh', type_script], cluster, ip_address)
         ssh(['source /tmp/pnda_env.sh',
              'export PNDA_SALTMASTER_IP=%s' % saltmaster,
              'export PNDA_CLUSTER=%s' % cluster,
@@ -196,7 +192,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
              'sudo chmod a+x /tmp/base.sh',
              '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log',
              'sudo chmod a+x /tmp/%s.sh' % node_type,
-             '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log' % (node_type, node_idx)], ip_address)
+             '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log' % (node_type, node_idx)], cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
     return ret_val
@@ -277,8 +273,8 @@ def check_package_server(pnda_env):
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
-def write_ssh_config(bastion_ip, os_user, keyfile):
-    with open('cli/ssh_config', 'w') as config_file:
+def write_ssh_config(cluster, bastion_ip, os_user, keyfile):
+    with open('cli/ssh_config-%s' % cluster, 'w') as config_file:
         config_file.write('host *\n')
         config_file.write('    User %s\n' % os_user)
         config_file.write('    IdentityFile %s\n' % keyfile)
@@ -287,7 +283,7 @@ def write_ssh_config(bastion_ip, os_user, keyfile):
         config_file.write('    ProxyCommand ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s exec nc %%h %%p\n'
                           % (keyfile, os_user, bastion_ip))
 
-    with open('cli/socks_proxy', 'w') as config_file:
+    with open('cli/socks_proxy-%s' % cluster, 'w') as config_file:
         config_file.write('eval `ssh-agent`\n')
         config_file.write('ssh-add %s\n' % keyfile)
         config_file.write('ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A -D 9999 %s@%s\n' % (keyfile, os_user, bastion_ip))
@@ -343,7 +339,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
@@ -355,13 +351,13 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         platform_salt_tarball = '%s.tmp' % str(uuid.uuid1())
         with tarfile.open(platform_salt_tarball, mode='w:gz') as archive:
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)
-        scp([platform_salt_tarball], saltmaster['private_ip_address'])
+        scp([platform_salt_tarball], cluster, saltmaster['private_ip_address'])
         os.remove(platform_salt_tarball)
 
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
         sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
-    scp([sm_script, 'pnda_env.sh', 'client_env.sh', 'git.pem'], saltmaster['private_ip_address'])
+    scp([sm_script, 'pnda_env.sh', 'client_env.sh', 'git.pem'], cluster, saltmaster['private_ip_address'])
     ssh(['source /tmp/client_env.sh',
          'source /tmp/pnda_env.sh',
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
@@ -371,7 +367,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
          'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
          '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log' % saltmaster['node_type']],
-        saltmaster['private_ip_address'])
+        cluster, saltmaster['private_ip_address'])
 
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     bootstrap_threads = []
@@ -395,7 +391,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log',
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log' % cluster,
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log' % bastion],
-        saltmaster['private_ip_address'])
+        cluster, saltmaster['private_ip_address'])
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
@@ -428,7 +424,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], os.environ['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
 
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
@@ -455,7 +451,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log',
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | tee -a pnda-salt.log' % cluster,
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log' % bastion],
-        saltmaster)
+        cluster, saltmaster)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def destroy(cluster):
@@ -709,10 +705,10 @@ def main():
     console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')
-    CONSOLE.info('  - The script ./socks_proxy opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost')
-    CONSOLE.info('  - Please review ./socks_proxy and ensure it complies with your local security policies before use')
-    CONSOLE.info('  - Set up a socks proxy with: chmod +x socks_proxy; ./socks_proxy')
-    CONSOLE.info('  - SSH to a node with: ssh -F ssh_config <private_ip>')
+    CONSOLE.info('  - The script ./socks_proxy-%s opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost' % pnda_cluster)
+    CONSOLE.info('  - Please review ./socks_proxy-%s and ensure it complies with your local security policies before use' % pnda_cluster)
+    CONSOLE.info('  - Set up a socks proxy with: chmod +x socks_proxy-%s; ./socks_proxy-%s', (pnda_cluster, pnda_cluster))
+    CONSOLE.info('  - SSH to a node with: ssh -F ssh_config-%s <private_ip>' % pnda_cluster)
 
 if __name__ == "__main__":
     try:
