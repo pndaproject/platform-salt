@@ -56,7 +56,7 @@ pnda_application_repo:
   PR_SSHFS_KEY: key.pem
 
 pnda_data_archive:
-  # S3 container to when archiving PNDA datasets
+  # S3 container to use for archiving PNDA datasets
   PNDA_ARCHIVE_CONTAINER: pnda-archive
 
   # AWS region that contains the PNDA_ARCHIVE_CONTAINER bucket
