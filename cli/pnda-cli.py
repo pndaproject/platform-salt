@@ -303,8 +303,9 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     keyfile = '%s.pem' % keyname
 
     region = pnda_env['ec2_access']['AWS_REGION']
-    image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
-    whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
+    cf_parameters = [('keyName', keyname), ('pndaCluster', cluster)]
+    for parameter in pnda_env['cloud_formation_parameters']:
+        cf_parameters.append((parameter, pnda_env['cloud_formation_parameters'][parameter]))
 
     if not no_config_check:
         check_aws_connection()
@@ -317,11 +318,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     stack_status = 'CREATING'
     conn.create_stack(cluster,
                       template_body=template_data,
-                      parameters=[('imageId', image_id),
-                                  ('keyName', keyname),
-                                  ('pndaCluster', cluster),
-                                  ('whitelistSshAccess', whitelist),
-                                  ('whitelistUiAccess', whitelist)])
+                      parameters=cf_parameters)
 
     while stack_status in ['CREATE_IN_PROGRESS', 'CREATING']:
         time.sleep(5)
@@ -393,19 +390,16 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     keyfile = '%s.pem' % keyname
 
     region = pnda_env['ec2_access']['AWS_REGION']
-    image_id = pnda_env['ec2_access']['AWS_IMAGE_ID']
-    whitelist = pnda_env['ec2_access']['AWS_ACCESS_WHITELIST']
+    cf_parameters = [('keyName', keyname), ('pndaCluster', cluster)]
+    for parameter in pnda_env['cloud_formation_parameters']:
+        cf_parameters.append((parameter, pnda_env['cloud_formation_parameters'][parameter]))
 
     CONSOLE.info('Updating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
     stack_status = 'UPDATING'
     conn.update_stack(cluster,
                       template_body=template_data,
-                      parameters=[('imageId', image_id),
-                                  ('keyName', keyname),
-                                  ('pndaCluster', cluster),
-                                  ('whitelistSshAccess', whitelist),
-                                  ('whitelistUiAccess', whitelist)])
+                      parameters=cf_parameters)
 
     while stack_status in ['UPDATE_IN_PROGRESS', 'UPDATING', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS']:
         time.sleep(5)

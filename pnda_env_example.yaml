@@ -10,12 +10,25 @@ ec2_access:
   # The user name to use when logging into the AWS ec2 instances
   OS_USER: ubuntu
 
+cloud_formation_parameters:
+  # Settings in this section are passed through as parameters when
+  # creating the cloud formation template. The cloud formation template must
+  # define a matching input parameter for each value listed here.
+
   # Base image to use, should be a standard 64-bit Ubuntu 14.04
-  AWS_IMAGE_ID: ami-f95ef58a
+  imageId: ami-f95ef58a
 
   # CIDR specifying the address range that may access the created PNDA instances
-  AWS_ACCESS_WHITELIST: 0.0.0.0/0
+  whitelistSshAccess: 0.0.0.0/0
 
+  # CIDR specifying the address range for the VPC
+  vpcCidr: 10.0.0.0/16
+
+  # CIDR specifying the address range for the public subnet
+  publicSubnetCidr: 10.0.0.0/24
+
+  # CIDR specifying the address range for the private subnet
+  privateSubnetCidr: 10.0.1.0/24
 platform_salt:
   # Use either PLATFORM_GIT_REPO_URI + PLATFORM_GIT_BRANCH or PLATFORM_SALT_LOCAL
 
@@ -79,4 +92,3 @@ mirrors:
 
   # These mirrors are mandatory and may be hosted on any HTTP server, including the PNDA component package server
   JAVA_MIRROR: http://x.x.x.x/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
-
