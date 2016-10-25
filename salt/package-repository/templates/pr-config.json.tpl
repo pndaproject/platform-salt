@@ -19,9 +19,9 @@
 {% elif package_repository_fs_type == 's3' %}
     "S3Repository": {
         "access": {
-            "region": "{{ salt['pillar.get']('aws.region', '') }}",
-            "access_key": "{{ salt['pillar.get']('aws.key', '') }}",
-            "secret_access_key": "{{ salt['pillar.get']('aws.secret', '') }}"
+            "region": "{{ salt['pillar.get']('aws.apps_region', '') }}",
+            "access_key": "{{ salt['pillar.get']('aws.apps_key', '') }}",
+            "secret_access_key": "{{ salt['pillar.get']('aws.apps_secret', '') }}"
         },
         "container": {
             "bucket": "{{ salt['pillar.get']('pnda.apps_container', 'apps') }}",

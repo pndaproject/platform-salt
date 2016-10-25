@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.0.0] 2016-10-21
 ### Added
 - Multi-flavor mechanism, with pico flavor
 - PNDA-2320 Kafka manager port is now in pillar
@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - Some logs were not in /var/log/pnda and so, were not shipped to the logserver
 - The 'bulk' directory in HDFS is now owned by the 'pnda' user
 - Prevent Gobblin from ingesting internal kafka __consumer_offsets topic
+
+### Changed
+- ntp:servers pillar default was removed, but can still be set
 
 ## [0.2.0] 2016-09-07
 ### Added
