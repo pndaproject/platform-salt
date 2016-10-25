@@ -1,0 +1,84 @@
+ec2_access:
+  # API key for full API access for use creating PNDA
+  # These keys are only ever stored on the client
+  AWS_ACCESS_KEY_ID: xxxx
+  AWS_SECRET_ACCESS_KEY: xxxx
+
+  # AWS region to create PNDA ec2 instances in
+  AWS_REGION: eu-west-1
+
+  # The user name to use when logging into the AWS ec2 instances
+  OS_USER: ubuntu
+
+  # Base image to use, should be a standard 64-bit Ubuntu 14.04
+  AWS_IMAGE_ID: ami-f95ef58a
+
+  # CIDR specifying the address range that may access the created PNDA instances
+  AWS_ACCESS_WHITELIST: 0.0.0.0/0
+
+platform_salt:
+  # Use either PLATFORM_GIT_REPO_URI + PLATFORM_GIT_BRANCH or PLATFORM_SALT_LOCAL
+
+  # URI of platform salt git repository
+  PLATFORM_GIT_REPO_URI: https://github.com/pndaproject/platform-salt.git
+
+  # The branch to select from PLATFORM_GIT_REPO_URI
+  PLATFORM_GIT_BRANCH: master
+
+  # Local path to folder containing a clone of the platform salt repository
+  # PLATFORM_SALT_LOCAL: /path/to/platform-salt
+
+pnda_application_repo:
+  # Type of storage to use for PNDA application packages
+  #   s3     - AWS S3. Also set PNDA_APPS_CONTAINER, PNDA_APPS_FOLDER, PNDA_APPS_REGION, PNDA_APPS_ACCESS_KEY_ID, PNDA_APPS_SECRET_ACCESS_KEY
+  #   sshfs  - standard file system. Also set PR_FS_LOCATION_PATH, PR_SSHFS_USER, PR_SSHFS_HOST, PR_SSHFS_PATH and PR_SSHFS_KEY
+  PR_FS_TYPE: s3
+
+  # S3 container to use for PNDA application packages 
+  PNDA_APPS_CONTAINER: pnda-apps
+
+  # Name of folder within PNDA_APPS_CONTAINER that contains the PNDA application packages
+  PNDA_APPS_FOLDER: releases
+
+  # AWS region that contains the PNDA_APPS_CONTAINER bucket
+  PNDA_APPS_REGION: eu-west-1
+
+  # API key for s3 access to PNDA_APPS_CONTAINER. These keys are stored on the cloud instances so should be restricted
+  # only allow access to the PNDA_APPS_CONTAINER bucket
+  PNDA_APPS_ACCESS_KEY_ID: xxxx
+  PNDA_APPS_SECRET_ACCESS_KEY: xxxx
+
+  # SSH accessed file system to use for PNDA application packages 
+  PR_FS_LOCATION_PATH: /opt/pnda/packages
+  PR_SSHFS_USER: ubuntu
+  PR_SSHFS_HOST: 127.0.0.1
+  PR_SSHFS_PATH: /mnt/packages
+  PR_SSHFS_KEY: key.pem
+
+pnda_data_archive:
+  # S3 container to use for archiving PNDA datasets
+  PNDA_ARCHIVE_CONTAINER: pnda-archive
+
+  # AWS region that contains the PNDA_ARCHIVE_CONTAINER bucket
+  PNDA_ARCHIVE_REGION: eu-west-1
+
+  # API key for s3 access to PNDA_ARCHIVE_CONTAINER. These keys are stored on the cloud instances so should be restricted
+  # only allow access to the PNDA_ARCHIVE_CONTAINER bucket
+  PNDA_ARCHIVE_ACCESS_KEY_ID: xxxx
+  PNDA_ARCHIVE_SECRET_ACCESS_KEY: xxxx
+
+pnda_component_packages:
+  # HTTP server containing the compiled binary packages for the components
+  # required to provision PNDA
+  PACKAGES_SERVER_URI: http://x.x.x.x/packages
+
+mirrors:
+  optional:
+    # These mirrors are optional and may be hosted on any HTTP server, including the PNDA component package server
+    # CLOUDERA_MIRROR: http://x.x.x.x/cloudera_repo
+    # ANACONDA_MIRROR: http://x.x.x.x/anaconda_repo
+
+  mandatory:
+    # These mirrors are mandatory and may be hosted on any HTTP server, including the PNDA component package server
+    JAVA_MIRROR: http://x.x.x.x/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
+

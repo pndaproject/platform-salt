@@ -1,10 +1,13 @@
 *.log
 *.pem
 *.pyc
+*.run
 hosts.txt
-cli/ssh_config
-cli/socks_proxy
+cli/ssh_config*
+cli/socks_proxy*
 client_env.sh
 pnda_env.sh
+pnda_env*.sh
+pnda_env.yaml
 *.tar.gz
 .DS_Store
