@@ -242,7 +242,7 @@ def check_aws_connection():
 
 def check_java_mirror():
     try:
-        java_mirror = pnda_env['mirrors']['mandatory']['JAVA_MIRROR']
+        java_mirror = pnda_env['mirrors']['JAVA_MIRROR']
         response = requests.head(java_mirror)
         response.raise_for_status()
         CONSOLE.info('Java mirror...... OK')
