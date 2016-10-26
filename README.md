@@ -44,3 +44,9 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
     pnda-cli.py create -e <cluster_name> -s <key_name> -f standard -o 1 -n 1 -k 1 -z 1
     pnda-cli.py create -e <cluster_name> -s <key_name> -f pico -n 1 -k 1
     ```
+
+# Cloud Formation Templates
+
+The cloud formation templates for PNDA can be edited directly to make modications as required.
+
+The organisation and contents of the cloud formation templates is described [here](cloud-formation/README.md)
