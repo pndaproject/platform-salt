@@ -11,11 +11,6 @@
       "Type" : "String",
       "Default" : "0.0.0.0/0",
       "Description" : "Whitelist for external access to ssh"
-    },    
-    "whitelistUiAccess" : {
-      "Type" : "String",
-      "Default" : "0.0.0.0/0",
-      "Description" : "Whitelist for external access to UIs"
     },
     "imageId" : {
       "Type" : "String",
@@ -36,22 +31,30 @@
       "Type" : "String",
       "Default" : "10",
       "Description" : "Size in GB for the log volume"
+    },
+    "vpcCidr" : {
+      "Type" : "String",
+      "Default" : "10.0.0.0/16",
+      "Description" : "CIDR specifying the address range for the VPC"
+    },
+    "publicSubnetCidr" : {
+      "Type" : "String",
+      "Default" : "10.0.0.0/24",
+      "Description" : "CIDR specifying the address range for the public subnet"
+    },
+    "privateSubnetCidr" : {
+      "Type" : "String",
+      "Default" : "10.0.1.0/24",
+      "Description" : "CIDR specifying the address range for the private subnet"
     }
-  },
-  "Mappings" : {
-    "SubnetConfig" : {
-      "VPC"     : { "CIDR" : "10.0.0.0/16" },
-      "Public"  : { "CIDR" : "10.0.0.0/24" },
-      "Private"  : { "CIDR" : "10.0.1.0/24"}
-    } 
-  },  
+  }, 
   "Resources": {
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
         "EnableDnsSupport" : "true",
         "EnableDnsHostnames" : "true",
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "VPC", "CIDR" ]},
+        "CidrBlock" : { "Ref" : "vpcCidr" },
         "Tags" : [
           { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Public" }
@@ -63,7 +66,7 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Public", "CIDR" ]},
+        "CidrBlock" : { "Ref" : "publicSubnetCidr" },
         "Tags" : [
           { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Public" }
@@ -245,7 +248,7 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Fn::FindInMap" : [ "SubnetConfig", "Private", "CIDR" ]},
+        "CidrBlock" : { "Ref" : "privateSubnetCidr" },
         "Tags" : [
           { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Private" }
@@ -328,151 +331,7 @@
         "ToPort": "22",
         "CidrIp": { "Ref" : "whitelistSshAccess" }
       }
-    },     
-    "ingressDataManager": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "3123",
-        "ToPort": "3123",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressConsole": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "80",
-        "ToPort": "80",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressPackageRepo": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "8000",
-        "ToPort": "8000",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressKafkaManager": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "9000",
-        "ToPort": "9000",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressDeploymentManager": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "5000",
-        "ToPort": "5000",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressOpenTsdb": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "4242",
-        "ToPort": "4242",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressCm": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "7180",
-        "ToPort": "7180",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressDataLogger": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "3001",
-        "ToPort": "3001",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressLogserver": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "5601",
-        "ToPort": "5601",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressGrafana": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "3000",
-        "ToPort": "3000",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressHue": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "8888",
-        "ToPort": "8888",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },
-    "ingressYarn": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "pndaSg"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": "8088",
-        "ToPort": "8088",
-        "CidrIp": { "Ref" : "whitelistUiAccess" }
-      }
-    },    
+    },         
     "ingressInternal": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
