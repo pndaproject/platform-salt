@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 - PNDA-2142: Allow subnet IP ranges to be specified in pnda_env.yam and used as parameters to the cloud formation templates
+- PNDA-2142: Allow any parameters to be passed through to the cloud formation templates, two settings have changed their names because they are now directly passed through - AWS_IMAGE_ID > imageId and AWS_ACCESS_WHITELIST > whitelistSshAccess. Update these in pnda_env.yaml otherwise the default value in the cloud formation template will be used.
 
 ## [1.0.0] 2016-10-21
 ### Added
