@@ -18,6 +18,9 @@ from cm_api.endpoints.services import ApiServiceSetupInfo
 from cm_api.api_client import ApiResource
 from cm_api.endpoints import users
 
+# Import Flavor configuration file
+import cfg_flavor as _CFG
+
 DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.5.2/'
 DEFAULT_PARCEL_VERSION = '5.5.2-1.cdh5.5.2.p0.4'
 
@@ -30,10 +33,10 @@ logging.basicConfig(filename=DEFAULT_LOG_FILE,
 
 def pause_until_api_up(api):
     '''
-    Wait for two minutes for CM API to come up
+    Wait for ten minutes for CM API to come up
     '''
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             logging.info("Checking API availability....")
             api.get_all_hosts()
@@ -46,10 +49,10 @@ def pause_until_api_up(api):
 
 def connect(cm_api, cm_username, cm_password, use_proxy=False):
     '''
-    Wait for two minutes for CM to come up
+    Wait for ten minutes for CM to come up
     '''
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             logging.info("Checking CM availability....")
             # change name of proxy if necessary
@@ -219,7 +222,7 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
 
     time.sleep(5)
 
-    for _ in xrange(24):
+    for _ in xrange(120):
         try:
             parcel = cluster.get_parcel(product, parcel_version)
             break
@@ -265,50 +268,9 @@ def create_cms(cloudera_manager, nodes):
 
     try:
         cms = cloudera_manager.create_mgmt_service(ApiServiceSetupInfo())
-
-        roles = [
-            {
-                "name": "cms-ap",
-                "type": "ALERTPUBLISHER",
-                "target": "CM"
-            },
-            {
-                "name": "cms-es",
-                "type": "EVENTSERVER",
-                "target": "CM"
-            },
-            {
-                "name": "cms-hm",
-                "type": "HOSTMONITOR",
-                "target": "CM"
-            },
-            {
-                "name": "cms-sm",
-                "type": "SERVICEMONITOR",
-                "target": "CM"
-            }
-        ]
-
-        role_cfg = [{"type": "ACTIVITYMONITOR",
-                     "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
-                    {"type": "ALERTPUBLISHER",
-                     "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher'}},
-                    {"type": "EVENTSERVER",
-                     "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
-                    {"type": "HOSTMONITOR",
-                     "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
-                    {"type": "SERVICEMONITOR",
-                     "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
-                                'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}}]
-
         cloudera_manager.auto_configure()
-
-        assign_roles(cms, roles, nodes)
-
-        apply_role_config(cms, role_cfg)
-
+        assign_roles(cms, _CFG.CMS_CFG['roles'], nodes)
+        apply_role_config(cms, _CFG.CMS_CFG['role_cfg'])
     except Exception as exception:
         logging.error("Error while creating CMS", exc_info=True)
         raise
@@ -655,13 +617,7 @@ def setup_hadoop(
         anaconda_repo=None,
         anaconda_version=None):
 
-    global _CFG
-    isHA_enabled = False
-
-    if flavor == 'standard':
-        import cfg_standard as _CFG
-        isHA_enabled = True
-    # Add additional flavors here
+    isHA_enabled = _CFG.isHA_enabled
 
     try:
         api, cloudera_manager = connect(cm_api, 'admin', 'admin')
@@ -725,10 +681,7 @@ def setup_hadoop(
         services = create_services(user, key_name, cluster, nodes, isHA_enabled)
         # there isn't much space for parcels but we know we are not going to
         # install any so it's safe to disable this warning
-        cfg = {
-            'host_agent_parcel_directory_free_space_absolute_thresholds': '{"warning":"-2.0","critical":"6000000000"}',
-            'memory_overcommit_threshold': '0.85'}
-        cloudera_manager.update_all_hosts_config(cfg)
+        cloudera_manager.update_all_hosts_config(_CFG.CM_CFG['hosts_config'])
         # Install system shared libs into defined deployment path
         setup_sharedlib(nodes, user, key_name, services['hdfs'], cm_api)
 

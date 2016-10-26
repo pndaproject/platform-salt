@@ -6,7 +6,7 @@
 {% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
 
 {% set pnda_graphite_port = 8013 %}
-{% set pnda_graphite_host = salt['pnda.ip_addresses']('console_backend')[0] %}
+{% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
 
 {% set dashboard_list = ['PNDA Deployment Manager.json',
                          'PNDA Hadoop.json',

@@ -2,7 +2,7 @@
 
 cdh-create_cloudera_user:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
     - tgt_type: compound
     - sls: cdh.cloudera_user
 

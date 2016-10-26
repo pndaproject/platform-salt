@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set scripts_location = '/tmp' %}
 {% set ssh_prv_key = scripts_location + '/cloudera.pem' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
@@ -8,9 +10,9 @@
 {% set keystone_tenant = salt['pillar.get']('keystone.tenant', "") %}
 {% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
 {% set region = salt['pillar.get']('keystone.region_name', "") %}
-{% set mysql_host = salt['pnda.ip_addresses']('cloudera_oozie_database')[0] %}
-{% set aws_key = salt['pillar.get']('aws.key', '') %}
-{% set aws_secret_key = salt['pillar.get']('aws.secret', '') %}
+{% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
+{% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
+{% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 
 include:
   - .cloudera-api
@@ -20,10 +22,11 @@ cdh-copy_script_manager_installation_script:
     - source: salt://cdh/files/cm_setup.py
     - name: {{ scripts_location }}/cm_setup.py
 
-cdh-copy_cm_config_standard:
+cdh-copy_cm_config:
   file.managed:
-    - source: salt://cdh/templates/cfg_standard.py.tpl
-    - name: {{ scripts_location }}/cfg_standard.py
+    - source: salt://cdh/templates/{{ flavor_cfg.template_file }}.tpl
+    - name: {{ scripts_location }}/{{ flavor_cfg.template_file }}
+    - name: {{ scripts_location }}/cfg_flavor.py
     - template: jinja
     - defaults:
       keystone_user: {{ keystone_user }}
@@ -48,8 +51,8 @@ cdh-create_cloudera_configuration_script:
     - source: salt://cdh/templates/cloudera_config.py.tpl
     - template: jinja
     - defaults:
-        ips: {{ salt['mine.get']('G@roles:cloudera_* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
-        cloudera_config: {{ salt['mine.get']('G@roles:cloudera_* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
+        ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
+        cloudera_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         private_key_filename: {{ ssh_prv_key }}
         cluster_name: {{ pnda_cluster }}
         parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}

@@ -5,6 +5,10 @@
 {% set cloudera = {'username': 'cloudera'} %}
 {% set cluster = salt['pnda.cluster_name']() %}
 
+{% set cm_id = salt['mine.get']('G@pnda_cluster:{} and G@roles:cloudera_manager'.format(cluster),
+                                'network.ip_addrs',
+                                expr_form='compound').keys()|first %}
+
 cdh-create_cloudera_user:
   user.present:
     - name: {{ cloudera['username'] }}
@@ -14,7 +18,7 @@ cdh-create_cloudera_user:
 cdh-get-cloudera-public-key:
   module.run:
     - name: cp.get_file
-    - path: salt://{{ cluster }}-cdh-cm/tmp/cloudera.pem.pub
+    - path: salt://{{ cm_id }}/keys/cloudera.pem.pub
     - dest: /tmp/cloudera.pem.pub
 
 cdh-add_authorized_key:

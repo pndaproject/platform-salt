@@ -22,14 +22,17 @@
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
-{%- for ip in salt['pnda.ip_addresses']('console_backend') -%}
+{%- for ip in salt['pnda.ip_addresses']('console_backend_data_logger') -%}
 {%- do console_hosts.append(ip + ':' + console_port) -%}
 {%- endfor -%}
 
-{% set dm_hosts = [] %}
-{%- for ip in salt['pnda.ip_addresses']('deployment_manager') -%}
-{%- do dm_hosts.append("http://" + ip + ':' + dm_port) -%}
-{%- endfor -%}
+{%- set dm_hosts = [] -%}
+{%- set dm_nodes = salt['pnda.ip_addresses']('deployment_manager') -%}
+{%- if dm_nodes is not none and dm_nodes|length > 0 -%}   
+  {%- for ip in dm_nodes -%}
+  {%- do dm_hosts.append("http://" + ip + ':' + dm_port) -%}
+  {%- endfor -%}
+{%- endif -%}
 
 include:
   - python-pip
@@ -48,7 +51,7 @@ platform-testing-general-install_python_deps:
     - require:
       - pip: python-pip-install_python_pip
 
-platform-testing-cdh-dl-and-extract:
+platform-testing-general-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }} 
     - source: {{ packages_server }}/platform/releases/platform-testing/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
@@ -141,6 +144,7 @@ platform-testing-general-crontab-zookeeper-blackbox:
     - user: root
     - name: sudo service platform-testing-general-zookeeper-blackbox start
 
+{%- if dm_hosts is not none and dm_hosts|length > 0 %}   
 platform-testing-general-install-requirements-dm-blackbox:
   pip.installed:
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/dm_blackbox/requirements.txt
@@ -164,6 +168,7 @@ platform-testing-general-crontab-dm-blackbox:
     - identifier: PLATFORM-TESTING-DM-BLACKBOX
     - user: root
     - name: sudo service platform-testing-general-dm-blackbox start
+{%- endif %}
 
 platform-testing-general-crontab-reload:
   service.running:

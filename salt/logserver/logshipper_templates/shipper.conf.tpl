@@ -50,6 +50,7 @@ input {
                    "/var/log/pnda/hadoop-yarn/container/application_*/container_*/spark.log"]
           add_field => {"source" => "yarn"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          discover_interval => "5"
    }
    file {
           path => ["/var/log/pnda/hadoop/*/*.log",
@@ -76,7 +77,8 @@ input {
    file {
           path => ["/var/log/pnda/impala/*.ERROR",
                   "/var/log/pnda/impala/*.WARNING",
-                  "/var/log/pnda/impala/*.INFO"]
+                  "/var/log/pnda/impala/*.INFO",
+                  "/var/log/pnda/impala-llama/*.log"]
           add_field => {"source" => "impala"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }

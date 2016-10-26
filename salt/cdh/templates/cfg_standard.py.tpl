@@ -7,6 +7,48 @@ Author:     PNDA team
 Created:    14/03/2016
 """
 
+isHA_enabled = True
+
+CM_CFG = {
+    "hosts_config": {
+        'host_agent_parcel_directory_free_space_absolute_thresholds': '{"warning":"-2.0","critical":"6000000000"}',
+        'memory_overcommit_threshold': '0.85'
+    }
+}
+
+CMS_CFG = {
+    "service": "MGMT",
+    "name": "mgmt",
+    "roles": [
+        {"name": "cms-ap",
+         "type": "ALERTPUBLISHER",
+         "target": "CM"},
+        {"name": "cms-es",
+         "type": "EVENTSERVER",
+         "target": "CM"},
+        {"name": "cms-hm",
+         "type": "HOSTMONITOR",
+         "target": "CM"},
+        {"name": "cms-sm",
+         "type": "SERVICEMONITOR",
+         "target": "CM"}
+     ],
+     "role_cfg": [
+         {"type": "ACTIVITYMONITOR",
+          "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
+         {"type": "ALERTPUBLISHER",
+          "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher'}},
+         {"type": "EVENTSERVER",
+          "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
+         {"type": "HOSTMONITOR",
+          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
+         {"type": "SERVICEMONITOR",
+          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
+                     'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}}]
+}
+
 OOZIE_CFG = {"service": "OOZIE",
              "name": "oozie01",
              "config": {'mapreduce_yarn_service': 'yarn01',
@@ -44,7 +86,7 @@ ZK_CFG = {"service": "ZOOKEEPER",
 MAPRED_CFG = {
     "service": "YARN",
     "name": "yarn01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'yarn_log_aggregation_retain_seconds': '265000'},
+    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'yarn_log_aggregation_retain_seconds': '265000', 'yarn_log_aggregation_enable': 'false'},
     "roles": [
         {
             "name": "yarn-jh",
@@ -194,7 +236,7 @@ HDFS_CFG = {
             },
             {
                 "type": "JOURNALNODE",
-                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data'}
+                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data', 'journalnode_log_dir': '/var/log/pnda/hadoop/jn'}
             },
             {
                 "type": "SECONDARYNAMENODE",
@@ -209,6 +251,10 @@ HDFS_CFG = {
             {
                 "type": "GATEWAY",
                 "config": {}
+            },
+            {
+                "type": "HTTPFS",
+                "config": {'httpfs_log_dir': '/var/log/pnda/hadoop-httpfs'}
             }
         ]
 }
@@ -347,7 +393,8 @@ IMPALA_CFG = {
                                        'scratch_dirs': '/impala/impalad',
                                        'log_dir': '/var/log/pnda/impala'}},
         {'type': 'CATALOGSERVER', 'config': {'log_dir': '/var/log/pnda/impala'}},
-        {'type': 'STATESTORE', 'config': {'log_dir': '/var/log/pnda/impala'}}
+        {'type': 'STATESTORE', 'config': {'log_dir': '/var/log/pnda/impala'}},
+        {'type': 'LLAMA', 'config': {'llama_log_dir': '/var/log/pnda/impala-llama'}}
     ]
 }
 

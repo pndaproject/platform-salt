@@ -43,6 +43,7 @@ admin_login:
 kafkamanager:
   release_directory: /opt/pnda
   release_version: 1.3.1.6
+  bind_port: 10900
 
 opentsdb:
   version: 2.2.0
@@ -56,21 +57,21 @@ gobblin:
   release_version: 0.1.1
 
 console_frontend:
-  release_version: 0.1.1
+  release_version: 0.1.2
 
 console_backend_data_logger:
-  release_version: 0.2.0
+  release_version: 0.2.1
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.2.0
+  release_version: 0.2.1
   bind_port: 3123
 
 deployment_manager:
-  release_version: 0.1.1
+  release_version: 0.2.0
 
 package_repository:
-  release_version: 0.1.1
+  release_version: 0.2.0
 
 data-service:
   release_version: 0.1.1
@@ -82,18 +83,9 @@ platform_testing:
   release_directory: /opt/pnda
   release_version: 0.1.1
 
-ntp:
-  servers:
-    - "ntp.esl.cisco.com iburst"
-
 platformlib:
   release_version: 0.1.1
   target_directory: "/opt/pnda"
-
-nginx:
-  admin_user: admin
-  admin_password: admin
-  certificates_email: pnda.team@external.cisco.com
 
 jmxproxy:
   release_version: "3.2.0"
