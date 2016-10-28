@@ -445,6 +445,16 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def destroy(cluster):
+    CONSOLE.info('Removing ssh access scripts')
+    socks_proxy_file = 'cli/socks_proxy-%s' % cluster
+    if os.path.exists(socks_proxy_file):
+        os.remove(socks_proxy_file)
+    ssh_config_file = 'cli/ssh_config-%s' % cluster
+    if os.path.exists(ssh_config_file):
+        os.remove(ssh_config_file)
+    env_sh_file = 'cli/pnda_env_%s.sh' % cluster
+    if os.path.exists(env_sh_file):
+        os.remove(env_sh_file)
     CONSOLE.info('Deleting Cloud Formation stack')
     region = pnda_env['ec2_access']['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
