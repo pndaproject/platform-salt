@@ -58,7 +58,14 @@ To create an API key with access only to the specific S3 buckets:
         "s3:DeleteObject"
       ],
       "Resource": ["arn:aws:s3:::pnda-archive/*"]
-    }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:CreateBucket"
+      ],
+      "Resource": ["arn:aws:s3:::*"]
+    }    
   ]
 }
 ```
