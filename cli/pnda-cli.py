@@ -54,7 +54,7 @@ CONSOLE.addHandler(logging.StreamHandler())
 NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
 START = datetime.datetime.now()
-THROW_BASH_ERROR = " exit ${PIPESTATUS[0]}"
+THROW_BASH_ERROR = "cmd_result=${PIPESTATUS[0]} && if [ ${cmd_result} != '0' ]; then exit ${cmd_result}; fi"
 
 RUNFILE = None
 def init_runfile(cluster):
