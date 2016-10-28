@@ -54,6 +54,7 @@ CONSOLE.addHandler(logging.StreamHandler())
 NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
 START = datetime.datetime.now()
+THROW_BASH_ERROR = " exit ${PIPESTATUS[0]}"
 
 RUNFILE = None
 def init_runfile(cluster):
@@ -191,9 +192,9 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
              'export PNDA_FLAVOR=%s' % flavor,
              'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
              'sudo chmod a+x /tmp/base.sh',
-             '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log',
+             '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
              'sudo chmod a+x /tmp/%s.sh' % node_type,
-             '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log' % (node_type, node_idx)], cluster, ip_address)
+             '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR)], cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
     return ret_val
@@ -358,7 +359,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
          'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
          'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
-         '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log' % saltmaster['node_type']],
+         '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % (saltmaster['node_type'], THROW_BASH_ERROR)],
         cluster, saltmaster['private_ip_address'])
 
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
@@ -380,9 +381,9 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     time.sleep(30)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
-    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log',
-         '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log' % cluster,
-         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log' % bastion],
+    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
+         '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
+         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],
         cluster, saltmaster['private_ip_address'])
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
@@ -437,9 +438,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
-    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log',
-         '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | tee -a pnda-salt.log' % cluster,
-         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log' % bastion],
+    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | %s' % THROW_BASH_ERROR,
+         '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | %s' % (cluster, THROW_BASH_ERROR),
+         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],
         cluster, saltmaster)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
