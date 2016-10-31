@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.1] 2016-10-31
 ### Fixed
- - PNDA-2368: Include console-backed 0.2.2 to fix version of the redis-parser npm module to 2.0.4
+ - PNDA-2368: Include console-backend 0.2.2 to fix version of the redis-parser npm module to 2.0.4
 
 ## [1.0.0] 2016-10-21
 ### Added
