@@ -15,7 +15,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 ## On AWS
 1. Obtain an AWS account.
-2. Create buckets in S3 for PNDA applications (pnda-apps/releases) and for archived data (pnda-archive). AWS credientials should be created for an IAM user with access to these specific S3 buckets only. For help creating a user with these permissions, please refer [here](s3help.md).
+2. Create a bucket in S3 for PNDA applications. A bucket for archived data is automatically created by PNDA. The names of these buckets are configured in pnda_env.yaml (see step 3 below). AWS credientials should be created for an IAM user with access to these specific S3 buckets only. For help creating a user with these permissions, please refer [here](s3help.md).
 
 ## From a local clone of this repo
 1. Copy ```pnda_env_example.yaml``` to create ```pnda_env.yaml```
@@ -24,17 +24,19 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
  - One set with access to EC2 and cloud formation used to create PNDA, these are only ever stored on the client machine.
  - One or more set created for the IAM user(s) with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
 
-3. Edit pnda_env.yaml with the component package server IP address. A component package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a component package server.
+3. Edit pnda_env.yaml with the names of the buckets to use for PNDA applications and PNDA archived data.
 
-4. Create an ssh keypair to use when creating the EC2 instances for PNDA [(link)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions.
+4. Edit pnda_env.yaml with the component package server IP address. A component package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a component package server.
 
-5. Install pip packages required by the CLI 
+5. Create an ssh keypair to use when creating the EC2 instances for PNDA [(link)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions.
+
+6. Install pip packages required by the CLI 
     ```sh
     cd cli
     sudo pip install -r requirements.txt
     ```
     
-6. Create a cluster:
+7. Create a cluster:
     ```sh
     cd cli
     pnda-cli.py create -e <cluster_name> -s <key_name> -f standard -o 2 -n 3 -k 2 -z 3
