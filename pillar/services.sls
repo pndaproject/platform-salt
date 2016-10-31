@@ -60,11 +60,11 @@ console_frontend:
   release_version: 0.1.2
 
 console_backend_data_logger:
-  release_version: 0.2.1
+  release_version: 3.2-hotfix1
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.2.1
+  release_version: 3.2-hotfix1
   bind_port: 3123
 
 deployment_manager:
