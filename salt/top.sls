@@ -93,3 +93,8 @@
   'roles:package_repository':
     - match: grain
     - package-repository
+
+  'roles:pnda_restart':
+    - match: grain
+    - reboot.install_restart
+
