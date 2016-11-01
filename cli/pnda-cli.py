@@ -18,12 +18,10 @@
 
 import uuid
 import re
-import subprocess
 import sys
 import os
 import os.path
 import json
-import yaml
 import time
 import logging
 import atexit
@@ -32,6 +30,7 @@ import datetime
 import tarfile
 from threading import Thread
 
+import yaml
 import requests
 import argparse
 from argparse import RawTextHelpFormatter
@@ -53,6 +52,8 @@ CONSOLE.addHandler(logging.StreamHandler())
 
 NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
+NODE_CONFIG = None
+PNDA_ENV = None
 START = datetime.datetime.now()
 THROW_BASH_ERROR = "cmd_result=${PIPESTATUS[0]} && if [ ${cmd_result} != '0' ]; then exit ${cmd_result}; fi"
 
@@ -66,10 +67,10 @@ def to_runfile(pairs):
     Append arbitrary pairs to a JSON dict on disk from anywhere in the code
     '''
     mode = 'w' if not os.path.isfile(RUNFILE) else 'r'
-    with open(RUNFILE, mode) as rf:
-        jrf = json.load(rf) if mode == 'r' else {}
+    with open(RUNFILE, mode) as runfile:
+        jrf = json.load(runfile) if mode == 'r' else {}
         jrf.update(pairs)
-        json.dump(jrf, rf)
+        json.dump(jrf, runfile)
 
 def banner():
     print r"    ____  _   ______  ___ "
@@ -130,7 +131,7 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
 
 def get_instance_map(cluster):
     CONSOLE.debug('Checking details of created instances')
-    region = pnda_env['ec2_access']['AWS_REGION']
+    region = PNDA_ENV['ec2_access']['AWS_REGION']
     ec2 = boto.ec2.connect_to_region(region)
     reservations = ec2.get_all_reservations()
     instance_map = {}
@@ -207,11 +208,11 @@ def check_config_file():
 def check_keypair(keyname, keyfile):
     if not os.path.isfile(keyfile):
         CONSOLE.info('Keyfile.......... ERROR')
-        CONSOLE.error('Did not find local file named %s' % keyfile)
+        CONSOLE.error('Did not find local file named %s', keyfile)
         sys.exit(1)
 
     try:
-        region = pnda_env['ec2_access']['AWS_REGION']
+        region = PNDA_ENV['ec2_access']['AWS_REGION']
         ec2 = boto.ec2.connect_to_region(region)
         stored_key = ec2.get_key_pair(keyname)
         if stored_key is None:
@@ -219,13 +220,13 @@ def check_keypair(keyname, keyfile):
         CONSOLE.info('Keyfile.......... OK')
     except:
         CONSOLE.info('Keyfile.......... ERROR')
-        CONSOLE.error('Failed to find key %s in ec2.' % keyname)
+        CONSOLE.error('Failed to find key %s in ec2.', keyname)
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
 
 def check_aws_connection():
-    region = pnda_env['ec2_access']['AWS_REGION']
+    region = PNDA_ENV['ec2_access']['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
     if conn is None:
         CONSOLE.info('AWS connection... ERROR')
@@ -243,7 +244,7 @@ def check_aws_connection():
 
 def check_java_mirror():
     try:
-        java_mirror = pnda_env['mirrors']['JAVA_MIRROR']
+        java_mirror = PNDA_ENV['mirrors']['JAVA_MIRROR']
         response = requests.head(java_mirror)
         response.raise_for_status()
         CONSOLE.info('Java mirror...... OK')
@@ -259,7 +260,7 @@ def check_java_mirror():
 
 def check_package_server():
     try:
-        package_uri = '%s/%s' % (pnda_env['pnda_component_packages']['PACKAGES_SERVER_URI'], 'platform/releases/')
+        package_uri = '%s/%s' % (PNDA_ENV['pnda_component_packages']['PACKAGES_SERVER_URI'], 'platform/releases/')
         response = requests.head(package_uri)
         if response.status_code != 403 and response.status_code != 200:
             raise Exception("Unexpected status code from %s: %s" % (package_uri, response.status_code))
@@ -273,10 +274,10 @@ def check_package_server():
 def write_pnda_env_sh(cluster):
     client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
     with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
-        for section in pnda_env:
-            for setting in pnda_env[section]:
+        for section in PNDA_ENV:
+            for setting in PNDA_ENV[section]:
                 if setting not in client_only:
-                    pnda_env_sh_file.write('export %s=%s\n' % (setting, pnda_env[section][setting]))
+                    pnda_env_sh_file.write('export %s=%s\n' % (setting, PNDA_ENV[section][setting]))
 
 def write_ssh_config(cluster, bastion_ip, os_user, keyfile):
     with open('cli/ssh_config-%s' % cluster, 'w') as config_file:
@@ -303,10 +304,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     keyfile = '%s.pem' % keyname
 
-    region = pnda_env['ec2_access']['AWS_REGION']
+    region = PNDA_ENV['ec2_access']['AWS_REGION']
     cf_parameters = [('keyName', keyname), ('pndaCluster', cluster)]
-    for parameter in pnda_env['cloud_formation_parameters']:
-        cf_parameters.append((parameter, pnda_env['cloud_formation_parameters'][parameter]))
+    for parameter in PNDA_ENV['cloud_formation_parameters']:
+        cf_parameters.append((parameter, PNDA_ENV['cloud_formation_parameters'][parameter]))
 
     if not no_config_check:
         check_aws_connection()
@@ -333,15 +334,16 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], pnda_env['ec2_access']['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'],
+                     PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
 
     platform_salt_tarball = None
-    if 'PLATFORM_SALT_LOCAL' in pnda_env['platform_salt']:
-        local_salt_path = pnda_env['platform_salt']['PLATFORM_SALT_LOCAL']
+    if 'PLATFORM_SALT_LOCAL' in PNDA_ENV['platform_salt']:
+        local_salt_path = PNDA_ENV['platform_salt']['PLATFORM_SALT_LOCAL']
         platform_salt_tarball = '%s.tmp' % str(uuid.uuid1())
         with tarfile.open(platform_salt_tarball, mode='w:gz') as archive:
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)
@@ -390,10 +392,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
     keyfile = '%s.pem' % keyname
 
-    region = pnda_env['ec2_access']['AWS_REGION']
+    region = PNDA_ENV['ec2_access']['AWS_REGION']
     cf_parameters = [('keyName', keyname), ('pndaCluster', cluster)]
-    for parameter in pnda_env['cloud_formation_parameters']:
-        cf_parameters.append((parameter, pnda_env['cloud_formation_parameters'][parameter]))
+    for parameter in PNDA_ENV['cloud_formation_parameters']:
+        cf_parameters.append((parameter, PNDA_ENV['cloud_formation_parameters'][parameter]))
 
     CONSOLE.info('Updating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
@@ -414,7 +416,8 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'], pnda_env['ec2_access']['OS_USER'], os.path.abspath(keyfile))
+    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'],
+                     PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
 
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
@@ -456,7 +459,7 @@ def destroy(cluster):
     if os.path.exists(env_sh_file):
         os.remove(env_sh_file)
     CONSOLE.info('Deleting Cloud Formation stack')
-    region = pnda_env['ec2_access']['AWS_REGION']
+    region = PNDA_ENV['ec2_access']['AWS_REGION']
     conn = boto.cloudformation.connect_to_region(region)
 
     stack_status = 'DELETING'
@@ -569,16 +572,16 @@ def main():
 
     os.chdir('../')
 
-    global pnda_env
+    global PNDA_ENV
     check_config_file()
     with open('pnda_env.yaml', 'r') as infile:
-        pnda_env = yaml.load(infile)
-        os.environ['AWS_ACCESS_KEY_ID'] = pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
-        os.environ['AWS_SECRET_ACCESS_KEY'] = pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
+        PNDA_ENV = yaml.load(infile)
+        os.environ['AWS_ACCESS_KEY_ID'] = PNDA_ENV['ec2_access']['AWS_ACCESS_KEY_ID']
+        os.environ['AWS_SECRET_ACCESS_KEY'] = PNDA_ENV['ec2_access']['AWS_SECRET_ACCESS_KEY']
         print 'Using ec2 credentials:'
-        print '  AWS_REGION = %s' % pnda_env['ec2_access']['AWS_REGION']
-        print '  AWS_ACCESS_KEY_ID = %s' % pnda_env['ec2_access']['AWS_ACCESS_KEY_ID']
-        print '  AWS_SECRET_ACCESS_KEY = %s' % pnda_env['ec2_access']['AWS_SECRET_ACCESS_KEY']
+        print '  AWS_REGION = %s' % PNDA_ENV['ec2_access']['AWS_REGION']
+        print '  AWS_ACCESS_KEY_ID = %s' % PNDA_ENV['ec2_access']['AWS_ACCESS_KEY_ID']
+        print '  AWS_SECRET_ACCESS_KEY = %s' % PNDA_ENV['ec2_access']['AWS_SECRET_ACCESS_KEY']
 
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
