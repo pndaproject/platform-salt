@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Changed
+ - PNDA-2284: hdfs-cleaner creates the archive container it needs
+ 
 ## [1.0.1] 2016-10-31
 ### Fixed
  - PNDA-2368: Include console-backend 0.2.2 to fix version of the redis-parser npm module to 2.0.4

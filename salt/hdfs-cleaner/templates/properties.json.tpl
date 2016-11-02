@@ -20,5 +20,13 @@
     "old_dirs_to_clean": [
         {"name": "/user/gobblin/work/metrics", "age_seconds": 172800}
     ],
-    "swift_repo": "{{ archive_type }}://{{ container }}{{ archive_service }}/{{ repo_path }}"
+    "swift_repo": "{{ archive_type }}://{{ container }}{{ archive_service }}/{{ repo_path }}",
+    "container_name": "{{ container }}",
+    "s3_archive_region": "{{ salt['pillar.get']('aws.archive_region', '') }}",
+    "s3_archive_access_key": "{{ salt['pillar.get']('aws.archive_key', '') }}",
+    "s3_archive_secret_access_key": "{{ salt['pillar.get']('aws.archive_secret', '') }}",
+    "swift_account":"{{ salt['pillar.get']('keystone.tenant', '') }}",
+    "swift_user": "{{ salt['pillar.get']('keystone.user', '') }}",
+    "swift_key": "{{ salt['pillar.get']('keystone.password', '') }}",
+    "swift_auth_url": "{{ salt['pillar.get']('keystone.auth_url', '') }}"
 }
