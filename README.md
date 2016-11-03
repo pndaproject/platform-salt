@@ -22,13 +22,13 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 2. Edit pnda_env.yaml with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) and an Ubuntu 14.04 image ID. Regarding the AMI, you should select an AMI with type HVM as we are using instance type t2 and m3 (for more details, you can find more details on [AWS Virtualization types](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html)). At least two sets of AWS credientials should be supplied:
  - One set with access to EC2 and cloud formation used to create PNDA, these are only ever stored on the client machine.
- - One or more set created for the IAM user(s) with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
+ - One or more sets created for the IAM user(s) with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
 
 3. Edit pnda_env.yaml with the names of the buckets to use for PNDA applications and PNDA archived data.
 
 4. Edit pnda_env.yaml with the component package server IP address. A component package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a component package server.
 
-5. Create an ssh keypair to use when creating the EC2 instances for PNDA [(link)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions.
+5. Create [an ssh keypair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) to use when creating the EC2 instances for PNDA as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions.
 
 6. Install pip packages required by the CLI 
     ```sh
@@ -51,4 +51,4 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 The cloud formation templates for PNDA can be edited directly to make modications as required.
 
-The organisation and contents of the cloud formation templates is described [here](cloud-formation/README.md)
+The organisation and contents of the cloud formation templates is described [here](cloud-formation/README.md).
