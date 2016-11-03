@@ -33,8 +33,8 @@ include:
 console-backend-data-manager-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }} 
-    - source: {{ packages_server }}/platform/releases/console/{{ backend_app_package }}
-    - source_hash: {{ packages_server }}/platform/releases/console/{{ backend_app_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ backend_app_package }}
+    - source_hash: {{ packages_server }}/{{ backend_app_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/console-backend-data-manager-{{ backend_app_version }}

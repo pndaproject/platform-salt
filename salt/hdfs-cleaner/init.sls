@@ -25,8 +25,8 @@ hdfs-cleaner-install_python_deps:
 hdfs-cleaner-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
-    - source: {{ packages_server }}/platform/releases/hdfs-cleaner/{{ app_package }}
-    - source_hash: {{ packages_server }}/platform/releases/hdfs-cleaner/{{ app_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ app_package }}
+    - source_hash: {{ packages_server }}/{{ app_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/{{ app_directory_name }}

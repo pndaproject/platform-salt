@@ -44,8 +44,8 @@ gobblin-create_gobblin_version_directory:
 gobblin-dl-and-extract:
   archive.extracted:
     - name: {{ gobblin_real_dir }}
-    - source: {{ packages_server }}/platform/releases/gobblin/{{ gobblin_package }}
-    - source_hash: {{ packages_server }}/platform/releases/gobblin/{{ gobblin_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ gobblin_package }}
+    - source_hash: {{ packages_server }}/{{ gobblin_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - user: {{ gobblin_user }}

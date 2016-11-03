@@ -40,8 +40,8 @@ include:
 console-frontend-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }} 
-    - source: {{ packages_server }}/platform/releases/console/{{ console_frontend_package }}
-    - source_hash: {{ packages_server }}/platform/releases/console/{{ console_frontend_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ console_frontend_package }}
+    - source_hash: {{ packages_server }}/{{ console_frontend_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ console_dir }}-{{ console_frontend_version }}
