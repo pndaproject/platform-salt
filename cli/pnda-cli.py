@@ -191,7 +191,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
              'export PNDA_SALTMASTER_IP=%s' % saltmaster,
              'export PNDA_CLUSTER=%s' % cluster,
              'export PNDA_FLAVOR=%s' % flavor,
-             'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
+             'export PLATFORM_GIT_BRANCH=%s' % branch,
              'sudo chmod a+x /tmp/base.sh',
              '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
              'sudo chmod a+x /tmp/%s.sh' % node_type,
@@ -272,7 +272,7 @@ def check_package_server():
         sys.exit(1)
 
 def write_pnda_env_sh(cluster):
-    client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
+    client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'PLATFORM_GIT_BRANCH']
     with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
         for section in PNDA_ENV:
             for setting in PNDA_ENV[section]:
@@ -358,7 +358,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
-         'export PLATFORM_GIT_BRANCH=%s' % branch if branch is not None else ':',
+         'export PLATFORM_GIT_BRANCH=%s' % branch,
          'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
          '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % (saltmaster['node_type'], THROW_BASH_ERROR)],
@@ -562,8 +562,7 @@ def main():
     kafkanodes = args.kafka_nodes
     zknodes = args.zk_nodes
     flavor = args.flavour
-    keyname = args.keyname
-    branch = args.branch
+    keyname = args.keyname    
     no_config_check = args.no_config_check
 
     if not os.path.basename(os.getcwd()) == "cli":
@@ -582,6 +581,15 @@ def main():
         print '  AWS_REGION = %s' % PNDA_ENV['ec2_access']['AWS_REGION']
         print '  AWS_ACCESS_KEY_ID = %s' % PNDA_ENV['ec2_access']['AWS_ACCESS_KEY_ID']
         print '  AWS_SECRET_ACCESS_KEY = %s' % PNDA_ENV['ec2_access']['AWS_SECRET_ACCESS_KEY']
+
+    # Branch defaults to master
+    # but may be overridden by pnda_env.yaml
+    # and both of those are overridden by --branch
+    branch = 'master'
+    if 'PLATFORM_GIT_BRANCH' in PNDA_ENV['platform_salt']:
+        branch = PNDA_ENV['platform_salt']['PLATFORM_GIT_BRANCH']
+    if args.branch is not None:
+        branch = args.branch
 
     if not os.path.isfile('git.pem'):
         with open('git.pem', 'w') as git_key_file:
