@@ -22,6 +22,7 @@ roles:
   - cloudera_manager
   - platform_testing_cdh
   - mysql_connector
+  - pnda_restart
 EOF
 
 cat >> /etc/salt/minion <<EOF

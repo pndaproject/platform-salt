@@ -215,6 +215,7 @@ roles:
   - hbase_opentsdb_tables
   - hdfs_cleaner
   - master_dataset
+  - pnda_restart
 
 pnda_cluster: $PNDA_CLUSTER
 EOF
