@@ -54,6 +54,7 @@ NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
 NODE_CONFIG = None
 PNDA_ENV = None
+VALID_FLAVORS = None
 START = datetime.datetime.now()
 THROW_BASH_ERROR = "cmd_result=${PIPESTATUS[0]} && if [ ${cmd_result} != '0' ]; then exit ${cmd_result}; fi"
 
@@ -526,6 +527,8 @@ def node_limit(param_name, value):
     return as_num
 
 def get_args():
+    global VALID_FLAVORS
+    VALID_FLAVORS = [dir_name for dir_name in os.listdir('../cloud-formation') if  os.path.isdir(os.path.join('../cloud-formation', dir_name))]
     epilog = """examples:
   - create new cluster, prompting for values:
     pnda-cli.py create
@@ -545,7 +548,7 @@ def get_args():
     parser.add_argument('-o', '--opentsdb-nodes', type=int, help='How many Open TSDB nodes for the hadoop cluster')
     parser.add_argument('-k', '--kafka-nodes', type=int, help='How many kafka nodes for the databus cluster')
     parser.add_argument('-z', '--zk-nodes', type=int, help='How many zookeeper nodes for the databus cluster')
-    parser.add_argument('-f', '--flavour', help='PNDA flavor: "standard"', choices=['standard', 'pico'])
+    parser.add_argument('-f', '--flavour', help='PNDA flavor: "standard"', choices=VALID_FLAVORS)
     parser.add_argument('-s', '--keyname', help='Keypair name')
     parser.add_argument('-x', '--no-config-check', action='store_true', help='Skip config verifiction checks')
     parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides value in pnda_env.yaml')
@@ -605,8 +608,8 @@ def main():
     write_pnda_env_sh(pnda_cluster)
 
     while flavor is None:
-        flavor = raw_input("Enter a flavor (standard/pico): ")
-        if not re.match("^(standard|pico)$", flavor):
+        flavor = raw_input("Enter a flavor (%s): " % '/'.join(VALID_FLAVORS))
+        if not re.match("^(%s)$" % '|'.join(VALID_FLAVORS), flavor):
             print "Not a valid flavor"
             flavor = None
 
