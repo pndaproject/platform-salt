@@ -18,8 +18,8 @@ include:
 platform-testing-cdh-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }} 
-    - source: {{ packages_server }}/platform/releases/platform-testing/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
-    - source_hash: {{ packages_server }}/platform/releases/platform-testing/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
+    - source: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
+    - source_hash: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }} 
