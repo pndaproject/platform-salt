@@ -8,10 +8,24 @@ echo 'checking if user already exists'
 build/env/bin/hue  shell <<CHECKUSER
 import sys
 from django.contrib.auth.models import User
- 
-a = User.objects.get(username='{{ pnda_user }}')
-code = 1 if '{{ pnda_user }}' == str(a) else 0
-sys.exit(code)
+
+pnda_user = None 
+try:
+    pnda_user = User.objects.get(username='{{ pnda_user }}')
+except User.DoesNotExist:
+    pnda_user = None
+
+print str(pnda_user)
+
+result_code = 0
+
+if '{{ pnda_user }}' == str(pnda_user):
+    result_code = 1
+
+print str(result_code)
+
+sys.exit(result_code)
+
 CHECKUSER
 result=$?
 echo 'checked if user already exists'
