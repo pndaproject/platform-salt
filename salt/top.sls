@@ -98,3 +98,7 @@
     - match: grain
     - reboot.install_restart
 
+  'elk-es:*':
+   - match: grain
+   - elasticsearch-cluster
+
