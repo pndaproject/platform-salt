@@ -98,7 +98,7 @@
     - match: grain
     - reboot.install_restart
 
-  'elk-es:*':
+  'roles:elk-es-*':
    - match: grain
    - elasticsearch-cluster
 
