@@ -2,8 +2,20 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+ - PNDA-2397: Generate the list of valid flavors dynamically. The valid values for the --branch parameter were hard coded, now they are generated based on the folder names under 'cloud-formation/'
+ - Update OS volume sizes for instances
+ - PNDA-2393: Increase the standard size from 30 GB to 50 GB and for kafka from 50 GB to 150 GB.
+ 
+### Added
 - PNDA-2142: Allow subnet IP ranges to be specified in pnda_env.yaml and used as parameters to the cloud formation templates
 - PNDA-2142: Allow any parameters to be passed through to the cloud formation templates, two settings have changed their names because they are now directly passed through - AWS_IMAGE_ID > imageId and AWS_ACCESS_WHITELIST > whitelistSshAccess. Update these in pnda_env.yaml otherwise the default value in the cloud formation template will be used.
+
+### Fixed
+ - PNDA-2313: CLI fails fast if errors occur in individual commands. Capturing logs on the cloud instance with `command | tee` (PNDA-2266) caused the CLI to carry on if an error was returned by command, because the final exit code was set by tee.
+ - PNDA-2284: Use correct archive parameters to configure s3 archive credentials (the set of variables for the application package bucket were being used)
+ - PNDA-2420: Add missing tee to capture logs when running expand salt commands. This missing command also caused the expand operation to fail for standard flavor clusters.
+
 
 ## [1.0.0] 2016-10-21
 ### Added
