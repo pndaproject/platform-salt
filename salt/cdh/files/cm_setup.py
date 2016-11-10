@@ -41,7 +41,7 @@ def pause_until_api_up(api):
             logging.info("Checking API availability....")
             api.get_all_hosts()
             return
-        except Exception as exception:
+        except Exception:
             logging.warning("API is not up")
             time.sleep(5)
     logging.error("The API did not come UP")
@@ -68,7 +68,7 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
             api.get_user(cm_username)
 
             return api, cloudera_manager
-        except Exception as exception:
+        except Exception:
             logging.warning("CM is not up")
             time.sleep(5)
     logging.error("CM did not come UP")
@@ -78,7 +78,6 @@ def create_hosts(api, cloudera_manager, user, nodes, key_name):
 
     key = file(key_name, 'rb')
     key_string = key.read()
-    is_new_cluster = 1
     new_nodes = []
     hosts_toinstall = []
     hosts_current = [h.ipAddress for h in api.get_all_hosts()]
@@ -86,14 +85,12 @@ def create_hosts(api, cloudera_manager, user, nodes, key_name):
         if host['private_addr'] not in hosts_current:
             hosts_toinstall.append(host['private_addr'])
             new_nodes.append(host)
-        else:
-            is_new_cluster = None
 
     logging.info(hosts_toinstall)
 
     if len(hosts_toinstall) > 0:
 
-        for attempt in xrange(1,4):
+        for attempt in xrange(1, 4):
             logging.info('Host install attempt %d', attempt)
             success, msgs = wait_on_command(cloudera_manager.host_install(user,
                                                                           hosts_toinstall,
@@ -108,36 +105,34 @@ def create_hosts(api, cloudera_manager, user, nodes, key_name):
                     logging.error('Giving up on create_hosts: ' + ' '.join(msgs))
                     sys.exit(-1)
 
-    return is_new_cluster, new_nodes
+    return new_nodes
 
-def wait_on_success(cmd, retries=1):
-
-        success, msgs = wait_on_command(cmd)
-        if not success:
-            logging.error('%s: ' + ' '.join(msgs), cmd.name)
-            sys.exit(-1)
+def wait_on_success(cmd):
+    success, msgs = wait_on_command(cmd)
+    if not success:
+        logging.error('%s: ' + ' '.join(msgs), cmd.name)
+        sys.exit(-1)
 
 def wait_on_command(cmd):
+    messages = []
+    success = False
 
-        messages = []
-        success = False
+    logging.info('Executing %s', cmd.name)
 
-        logging.info('Executing %s', cmd.name)
+    while cmd.active is True and cmd.success is None:
+        time.sleep(5)
+        cmd = cmd.fetch()
 
-        while cmd.active is True and cmd.success is None:
-            time.sleep(5)
-            cmd = cmd.fetch()
+    if cmd.active is None:
+        messages.append('%s (cmd.active is None)' % cmd.resultMessage)
+    if cmd.success is False:
+        messages.append('%s (cmd.success is False)' % cmd.resultMessage)
+    elif cmd.success is None:
+        messages.append('%s (cmd.success is None)' % cmd.resultMessage)
+    elif cmd.success is True:
+        success = True
 
-        if cmd.active is None:
-            messages.append('%s (cmd.active is None)' % cmd.resultMessage)
-        if cmd.success is False:
-            messages.append('%s (cmd.success is False)' % cmd.resultMessage)
-        elif cmd.success is None:
-            messages.append('%s (cmd.success is None)' % cmd.resultMessage)
-        elif cmd.success is True:
-            success = True
-
-        return success, messages
+    return success, messages
 
 
 def assign_host_ids(api, nodes):
@@ -158,7 +153,7 @@ def create_cluster(api, cluster_name):
         hosts = api.get_all_hosts()
         cluster = api.create_cluster(cluster_name, "CDH5")
         cluster.add_hosts([host.hostId for host in hosts])
-    except Exception as exception:
+    except Exception:
         logging.error("Error while creating cluster", exc_info=True)
         raise
 
@@ -212,9 +207,8 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
     cm_config = cloudera_manager.get_config(view='full')
     repo_config = cm_config['REMOTE_PARCEL_REPO_URLS']
     repo_config_value = repo_config.value or repo_config.default
-    cloudera_manager.update_config(
-        {'REMOTE_PARCEL_REPO_URLS': "%s,%s" % (repo_config_value, parcel_repo),
-        'PARCEL_DISTRIBUTE_RATE_LIMIT_KBS_PER_SECOND': '1048576'})
+    cloudera_manager.update_config({'REMOTE_PARCEL_REPO_URLS': "%s,%s" % (repo_config_value, parcel_repo),
+                                    'PARCEL_DISTRIBUTE_RATE_LIMIT_KBS_PER_SECOND': '1048576'})
 
     # update_config doesn't return a command object we can wait on, however the
     # parcel is not available to download until the change has propagated, which takes
@@ -271,7 +265,7 @@ def create_cms(cloudera_manager, nodes):
         cloudera_manager.auto_configure()
         assign_roles(cms, _CFG.CMS_CFG['roles'], nodes)
         apply_role_config(cms, _CFG.CMS_CFG['role_cfg'])
-    except Exception as exception:
+    except Exception:
         logging.error("Error while creating CMS", exc_info=True)
         raise
 
@@ -286,6 +280,15 @@ def generic_expand_service(cluster, cfg, nodes):
 
     return service
 
+def generic_configure_service(cluster, cfg):
+
+    service = cluster.get_service(cfg['name'])
+
+    apply_role_config(service, cfg['role_cfg'])
+
+    service.update_config(cfg['config'])
+
+    return service
 
 def generic_create_service(cluster, cfg, nodes):
 
@@ -317,7 +320,7 @@ def create_mysql_connector_symlink(user, key, ip_addr, target_dir):
                      " || echo \"ERROR - Unable to create symbolic link for 'mysql-connector-java.jar'. Oozie service might not work properly.\"") %
                     (target_dir)]]}
         setup_remotehost(config)
-    except Exception as exception:
+    except Exception:
         logging.error("Error while creating mysql symlink", exc_info=True)
         raise
 
@@ -338,7 +341,7 @@ def create_hive_tmp(user, key, ip_addr):
             ]
         }
         setup_remotehost(config)
-    except Exception as exception:
+    except Exception:
         logging.error("Error while creating hive temporary directory", exc_info=True)
         raise
 
@@ -424,12 +427,64 @@ def expand_services(cluster, nodes):
         logging.info("Starting new Impala roles")
         start_roles(impala)
 
-    except Exception as exception:
+    except Exception:
         logging.error("Error while expanding services", exc_info=True)
         raise
 
-    return {'hdfs': hdfs, 'hbase': hbase, 'mapred': mapred, 'impala': impala}
+def insert_hue_dependencies(nodes, hue_config, hdfs, hbase):
+    httpfs_role = get_role_name(hdfs, "HTTPFS")
+    hbase_addr = get_role_vm(nodes, hbase, get_role_name(hbase, "HBASETHRIFTSERVER"))['private_addr']
+    hbase_thrift_name = get_role_name(hbase, 'HBASETHRIFTSERVER')
+    hue_config['hue_webhdfs'] = httpfs_role
+    hue_config['hue_service_safety_valve'] = '[hbase]\r\n hbase_clusters=(HBase|%s:9090)' % (hbase_addr)
+    hue_config['hue_hbase_thrift'] = hbase_thrift_name
 
+def configure_services(cloudera_manager, cluster, nodes):
+    try:
+        logging.info("Applying config to CMS")
+        cms = cloudera_manager.get_service()
+        apply_role_config(cms, _CFG.CMS_CFG['role_cfg'])
+
+        logging.info("Applying config to HDFS")
+        insert_hdfs_replication_factor(nodes)
+        hdfs = generic_configure_service(cluster, _CFG.HDFS_CFG)
+
+        logging.info("Applying config to Zookeeper")
+        generic_configure_service(cluster, _CFG.ZK_CFG)
+
+        logging.info("Applying config to HBase")
+        hbase = generic_configure_service(cluster, _CFG.HBASE_CFG)
+
+        logging.info("Applying config to YARN")
+        mapred = generic_configure_service(cluster, _CFG.MAPRED_CFG)
+
+        logging.info("Applying config to Hive")
+        generic_configure_service(cluster, _CFG.HIVE_CFG)
+
+        logging.info("Applying config to Oozie")
+        generic_configure_service(cluster, _CFG.OOZIE_CFG)
+
+        logging.info("Applying config to Hue")
+        insert_hue_dependencies(nodes, _CFG.HUE_CFG['config'], hdfs, hbase)
+        generic_configure_service(cluster, _CFG.HUE_CFG)
+
+        logging.info("Applying config to Spark")
+        generic_configure_service(cluster, _CFG.SPARK_CFG)
+
+        logging.info("Applying config to Impala")
+        generic_configure_service(cluster, _CFG.IMPALA_CFG)
+
+        time.sleep(10)
+
+        logging.info("Restarting cluster")
+        wait_on_success(cluster.restart(redeploy_client_configuration=True))
+
+        logging.info("Restarting CMS")
+        wait_on_success(cms.restart())
+
+    except Exception:
+        logging.error("Error while reconfiguring services", exc_info=True)
+        raise
 
 def start_roles(service):
     wait_on_success(service.restart())
@@ -443,28 +498,19 @@ def enable_hdfs_ha(nodes, hdfs, zk_name, name_service='HDFS-HA'):
     nn_name = get_role_name(hdfs, "NAMENODE")
     second_nn_node = get_role_vm(nodes, hdfs, get_role_name(hdfs, "SECONDARYNAMENODE"))
     if nn_name  and second_nn_node:
-        wait_on_success(hdfs.enable_nn_ha(nn_name, second_nn_node['id'], name_service, [],
-                          None, None, None, None, None, zk_name))
+        wait_on_success(hdfs.enable_nn_ha(nn_name, second_nn_node['id'], name_service, [], None, None, None, None, None, zk_name))
 
+def insert_hdfs_replication_factor(nodes):
+    hdfs_repl_factor = min(3, sum(1 for n in nodes if n["type"] == "DATANODE"))
+    logging.info("Replication factor for HDFS is %s", hdfs_repl_factor)
+    _CFG.HDFS_CFG["config"]["dfs_replication"] = hdfs_repl_factor
 
-def enable_yarn_ha(nodes, map_reduce):
-    """
-    Enable HA for YARN by adding standby resource manager
-    """
-    logging.info("Setup YARN HA by adding slave resource manager ")
-    node = get_role_vm(nodes, map_reduce, get_role_name(map_reduce, "RESOURCEMANAGER"))
-    if node:
-        logging.info("HA for Yarn enabled with standby resource manager node %s" % node)
-
-def create_services(user, key, cluster, nodes, isHA_enabled):
+def create_services(user, key, cluster, nodes, ha_enabled):
 
     try:
-        # note: the order of creation, configuration & activation here is
-        # critical
-        hdfs_repl_factor = min(
-            3, sum(1 for n in nodes if n["type"] == "DATANODE"))
-        logging.info("Replication factor for HDFS is %s", hdfs_repl_factor)
-        _CFG.HDFS_CFG["config"]["dfs_replication"] = hdfs_repl_factor
+        # note: the order of creation, configuration & activation here is critical
+        # Ensure that any modifications to the _CFG is also made in configure_services
+        insert_hdfs_replication_factor(nodes)
 
         logging.info("Creating HDFS")
         hdfs = generic_create_service(cluster, _CFG.HDFS_CFG, nodes)
@@ -480,32 +526,20 @@ def create_services(user, key, cluster, nodes, isHA_enabled):
 
         logging.info("Creating HBase")
         hbase = generic_create_service(cluster, _CFG.HBASE_CFG, nodes)
-        hbase_addr = get_role_vm(
-            nodes, hbase, get_role_name(
-                hbase, "HBASETHRIFTSERVER"))['private_addr']
-        hbase_thrift_name = get_role_name(hbase, 'HBASETHRIFTSERVER')
 
         logging.info("Creating YARN")
         mapred = generic_create_service(cluster, _CFG.MAPRED_CFG, nodes)
 
         logging.info("Creating Hive")
         hive = generic_create_service(cluster, _CFG.HIVE_CFG, nodes)
-        hive_detail = get_role_vm(
-            nodes, hive, get_role_name(
-                hive, "HIVEMETASTORE"))
+        hive_detail = get_role_vm(nodes, hive, get_role_name(hive, "HIVEMETASTORE"))
 
         logging.info("Creating Oozie")
         oozie = generic_create_service(cluster, _CFG.OOZIE_CFG, nodes)
-        oozie_detail = get_role_vm(
-            nodes, oozie, get_role_name(
-                oozie, "OOZIE_SERVER"))
+        oozie_detail = get_role_vm(nodes, oozie, get_role_name(oozie, "OOZIE_SERVER"))
 
         logging.info("Creating Hue")
-        httpfs_role = get_role_name(hdfs, "HTTPFS")
-        _CFG.HUE_CFG['config']['hue_webhdfs'] = httpfs_role
-        _CFG.HUE_CFG['config'][
-            'hue_service_safety_valve'] = '[hbase]\r\n hbase_clusters=(HBase|%s:9090)' % (hbase_addr)
-        _CFG.HUE_CFG['config']['hue_hbase_thrift'] = hbase_thrift_name
+        insert_hue_dependencies(nodes, _CFG.HUE_CFG['config'], hdfs, hbase)
         hue = generic_create_service(cluster, _CFG.HUE_CFG, nodes)
 
         logging.info("Creating Spark")
@@ -517,15 +551,13 @@ def create_services(user, key, cluster, nodes, isHA_enabled):
         # The mysql-server is installed on node-1 (i.e. NAMENODE) and is used for oozie, hive and hue databases.
         # This must be done prior to oozie db creation.
         logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
-        create_mysql_connector_symlink(
-            user, key, oozie_detail['public_addr'], '/var/lib/oozie')
+        create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
 
         logging.info("Create Oozie db")
         wait_on_success(oozie.create_oozie_db())
 
         logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
-        create_mysql_connector_symlink(
-            user, key, hive_detail['public_addr'], '/var/lib/hive')
+        create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
 
         # This must be done prior to hive metastore db creation.
         logging.info("Creating /tmp for Hive")
@@ -558,10 +590,9 @@ def create_services(user, key, cluster, nodes, isHA_enabled):
         logging.info("Starting HBase")
         wait_on_success(hbase.start())
 
-        if isHA_enabled:
+        if ha_enabled:
             logging.info("Enable HA for services")
             enable_hdfs_ha(nodes, hdfs, _CFG.ZK_CFG['name'])
-            enable_yarn_ha(nodes, mapred)
 
         logging.info("Creating Hive Warehouse directory")
         wait_on_success(hive.create_hive_warehouse())
@@ -587,7 +618,7 @@ def create_services(user, key, cluster, nodes, isHA_enabled):
         wait_on_success(impala.start())
 
 
-    except Exception as exception:
+    except Exception:
         logging.error("Error while creating services", exc_info=True)
         raise
 
@@ -611,13 +642,12 @@ def setup_hadoop(
         cluster_name,
         cm_username='admin',
         cm_password='admin',
-        flavor='standard',
         parcel_repo=None,
         parcel_version=None,
         anaconda_repo=None,
         anaconda_version=None):
 
-    isHA_enabled = _CFG.isHA_enabled
+    ha_enabled = _CFG.isHA_enabled
 
     try:
         api, cloudera_manager = connect(cm_api, 'admin', 'admin')
@@ -627,7 +657,7 @@ def setup_hadoop(
             admin_user.password = cm_password
             users.update_user(api, admin_user)
         else:
-            logging.info("Updating admin login user to %s" % cm_username)
+            logging.info("Updating admin login user to %s", cm_username)
             api.create_user(cm_username, cm_password, ['ROLE_ADMIN'])
 
         api, cloudera_manager = connect(cm_api, cm_username, cm_password)
@@ -644,41 +674,53 @@ def setup_hadoop(
     # There are several ways to add hosts to a cluster, this is the only one that
     # works reliably - introduce hosts & let CM handle installation of agents
     logging.info("Installing hosts")
-    is_new_cluster, new_nodes = create_hosts(api, cloudera_manager, user, nodes, key_name)
-
+    new_nodes = create_hosts(api, cloudera_manager, user, nodes, key_name)
     assign_host_ids(api, nodes)
 
-    # CMS creation is handled slightly differently from other services and must
-    # be done prior to cluster creation
-    if is_new_cluster:
+    if len(new_nodes) == 0:
+        # no new nodes, reapply config to existing ones
+        cluster_action = 'reapply_config'
+    elif len(new_nodes) == len(nodes):
+        # all new nodes, create new cluster
+        cluster_action = 'create_new'
+    else:
+        # some new nodes, expand cluster onto them
+        cluster_action = 'expand'
+
+    if cluster_action == 'create_new':
+        # CMS creation is handled slightly differently from other services and must
+        # be done prior to cluster creation
         logging.info("Creating CMS")
         cms = create_cms(cloudera_manager, nodes)
         logging.info("Creating cluster")
         cluster = create_cluster(api, cluster_name)
-    else:
+    elif cluster_action == 'expand':
         logging.info("Expanding cluster")
         cluster = api.get_cluster(cluster_name)
         # pylint: disable=E1103
         cluster.add_hosts([h['id'] for h in new_nodes])
+    elif cluster_action == 'reapply_config':
+        cluster = api.get_cluster(cluster_name)
 
-    # Once we have a cluster and a set of hosts with installed agents, we need
-    # to install the correct CDH parcel via the download/distribute/activate
-    logging.info("Downloading, distributing and activating parcels")
-    install_parcel(cloudera_manager, cluster, 'CDH', parcel_repo, parcel_version)
+    if cluster_action == 'create_new' or cluster_action == 'expand':
+        # Once we have a cluster and a set of hosts with installed agents, we need
+        # to install the correct CDH parcel via the download/distribute/activate
+        logging.info("Downloading, distributing and activating parcels")
+        install_parcel(cloudera_manager, cluster, 'CDH', parcel_repo, parcel_version)
 
-    # to install Anaconda parcels
-    logging.info("Downloading anaconda parcels")
-    if anaconda_repo is not None and anaconda_version is not None:
-        install_parcel(cloudera_manager, cluster, 'Anaconda', anaconda_repo, anaconda_version)
+        # to install Anaconda parcels
+        logging.info("Downloading anaconda parcels")
+        if anaconda_repo is not None and anaconda_version is not None:
+            install_parcel(cloudera_manager, cluster, 'Anaconda', anaconda_repo, anaconda_version)
 
-    if is_new_cluster:
+    if cluster_action == 'create_new':
         # Some services are sensitive to perceived health so CMS needs to be started
         # before everything else
         logging.info("Starting CMS")
         wait_on_success(cms.start())
 
         logging.info("Creating, configuring and starting Hadoop services")
-        services = create_services(user, key_name, cluster, nodes, isHA_enabled)
+        services = create_services(user, key_name, cluster, nodes, ha_enabled)
         # there isn't much space for parcels but we know we are not going to
         # install any so it's safe to disable this warning
         cloudera_manager.update_all_hosts_config(_CFG.CM_CFG['hosts_config'])
@@ -689,10 +731,12 @@ def setup_hadoop(
         # after a restart even though everything is actually fine
         logging.info("Restarting cloudera monitors")
         wait_on_success(cms.restart())
-    else:
+    elif cluster_action == 'expand':
         logging.info("Adding Hadoop services to new nodes")
-        services = expand_services(cluster, new_nodes)
-
+        expand_services(cluster, new_nodes)
+    elif cluster_action == 'reapply_config':
+        logging.info("Re-applying hadoop config to all nodes")
+        configure_services(cloudera_manager, cluster, nodes)
 
 def setup_sharedlib(nodes, user, key_name, hdfs, cm_api):
     # Get the namenode private ip address
