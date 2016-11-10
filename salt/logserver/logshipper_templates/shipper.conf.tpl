@@ -13,6 +13,12 @@ input {
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
    file {
+          path => ["/var/log/upstart/gobblin.log",
+                   "/var/log/pnda/gobblin/*.log"]
+          add_field => {"source" => "gobblin"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
           path => ["/var/log/salt/minion",
                    "/tmp/cm_setup.log"]
           add_field => {"source" => "provisioning"}
