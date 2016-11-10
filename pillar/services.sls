@@ -24,7 +24,7 @@ elasticsearch-cluster:
   directory: /opt/pnda
   logdir: /var/log/elasticsearch
   datadir: /var/lib/elasticsearch
-  confdir: /etc/elasticsearch
+#  confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
 jupyter:
