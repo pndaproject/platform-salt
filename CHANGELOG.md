@@ -4,8 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Changed
  - PNDA-2397: Generate the list of valid flavors dynamically. The valid values for the --branch parameter were hard coded, now they are generated based on the folder names under 'cloud-formation/'
- - Update OS volume sizes for instances
- - PNDA-2393: Increase the standard size from 30 GB to 50 GB and for kafka from 50 GB to 150 GB.
+ - PNDA-2393: Update OS volume sizes for instances. Increase the standard size from 30 GB to 50 GB and for kafka from 50 GB to 150 GB.
  
 ### Added
 - PNDA-2142: Allow subnet IP ranges to be specified in pnda_env.yaml and used as parameters to the cloud formation templates
