@@ -1,16 +1,13 @@
-{% set elasticsearch_version = salt['pillar.get']('elasticsearch:version', '') %}
-{% set cluster_name = salt['pillar.get']('elasticsearch:name', '') %}
-{% set elasticsearch_directory = salt['pillar.get']('elasticsearch:directory', '') %}
-{% set elasticsearch_datadir = salt['pillar.get']('elasticsearch:datadir', '') %}
-{% set elasticsearch_logdir = salt['pillar.get']('elasticsearch:logdir', '') %}
-{% set elasticsearch_confdir = salt['pillar.get']('elasticsearch:confdir', '') %}
-{% set elasticsearch_workdir = salt['pillar.get']('elasticsearch:workdir', '') %}
+{% set elasticsearch_version = salt['pillar.get']('elasticsearch-cluster:version', '') %}
+{% set cluster_name = salt['pillar.get']('elasticsearch-cluster:name', '') %}
+{% set elasticsearch_directory = salt['pillar.get']('elasticsearch-cluster:directory', '') %}
+{% set elasticsearch_datadir = salt['pillar.get']('elasticsearch-cluster:datadir', '') %}
+{% set elasticsearch_logdir = salt['pillar.get']('elasticsearch-cluster:logdir', '') %}
+#{% set elasticsearch_confdir = salt['pillar.get']('elasticsearch-cluster:confdir', '') %}
+{% set elasticsearch_workdir = salt['pillar.get']('elasticsearch-cluster:workdir', '') %}
 
+{% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config/' %}
 
-{% set is_master salt['grains.get']('master', '') %}
-{% set is_data salt['grains.get']('data', '') %}
-{% set is_ingest salt['grains.get']('ingest', '') %}
-{% set is_coordinating salt['grains.get']('coordinating', '') %}
 {% set minion_roles salt['grains.get']('roles', []) %}
 {% set num_of_maters salt['grains.get']('num_of_masters', 0) %}
 {% set master_name['grains.get']('master_name', '')}
@@ -70,12 +67,17 @@ elasticsearch-copy_configuration_elasticsearch:
     - group: elasticsearch
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
     - template: jinja
+    - context:
+      cluster_name: {{cluster_name}}
+      minion_roles: {{minion_roles}}
+      num_of_maters: {{num_of_master}}
+      master_name: {{master_name}}
 
 elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
-    - source: https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1.txt
+    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
+    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
@@ -93,13 +95,6 @@ elasticsearch-dl_and_extract_elasticsearch:
       confdir: {{elasticsearch_confdir }}
       workdir: {{elasticsearch_workdir }}
       defaultconfig: {{elasticsearch_confdir}}/elasticsearch.yml
-      is_master: {{is_master}}
-      is_data: {{is_data}}
-      is_ingest: {{is_ingest}}
-      is_coordinating: {{is_coordinating}}
-      minion_roles: {{minion_roles}}
-      num_of_maters: {{num_of_master}}
-      master_name: {{master_name}}
 
 elasticsearch-service:
   service.running:
