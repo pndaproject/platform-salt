@@ -20,7 +20,9 @@ setgid elasticsearch
 pre-start script
 
 end script
+script
+    export ES_HEAP_SIZE=10g
+	chdir {{ installdir }}
 
-chdir {{ installdir }}
-
-exec bin/elasticsearch -Des.default.config={{ defaultconfig }} -Des.default.path.logs={{ logdir }} -Des.default.path.data={{ datadir }} -Des.default.path.work={{ workdir }} -Des.default.path.conf={{ confdir }}
+	exec bin/elasticsearch -Des.default.path.logs={{ logdir }} -Des.default.path.data={{ datadir }} -Des.default.path.work={{ workdir }} -Des.default.path.conf={{ confdir }}
+end script
