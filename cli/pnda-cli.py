@@ -88,7 +88,7 @@ def display_elasped():
     elapsed = datetime.datetime.now() - START
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
 
-def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
+def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters = 1, esdatas = 0, escoord = 0, esmulti = 0):
     common_filepath = 'cloud-formation/cf-common.json'
     with open(common_filepath, 'r') as template_file:
         template_data = json.loads(template_file.read())
@@ -111,6 +111,16 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
         instance_kafka = json.dumps(template_data['Resources'].pop('instanceKafka'))
     if 'instanceZookeeper' in template_data['Resources']:
         instance_zookeeper = json.dumps(template_data['Resources'].pop('instanceZookeeper'))
+    if 'instanceESMaster' in template_data['Resources']:
+        instance_esmaster = json.dumps(template_data['Resources'].pop('instanceESMaster'))
+    if 'instanceESData' in template_data['Resources']:
+        instance_esdata = json.dumps(template_data['Resources'].pop('instanceESData'))
+    if 'instanceESIngest' in template_data['Resources']:
+        instance_esingest = json.dumps(template_data['Resources'].pop('instanceESIngest'))
+    if 'instanceESCoordinator' in template_data['Resources']:
+        instance_escoordinator = json.dumps(template_data['Resources'].pop('instanceESCoordinator'))
+    if 'instanceESMulti' in template_data['Resources']:
+        instance_esmulti = json.dumps(template_data['Resources'].pop('instanceESMulti'))
 
     for datanode in range(0, datanodes):
         instance_cdh_dn_n = instance_cdh_dn.replace('$node_idx$', str(datanode))
@@ -127,6 +137,13 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
     for zookeeper in range(0, zookeepers):
         instance_zookeeper_n = instance_zookeeper.replace('$node_idx$', str(zookeeper))
         template_data['Resources']['instanceZookeeper%s' % zookeeper] = json.loads(instance_zookeeper_n)
+
+    for esmaster in range(0, esmasters):
+        instance_esmaster_n = instance_esmaster.replace('$node_idx$', str(esmaster))
+        template_data['Resources']['instanceESMaster%s' % esmaster] = json.loads(instance_esmaster_n)
+
+
+
 
     return json.dumps(template_data)
 
@@ -196,6 +213,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
              'sudo chmod a+x /tmp/base.sh',
              '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
              'sudo chmod a+x /tmp/%s.sh' % node_type,
+             # TODO: Add param to number of master of instances (perhaps hard coded in salt?)
              '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR)], cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
