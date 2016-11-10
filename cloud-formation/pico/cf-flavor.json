@@ -25,6 +25,31 @@
       "Default" : "m3.xlarge",
       "Description" : "Instance type for cluster edge node"
     },
+    "instancetypeESMaster" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster master node"  
+    },
+    "instancetypeESIngest" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster ingest node"  
+    },
+    "instancetypeESData" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster data node"  
+    },
+    "instancetypeESCoordinator" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster coordinator node"  
+    },
+    "instancetypeESMulti" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster multi-role node"  
+    },
     "logVolumeSizeGb" : {
       "Type" : "String",
       "Default" : "1",
@@ -32,6 +57,211 @@
     }    
   },
   "Resources": {
+    "instanceESMaster":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeESMaster" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-es-master-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-es-master"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceESIngest":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeESIngest" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-es-ingest-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-es-ingest"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceESData":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeESData" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-es-data-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-es-data"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceESCoordinator":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeESCoordinator" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-es-coordinator-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-es-coordinator"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceESMulti":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeESMulti" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-es-multi-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-es-multi"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
     "instanceBastion": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -80,7 +310,8 @@
           }
         ]
       }
-    },    
+    },
+
     "instanceKafka": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
