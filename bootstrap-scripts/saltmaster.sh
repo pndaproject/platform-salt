@@ -186,3 +186,23 @@ echo $PNDA_CLUSTER-saltmaster > /etc/hostname
 hostname $PNDA_CLUSTER-saltmaster
 
 restart salt-master
+
+# Also include a minion on the saltmaster instance
+# Set the master address the minion will register itself with
+cat > /etc/salt/minion <<EOF
+master: $PNDA_SALTMASTER_IP
+EOF
+
+# Set the grains common to all minions
+cat >> /etc/salt/grains <<EOF
+pnda:
+  flavor: $PNDA_FLAVOR
+
+pnda_cluster: $PNDA_CLUSTER 
+EOF
+
+cat >> /etc/salt/minion <<EOF
+id: $PNDA_CLUSTER-saltmaster
+EOF
+
+restart salt-minion
