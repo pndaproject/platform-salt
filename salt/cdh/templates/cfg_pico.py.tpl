@@ -474,6 +474,7 @@ IMPALA_CFG = {
                                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                        'max_log_size': '100'}},
         {'type': 'CATALOGSERVER', 'config': {'log_dir': '/var/log/pnda/impala',
+                                             'catalogd_embedded_jvm_heapsize': "1073741824",
                                              'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                                              'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                              'max_log_size': '100'}},
