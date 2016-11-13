@@ -8,9 +8,9 @@
 
 {% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config/' %}
 
-{% set minion_roles salt['grains.get']('roles', []) %}
-{% set num_of_maters salt['grains.get']('num_of_masters', 0) %}
-{% set master_name['grains.get']('master_name', '')}
+{% set minion_roles = salt['grains.get']('roles', []) %}
+{% set num_of_maters = salt['grains.get']('num_of_masters', 0) %}
+{% set master_name = salt['grains.get']('master_name', '') %}
 elasticsearch-elasticsearch:
   group.present:
     - name: elasticsearch
