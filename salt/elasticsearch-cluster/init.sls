@@ -9,7 +9,7 @@
 {% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config/' %}
 
 {% set minion_roles = salt['grains.get']('roles', []) %}
-{% set num_of_maters = salt['grains.get']('num_of_masters', 0) %}
+{% set num_of_masters = salt['grains.get']('num_of_masters', 1) %}
 {% set master_name = salt['grains.get']('master_name', '') %}
 elasticsearch-elasticsearch:
   group.present:
@@ -70,7 +70,7 @@ elasticsearch-copy_configuration_elasticsearch:
     - context:
       cluster_name: {{cluster_name}}
       minion_roles: {{minion_roles}}
-      num_of_maters: {{num_of_master}}
+      num_of_masters: {{num_of_masters}}
       master_name: {{master_name}}
 
 elasticsearch-dl_and_extract_elasticsearch:
