@@ -1,4 +1,4 @@
-{% set elasticsearch_version = salt['pillar.get']('elasticsearch-cluster:version', '') %}
+{% set elasticsearch_version = salt['pillar.get']('elasticsearch-cluster:version', '5.0.0') %}
 {% set cluster_name = salt['pillar.get']('elasticsearch-cluster:name', '') %}
 {% set elasticsearch_directory = salt['pillar.get']('elasticsearch-cluster:directory', '') %}
 {% set elasticsearch_datadir = salt['pillar.get']('elasticsearch-cluster:datadir', '') %}
@@ -62,7 +62,7 @@ elasticsearch-create_elasticsearch_workdir:
 
 elasticsearch-copy_configuration_elasticsearch:
   file.managed:
-    - source: salt://elasticsearch/files/templates/elasticsearch.yml.tpl
+    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.yml.tpl
     - user: elasticsearch
     - group: elasticsearch
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
@@ -77,14 +77,14 @@ elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
     - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
+    #- source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
 
 /etc/init/elasticsearch.conf:
   file.managed:
-    - source: salt://elasticsearch/files/templates/elasticsearch.init.conf.tpl
+    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.init.conf.tpl
     - mode: 644
     - template: jinja
     - context:
