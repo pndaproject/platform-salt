@@ -21,5 +21,5 @@ script
 	#export ES_HEAP_SIZE=10g
 	chdir {{ installdir }}
 
-	exec bin/elasticsearch -Edefault.path.logs={{ logdir }} -Edefault.path.data={{ datadir }} -Edefault.path.work={{ workdir }} 
+	exec bin/elasticsearch -Edefault.path.logs={{ logdir }} -Edefault.path.data={{ datadir }}
 end script
