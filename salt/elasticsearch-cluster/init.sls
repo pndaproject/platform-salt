@@ -44,6 +44,15 @@ elasticsearch-create_elasticsearch_logdir:
     - dir_mode: 755
     - makedirs: True
 
+elasticsearch-dl_and_extract_elasticsearch:
+  archive.extracted:
+    - name: {{elasticsearch_directory}}
+    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
+    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
+    - archive_format: tar
+    - tar_options: v
+    - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
+
 elasticsearch-create_elasticsearch_confdir:
   file.directory:
     - name: {{elasticsearch_confdir}}
@@ -72,17 +81,6 @@ elasticsearch-copy_configuration_elasticsearch:
       minion_roles: {{minion_roles}}
       num_of_masters: {{num_of_masters}}
       master_name: {{master_name}}
-
-elasticsearch-dl_and_extract_elasticsearch:
-  archive.extracted:
-    - name: {{elasticsearch_directory}}
-    #- source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.0.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.0.tar.gz.sha1
-    #- source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
-    - archive_format: tar
-    - tar_options: v
-    - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
 
 /etc/init/elasticsearch.conf:
   file.managed:
