@@ -17,11 +17,8 @@ kill timeout 300
 setuid elasticsearch
 setgid elasticsearch
 
-pre-start script
-
-end script
 script
-    export ES_HEAP_SIZE=10g
+	#export ES_HEAP_SIZE=10g
 	chdir {{ installdir }}
 
 	exec bin/elasticsearch -Edefault.path.logs={{ logdir }} -Edefault.path.data={{ datadir }} -Edefault.path.work={{ workdir }} 
