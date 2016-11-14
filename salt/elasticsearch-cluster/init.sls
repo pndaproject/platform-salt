@@ -77,6 +77,7 @@ elasticsearch-copy_configuration_elasticsearch:
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
     - template: jinja
     - context:
+      logdir: {{elasticsearch_logdir }}
       cluster_name: {{cluster_name}}
       minion_roles: {{minion_roles}}
       num_of_masters: {{num_of_masters}}
