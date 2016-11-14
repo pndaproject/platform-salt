@@ -5,7 +5,7 @@ discovery.zen.ping.unicast.hosts: [{% for i in range(num_of_masters) %}"{{master
 node.master: {% if 'elk-es-master' in minion_roles %} true {% else %} false {% endif %}
 node.data: {% if 'elk-es-data' in minion_roles %} true {% else %} false {% endif %}
 node.ingest: {% if 'elk-es-ingest' in minion_roles %} true {% else %} false {% endif %}
-bootstrap.mlockall: true
+#bootstrap.mlockall: true
 discovery.zen.minimum_master_nodes: {{ (num_of_masters / 2 + 1) | int}}
 path.logs: {{logdir}}
 ##################### Elasticsearch Configuration Example #####################
@@ -328,7 +328,7 @@ path.logs: {{logdir}}
 #
 # 1. Disable multicast discovery (enabled by default):
 #
-discovery.zen.ping.multicast.enabled: false
+#discovery.zen.ping.multicast.enabled: false
 
 #
 # 2. Configure an initial list of master nodes in the cluster
