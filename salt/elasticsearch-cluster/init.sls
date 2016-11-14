@@ -5,8 +5,8 @@
 {% set elasticsearch_logdir = salt['pillar.get']('elasticsearch-cluster:logdir', '') %}
 #{% set elasticsearch_confdir = salt['pillar.get']('elasticsearch-cluster:confdir', '') %}
 {% set elasticsearch_workdir = salt['pillar.get']('elasticsearch-cluster:workdir', '') %}
-
-{% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config/' %}
+{% set elasticsearch_pluginsdir =  elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/plugins' % %}
+{% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config' %}
 
 {% set minion_roles = salt['grains.get']('roles', []) %}
 {% set num_of_masters = salt['grains.get']('num_of_masters', 1) %}
@@ -56,6 +56,14 @@ elasticsearch-dl_and_extract_elasticsearch:
 elasticsearch-create_elasticsearch_confdir:
   file.directory:
     - name: {{elasticsearch_confdir}}
+    - user: elasticsearch
+    - group: elasticsearch
+    - dir_mode: 755
+    - makedirs: True
+
+elasticsearch-create_elasticsearch_pluginsdir:
+  file.directory:
+    - name: {{elasticsearch_pluginsdir}}
     - user: elasticsearch
     - group: elasticsearch
     - dir_mode: 755
