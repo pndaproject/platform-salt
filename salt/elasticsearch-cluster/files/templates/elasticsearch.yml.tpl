@@ -7,7 +7,7 @@ node.data: {% if 'elk-es-data' in minion_roles %} true {% else %} false {% endif
 node.ingest: {% if 'elk-es-ingest' in minion_roles %} true {% else %} false {% endif %}
 bootstrap.mlockall: true
 discovery.zen.minimum_master_nodes: {{ (num_of_masters / 2 + 1) | int}}
-
+path.logs: {{logdir}}
 ##################### Elasticsearch Configuration Example #####################
 
 # This file contains an overview of various configuration settings,
