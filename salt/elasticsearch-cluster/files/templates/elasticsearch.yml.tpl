@@ -1,4 +1,4 @@
-cluster.name: {{ cluster-name }}
+cluster.name: {{ cluster_name }}
 node.name: ${HOSTNAME}
 network.host: 0.0.0.0
 discovery.zen.ping.unicast.hosts: [{% for i in range(num_of_masters) %}"{{master_name}}{{i}}"{% if i < num_of_masters-1 %}, {% endif %}{% endfor %}]
