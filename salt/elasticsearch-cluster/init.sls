@@ -5,7 +5,7 @@
 {% set elasticsearch_logdir = salt['pillar.get']('elasticsearch-cluster:logdir', '') %}
 #{% set elasticsearch_confdir = salt['pillar.get']('elasticsearch-cluster:confdir', '') %}
 {% set elasticsearch_workdir = salt['pillar.get']('elasticsearch-cluster:workdir', '') %}
-{% set elasticsearch_pluginsdir =  elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/plugins' % %}
+{% set elasticsearch_pluginsdir =  elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/plugins' %}
 {% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config' %}
 
 {% set minion_roles = salt['grains.get']('roles', []) %}
