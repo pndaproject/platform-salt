@@ -2,7 +2,7 @@
 
 description "elasticsearch service"
 
-limit nofile 32768 32768
+limit nofile 65536 65536
 
 start on runlevel [2345]
 stop on [!12345]
