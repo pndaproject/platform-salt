@@ -66,6 +66,31 @@
       "Type" : "String",
       "Default" : "0.0.0.0/0",
       "Description" : "Whitelist for external access to ssh"
+    },
+    "instancetypeESMaster" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster master node"  
+    },
+    "instancetypeESIngest" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster ingest node"  
+    },
+    "instancetypeESData" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster data node"  
+    },
+    "instancetypeESCoordinatior" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster coordinator node"  
+    },
+    "instancetypeESMulti" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK ES cluster multi-role node"  
     }
   },  
   "Resources": {
