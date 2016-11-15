@@ -21,7 +21,7 @@ roles:
   - elk-es-data
   - elk-es-ingest
   - elk-es-coordinator
-num_of_masters: $2
+num_of_masters: 2
 master_name: $PNDA_CLUSTER-elk-es-multi-
 EOF
 

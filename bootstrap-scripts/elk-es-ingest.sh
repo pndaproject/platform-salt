@@ -18,7 +18,7 @@ set -e
 cat >> /etc/salt/grains <<EOF
 roles:
   - elk-es-ingest
-num_of_masters: $2
+num_of_masters: 2
 master_name: $PNDA_CLUSTER-elk-es-master-
 EOF
 

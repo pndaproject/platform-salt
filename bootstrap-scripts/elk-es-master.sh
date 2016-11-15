@@ -13,12 +13,13 @@
 #  $1 - node index for this datanode - as this node type may be horizontally scaled, should start at 0.
 #  $2 - number of master nodes in this cluster.
 
+# TODO: FIX num_of_masters: $2
 set -e
 
 cat >> /etc/salt/grains <<EOF
 roles:
   - elk-es-master
-num_of_masters: $2
+num_of_masters: 2
 master_name: $PNDA_CLUSTER-elk-es-master-
 EOF
 
