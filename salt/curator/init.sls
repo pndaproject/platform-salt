@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 include:
   - python-pip
 
@@ -14,4 +16,5 @@ curator-update-crontab-inc-curator:
     - user: root
     - minute: 01
     - hour: 00
-    - name: /usr/local/bin/curator delete indices --older-than 6 --time-unit days --prefix logstash- --timestring \%Y.\%m.\%d >> /tmp/curator.log 2>&1
+    - name: /usr/local/bin/curator delete indices --older-than {{ flavor_cfg.days_to_keep }} --time-unit days --prefix logstash- --timestring \%Y.\%m.\%d >> /tmp/curator.log 2>&1
+
