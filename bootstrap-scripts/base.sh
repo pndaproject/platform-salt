@@ -13,13 +13,15 @@ apt-get update
 apt-get -y install xfsprogs
 
 # Mount the log volume, this is always xvdc
-echo "Mounting xvdc for logs"
-umount /dev/xvdc || echo 'not mounted'
-mkfs.xfs -f /dev/xvdc
-mkdir -p /var/log/panda
-sed -i "/xvdc/d" /etc/fstab
-echo "/dev/xvdc /var/log/panda auto defaults,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
-
+if [ -b /dev/xvdc ];
+then
+   echo "Mounting xvdc for logs"
+   umount /dev/xvdc || echo 'not mounted'
+   mkfs.xfs -f /dev/xvdc
+   mkdir -p /var/log/panda
+   sed -i "/xvdc/d" /etc/fstab
+   echo "/dev/xvdc /var/log/panda auto defaults,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
+fi
 # Mount the other log volumes if they exist, up to 3 more may be mounted but this list could be extended if required
 DISKS="xvdd xvde xvdf"
 DISK_IDX=0

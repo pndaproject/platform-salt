@@ -29,7 +29,7 @@
     },
     "logVolumeSizeGb" : {
       "Type" : "String",
-      "Default" : "10",
+      "Default" : "120",
       "Description" : "Size in GB for the log volume"
     },
     "vpcCidr" : {
