@@ -28,14 +28,15 @@ import atexit
 import traceback
 import datetime
 import tarfile
+import Queue
 from threading import Thread
 
-import yaml
-import requests
 import argparse
 from argparse import RawTextHelpFormatter
+import requests
 import boto.cloudformation
 import boto.ec2
+import yaml
 
 import subprocess_to_log
 
@@ -177,7 +178,7 @@ def ssh(cmds, cluster, host):
     if ret_val != 0:
         raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (host, LOG_FILE_NAME))
 
-def bootstrap(instance, saltmaster, cluster, flavor, branch):
+def bootstrap(instance, saltmaster, cluster, flavor, branch, error_queue):
     ret_val = None
     try:
         ip_address = instance['private_ip_address']
@@ -199,7 +200,8 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch):
              '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR)], cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
-    return ret_val
+        CONSOLE.error(ret_val)
+        error_queue.put(ret_val)
 
 def check_config_file():
     if not os.path.exists('pnda_env.yaml'):
@@ -367,9 +369,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     bootstrap_threads = []
+    bootstrap_errors = Queue.Queue()
     for key, instance in instance_map.iteritems():
         if '-' + NODE_CONFIG['salt-master-instance'] not in key:
-            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -378,8 +381,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     for thread in bootstrap_threads:
         ret_val = thread.join()
-        if ret_val is not None:
-            raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
+
+    while not bootstrap_errors.empty():
+        ret_val = bootstrap_errors.get()
+        raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
 
     time.sleep(30)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
@@ -565,7 +570,7 @@ def main():
     kafkanodes = args.kafka_nodes
     zknodes = args.zk_nodes
     flavor = args.flavour
-    keyname = args.keyname    
+    keyname = args.keyname
     no_config_check = args.no_config_check
 
     if not os.path.basename(os.getcwd()) == "cli":
