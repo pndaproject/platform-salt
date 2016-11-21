@@ -101,11 +101,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },
-          {
-              "DeviceName" : "/dev/sdc",
-              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }       
         ],
         "NetworkInterfaces": [
           {
@@ -150,11 +146,11 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "500" }
+              "Ebs" : { "VolumeSize" : "250" }
           },
           {
               "DeviceName" : "/dev/sdc",
-              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+              "Ebs" : { "VolumeSize" : "250" }
           }        
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
@@ -193,15 +189,11 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
           },
           {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
-          }          
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }         
         ],       
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -238,13 +230,17 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
+          },
           {
-              "DeviceName"  : "/dev/sdc",
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          },                  
+          {
+              "DeviceName"  : "/dev/sdd",
               "VirtualName" : "ephemeral0"
           },
           {
-              "DeviceName"  : "/dev/sdd",
+              "DeviceName"  : "/dev/sde",
               "VirtualName" : "ephemeral1"
           }          
         ],
@@ -283,14 +279,6 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
-          },
-          {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
           }          
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
@@ -328,15 +316,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
-          },
-          {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
-          }          
+          }         
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -419,14 +399,10 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
           },
           {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
           }          
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
@@ -505,14 +481,10 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
           },
           {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
           }          
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
@@ -550,14 +522,6 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          },         
-          {
-              "DeviceName"  : "/dev/sdc",
-              "VirtualName" : "ephemeral0"
-          },
-          {
-              "DeviceName"  : "/dev/sdd",
-              "VirtualName" : "ephemeral1"
           }          
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]

@@ -27,7 +27,7 @@
     },
     "logVolumeSizeGb" : {
       "Type" : "String",
-      "Default" : "1",
+      "Default" : "10",
       "Description" : "Size in GB for the log volume"
     }    
   },
@@ -63,11 +63,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "20" }
-          },
-          {
-              "DeviceName" : "/dev/sdc",
-              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }       
         ],
         "NetworkInterfaces": [
           {
