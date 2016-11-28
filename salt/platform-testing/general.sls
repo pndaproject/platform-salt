@@ -28,7 +28,7 @@
 
 {%- set dm_hosts = [] -%}
 {%- set dm_nodes = salt['pnda.ip_addresses']('deployment_manager') -%}
-{%- if dm_nodes is not none and dm_nodes|length > 0 -%}   
+{%- if dm_nodes is not none and dm_nodes|length > 0 -%}
   {%- for ip in dm_nodes -%}
   {%- do dm_hosts.append("http://" + ip + ':' + dm_port) -%}
   {%- endfor -%}
@@ -53,12 +53,12 @@ platform-testing-general-install_python_deps:
 
 platform-testing-general-dl-and-extract:
   archive.extracted:
-    - name: {{ platform_testing_directory }} 
+    - name: {{ platform_testing_directory }}
     - source: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
     - source_hash: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }} 
+    - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
 
 platform-testing-general-install-requirements:
   pip.installed:
@@ -120,7 +120,7 @@ platform-testing-general-crontab-zookeeper:
     - user: root
     - name: sudo service platform-testing-general-zookeeper start
 
-{%- if dm_hosts is not none and dm_hosts|length > 0 %}   
+{%- if dm_hosts is not none and dm_hosts|length > 0 %}
 platform-testing-general-install-requirements-dm-blackbox:
   pip.installed:
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/dm_blackbox/requirements.txt
