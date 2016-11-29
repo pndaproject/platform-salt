@@ -144,8 +144,3 @@ platform-testing-general-crontab-dm-blackbox:
     - user: root
     - name: sudo service platform-testing-general-dm-blackbox start
 {%- endif %}
-
-platform-testing-general-crontab-reload:
-  service.running:
-    - name: cron
-    - reload: True

@@ -106,9 +106,4 @@ platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH-BLACKBOX
     - user: root
-    - name: sudo service platform-testing-cdh-blackbox start
-
-platform-testing-cdh-crontab-reload:
-  service.running:
-    - name: cron
-    - reload: True
+    - name: service platform-testing-cdh-blackbox start
