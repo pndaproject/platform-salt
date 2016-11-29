@@ -5,6 +5,8 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
+{% set virtual_env_dir = install_dir + "/package_repository/venv" %}
+
 include:
   - python-pip
 
@@ -15,14 +17,16 @@ package-repository-dl-and-extract:
     - source_hash: {{ packages_server }}/{{ package_repository_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/{{ package_repository_directory_name }} 
+    - if_missing: {{ install_dir }}/{{ package_repository_directory_name }}
 
-package-repository-install_python_deps:
-  pip.installed:
+package-repository-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ package_repository_directory_name }}/requirements.txt
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip
+      - archive: package-repository-dl-and-extract
 
 package-repository-create_package_repository_link:
   file.symlink:
@@ -34,6 +38,8 @@ package-repository-copy_configuration:
     - name: {{ install_dir }}/{{ package_repository_directory_name }}/pr-config.json
     - source: salt://package-repository/templates/pr-config.json.tpl
     - template: jinja
+    - require:
+      - archive: package-repository-dl-and-extract
 
 package-repository-copy_upstart:
   file.managed:
@@ -52,7 +58,7 @@ package-repository-stop_package_repository:
 {% if package_repository_fs_type == 'sshfs' %}
 {% include "package-repository/sshfs.sls" %}
 
-{% elif package_repository_fs_type == 'local' %}    
+{% elif package_repository_fs_type == 'local' %}
 {% set package_repository_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/mnt/packages') %}
 package-repository-create_fs_location_path:
   file.directory:
