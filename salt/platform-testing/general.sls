@@ -4,6 +4,8 @@
 
 {% set platform_testing_package = 'platform-testing-general' %}
 
+{% set virtual_env_dir = platform_testing_directory + "/" + platform_testing_package + "-" + platform_testing_version + "/venv" %}
+
 {% set kafka_jmx_port = '9050' %}
 {% set console_port = '3001' %}
 {% set zookeeper_port = '2181' %}
@@ -43,14 +45,6 @@ platform-testing-general-install_dev_deps:
       - libsasl2-dev
       - g++
 
-platform-testing-general-install_python_deps:
-  pip.installed:
-    - pkgs:
-      - setuptools == 3.4.4
-    - reload_modules: True
-    - require:
-      - pip: python-pip-install_python_pip
-
 platform-testing-general-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }}
@@ -60,11 +54,13 @@ platform-testing-general-dl-and-extract:
     - tar_options: v
     - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
 
-platform-testing-general-install-requirements:
-  pip.installed:
+platform-testing-general-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
     - require:
       - pip: python-pip-install_python_pip
+      - archive: platform-testing-general-dl-and-extract
 
 platform-testing-general-create-link:
   file.symlink:
@@ -73,9 +69,10 @@ platform-testing-general-create-link:
 
 platform-testing-general-install-requirements-kafka:
   pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/kafka/requirements.txt
     - require:
-      - pip: python-pip-install_python_pip
+      - virtualenv: platform-testing-general-create-venv
 
 platform-testing-general-kafka_upstart:
   file.managed:
@@ -98,9 +95,10 @@ platform-testing-general-crontab-kafka:
 
 platform-testing-general-install-requirements-zookeeper:
   pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/zookeeper/requirements.txt
     - require:
-      - pip: python-pip-install_python_pip
+      - virtualenv: platform-testing-general-create-venv
 
 platform-testing-general-zookeeper-upstart:
   file.managed:
@@ -123,9 +121,10 @@ platform-testing-general-crontab-zookeeper:
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}
 platform-testing-general-install-requirements-dm-blackbox:
   pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/dm_blackbox/requirements.txt
     - require:
-      - pip: python-pip-install_python_pip
+      - virtualenv: platform-testing-general-create-venv
 
 platform-testing-general-dm-blackbox_upstart:
   file.managed:
