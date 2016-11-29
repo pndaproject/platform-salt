@@ -5,35 +5,35 @@
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 
+{% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
+
 include:
   - python-pip
 
-data-service-install_python_deps:
-  pip.installed:
-    - pkgs:
-      - pyhdfs
-      - happybase
-      - cm_api == 11.0.0
-      - tornado
-      - tornado-json
-      - futures
-    - reload_modules: True
-    - require:
-      - pip: python-pip-install_python_pip
-
 data-service-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ packages_server }}/{{ app_package }}
     - source_hash: {{ packages_server }}/{{ app_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/{{ app_directory_name }} 
+    - if_missing: {{ install_dir }}/{{ app_directory_name }}
+
+data-service-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
+    - requirements: salt://data-service/files/requirements.txt
+    - reload_modules: True
+    - require:
+      - pip: python-pip-install_python_pip
+      - archive: data-service-dl-and-extract
 
 data-service-create_link:
   file.symlink:
     - name: {{ install_dir }}/data-service
     - target: {{ install_dir }}/{{ app_directory_name }}
+    - require:
+      - archive: data-service-dl-and-extract
 
 data-service-copy_config:
   file.managed:
@@ -42,6 +42,8 @@ data-service-copy_config:
     - template: jinja
     - defaults:
         location: {{ pnda_master_dataset_location }}
+    - require:
+      - archive: data-service-dl-and-extract
 
 data-service-copy_upstart:
   file.managed:
