@@ -91,7 +91,7 @@ platform-testing-general-crontab-kafka:
   cron.present:
     - identifier: PLATFORM-TESTING-KAFKA
     - user: root
-    - name: sudo service platform-testing-general-kafka start
+    - name: service platform-testing-general-kafka start
 
 platform-testing-general-install-requirements-zookeeper:
   pip.installed:
@@ -142,5 +142,5 @@ platform-testing-general-crontab-dm-blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-DM-BLACKBOX
     - user: root
-    - name: sudo service platform-testing-general-dm-blackbox start
+    - name: service platform-testing-general-dm-blackbox start
 {%- endif %}

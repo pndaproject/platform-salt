@@ -78,7 +78,7 @@ platform-testing-cdh-crontab-cdh:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
-    - name: sudo service platform-testing-cdh start
+    - name: service platform-testing-cdh start
 
 platform-testing-cdh-install-requirements-cdh_blackbox:
   pip.installed:
