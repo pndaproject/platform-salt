@@ -11,6 +11,11 @@
 {% set minion_roles = salt['grains.get']('roles', []) %}
 {% set num_of_masters = salt['grains.get']('num_of_masters', 1) %}
 {% set master_name = salt['grains.get']('master_name', '') %}
+
+{%- set pnda_cluster = salt['pnda.cluster_name']() %}
+{%- set es_master_grains = salt['mine.get']('G@pnda_cluster:{} and G@roles:elk-es-master'.format(pnda_cluster), 'grains.items',
+expr_form='compound') %}
+
 elasticsearch-elasticsearch:
   group.present:
     - name: elasticsearch
@@ -90,6 +95,7 @@ elasticsearch-copy_configuration_elasticsearch:
       minion_roles: {{minion_roles}}
       num_of_masters: {{num_of_masters}}
       master_name: {{master_name}}
+      list_of_masters: {{ es_master_hostnames }}
 
 /etc/init/elasticsearch.conf:
   file.managed:
