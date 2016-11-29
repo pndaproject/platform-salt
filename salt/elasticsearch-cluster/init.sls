@@ -17,7 +17,7 @@
 expr_form='compound') %}
 
 {% set es_master_hostnames = [] %}
-{% for _minion_id, grains in es_master_grains.values() %}
+{% for grains in es_master_grains.values() %}
   es_master_hostnames.append(grains['fqdn'])
 {% endfor %}
 
