@@ -5,7 +5,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
-{% set virtual_env_dir = install_dir + "/package_repository/venv" %}
+{% set virtual_env_dir = install_dir + "/" + package_repository_directory_name + "/venv" %}
 
 include:
   - python-pip

@@ -1,0 +1,6 @@
+pyhdfs
+happybase
+cm_api==11.0.0
+tornado
+tornado-json
+futures
