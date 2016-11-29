@@ -16,6 +16,11 @@
 {%- set es_master_grains = salt['mine.get']('G@pnda_cluster:{} and G@roles:elk-es-master'.format(pnda_cluster), 'grains.items',
 expr_form='compound') %}
 
+{% set es_master_hostnames = [] %}
+{% for _minion_id, grains in es_master_grains.values() %}
+{% es_master_hostnames.append(grains['fqdn']) %}
+{% endfor %}
+
 elasticsearch-elasticsearch:
   group.present:
     - name: elasticsearch
