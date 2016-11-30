@@ -1,8 +1,7 @@
 cluster.name: {{ cluster_name }}
 node.name: ${HOSTNAME}
 network.host: 0.0.0.0
-discovery.zen.ping.unicast.hosts: {{list_of_masters|string}} # [{% for i in range(num_of_masters) %}"{{master_name}}{{i}}"{% if i < num_of_masters-1 %}, {% endif %}{% endfor %}]
-#node.master: {% if 'elk-es-master' in minion_roles %} true {% else %} false {% endif %}
+discovery.zen.ping.unicast.hosts: {{list_of_masters|string}} 
 node.master: {% if 'elk-es-master' in minion_roles %} true {% else %} false {% endif %}
 node.data: {% if 'elk-es-data' in minion_roles %} true {% else %} false {% endif %}
 node.ingest: {% if 'elk-es-ingest' in minion_roles %} true {% else %} false {% endif %}
