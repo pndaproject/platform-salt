@@ -96,16 +96,16 @@ platform-testing-general-crontab-kafka:
     - user: root
     - name: sudo service platform-testing-general-kafka start
 
-platform-testing-general-install-requirements-kafka-blackbox:
+platform-testing-general-install-requirements-zookeeper:
   pip.installed:
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/kafka_blackbox/requirements.txt
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/zookeeper/requirements.txt
     - require:
       - pip: python-pip-install_python_pip
 
-platform-testing-general-kafka-blackbox_upstart:
+platform-testing-general-zookeeper-upstart:
   file.managed:
-    - source: salt://platform-testing/templates/platform-testing-general-kafka-blackbox.conf.tpl
-    - name: /etc/init/platform-testing-general-kafka-blackbox.conf
+    - source: salt://platform-testing/templates/platform-testing-general-zookeeper.conf.tpl
+    - name: /etc/init/platform-testing-general-zookeeper.conf
     - mode: 644
     - template: jinja
     - context:
@@ -114,35 +114,11 @@ platform-testing-general-kafka-blackbox_upstart:
       console_hosts: {{ console_hosts }}
       kafka_zookeepers: {{ kafka_zookeepers }}
 
-platform-testing-general-crontab-kafka-blackbox:
-  cron.present:
-    - identifier: PLATFORM-TESTING-KAFKA-BLACKBOX
-    - user: root
-    - name: sudo service platform-testing-general-kafka-blackbox start
-
-platform-testing-general-install-requirements-zookeeper-blackbox:
-  pip.installed:
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/zookeeper_blackbox/requirements.txt
-    - require:
-      - pip: python-pip-install_python_pip
-
-platform-testing-general-zookeeper-blackbox_upstart:
-  file.managed:
-    - source: salt://platform-testing/templates/platform-testing-general-zookeeper-blackbox.conf.tpl
-    - name: /etc/init/platform-testing-general-zookeeper-blackbox.conf
-    - mode: 644
-    - template: jinja
-    - context:
-      platform_testing_directory: {{ platform_testing_directory }}
-      platform_testing_package: {{ platform_testing_package }}
-      console_hosts: {{ console_hosts }}
-      kafka_zookeepers: {{ kafka_zookeepers }}
-
-platform-testing-general-crontab-zookeeper-blackbox:
+platform-testing-general-crontab-zookeeper:
   cron.present:
     - identifier: PLATFORM-TESTING-ZOOKEEPER
     - user: root
-    - name: sudo service platform-testing-general-zookeeper-blackbox start
+    - name: sudo service platform-testing-general-zookeeper start
 
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}   
 platform-testing-general-install-requirements-dm-blackbox:
