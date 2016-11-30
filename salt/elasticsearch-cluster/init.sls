@@ -18,7 +18,7 @@ expr_form='compound') %}
 
 {% set es_master_hostnames = [] %}
 {% for grains in es_master_grains.values() %}
-  es_master_hostnames.append(grains['fqdn'])
+  {% do es_master_hostnames.append(grains['fqdn']) %}
 {% endfor %}
 
 elasticsearch-elasticsearch:
