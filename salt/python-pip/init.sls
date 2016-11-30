@@ -3,6 +3,7 @@ python-pip-install-pip-package:
     - pkgs:
       - python-pip
       - python-dev
+      - python-virtualenv
 
 python-pip-install_python_pip:
   pip.installed:
