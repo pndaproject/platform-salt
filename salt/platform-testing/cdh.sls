@@ -78,7 +78,7 @@ platform-testing-cdh-crontab-cdh:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
-    - name: service platform-testing-cdh start
+    - name: /sbin/start platform-testing-cdh
 
 platform-testing-cdh-install-requirements-cdh_blackbox:
   pip.installed:
@@ -106,4 +106,4 @@ platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH-BLACKBOX
     - user: root
-    - name: service platform-testing-cdh-blackbox start
+    - name: /sbin/start platform-testing-cdh-blackbox
