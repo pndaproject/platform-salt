@@ -128,6 +128,9 @@ elastic-ulimit:
     - name: ulimit -Sn `ulimit -Hn`
 
 elastic-sysctl:
-  cmd.run:
-    - name: sysctl -w vm.max_map_count=262144
+  #cmd.run:
+  #  - name: sysctl -w vm.max_map_count=262144
+  sysctl.present:
+    name: vm.max_map_count
+    value: 262144
 
