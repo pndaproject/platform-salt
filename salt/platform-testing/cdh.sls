@@ -4,6 +4,8 @@
 
 {% set platform_testing_package = 'platform-testing-cdh' %}
 
+{% set virtual_env_dir = platform_testing_directory + "/" + platform_testing_package + "-" + platform_testing_version + "/venv" %}
+
 {% set console_port = '3001' %}
 {% set cm_port = '7180' %}
 
@@ -17,12 +19,12 @@ include:
 
 platform-testing-cdh-dl-and-extract:
   archive.extracted:
-    - name: {{ platform_testing_directory }} 
+    - name: {{ platform_testing_directory }}
     - source: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
     - source_hash: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }} 
+    - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
 
 platform-testing-cdh-install_dev_deps:
   pkg.installed:
@@ -30,30 +32,32 @@ platform-testing-cdh-install_dev_deps:
       - libsasl2-dev
       - g++
 
-platform-testing-cdh-install_python_deps:
-  pip.installed:
-    - pkgs:
-      - setuptools == 3.4.4
-    - reload_modules: True
-    - require:
-      - pip: python-pip-install_python_pip
-
-platform-testing-cdh-install-requirements:
-  pip.installed:
+platform-testing-cdh-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
     - require:
       - pip: python-pip-install_python_pip
+      - archive: platform-testing-cdh-dl-and-extract
 
 platform-testing-cdh-create-link:
   file.symlink:
     - name: {{ platform_testing_directory }}/{{platform_testing_package}}
     - target: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
 
+platform-testing-cdh-install-requirements:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
+    - require:
+      - virtualenv: platform-testing-cdh-create-venv
+
 platform-testing-cdh-install-requirements-cdh:
   pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
     - require:
-      - pip: python-pip-install_python_pip
+      - virtualenv: platform-testing-cdh-create-venv
 
 platform-testing-cdh_upstart:
   file.managed:
@@ -74,13 +78,14 @@ platform-testing-cdh-crontab-cdh:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
-    - name: sudo service platform-testing-cdh start
+    - name: /sbin/start platform-testing-cdh
 
 platform-testing-cdh-install-requirements-cdh_blackbox:
   pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
     - require:
-      - pip: python-pip-install_python_pip
+      - virtualenv: platform-testing-cdh-create-venv
 
 platform-testing-cdh-backbox_upstart:
   file.managed:
@@ -101,9 +106,4 @@ platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH-BLACKBOX
     - user: root
-    - name: sudo service platform-testing-cdh-blackbox start
-
-platform-testing-cdh-crontab-reload:
-  service.running:
-    - name: cron
-    - reload: True
+    - name: /sbin/start platform-testing-cdh-blackbox

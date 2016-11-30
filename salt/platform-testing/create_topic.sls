@@ -19,6 +19,6 @@ platform-testing-topic-check-script:
 platform-testing-create-topic:
   cmd.run:
     - name: {{ prefix }}/bin/kafka-topics.sh --zookeeper {{ kafka_zookeepers|join(',') }} --create --topic {{ topic }} --partitions {{ partitions }} --replication-factor {{ replication }}
-    - unless: 
+    - unless:
       - {{ prefix }}/topic-check.sh {{ prefix }} {{ kafka_zookeepers|join(',') }} {{ topic }}
 
