@@ -88,6 +88,7 @@ def display_elasped():
     elapsed = datetime.datetime.now() - START
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
 
+
 def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis):
     common_filepath = 'cloud-formation/cf-common.json'
     with open(common_filepath, 'r') as template_file:
@@ -765,10 +766,26 @@ def main():
         kafkanodes = 0
     if zknodes is None:
         zknodes = 0
+    if esMasterNodes is None:
+        esMasterNodes = 0
+    if esDataNodes is None:
+        esDataNodes = 0
+    if esIngestNodes is None:
+        esIngestNodes = 0
+    if esCoordinatorNodes is None:
+        esCoordinatorNodes = 0
+    if esMultiNodes is None:
+        esMultiNodes = 0
+
     node_limit("datanodes", datanodes)
     node_limit("opentsdb-nodes", tsdbnodes)
     node_limit("kafka-nodes", kafkanodes)
     node_limit("zk-nodes", zknodes)
+    node_limit("elk-es-master", esMasterNodes)
+    node_limit("elk-es-data", esDataNodes)
+    node_limit("elk-es-ingest", esIngestNodes)
+    node_limit("elk-es-coordinator", esCoordinatorNodes)
+    node_limit("elk-es-multi", esMultiNodes)
 
     template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes,
                                            esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes, esMultiNodes)
