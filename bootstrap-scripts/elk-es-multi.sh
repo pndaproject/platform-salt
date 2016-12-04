@@ -11,7 +11,6 @@
 
 # Parameters:
 #  $1 - node index for this datanode - as this node type may be horizontally scaled, should start at 0.
-#  $2 - number of master nodes in this cluster (in this case all nodes are master nodes).
 
 set -e
 
