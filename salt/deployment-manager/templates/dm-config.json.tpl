@@ -17,8 +17,6 @@
 
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
-
-{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {%- set opentsdb_port = salt['pillar.get']('opentsdb:bind_port', 4242) -%}
 {%- set opentsdb_nodes = salt['pnda.ip_addresses']('opentsdb') -%}
 {%- set opentsdb_host = '' -%}
