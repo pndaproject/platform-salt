@@ -48,6 +48,7 @@ kafkamanager:
 opentsdb:
   version: 2.2.0
   release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
+  bind_port: 4242
 
 grafana:
   version: 3.1.1-1470047149
