@@ -27,6 +27,12 @@ elasticsearch-cluster:
 #  confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
+logstash-cluster:
+  version: 5.0.2
+  directory: /opt/pnda
+  logdir: /var/log/logstash
+  confdir: /etc/logstash
+
 jupyter:
   version: 4.2.0
   confdir: /usr/local/etc/jupyter
