@@ -288,7 +288,9 @@ HDFS_CFG = {
                            'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                            'max_log_backup_index': '2',
-                           'max_log_size': '100'}
+                           'max_log_size': '100',
+                           'dfs_datanode_max_locked_memory':'1073741824'
+                           }
             },
             {
                 "type": "SECONDARYNAMENODE",
@@ -305,6 +307,7 @@ HDFS_CFG = {
                 "type": "HTTPFS",
                 "config": {'httpfs_log_dir': '/var/log/pnda/hadoop-httpfs',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
 						   'max_log_backup_index': '2',
 						   'max_log_size': '100'}
             }
@@ -348,7 +351,7 @@ HBASE_CFG = {
         {
             "type": "HBASERESTSERVER",
             "config": {'hbase_restserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_restserver_java_heapsize': '209715200',
+                       'hbase_restserver_java_heapsize': '402653184',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
@@ -357,7 +360,7 @@ HBASE_CFG = {
         {
             "type": "HBASETHRIFTSERVER",
             "config": {'hbase_thriftserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_thriftserver_java_heapsize': '209715200',
+                       'hbase_thriftserver_java_heapsize': '402653184',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
@@ -365,7 +368,7 @@ HBASE_CFG = {
         },
         {
             "type": "MASTER",
-            "config": {'hbase_master_log_dir': '/var/log/pnda/hbase', 'hbase_master_java_heapsize': '209715200',
+            "config": {'hbase_master_log_dir': '/var/log/pnda/hbase', 'hbase_master_java_heapsize': '402653184',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
@@ -374,7 +377,7 @@ HBASE_CFG = {
         {
             "type": "REGIONSERVER",
             "config": {'hbase_regionserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_regionserver_java_heapsize': '536870912',
+                       'hbase_regionserver_java_heapsize': '805306368',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
