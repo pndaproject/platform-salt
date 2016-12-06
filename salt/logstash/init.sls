@@ -54,7 +54,7 @@ logstash-create_logstash_confdir:
 
 logstash-copy_configuration_logstash:
   file.managed:
-    - source: salt://logstash-cluster/files/templates/logstash.conf.tpl
+    - source: salt://logstash/files/templates/logstash.conf.tpl
     - user: logstash
     - group: logstash
     - name: {{logstash_confdir}}/logstash.conf
@@ -64,7 +64,7 @@ logstash-copy_configuration_logstash:
 
 /etc/init/logstash.conf:
   file.managed:
-    - source: salt://logstash-cluster/files/templates/logstash.init.conf.tpl
+    - source: salt://logstash/files/templates/logstash.init.conf.tpl
     - mode: 644
     - template: jinja
     - context:
@@ -74,7 +74,7 @@ logstash-copy_configuration_logstash:
 
 logstash-service:
   service.running:
-    - name: logstash
+    - name: logstash-cluster
     - enable: true
     - watch:
       - file: /etc/init/logstash.conf
