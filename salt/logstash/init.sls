@@ -27,14 +27,6 @@ logstash-create_logstash_dir:
     - dir_mode: 777
     - makedirs: True
 
-logstash-create_logstash_datadir:
-  file.directory:
-    - name: {{logstash_datadir}}
-    - user: logstash
-    - group: logstash
-    - dir_mode: 755
-    - makedirs: True
-
 logstash-create_logstash_logdir:
   file.directory:
     - name: {{logstash_logdir}}
@@ -78,7 +70,6 @@ logstash-copy_configuration_logstash:
     - context:
       installdir: {{logstash_directory}}/logstash-{{ logstash_version }}
       logdir: {{logstash_logdir }}
-      datadir: {{logstash_datadir }}
       confpath: {{logstash_confdir }}/logstash.conf
 
 logstash-service:
