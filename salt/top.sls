@@ -102,7 +102,7 @@
    - match: grain
    - elasticsearch-cluster
 
-   'roles:elk-logstash':
+  'roles:elk-logstash':
    - match: grain
    - logstash
 
