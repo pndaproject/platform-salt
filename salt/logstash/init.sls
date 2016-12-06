@@ -2,6 +2,8 @@
 {% set logstash_directory = salt['pillar.get']('logstash-cluster:directory', '') %}
 {% set logstash_logdir = salt['pillar.get']('logstash-cluster:logdir', '') %}
 {% set logstash_confdir = salt['pillar.get']('logstash-cluster:confdir', '') %}
+{% set logstash_datadir = salt['pillar.get']('logstash-cluster:datadir', '') %}
+
 
 {%- set es_ingest_grains = salt['mine.get']('G@roles:elk-es-ingest', 'grains.items', expr_form='compound') %}
 
@@ -30,6 +32,14 @@ logstash-create_logstash_dir:
 logstash-create_logstash_logdir:
   file.directory:
     - name: {{logstash_logdir}}
+    - user: logstash
+    - group: logstash
+    - dir_mode: 755
+    - makedirs: True
+
+elasticsearch-create_elasticsearch_datadir:
+  file.directory:
+    - name: {{logstash_datadir}}
     - user: logstash
     - group: logstash
     - dir_mode: 755
@@ -71,6 +81,7 @@ logstash-copy_configuration_logstash:
       installdir: {{logstash_directory}}/logstash-{{ logstash_version }}
       logdir: {{logstash_logdir }}
       confpath: {{logstash_confdir }}/logstash.conf
+      datadir: {{logstash_datadir}}
 
 logstash-service:
   service.running:

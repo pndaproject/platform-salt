@@ -18,5 +18,5 @@ setgid logstash-cluster
 script
 	chdir {{ installdir }}
 
-	exec bin/logstash -l {{logdir}} -f {{confpath}}
+	exec bin/logstash -l {{logdir}} -f {{confpath}} --path.data {{datadir}}
 end script

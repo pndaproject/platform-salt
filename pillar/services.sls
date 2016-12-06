@@ -32,6 +32,7 @@ logstash-cluster:
   directory: /opt/pnda
   logdir: /var/log/logstash
   confdir: /etc/logstash
+  datadir: /var/lib/logstash
 
 jupyter:
   version: 4.2.0
