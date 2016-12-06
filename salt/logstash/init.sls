@@ -60,7 +60,7 @@ logstash-copy_configuration_logstash:
     - name: {{logstash_confdir}}/logstash.conf
     - template: jinja
     - context:
-      list_of_masters: {{ es_ingest_hostnames }}
+      list_of_ingest: {{ es_ingest_hostnames }}
 
 /etc/init/logstash.conf:
   file.managed:
@@ -74,7 +74,7 @@ logstash-copy_configuration_logstash:
 
 logstash-service:
   service.running:
-    - name: logstash-cluster
+    - name: logstash
     - enable: true
     - watch:
       - file: /etc/init/logstash.conf
