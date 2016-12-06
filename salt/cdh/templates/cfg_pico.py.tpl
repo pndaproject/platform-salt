@@ -144,16 +144,16 @@ MAPRED_CFG = {
     "role_cfg": [
         {
             "type": "GATEWAY",
-            "config": {'mapred_reduce_tasks': 3, 'mapred_submit_replication': 1,
-                       'io_sort_mb': '128',
-                       'mapred_reduce_tasks': '4',
-                       'mapreduce_client_java_heapsize': '213909504',
-                       'mapreduce_map_java_opts_max_heap': '213909504',
-                       'mapreduce_map_memory_mb': '256',
-                       'mapreduce_reduce_java_opts_max_heap': '427819008',
-                       'mapreduce_reduce_memory_mb': '512',
-                       'yarn_app_mapreduce_am_max_heap': '427819008',
-                       'yarn_app_mapreduce_am_resource_mb': '512'}
+            "config": {'mapred_reduce_tasks': 3, 
+                       'mapred_submit_replication': 1,
+                       'io_sort_mb': '128',                       
+                       'mapreduce_client_java_heapsize': '428867584',
+                       'mapreduce_map_java_opts_max_heap': '428867584',
+                       'mapreduce_map_memory_mb': '512',
+                       'mapreduce_reduce_java_opts_max_heap': '858783744',
+                       'mapreduce_reduce_memory_mb': '1024',
+                       'yarn_app_mapreduce_am_max_heap': '1073741824',
+                       'yarn_app_mapreduce_am_resource_mb': '1024'}
         },
         {
             "type": "NODEMANAGER",
@@ -201,10 +201,11 @@ MAPRED_CFG = {
                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100',
-                    'yarn_scheduler_increment_allocation_mb': '256',
+                    'yarn_scheduler_increment_allocation_mb': '512',
                     'yarn_scheduler_maximum_allocation_mb': '4096',
-                    'yarn_scheduler_maximum_allocation_vcores': '2',
-                    'yarn_scheduler_minimum_allocation_mb': '256'
+                    'yarn_scheduler_maximum_allocation_vcores': '1',
+                    'yarn_scheduler_minimum_allocation_vcores': '1',
+                    'yarn_scheduler_minimum_allocation_mb': '512'
                 }
         }
     ]
