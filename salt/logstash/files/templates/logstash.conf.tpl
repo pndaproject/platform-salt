@@ -3,6 +3,6 @@ output {
 }
 input {
   file {
-    path => {{input_dir|string}}
+    path => "{{input_dir|string}}"
   }
 }
