@@ -12,8 +12,8 @@ umask 007
 
 kill timeout 300
 
-setuid logstash-cluster
-setgid logstash-cluster
+setuid logstash
+setgid logstash
 
 script
 	chdir {{ installdir }}
