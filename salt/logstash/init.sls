@@ -3,7 +3,7 @@
 {% set logstash_logdir = salt['pillar.get']('logstash-cluster:logdir', '') %}
 {% set logstash_confdir = salt['pillar.get']('logstash-cluster:confdir', '') %}
 {% set logstash_datadir = salt['pillar.get']('logstash-cluster:datadir', '') %}
-{% set logstash_inuptdir = salt['pillar.get']('logstash-cluster:inputdir', '') %}
+{% set logstash_inputdir = salt['pillar.get']('logstash-cluster:inputdir', '') %}
 
 
 {%- set es_ingest_grains = salt['mine.get']('G@roles:elk-es-ingest', 'grains.items', expr_form='compound') %}
