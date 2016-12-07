@@ -3,6 +3,7 @@
 {% set logstash_logdir = salt['pillar.get']('logstash-cluster:logdir', '') %}
 {% set logstash_confdir = salt['pillar.get']('logstash-cluster:confdir', '') %}
 {% set logstash_datadir = salt['pillar.get']('logstash-cluster:datadir', '') %}
+{% set logstash_inuptdir = salt['pillar.get']('logstash-cluster:inputdir', '') %}
 
 
 {%- set es_ingest_grains = salt['mine.get']('G@roles:elk-es-ingest', 'grains.items', expr_form='compound') %}
@@ -37,9 +38,17 @@ logstash-create_logstash_logdir:
     - dir_mode: 755
     - makedirs: True
 
-elasticsearch-create_elasticsearch_datadir:
+logstash-create_logstash_datadir:
   file.directory:
     - name: {{logstash_datadir}}
+    - user: logstash
+    - group: logstash
+    - dir_mode: 755
+    - makedirs: True
+
+logstash-create_logstash_inputdir:
+  file.directory:
+    - name: {{logstash_inputdir}}
     - user: logstash
     - group: logstash
     - dir_mode: 755
@@ -71,6 +80,7 @@ logstash-copy_configuration_logstash:
     - template: jinja
     - context:
       list_of_ingest: {{ es_ingest_hostnames }}
+      input_dir: {{logstash_inputdir}}/*
 
 /etc/init/logstash.conf:
   file.managed:

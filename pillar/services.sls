@@ -33,6 +33,7 @@ logstash-cluster:
   logdir: /var/log/logstash
   confdir: /etc/logstash
   datadir: /var/lib/logstash
+  inputdir: /tmp/logstash
 
 jupyter:
   version: 4.2.0
