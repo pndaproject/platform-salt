@@ -161,9 +161,9 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esm
         instance_esmulti_n = instance_esmulti.replace('$node_idx$', str(esmulti))
         template_data['Resources']['instanceESMulti%s' % esmulti] = json.loads(instance_esmulti_n)
 
-    for eslogstash in range(0, esmultis):
+    for eslogstash in range(0, logstashNodes):
         instance_logstash_n = instance_logstash.replace('$node_idx$', str(eslogstash))
-        template_data['Resources']['instanceESMulti%s' % esmulti] = json.loads(instance_logstash_n)
+        template_data['Resources']['instanceLogstash%s' % eslogstash] = json.loads(instance_logstash_n)
 
     return json.dumps(template_data)
 
