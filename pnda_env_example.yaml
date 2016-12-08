@@ -105,3 +105,6 @@ elk-cluster:
 
   # How many nodes that do all roles (simple setup). Please use eithar this simple setup or the above advanced setup. DON'T USE BOTH
   MULTI_ROLE_NODES: 0
+
+  # number of logstash nodes
+  LOGSTASH_NODES: 0
