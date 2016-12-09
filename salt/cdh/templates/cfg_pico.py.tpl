@@ -360,7 +360,7 @@ HBASE_CFG = {
         {
             "type": "HBASETHRIFTSERVER",
             "config": {'hbase_thriftserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_thriftserver_java_heapsize': '402653184',
+                       'hbase_thriftserver_java_heapsize': '671088640',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                        'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
