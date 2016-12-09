@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+- PNDA-2456: Initial work to support for Redhat 7. Salt highstate and orchestrate run on a Redhat7 HEAT cluster with no errors but requires further testing and work.
+
 ## [1.3.0] 2017-01-20
 ### Added
 - PNDA-2533: Ability to create an ElasticSearch cluster for external usage

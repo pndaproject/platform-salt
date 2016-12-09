@@ -29,12 +29,12 @@ zookeeper-data-dir:
 
 zookeeper-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ zookeeper_url }}
     - source_hash: {{ zookeeper_url }}.sha1
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }} 
+    - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
 
 {% set nodes = [] %}
 {% include "zookeeper/nodes.sls" %}
@@ -88,6 +88,7 @@ zookeeper-link:
     - require:
       - archive: zookeeper-dl-and-extract
 
+{% if grains['os'] == 'Ubuntu' %}
 zookeeper-upstart:
   file.managed:
     - name: /etc/init/zookeeper.conf
@@ -98,6 +99,43 @@ zookeeper-upstart:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
+{% elif grains['os'] == 'RedHat' %}
+zookeeper-service_startpre:
+    file.managed:
+      - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-startpre.sh
+      - source: salt://zookeeper/files/templates/zookeeper-service-startpre.sh.tpl
+      - template: jinja
+      - context:
+        conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+      - mode: 755
+      - require:
+        - file: zookeeper-data-dir
+
+zookeper-service_start:
+    file.managed:
+      - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-start.sh
+      - source: salt://zookeeper/files/templates/zookeeper-service-start.sh.tpl
+      - template: jinja
+      - context:
+        conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+      - mode: 755
+      - require:
+        - file: zookeeper-data-dir
+
+zookeeper-systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/zookeeper.service
+    - source: salt://zookeeper/files/templates/zookeeper.service.tpl
+    - template: jinja
+    - context:
+      conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+    - mode: 644
+    - require:
+      - file: zookeeper-data-dir
+zookeeper-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{% endif %}
 
 zookeeper-ensure-service-running:
   service.running:
@@ -107,5 +145,9 @@ zookeeper-ensure-service-running:
       - file: zookeeper-environment
       - file: zookeeper-configuration
       - file: zookeeper-myid
+{% if grains['os'] == 'Ubuntu' %}
       - file: zookeeper-upstart
+{% elif grains['os'] == 'RedHat' %}
+      - file: zookeeper-systemd
+{% endif %}
       - file: zookeeper-link

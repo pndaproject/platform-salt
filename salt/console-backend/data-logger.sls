@@ -16,11 +16,15 @@ include:
 console-backend-install_data_logger_redis:
   pkg.installed:
     - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
       - redis-server
+{% elif grains['os'] == 'RedHat' %}
+      - redis
+{% endif %}
 
 console-backend-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ packages_server }}/{{ backend_app_package }}
     - source_hash: {{ packages_server }}/{{ backend_app_package }}.sha512.txt
     - archive_format: tar
@@ -61,6 +65,7 @@ console-backend-install_backend_data_logger_app_dependencies:
     - require:
       - npm: nodejs-update_npm
 
+{% if grains['os'] == 'Ubuntu' %}
 # Create upstart script from template
 console-backend-copy_data_logger_upstart:
   file.managed:
@@ -72,6 +77,22 @@ console-backend-copy_data_logger_upstart:
         host_ip: {{ host_ip }}
         backend_app_port: {{ backend_app_port }}
         app_dir: {{ app_dir }}
+{% elif grains['os'] == 'RedHat' %}
+console-backend-systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/data-logger.service
+    - source: salt://console-backend/templates/backend_nodejs_app.service.tpl
+    - template: jinja
+    - defaults:
+        no_console_log: True
+        host_ip: {{ host_ip }}
+        backend_app_port: {{ backend_app_port }}
+        app_dir: {{ app_dir }}
+  module.run:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: console-backend-systemd
+{% endif %}
 
 # Restart the data logger component
 data-logger_service:
@@ -81,4 +102,21 @@ data-logger_service:
     - reload: True
     - watch:
       - file: console-backend-symlink_data_logger_dir
+{% if grains['os'] == 'Ubuntu' %}
       - file: console-backend-copy_data_logger_upstart
+{% elif grains['os'] == 'RedHat' %}
+      - file: console-backend-systemd
+{% endif %}
+
+{% if grains['os'] == 'Ubuntu' %}
+console-backend-redis_start:
+  cmd.run:
+    - name: 'service redis-server restart'
+    - user: root
+    - group: root
+{% elif grains['os'] == 'RedHat' %}
+console-backend-redis_start:
+    service.running:
+      - name: redis
+      - enable: True
+{% endif %}

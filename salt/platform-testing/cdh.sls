@@ -29,13 +29,19 @@ platform-testing-cdh-dl-and-extract:
 platform-testing-cdh-install_dev_deps:
   pkg.installed:
     - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
       - libsasl2-dev
       - g++
+{% elif grains['os'] == 'RedHat' %}
+      - gcc-c++
+      - cyrus-sasl-devel
+{% endif %}
 
 platform-testing-cdh-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}/requirements.txt
+    - python: python2
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-cdh-dl-and-extract
@@ -55,8 +61,13 @@ platform-testing-cdh-install-requirements-cdh:
 
 platform-testing-cdh_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-cdh.conf.tpl
     - name: /etc/init/platform-testing-cdh.conf
+{% elif grains['os'] == 'RedHat' %}
+    - source: salt://platform-testing/templates/platform-testing-cdh.service.tpl
+    - name: /usr/lib/systemd/system/platform-testing-cdh.service
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -72,7 +83,11 @@ platform-testing-cdh-crontab-cdh:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-cdh
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-cdh
+{% endif %}
     - require:
       - pip: platform-testing-cdh-install-requirements-cdh
       - file: platform-testing-cdh_upstart
@@ -86,8 +101,13 @@ platform-testing-cdh-install-requirements-cdh_blackbox:
 
 platform-testing-cdh-blackbox_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-cdh-blackbox.conf.tpl
     - name: /etc/init/platform-testing-cdh-blackbox.conf
+{% elif grains['os'] == 'RedHat' %}
+    - source: salt://platform-testing/templates/platform-testing-cdh-blackbox.service.tpl
+    - name: /usr/lib/systemd/system/platform-testing-cdh-blackbox.service
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -103,7 +123,17 @@ platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH-BLACKBOX
     - user: root
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-cdh-blackbox
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-cdh-blackbox
+{% endif %}
     - require:
       - pip: platform-testing-cdh-install-requirements-cdh_blackbox
       - file: platform-testing-cdh-blackbox_upstart
+
+{% if grains['os'] == 'RedHat' %}
+platform-testing-cdh-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{%- endif %}

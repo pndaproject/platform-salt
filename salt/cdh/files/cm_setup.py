@@ -550,14 +550,14 @@ def create_services(user, key, cluster, nodes, ha_enabled):
 
         # The mysql-server is installed on node-1 (i.e. NAMENODE) and is used for oozie, hive and hue databases.
         # This must be done prior to oozie db creation.
-        logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
-        create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
+        #logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
+        #create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
 
         logging.info("Create Oozie db")
         wait_on_success(oozie.create_oozie_db())
 
-        logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
-        create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
+        #logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
+        #create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
 
         # This must be done prior to hive metastore db creation.
         logging.info("Creating /tmp for Hive")

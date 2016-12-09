@@ -22,6 +22,7 @@ cdh-create_tmp_virtualenv:
   virtualenv.managed:
     - name: {{ scripts_location }}/venv
     - requirements: salt://cdh/files/requirements-cm_setup.txt
+    - python: python2
     - require:
       - pip: python-pip-install_python_pip
 

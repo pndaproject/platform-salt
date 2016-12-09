@@ -1,7 +1,11 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set console_frontend_version = pillar['console_frontend']['release_version'] %}
 {% set console_frontend_package = 'console-frontend-' + console_frontend_version + '.tar.gz' %}
+{% if grains['os'] == 'Ubuntu' %}
 {% set nginx_config_location = '/etc/nginx/sites-enabled' %}
+{% elif grains['os'] == 'RedHat' %}
+{% set nginx_config_location = '/etc/nginx/conf.d' %}
+{% endif %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set console_dir = install_dir + '/console-frontend' %}
 {% set console_config_dir = console_dir + '/conf' %}
@@ -17,7 +21,7 @@
 
 # edge node IP
 {% set edge_nodes = salt['pnda.ip_addresses']('cloudera_edge') %}
-{%- if edge_nodes is not none and edge_nodes|length > 0 -%}   
+{%- if edge_nodes is not none and edge_nodes|length > 0 -%}
     {%- set edge_node_ip = edge_nodes[0] -%}
 {%- else -%}
     {%- set edge_node_ip = '' -%}
@@ -39,7 +43,7 @@ include:
 
 console-frontend-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ packages_server }}/{{ console_frontend_package }}
     - source_hash: {{ packages_server }}/{{ console_frontend_package }}.sha512.txt
     - archive_format: tar
