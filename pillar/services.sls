@@ -85,7 +85,7 @@ platform_testing:
   release_version: RELEASE-0.2.0
 
 platformlib:
-  release_version: RELEASE-0.1.2
+  release_version: RELEASE_0.1.2
   target_directory: "/opt/pnda"
 
 jmxproxy:
