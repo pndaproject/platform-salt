@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.1.0] 2016-12-12
 ### Changed
  - PNDA-2397: Generate the list of valid flavors dynamically. The valid values for the --branch parameter were hard coded, now they are generated based on the folder names under 'cloud-formation/'
  - PNDA-2393: Update OS volume sizes for instances. Increase the standard size from 30 GB to 50 GB and for kafka from 50 GB to 150 GB.
