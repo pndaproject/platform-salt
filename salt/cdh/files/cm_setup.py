@@ -173,12 +173,12 @@ def process_parcel_state(cluster, product, parcel_version, check_complete):
             logging.info("Parcel Error: %s", str(parcel.state.errors))
             logging.info("Retrying...")
             error_count += 1
-            if error_count > 5:
+            if error_count > 30:
                 raise Exception(str(parcel.state.errors))
             else:
-                time.sleep(15)
+                time.sleep(60)
 
-        time.sleep(15)
+        time.sleep(30)
 
 
 def check_parcel_download_state(parcel):
@@ -707,7 +707,7 @@ def setup_hadoop(
         # to install the correct CDH parcel via the download/distribute/activate
         logging.info("Downloading, distributing and activating parcels")
         install_parcel(cloudera_manager, cluster, 'CDH', parcel_repo, parcel_version)
-
+        
         # to install Anaconda parcels
         logging.info("Downloading anaconda parcels")
         if anaconda_repo is not None and anaconda_version is not None:
