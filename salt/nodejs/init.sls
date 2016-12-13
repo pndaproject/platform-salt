@@ -8,8 +8,6 @@ nodejs-install_useful_packages:
   pkg.installed:
     - pkgs:
       - nodejs
-      - nodejs-legacy
-      - npm
     - require:
       - cmd: nodejs-v6-setup
 
