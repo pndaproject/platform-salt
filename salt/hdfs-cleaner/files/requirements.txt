@@ -1,0 +1,7 @@
+cm-api==11.0.0
+happybase==0.9
+PyHDFS==0.1.1
+pylint==1.5.4
+python-swiftclient==3.2.0
+python-keystoneclient==3.8.0
+boto==2.44.0
