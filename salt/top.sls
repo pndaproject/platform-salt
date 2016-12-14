@@ -65,7 +65,6 @@
 
   'roles:opentsdb':
     - match: grain
-    - pnda_opentsdb.install
     - snappy
 
   'cloudera:*':
