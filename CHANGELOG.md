@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-1812: Add a re-apply config mode to cm_setup
 - Merge general zookeeper/kafka white and black box tests
 - PNDA-2487: Increase HBase heaps for CDH5.9 
+- PNDA-2496: CM now uses external MySQL database instead of embedded postgres db
 
 ### Fixed
 - PNDA-2231: Don't fail if the pnda user is already created in grafana 
