@@ -55,37 +55,37 @@ grafana:
   release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
 
 gobblin:
-  release_version: RELEASE-0.1.2
+  release_version: 0.1.2
 
 console_frontend:
-  release_version: RELEASE-0.1.3
+  release_version: 0.1.3
 
 console_backend_data_logger:
-  release_version: RELEASE-0.2.3
+  release_version: 0.2.3
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: RELEASE-0.2.3
+  release_version: 0.2.3
   bind_port: 3123
 
 deployment_manager:
-  release_version: RELEASE-0.2.1
+  release_version: 0.2.1
 
 package_repository:
-  release_version: RELEASE-0.2.1
+  release_version: 0.2.1
 
 data-service:
-  release_version: RELEASE-0.1.2
+  release_version: 0.1.2
 
 hdfs_cleaner:
-  release_version: RELEASE-0.1.2
+  release_version: 0.1.2
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: RELEASE-0.2.0
+  release_version: 0.2.0
 
 platformlib:
-  release_version: RELEASE_0.1.2
+  release_version: 0.1.2
   target_directory: "/opt/pnda"
 
 jmxproxy:
