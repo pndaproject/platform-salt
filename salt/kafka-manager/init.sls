@@ -17,8 +17,8 @@ kafka-manager-install_unzip:
 kafka-manager-dl-and-extract:
   archive.extracted:
     - name: {{ release_directory }}
-    - source: {{ packages_server }}/platform/releases/kafka-manager/{{ release_filename }}
-    - source_hash: {{ packages_server }}/platform/releases/kafka-manager/{{ release_filename }}.sha512.txt
+    - source: {{ packages_server }}/{{ release_filename }}
+    - source_hash: {{ packages_server }}/{{ release_filename }}.sha512.txt
     - archive_format: zip
     - if_missing: {{ release_directory }}/kafka-manager-{{ release_version }}
 

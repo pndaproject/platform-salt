@@ -4,7 +4,7 @@ jupyter-extension_install_jupyter_spark:
   pip.installed:
     - pkgs:
       - https://github.com/klyr/jupyter-spark/releases/download/0.3.0-patch/jupyter-spark-0.3.0-patch.tar.gz
-      - lxml
+      - lxml==3.6.4
     - bin_env: /usr/local/bin/pip3
     - upgrade: True
     - reload_modules: True

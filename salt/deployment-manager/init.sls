@@ -17,8 +17,8 @@ deployment-manager-install_dev_deps:
 deployment-manager-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
-    - source: {{ packages_server }}/platform/releases/deployment-manager/{{ deployment_manager_package }}
-    - source_hash: {{ packages_server }}/platform/releases/deployment-manager/{{ deployment_manager_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ deployment_manager_package }}
+    - source_hash: {{ packages_server }}/{{ deployment_manager_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }} 

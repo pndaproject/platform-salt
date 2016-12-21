@@ -17,13 +17,20 @@
 
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
+{%- set opentsdb_port = salt['pillar.get']('opentsdb:bind_port', 4242) -%}
+{%- set opentsdb_nodes = salt['pnda.ip_addresses']('opentsdb') -%}
+{%- set opentsdb_host = '' -%}
+{%- if opentsdb_nodes is not none and opentsdb_nodes|length > 0 -%}
+    {%- set opentsdb_host = opentsdb_nodes[0]+':'+opentsdb_port|string -%}
+{%- else -%}
+    {%- set opentsdb_host = '' -%}
+{%- endif -%}
 
-{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+pnda_cluster) %}
 
 {%- set jupyter_nodes = salt['pnda.ip_addresses']('jupyter') -%}
 {%- set jupyter_host = '' -%}
-{%- if jupyter_nodes is not none and jupyter_nodes|length > 0 -%}   
+{%- if jupyter_nodes is not none and jupyter_nodes|length > 0 -%}
     {%- set jupyter_host = jupyter_nodes[0] -%}
 {%- else -%}
     {%- set jupyter_host = '' -%}
@@ -51,7 +58,7 @@
         "cluster_private_key" : "./dm.pem",
         "kafka_zookeeper" : "{{ kafka_zookeepers|join(',') }}",
         "kafka_brokers" : "{{ kafka_brokers|join(',') }}",
-        "opentsdb" : "{{ opentsdb_link }}",
+        "opentsdb" : "{{ opentsdb_host }}",
         "kafka_manager" : "{{ km_link }}",
         "namespace": "platform_app",
         "metric_logger_url": "{{ data_logger_link }}/metrics",

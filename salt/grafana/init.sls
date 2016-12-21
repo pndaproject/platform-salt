@@ -8,6 +8,9 @@
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
 
+{% set datasources = [
+    '{ "name": "PNDA OpenTSDB", "type": "opentsdb", "url": "http://localhost:4242", "access": "proxy", "basicAuth": false, "isDefault": true }',
+    '{{ "name": "PNDA Graphite", "type": "graphite", "url": "http://{}:{}", "access": "proxy", "basicAuth": false, "isDefault": false }}'.format(pnda_graphite_host, pnda_graphite_port) ] %}
 {% set dashboard_list = ['PNDA Deployment Manager.json',
                          'PNDA Hadoop.json',
                          'PNDA Kafka Brokers.json',
@@ -34,18 +37,17 @@ grafana-login_script_run:
         pnda_password: {{ pillar['pnda']['password'] }}
     - cwd: /
 
-grafana-create_datasources_run_script:
+{% for ds in datasources %}
+grafana-create_datasources_{{ loop.index }}:
   cmd.script:
-    - name: salt://grafana/templates/grafana-datasources-setup.sh.tpl
-    - template: jinja
-    - context:
-        pnda_user: {{ pillar['pnda']['user'] }}
-        pnda_password: {{ pillar['pnda']['password'] }}
-        pnda_graphite_host: {{ pnda_graphite_host  }}
-        pnda_graphite_port: {{ pnda_graphite_port }}
+    - name: salt://grafana/files/scripts/create_or_update_ds.py
+    - args: |
+        {{ pillar['pnda']['user'] }} {{ pillar['pnda']['password'] }} 'http://localhost:3000' '{{ ds }}'
+    - shell: /bin/bash
     - cwd: /
     - require:
       - cmd: grafana-login_script_run
+{% endfor %}
 
 {% for dash in dashboard_list %}
 grafana-copy_dashboard_{{ dash }}:
@@ -53,7 +55,9 @@ grafana-copy_dashboard_{{ dash }}:
     - source: salt://grafana/files/dashboards/{{ dash }}
     - name: /tmp/{{ dash }}.salt.tmp
     - require:
-      - cmd: grafana-create_datasources_run_script
+{% for ds in datasources %}
+      - cmd: grafana-create_datasources_{{ loop.index }}
+{% endfor %}
 
 grafana-import_dashboard-{{ dash }}:
   cmd.script:

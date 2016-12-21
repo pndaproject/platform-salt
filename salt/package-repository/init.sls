@@ -11,8 +11,8 @@ include:
 package-repository-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
-    - source: {{ packages_server }}/platform/releases/package-repository/{{ package_repository_package }}
-    - source_hash: {{ packages_server }}/platform/releases/package-repository/{{ package_repository_package }}.sha512.txt
+    - source: {{ packages_server }}/{{ package_repository_package }}
+    - source_hash: {{ packages_server }}/{{ package_repository_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/{{ package_repository_directory_name }} 

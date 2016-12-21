@@ -15,8 +15,8 @@ platform-libraries-create_target_dir:
 platform-libraries-download_egg_file:
   file.managed:
     - name: {{ platformlib_target_directory }}/{{ platformlib_package }}
-    - source: {{ package_server }}/platform/releases/platform-libraries/{{ platformlib_package }}
-    - source_hash: {{ package_server }}/platform/releases/platform-libraries/{{ platformlib_package }}.sha512.txt
+    - source: {{ package_server }}/{{ platformlib_package }}
+    - source_hash: {{ package_server }}/{{ platformlib_package }}.sha512.txt
     - require:
       - file: platform-libraries-create_target_dir
 

@@ -268,12 +268,12 @@ HBASE_CFG = {
             {
                 "name": "master",
                 "type": "MASTER",
-                "target": "MGR03"
+                "target": "MGR01"
             },
             {
                 "name": "master_sec",
                 "type": "MASTER",
-                "target": "MGR04"
+                "target": "MGR02"
             },
             {
                 "name": "regionserver",

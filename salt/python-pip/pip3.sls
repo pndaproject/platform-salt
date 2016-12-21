@@ -6,6 +6,7 @@ python-pip-install-pip3-package:
     - pkgs:
       - python3-pip
       - python3-dev
+      - python-virtualenv
 
 python-pip-install_python_pip3:
   pip.installed:
