@@ -318,7 +318,7 @@ HDFS_CFG = {
 HBASE_CFG = {
     "service": "HBASE",
     "name": "hbase01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'hbase_client_keyvalue_maxsize': '209715200', 'rm_dirty': 'true'},
+    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'rm_dirty': 'true'},
     "roles":
         [
             {
