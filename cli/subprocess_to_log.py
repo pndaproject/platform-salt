@@ -1,5 +1,6 @@
 import subprocess
 import select
+import re
 from logging import INFO
 
 
@@ -20,8 +21,9 @@ def call(cmd_to_run, logger, log_id=None, stdout_log_level=INFO, stderr_log_leve
             if log_id is not None:
                 msg_with_id = '%s %s' % (log_id, msg)
             logger.log(log_level[child_output_stream], msg_with_id)
-            if msg in scan_for_errors:
-                raise Exception(msg_with_id)
+            for pattern in scan_for_errors:
+                if re.match(pattern, msg):
+                    raise Exception(msg_with_id)
 
     while child_process.poll() is None:
         fetch_child_output()

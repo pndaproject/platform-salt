@@ -174,7 +174,7 @@ def ssh(cmds, cluster, host):
     parts = cmd.split(' ')
     parts.append(';'.join(cmds))
     CONSOLE.debug(json.dumps(parts))
-    ret_val = subprocess_to_log.call(parts, LOG, host, scan_for_errors=['lost connection'])
+    ret_val = subprocess_to_log.call(parts, LOG, host, scan_for_errors=[r'lost connection', r'\s*Failed:\s*[1-9].*'])
     if ret_val != 0:
         raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (host, LOG_FILE_NAME))
 
@@ -748,5 +748,4 @@ if __name__ == "__main__":
         main()
     except Exception as exception:
         CONSOLE.error(exception)
-        CONSOLE.error(traceback.format_exc())
         raise
