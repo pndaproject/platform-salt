@@ -52,13 +52,6 @@ platform-testing-cdh-install-requirements:
     - require:
       - virtualenv: platform-testing-cdh-create-venv
 
-platform-testing-cdh-install-requirements-cdh:
-  pip.installed:
-    - bin_env: {{ virtual_env_dir }}
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
-    - require:
-      - virtualenv: platform-testing-cdh-create-venv
-
 platform-testing-cdh_upstart:
   file.managed:
     - source: salt://platform-testing/templates/platform-testing-cdh.conf.tpl
