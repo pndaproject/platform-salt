@@ -1,34 +1,35 @@
-{% set install_dir = pillar['pnda']['homedir'] %}
+{% set virtual_env_dir = pillar['pnda']['homedir'] + "/impala-wrapper" %}
 
 include:
   - python-pip
 
-cdh-impala_shell_python_deps:
-  pip.installed:
-    - pkgs:
-      - pexpect
+cdh-impala_shell_venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
+    - requirements: salt://cdh/files/impala-shell-requirements.txt
     - require:
       - pip: python-pip-install_python_pip
 
-cdh-impala_shell_dir:
-  file.directory:
-    - name: {{ install_dir }}/impala-wrapper
-    - makedirs: True
-
 cdh-impala_shell_install:
   file.managed:
-    - name: {{ install_dir }}/impala-wrapper/impala-shell
+    - name: {{ virtual_env_dir }}/impala-shell
     - source: salt://cdh/templates/impala-shell.tpl
     - mode: 755
     - template: jinja
+    - require:
+      - virtualenv: cdh-impala_shell_venv
 
 cdh-impala_shell_alt:
   alternatives.install:
     - name: impala-shell
     - link: /usr/bin/impala-shell
-    - path: {{ install_dir }}/impala-wrapper/impala-shell
+    - path: {{ virtual_env_dir}}/impala-shell
     - priority: 20
+    - require:
+      - file: cdh-impala_shell_install
 
 cdh-impala_shell_auto:
   alternatives.auto:
     - name: impala-shell
+    - require:
+      - alternatives: cdh-impala_shell_alt
