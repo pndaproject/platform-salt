@@ -26,6 +26,12 @@ platform-testing-cdh-dl-and-extract:
     - tar_options: v
     - if_missing: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}
 
+platform-testing-cdh-install_dev_deps:
+  pkg.installed:
+    - pkgs:
+      - libsasl2-dev
+      - g++
+
 platform-testing-cdh-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
@@ -33,6 +39,7 @@ platform-testing-cdh-create-venv:
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-cdh-dl-and-extract
+      - pkg: platform-testing-cdh-install_dev_deps
 
 platform-testing-cdh-create-link:
   file.symlink:
