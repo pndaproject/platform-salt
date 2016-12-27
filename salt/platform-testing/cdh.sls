@@ -21,34 +21,28 @@ platform-testing-cdh-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }}
     - source: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
-    - source_hash: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
+    - source_hash: {{ packages_server }}/{{ platform_testing_package }}-{{ platform_testing_version }}.tar.gz.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
-
-platform-testing-cdh-install_dev_deps:
-  pkg.installed:
-    - pkgs:
-      - libsasl2-dev
-      - g++
+    - if_missing: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}
 
 platform-testing-cdh-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
+    - requirements: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}/requirements.txt
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-cdh-dl-and-extract
 
 platform-testing-cdh-create-link:
   file.symlink:
-    - name: {{ platform_testing_directory }}/{{platform_testing_package}}
-    - target: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
+    - name: {{ platform_testing_directory }}/{{ platform_testing_package }}
+    - target: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}
 
-platform-testing-cdh-install-requirements:
+platform-testing-cdh-install-requirements-cdh:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
     - require:
       - virtualenv: platform-testing-cdh-create-venv
 
@@ -72,15 +66,18 @@ platform-testing-cdh-crontab-cdh:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
     - name: /sbin/start platform-testing-cdh
+    - require:
+      - pip: platform-testing-cdh-install-requirements-cdh
+      - file: platform-testing-cdh_upstart
 
 platform-testing-cdh-install-requirements-cdh_blackbox:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh_blackbox/requirements.txt
     - require:
       - virtualenv: platform-testing-cdh-create-venv
 
-platform-testing-cdh-backbox_upstart:
+platform-testing-cdh-blackbox_upstart:
   file.managed:
     - source: salt://platform-testing/templates/platform-testing-cdh-blackbox.conf.tpl
     - name: /etc/init/platform-testing-cdh-blackbox.conf
@@ -100,3 +97,6 @@ platform-testing-cdh-crontab-cdh_blackbox:
     - identifier: PLATFORM-TESTING-CDH-BLACKBOX
     - user: root
     - name: /sbin/start platform-testing-cdh-blackbox
+    - require:
+      - pip: platform-testing-cdh-install-requirements-cdh_blackbox
+      - file: platform-testing-cdh-blackbox_upstart
