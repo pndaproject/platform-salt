@@ -238,59 +238,159 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 # Spawner configuration
 #------------------------------------------------------------------------------
 
-# Base class for spawning single-user notebook servers.
-# 
-# Subclass this, and override the following methods:
-# 
-# - load_state - get_state - start - stop - poll
+## Base class for spawning single-user notebook servers.
+#  
+#  Subclass this, and override the following methods:
+#  
+#  - load_state - get_state - start - stop - poll
+#  
+#  As JupyterHub supports multiple users, an instance of the Spawner subclass is
+#  created for each user. If there are 20 JupyterHub users, there will be 20
+#  instances of the subclass.
 
-# Extra arguments to be passed to the single-user server
-# c.Spawner.args = []
+## Extra arguments to be passed to the single-user server.
+#  
+#  Some spawners allow shell-style expansion here, allowing you to use
+#  environment variables here. Most, including the default, do not. Consult the
+#  documentation for your spawner to verify!
+#c.Spawner.args = []
 
-# The command used for starting notebooks.
-# c.Spawner.cmd = ['jupyterhub-singleuser']
+## The command used for starting the single-user server.
+#  
+#  Provide either a string or a list containing the path to the startup script
+#  command. Extra arguments, other than this path, should be provided via `args`.
+#  
+#  This is usually set if you want to start the single-user server in a different
+#  python environment (with virtualenv/conda) than JupyterHub itself.
+#  
+#  Some spawners allow shell-style expansion here, allowing you to use
+#  environment variables. Most, including the default, do not. Consult the
+#  documentation for your spawner to verify!
+#c.Spawner.cmd = ['jupyterhub-singleuser']
+c.Spawner.cmd = ['{{ virtual_env_dir }}/bin/jupyterhub-singleuser']
 
-# Enable debug-logging of the single-user server
-# c.Spawner.debug = False
+## Minimum number of cpu-cores a single-user notebook server is guaranteed to
+#  have available.
+#  
+#  If this value is set to 0.5, allows use of 50% of one CPU. If this value is
+#  set to 2, allows use of up to 2 CPUs.
+#  
+#  Note that this needs to be supported by your spawner for it to work.
+#c.Spawner.cpu_guarantee = None
 
-# The default URL for the single-user server.
-# 
-# Can be used in conjunction with --notebook-dir=/ to enable  full filesystem
-# traversal, while preserving user's homedir as landing page for notebook
-# 
-# `%U` will be expanded to the user's username
-# c.Spawner.default_url = ''
+## Maximum number of cpu-cores a single-user notebook server is allowed to use.
+#  
+#  If this value is set to 0.5, allows use of 50% of one CPU. If this value is
+#  set to 2, allows use of up to 2 CPUs.
+#  
+#  The single-user notebook server will never be scheduled by the kernel to use
+#  more cpu-cores than this. There is no guarantee that it can access this many
+#  cpu-cores.
+#  
+#  This needs to be supported by your spawner for it to work.
+#c.Spawner.cpu_limit = None
 
-# Disable per-user configuration of single-user servers.
-# 
-# This prevents any config in users' $HOME directories from having an effect on
-# their server.
-# c.Spawner.disable_user_config = False
+## Enable debug-logging of the single-user server
+#c.Spawner.debug = False
 
-# Whitelist of environment variables for the subprocess to inherit
-# c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
+## The URL the single-user server should start in.
+#  
+#  `{username}` will be expanded to the user's username
+#  
+#  Example uses:
+#  - You can set `notebook_dir` to `/` and `default_url` to `/home/{username}` to allow people to
+#    navigate the whole filesystem from their notebook, but still start in their home directory.
+#  - You can set this to `/lab` to have JupyterLab start by default, rather than Jupyter Notebook.
+#c.Spawner.default_url = ''
 
-# Environment variables to load for the Spawner.
-# 
-# Value could be a string or a callable. If it is a callable, it will be called
-# with one parameter, which will be the instance of the spawner in use. It
-# should quickly (without doing much blocking operations) return a string that
-# will be used as the value for the environment variable.
-# c.Spawner.environment = {}
+## Disable per-user configuration of single-user servers.
+#  
+#  When starting the user's single-user server, any config file found in the
+#  user's $HOME directory will be ignored.
+#  
+#  Note: a user could circumvent this if the user modifies their Python
+#  environment, such as when they have their own conda environments / virtualenvs
+#  / containers.
+#c.Spawner.disable_user_config = False
 
-# Timeout (in seconds) before giving up on a spawned HTTP server
-# 
-# Once a server has successfully been spawned, this is the amount of time we
-# wait before assuming that the server is unable to accept connections.
-# c.Spawner.http_timeout = 30
+## Whitelist of environment variables for the single-user server to inherit from
+#  the JupyterHub process.
+#  
+#  This whitelist is used to ensure that sensitive information in the JupyterHub
+#  process's environment (such as `CONFIGPROXY_AUTH_TOKEN`) is not passed to the
+#  single-user server's process.
+#c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
 
-# The IP address (or hostname) the single-user server should listen on
-# c.Spawner.ip = '127.0.0.1'
+## Extra environment variables to set for the single-user server's process.
+#  
+#  Environment variables that end up in the single-user server's process come from 3 sources:
+#    - This `environment` configurable
+#    - The JupyterHub process' environment variables that are whitelisted in `env_keep`
+#    - Variables to establish contact between the single-user notebook and the hub (such as JPY_API_TOKEN)
+#  
+#  The `enviornment` configurable should be set by JupyterHub administrators to
+#  add installation specific environment variables. It is a dict where the key is
+#  the name of the environment variable, and the value can be a string or a
+#  callable. If it is a callable, it will be called with one parameter (the
+#  spawner instance), and should return a string fairly quickly (no blocking
+#  operations please!).
+#  
+#  Note that the spawner class' interface is not guaranteed to be exactly same
+#  across upgrades, so if you are using the callable take care to verify it
+#  continues to work after upgrades!
+#c.Spawner.environment = {}
 
-# The notebook directory for the single-user server
-# 
-# `~` will be expanded to the user's home directory `%U` will be expanded to the
-# user's username
+## Timeout (in seconds) before giving up on a spawned HTTP server
+#  
+#  Once a server has successfully been spawned, this is the amount of time we
+#  wait before assuming that the server is unable to accept connections.
+#c.Spawner.http_timeout = 30
+
+## The IP address (or hostname) the single-user server should listen on.
+#  
+#  The JupyterHub proxy implementation should be able to send packets to this
+#  interface.
+#c.Spawner.ip = '127.0.0.1'
+
+## Minimum number of bytes a single-user notebook server is guaranteed to have
+#  available.
+#  
+#  Allows the following suffixes:
+#    - K -> Kilobytes
+#    - M -> Megabytes
+#    - G -> Gigabytes
+#    - T -> Terabytes
+#  
+#  This needs to be supported by your spawner for it to work.
+#c.Spawner.mem_guarantee = None
+
+## Maximum number of bytes a single-user notebook server is allowed to use.
+#  
+#  Allows the following suffixes:
+#    - K -> Kilobytes
+#    - M -> Megabytes
+#    - G -> Gigabytes
+#    - T -> Terabytes
+#  
+#  If the single user server tries to allocate more memory than this, it will
+#  fail. There is no guarantee that the single-user notebook server will be able
+#  to allocate this much memory - only that it can not allocate more than this.
+#  
+#  This needs to be supported by your spawner for it to work.
+#c.Spawner.mem_limit = None
+
+## Path to the notebook directory for the single-user server.
+#  
+#  The user sees a file listing of this directory when the notebook interface is
+#  started. The current interface does not easily allow browsing beyond the
+#  subdirectories in this directory's tree.
+#  
+#  `~` will be expanded to the home directory of the user, and {username} will be
+#  replaced with the name of the user.
+#  
+#  Note that this does *not* prevent users from accessing files outside of this
+#  path! They can do so with many other means.
+#c.Spawner.notebook_dir = ''
 c.Spawner.notebook_dir = '~/jupyter_notebooks'
 
 # An HTML form for options a user can specify on launching their server. The
