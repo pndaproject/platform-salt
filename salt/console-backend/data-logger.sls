@@ -4,6 +4,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set app_dir = install_dir + '/console-backend-data-logger' %}
 {% set app_config_dir = app_dir + '/conf' %}
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
 
 {% set host_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] %}
 

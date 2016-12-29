@@ -1,3 +1,5 @@
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
+
 include:
   - nodejs
   - python-pip
