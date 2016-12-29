@@ -25,7 +25,7 @@ jupyter-create-venv:
 # set up jupyter environment configuration
 jupyter-enable_widget_nbextensions:
   cmd.run:
-    - name: {{virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system
+    - name: {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system
     - require:
       - virtualenv: jupyter-create-venv
 
@@ -41,29 +41,30 @@ jupyter-copy_initial_notebooks:
     - require:
       - file: jupyter-create_notebooks_directory
 
-## install jupyter kernels (python2, python3, and pyspark)
-#jupyter-create_kernels_dir:
-#  file.directory:
-#    - name: {{ jupyter_kernels_dir }}
-#
-#jupyter-install_python2_kernel:
-#  cmd.run:
-#    - name: '/opt/cloudera/parcels/Anaconda/bin/python -m ipykernel.kernelspec '
-#
-#jupyter-create_pyspark_kernel_dir:
-#  file.directory:
-#    - name: {{ jupyter_kernels_dir }}/pyspark
-#    - require:
-#      - file: jupyter-create_kernels_dir
-#
-#jupyter-copy_pyspark_kernel:
-#  file.managed:
-#    - source: salt://jupyter/templates/pyspark_kernel.json.tpl
-#    - name: {{ jupyter_kernels_dir }}/pyspark/kernel.json
-#    - template: jinja
-#    - require:
-#      - file: jupyter-create_pyspark_kernel_dir
-#
+# install jupyter kernels (python2, python3, and pyspark)
+jupyter-create_kernels_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}
+
+jupyter-install_python2_kernel:
+  cmd.run:
+    - name: '/opt/cloudera/parcels/Anaconda/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
+    - require:
+      - virtualenv: jupyter-create-venv
+
+jupyter-create_pyspark_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/pyspark
+    - require:
+      - file: jupyter-create_kernels_dir
+
+jupyter-copy_pyspark_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/pyspark_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/pyspark/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_pyspark_kernel_dir
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:
