@@ -52,13 +52,19 @@ console-frontend-create_directory_link:
     - name: {{ console_dir }}
     - target: {{ console_dir }}-{{ console_frontend_version }}
 
-# Install npm dependencies
-console-frontend-install_app_dependencies:
+# set npm registry
+console-frontend-set_registry:
   cmd.run:
-    - cwd: {{ console_dir }}
-    - name: npm config set registry {{ npm_registry }} && npm install --json
+    - name: npm config set registry {{ npm_registry }}
     - require:
       - npm: nodejs-update_npm
+
+# Install npm dependencies
+console-frontend-install_app_dependencies:
+  npm.bootstrap:
+    - name: {{ console_dir }}
+    - require:
+      - cmd: console-frontend-set-registry
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:
