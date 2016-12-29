@@ -49,3 +49,4 @@ jupyter-install_anaconda_ipywidgets:
 jupyter-install_configurable_http_proxy:
   npm.installed:
     - name: configurable-http-proxy
+    - registry: {{ npm_registry }}

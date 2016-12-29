@@ -83,6 +83,7 @@ console-backend-create_data_manager_util_conf:
 console-backend-install_utils_dependencies:
   npm.bootstrap:
     - name: {{ install_dir }}/console-backend-utils
+    - registry: {{ npm_registry }}
     - require:
       - npm: nodejs-update_npm
 
@@ -90,6 +91,7 @@ console-backend-install_utils_dependencies:
 console-backend-install_backend_app_dependencies:
   npm.bootstrap:
     - name: {{ app_dir }}
+    - registry: {{ npm_registry }}
     - require:
       - npm: nodejs-update_npm
 

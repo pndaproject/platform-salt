@@ -55,6 +55,7 @@ console-frontend-create_directory_link:
 console-frontend-install_app_dependencies:
   npm.bootstrap:
     - name: {{ console_dir }}
+    - registry: {{ npm_registry }}
     - require:
       - npm: nodejs-update_npm
 
