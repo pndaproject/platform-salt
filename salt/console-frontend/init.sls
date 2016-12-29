@@ -64,7 +64,7 @@ console-frontend-install_app_dependencies:
   npm.bootstrap:
     - name: {{ console_dir }}
     - require:
-      - cmd: console-frontend-set-registry
+      - cmd: console-frontend-set_registry
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:
