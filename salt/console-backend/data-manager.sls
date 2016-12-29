@@ -80,28 +80,21 @@ console-backend-create_data_manager_util_conf:
     - defaults:
         log_file: /var/log/pnda/console/platform-console-logs.log
 
-# set npm registry
-console-backend-data-manager-set_registry:
+# Install npm dependencies for utils
+console-backend-install_utils_dependencies:
   cmd.run:
-    - name: npm config set registry {{ npm_registry }}
+    - cwd: {{ install_dir }}/console-backend-utils
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
       - npm: nodejs-update_npm
 
-# Install npm dependencies for utils
-console-backend-install_utils_dependencies:
-  npm.bootstrap:
-    - name: {{ install_dir }}/console-backend-utils
-    - registry: {{ npm_registry }}
-    - require:
-      - cmd: console-backend-data-manager-set_registry
-
 # Install npm dependencies
 console-backend-install_backend_app_dependencies:
-  npm.bootstrap:
-    - name: {{ app_dir }}
-    - registry: {{ npm_registry }}
+  cmd.run:
+    - cwd: {{ app_dir }}
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
-      - cmd: console-backend-data-manager-set_registry
+      - npm: nodejs-update_npm
 
 # Create upstart script from template
 console-backend-copy_upstart:
