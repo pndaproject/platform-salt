@@ -48,13 +48,20 @@ console-backend-create_data_logger_util_conf:
     - defaults:
         log_file: /var/log/pnda/console/platform-console-logs.log
 
+# set npm registry
+console-backend-data-logger-set_registry:
+  cmd.run:
+    - name: npm config set registry {{ npm_registry }}
+    - require:
+      - npm: nodejs-update_npm
+
 # Install npm dependencies for utils
 console-backend-install_data_logger_utils_dependencies:
   npm.bootstrap:
     - name: {{ install_dir }}/console-backend-utils
     - registry: {{ npm_registry }}
     - require:
-      - npm: nodejs-update_npm
+      - cmd: console-backend-data-logger-set_registry
 
 # Install npm dependencies
 console-backend-install_backend_data_logger_app_dependencies:
@@ -62,7 +69,7 @@ console-backend-install_backend_data_logger_app_dependencies:
     - name: {{ app_dir }}
     - registry: {{ npm_registry }}
     - require:
-      - npm: nodejs-update_npm
+      - cmd: console-backend-data-logger-set_registry
 
 # Create upstart script from template
 console-backend-copy_data_logger_upstart:
