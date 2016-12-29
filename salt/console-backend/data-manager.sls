@@ -5,6 +5,7 @@
 {% set app_dir = install_dir + '/console-backend-data-manager' %}
 {% set app_config_dir = app_dir + '/conf' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
 
 {% set host_ip = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 
@@ -81,15 +82,17 @@ console-backend-create_data_manager_util_conf:
 
 # Install npm dependencies for utils
 console-backend-install_utils_dependencies:
-  npm.bootstrap:
-    - name: {{ install_dir }}/console-backend-utils
+  cmd.run:
+    - cwd: {{ install_dir }}/console-backend-utils
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
       - npm: nodejs-update_npm
 
 # Install npm dependencies
 console-backend-install_backend_app_dependencies:
-  npm.bootstrap:
-    - name: {{ app_dir }}
+  cmd.run:
+    - cwd: {{ app_dir }}
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
       - npm: nodejs-update_npm
 

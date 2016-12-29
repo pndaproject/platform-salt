@@ -1,3 +1,5 @@
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
+
 include:
   - nodejs
   - python-pip
@@ -49,3 +51,4 @@ jupyter-install_anaconda_ipywidgets:
 jupyter-install_configurable_http_proxy:
   npm.installed:
     - name: configurable-http-proxy
+    - registry: {{ npm_registry }}
