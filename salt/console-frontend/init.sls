@@ -54,9 +54,9 @@ console-frontend-create_directory_link:
 
 # Install npm dependencies
 console-frontend-install_app_dependencies:
-  npm.bootstrap:
-    - name: {{ console_dir }}
-    - registry: {{ npm_registry }}
+  cmd.run:
+    - cwd: {{ console_dir }}
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
       - npm: nodejs-update_npm
 
