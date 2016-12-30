@@ -18,15 +18,6 @@ elasticsearch:
   confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
-jupyter:
-  version: 4.2.0
-  confdir: /usr/local/etc/jupyter
-  kerneldir: /usr/local/share/jupyter/kernels
-
-jupyterhub:
-  version: 0.6.1
-  confdir: /etc/jupyterhub
-
 zookeeper:
   version: 3.4.6
 

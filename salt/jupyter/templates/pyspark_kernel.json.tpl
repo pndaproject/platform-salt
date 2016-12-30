@@ -1,5 +1,5 @@
 {
- "display_name": "PySpark (Python2)",
+ "display_name": "PySpark/Python2 (Anaconda)",
  "language": "python",
  "argv": [
   "/opt/cloudera/parcels/Anaconda/bin/python",
