@@ -715,7 +715,8 @@ def main():
                 print "Increasing the number of kafkanodes from %s to %s" % (node_counts['kafka'], kafkanodes)
 
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
-                                                   0, 0, 0, 0, 0)
+                                                   esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
+                                                   esMultiNodes, logstashNodes)
             expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, branch)
             sys.exit(0)
         else:
