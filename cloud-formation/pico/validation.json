@@ -2,5 +2,11 @@
   "zk-nodes":"0",
   "kafka-nodes":"1",
   "opentsdb-nodes":"0",
-  "datanodes":"1-3"  
+  "datanodes":"1-3",
+  "elk-es-master":"0",
+  "elk-es-data":"0",
+  "elk-es-ingest":"0",
+  "elk-es-coordinator":"0",
+  "elk-es-multi":"0-3",
+  "elk-logstash":"0-3"
 }

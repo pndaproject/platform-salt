@@ -89,7 +89,8 @@ def display_elasped():
     elapsed = datetime.datetime.now() - START
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
 
-def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
+
+def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis, logstashNodes):
     common_filepath = 'cloud-formation/cf-common.json'
     with open(common_filepath, 'r') as template_file:
         template_data = json.loads(template_file.read())
@@ -112,6 +113,18 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
         instance_kafka = json.dumps(template_data['Resources'].pop('instanceKafka'))
     if 'instanceZookeeper' in template_data['Resources']:
         instance_zookeeper = json.dumps(template_data['Resources'].pop('instanceZookeeper'))
+    if 'instanceESMaster' in template_data['Resources']:
+        instance_esmaster = json.dumps(template_data['Resources'].pop('instanceESMaster'))
+    if 'instanceESData' in template_data['Resources']:
+        instance_esdata = json.dumps(template_data['Resources'].pop('instanceESData'))
+    if 'instanceESIngest' in template_data['Resources']:
+        instance_esingest = json.dumps(template_data['Resources'].pop('instanceESIngest'))
+    if 'instanceESCoordinator' in template_data['Resources']:
+        instance_escoordinator = json.dumps(template_data['Resources'].pop('instanceESCoordinator'))
+    if 'instanceESMulti' in template_data['Resources']:
+        instance_esmulti = json.dumps(template_data['Resources'].pop('instanceESMulti'))
+    if 'instanceLogstash' in template_data['Resources']:
+        instance_logstash = json.dumps(template_data['Resources'].pop('instanceLogstash'))
 
     for datanode in range(0, datanodes):
         instance_cdh_dn_n = instance_cdh_dn.replace('$node_idx$', str(datanode))
@@ -128,6 +141,30 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers):
     for zookeeper in range(0, zookeepers):
         instance_zookeeper_n = instance_zookeeper.replace('$node_idx$', str(zookeeper))
         template_data['Resources']['instanceZookeeper%s' % zookeeper] = json.loads(instance_zookeeper_n)
+
+    for esmaster in range(0, esmasters):
+        instance_esmaster_n = instance_esmaster.replace('$node_idx$', str(esmaster))
+        template_data['Resources']['instanceESMaster%s' % esmaster] = json.loads(instance_esmaster_n)
+    
+    for esingest in range(0, esingests):
+        instance_esingest_n = instance_esingest.replace('$node_idx$', str(esingest))
+        template_data['Resources']['instanceESIngest%s' % esingest] = json.loads(instance_esingest_n)
+    
+    for esdata in range(0, esdatas):
+        instance_esdata_n = instance_esdata.replace('$node_idx$', str(esdata))
+        template_data['Resources']['instanceESData%s' % esdata] = json.loads(instance_esdata_n)
+    
+    for escoord in range(0, escoords):
+        instance_escoordinator_n = instance_escoordinator.replace('$node_idx$', str(escoord))
+        template_data['Resources']['instanceESCoordinator%s' % escoord] = json.loads(instance_escoordinator_n)
+
+    for esmulti in range(0, esmultis):
+        instance_esmulti_n = instance_esmulti.replace('$node_idx$', str(esmulti))
+        template_data['Resources']['instanceESMulti%s' % esmulti] = json.loads(instance_esmulti_n)
+
+    for eslogstash in range(0, logstashNodes):
+        instance_logstash_n = instance_logstash.replace('$node_idx$', str(eslogstash))
+        template_data['Resources']['instanceLogstash%s' % eslogstash] = json.loads(instance_logstash_n)
 
     return json.dumps(template_data)
 
@@ -197,6 +234,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch, error_queue):
              'sudo chmod a+x /tmp/base.sh',
              '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
              'sudo chmod a+x /tmp/%s.sh' % node_type,
+             # TODO: Add param to number of master of instances (perhaps hard coded in salt?)
              '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR)], cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
@@ -580,6 +618,8 @@ def main():
     os.chdir('../')
 
     global PNDA_ENV
+
+
     check_config_file()
     with open('pnda_env.yaml', 'r') as infile:
         PNDA_ENV = yaml.load(infile)
@@ -589,6 +629,14 @@ def main():
         print '  AWS_REGION = %s' % PNDA_ENV['ec2_access']['AWS_REGION']
         print '  AWS_ACCESS_KEY_ID = %s' % PNDA_ENV['ec2_access']['AWS_ACCESS_KEY_ID']
         print '  AWS_SECRET_ACCESS_KEY = %s' % PNDA_ENV['ec2_access']['AWS_SECRET_ACCESS_KEY']
+
+    # read ES cluster setup from yaml
+    esMasterNodes = PNDA_ENV['elk-cluster']['MASTER_NODES']
+    esDataNodes = PNDA_ENV['elk-cluster']['DATA_NODES']
+    esIngestNodes = PNDA_ENV['elk-cluster']['INGEST_NODES']
+    esCoordinatorNodes = PNDA_ENV['elk-cluster']['COORDINATING_NODES']
+    esMultiNodes = PNDA_ENV['elk-cluster']['MULTI_ROLE_NODES']
+    logstashNodes = PNDA_ENV['elk-cluster']['LOGSTASH_NODES']
 
     # Branch defaults to master
     # but may be overridden by pnda_env.yaml
@@ -666,7 +714,9 @@ def main():
             elif  kafkanodes > node_counts['kafka']:
                 print "Increasing the number of kafkanodes from %s to %s" % (node_counts['kafka'], kafkanodes)
 
-            template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'])
+            template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
+                                                   esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
+                                                   esMultiNodes, logstashNodes)
             expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, branch)
             sys.exit(0)
         else:
@@ -729,12 +779,34 @@ def main():
         kafkanodes = 0
     if zknodes is None:
         zknodes = 0
+    if esMasterNodes is None:
+        esMasterNodes = 0
+    if esDataNodes is None:
+        esDataNodes = 0
+    if esIngestNodes is None:
+        esIngestNodes = 0
+    if esCoordinatorNodes is None:
+        esCoordinatorNodes = 0
+    if esMultiNodes is None:
+        esMultiNodes = 0
+    if logstashNodes is None:
+        logstashNodes = 0
+
     node_limit("datanodes", datanodes)
     node_limit("opentsdb-nodes", tsdbnodes)
     node_limit("kafka-nodes", kafkanodes)
     node_limit("zk-nodes", zknodes)
+    node_limit("elk-es-master", esMasterNodes)
+    node_limit("elk-es-data", esDataNodes)
+    node_limit("elk-es-ingest", esIngestNodes)
+    node_limit("elk-es-coordinator", esCoordinatorNodes)
+    node_limit("elk-es-multi", esMultiNodes)
+    node_limit("elk-logstash", logstashNodes)
 
-    template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes)
+    template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes,
+                                           esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
+                                           esMultiNodes, logstashNodes)
+
     console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')
