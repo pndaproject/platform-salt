@@ -6,6 +6,8 @@ stop on runlevel [!2345]
 respawn
 respawn limit 10 5
 
-chdir {{ jupyterhub_config_dir }}
+env PYTHON_HOME={{ virtual_env_dir }}
 
-exec jupyterhub
+chdir {{ virtual_env_dir }}
+
+exec ${PYTHON_HOME}/bin/jupyterhub --config={{ jupyterhub_config_dir }}/jupyterhub_config.py

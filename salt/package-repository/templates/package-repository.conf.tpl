@@ -6,5 +6,7 @@ respawn
 respawn limit unlimited
 post-stop exec sleep 2
 
+env PYTHON_HOME={{install_dir }}/package_repository/venv
+
 chdir {{ install_dir }}/package_repository
-exec python package_repository_rest_server.py
+exec ${PYTHON_HOME}/bin/python package_repository_rest_server.py

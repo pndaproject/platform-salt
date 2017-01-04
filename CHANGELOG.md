@@ -1,10 +1,35 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.2.0] 2016-12-12
+### Added
+- PNDA-2250: Provide tools that allow pnda infra to be rebooted and the services started again
+- Aggregating redundant services into common VMs (anti-affinity on OpenStack)
+
 ### Changed
- - PNDA-2284: hdfs-cleaner creates the archive container it needs
- 
+- PNDA-2284: hdfs-cleaner creates the archive container it needs
+- PNDA-1918: Simplify component paths 
+- PNDA-2392: Refactor hue user creation 
+- Update CDH to 5.9.0
+- PNDA-1812: Add a re-apply config mode to cm_setup
+- Merge general zookeeper/kafka white and black box tests
+- PNDA-2487: Increase HBase heaps for CDH5.9 
+- PNDA-2496: CM now uses external MySQL database instead of embedded postgres db
+
+### Fixed
+- PNDA-2231: Don't fail if the pnda user is already created in grafana 
+- Change 'heap_dump_directory_free_space' warnings for PICO flavor
+- Update logshipping for gobblin
+- PNDA-2431: Reduce impala catalog server heap size for pico 
+- Fix UTF8 issue on master-dataset
+- PNDA-2434: Pin version of ES curator and specify full path 
+- PNDA-2435: Reduce ES data retention for pico 
+- Create a python virtualenv for platform testing
+- PNDA-2488: Harmonize heap dump warning and reduce firehose size 
+- Fix issue on DM config as OpenTSDB configuration should be IP:PORT not a link
+- Alter YARN parameters to give 512MB map tasks
+- PNDA-2487: Adjust hbase, yarn and mapred to better fit pico 
+
 ## [1.0.1] 2016-10-31
 ### Fixed
  - PNDA-2368: Include console-backend 0.2.2 to fix version of the redis-parser npm module to 2.0.4

@@ -4,6 +4,8 @@
 {% set deployment_manager_package = 'deployment-manager-' + deployment_manager_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 
+{% set virtual_env_dir = install_dir + "/" + deployment_manager_directory_name + "/venv" %}
+
 include:
   - cdh.cloudera-api
   - python-pip
@@ -21,14 +23,15 @@ deployment-manager-dl-and-extract:
     - source_hash: {{ packages_server }}/{{ deployment_manager_package }}.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }} 
+    - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }}
 
-deployment-manager-install_python_deps:
-  pip.installed:
+deployment-manager-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ deployment_manager_directory_name }}/requirements.txt
     - reload_modules: True
     - require:
-      - pip: python-pip-install_python_pip
+      - archive: deployment-manager-dl-and-extract
 
 deployment-manager-create_deployment_manager_link:
   file.symlink:
@@ -40,17 +43,23 @@ deployment-manager-copy_configuration:
     - name: {{ install_dir }}/{{ deployment_manager_directory_name }}/dm-config.json
     - source: salt://deployment-manager/templates/dm-config.json.tpl
     - template: jinja
+    - require:
+      - archive: deployment-manager-dl-and-extract
 
 deployment-manager-gen_key:
   cmd.run:
     - name: 'ssh-keygen -b 2048 -t rsa -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem -q -N ""'
     - unless: test -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem
+    - require:
+      - archive: deployment-manager-dl-and-extract
 
 deployment-manager-push_key:
   module.run:
     - name: cp.push
     - path: '{{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem.pub'
     - upload_path: '/keys/dm.pem.pub'
+    - require:
+      - cmd: deployment-manager-gen_key
 
 deployment-manager-copy_upstart:
   file.managed:

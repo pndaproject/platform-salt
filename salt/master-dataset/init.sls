@@ -71,7 +71,7 @@ master-dataset-update_PNDA_quarantine_dataset_perms:
 master-bulk-ingest:
   cmd.run:
     - name: hdfs dfs -mkdir {{ pnda_master_bulk_location }}
-    - user: {{ pnda_user }}
+    - user: {{ pnda_user }}
     - unless: hdfs dfs -test -d {{ pnda_master_bulk_location }}
 
 master-bulk-ingest-perms:

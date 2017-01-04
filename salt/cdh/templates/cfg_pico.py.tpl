@@ -38,18 +38,21 @@ CMS_CFG = {
          {"type": "ACTIVITYMONITOR",
           "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
                      'max_log_backup_index': '2',
                      'max_log_size': '100',
                      'firehose_heapsize': '268435456'}},
          {"type": "ALERTPUBLISHER",
           "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
                      'max_log_backup_index': '2',
                      'max_log_size': '100'}},
          {"type": "EVENTSERVER",
           "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
                      'eventserver_index_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
                      'max_log_backup_index': '2',
                      'max_log_size': '100',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
@@ -57,9 +60,10 @@ CMS_CFG = {
           "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
                      'firehose_heapsize': '268435456',
                      'firehose_non_java_memory_bytes': '805306368',
-                     'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>2000000000</value>\n</property>\n',
+                     'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>524288000</value>\n</property>\n',
                      'firehose_storage_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
                      'max_log_backup_index': '2',
                      'max_log_size': '100',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
@@ -67,9 +71,10 @@ CMS_CFG = {
           "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
                      'firehose_heapsize': '268435456',
                      'firehose_non_java_memory_bytes': '805306368',
-                     'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>2000000000</value>\n</property>',
+                     'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>524288000</value>\n</property>',
                      'firehose_storage_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
                      'max_log_backup_index': '2',
                      'max_log_size': '100',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}}]
@@ -89,6 +94,7 @@ OOZIE_CFG = {"service": "OOZIE",
                                       'oozie_database_host': '{{ mysql_host }}',
                                       'oozie_database_user': 'oozie',
                                       'oozie_database_password': 'oozie',
+                                      'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                       'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}'}}]}
 
 ZK_CFG = {"service": "ZOOKEEPER",
@@ -103,6 +109,7 @@ ZK_CFG = {"service": "ZOOKEEPER",
                                    'zk_server_log_dir': '/var/log/pnda/zookeeper',
                                    'maxSessionTimeout': '60000',
                                    'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}',
+                                   'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                    'max_log_backup_index': '2',
                                    'max_log_size': '100',
                                    'zookeeper_server_data_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
@@ -137,15 +144,15 @@ MAPRED_CFG = {
     "role_cfg": [
         {
             "type": "GATEWAY",
-            "config": {'mapred_reduce_tasks': 3, 'mapred_submit_replication': 1,
-                       'io_sort_mb': '128',
-                       'mapred_reduce_tasks': '4',
-                       'mapreduce_client_java_heapsize': '213909504',                                                          
-                       'mapreduce_map_java_opts_max_heap': '213909504',
-                       'mapreduce_map_memory_mb': '256',
-                       'mapreduce_reduce_java_opts_max_heap': '427819008',
-                       'mapreduce_reduce_memory_mb': '512',
-                       'yarn_app_mapreduce_am_max_heap': '427819008',
+            "config": {'mapred_reduce_tasks': 3, 
+                       'mapred_submit_replication': 1,
+                       'io_sort_mb': '128',                       
+                       'mapreduce_client_java_heapsize': '321912832',
+                       'mapreduce_map_java_opts_max_heap': '321912832',
+                       'mapreduce_map_memory_mb': '384',
+                       'mapreduce_reduce_java_opts_max_heap': '858783744',
+                       'mapreduce_reduce_memory_mb': '1024',
+                       'yarn_app_mapreduce_am_max_heap': '428867584',
                        'yarn_app_mapreduce_am_resource_mb': '512'}
         },
         {
@@ -164,6 +171,7 @@ MAPRED_CFG = {
                     'nodemanager_log_directories_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                     'nodemanager_recovery_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                     'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                    'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100'
                 }
@@ -176,6 +184,7 @@ MAPRED_CFG = {
                     'mapreduce_jobhistory_max_age_ms': '86400000',
                     'mr2_jobhistory_java_heapsize': '1073741824',
                     'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                    'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100'
                 }
@@ -189,11 +198,13 @@ MAPRED_CFG = {
                     'resource_manager_java_heapsize': '1073741824',
                     'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn',
                     'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
+                    'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                     'max_log_backup_index': '2',
                     'max_log_size': '100',
                     'yarn_scheduler_increment_allocation_mb': '256',
                     'yarn_scheduler_maximum_allocation_mb': '4096',
-                    'yarn_scheduler_maximum_allocation_vcores': '2',
+                    'yarn_scheduler_maximum_allocation_vcores': '1',
+                    'yarn_scheduler_minimum_allocation_vcores': '1',
                     'yarn_scheduler_minimum_allocation_mb': '256'
                 }
         }
@@ -265,6 +276,7 @@ HDFS_CFG = {
                            'namenode_java_heapsize': 1073741824,
                            'dfs_qjournal_write_txns_timeout_ms': 120000,
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'max_log_backup_index': '2',
                            'max_log_size': '100',
                            'namenode_data_directories_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}'}
@@ -273,15 +285,19 @@ HDFS_CFG = {
                 "type": "DATANODE",
                 "config": {'dfs_data_dir_list': '/data0/dn', 'datanode_log_dir': '/var/log/pnda/hadoop/dn',
                            'datanode_data_directories_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
-                          'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
-                          'max_log_backup_index': '2',
-                          'max_log_size': '100'}
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
+                           'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'max_log_backup_index': '2',
+                           'max_log_size': '100',
+                           'dfs_datanode_max_locked_memory':'1073741824'
+                           }
             },
             {
                 "type": "SECONDARYNAMENODE",
                 "config": {'fs_checkpoint_dir_list': '/data0/snn',
                            'secondarynamenode_log_dir': '/var/log/pnda/hadoop/snn',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'max_log_backup_index': '2',
                            'max_log_size': '100',
                            'secondary_namenode_java_heapsize': '1073741824',
@@ -291,6 +307,7 @@ HDFS_CFG = {
                 "type": "HTTPFS",
                 "config": {'httpfs_log_dir': '/var/log/pnda/hadoop-httpfs',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
 						   'max_log_backup_index': '2',
 						   'max_log_size': '100'}
             }
@@ -301,7 +318,7 @@ HDFS_CFG = {
 HBASE_CFG = {
     "service": "HBASE",
     "name": "hbase01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'hbase_client_keyvalue_maxsize': '209715200', 'rm_dirty': 'true'},
+    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'rm_dirty': 'true'},
     "roles":
         [
             {
@@ -334,31 +351,35 @@ HBASE_CFG = {
         {
             "type": "HBASERESTSERVER",
             "config": {'hbase_restserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_restserver_java_heapsize': '209715200',
+                       'hbase_restserver_java_heapsize': '402653184',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                       'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
                        'max_log_size': '100'}
         },
         {
             "type": "HBASETHRIFTSERVER",
             "config": {'hbase_thriftserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_thriftserver_java_heapsize': '209715200',
+                       'hbase_thriftserver_java_heapsize': '671088640',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                       'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
                        'max_log_size': '100'}
         },
         {
             "type": "MASTER",
-            "config": {'hbase_master_log_dir': '/var/log/pnda/hbase', 'hbase_master_java_heapsize': '209715200',
+            "config": {'hbase_master_log_dir': '/var/log/pnda/hbase', 'hbase_master_java_heapsize': '402653184',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                       'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
                        'max_log_size': '100'}
         },
         {
             "type": "REGIONSERVER",
             "config": {'hbase_regionserver_log_dir': '/var/log/pnda/hbase',
-                       'hbase_regionserver_java_heapsize': '536870912',
+                       'hbase_regionserver_java_heapsize': '805306368',
                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                       'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                        'max_log_backup_index': '2',
                        'max_log_size': '100'}
         },
@@ -408,6 +429,7 @@ HIVE_CFG = {
                 "config": {'hive_log_dir': '/var/log/pnda/hive',
                            'hive_metastore_java_heapsize': '1073741824',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'max_log_backup_index': '2',
                            'max_log_size': '100'}
             },
@@ -415,6 +437,7 @@ HIVE_CFG = {
                 "type": "HIVESERVER2",
                 "config": {'hive_log_dir': '/var/log/pnda/hive', 'hiveserver2_java_heapsize': '1073741824',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'max_log_backup_index': '2',
                            'max_log_size': '100'}
             },
@@ -425,6 +448,7 @@ HIVE_CFG = {
             {
                 "type": "WEBHCAT",
                 "config": {'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                           'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'max_log_backup_index': '2',
                            'max_log_size': '100'}
             }
@@ -451,14 +475,19 @@ IMPALA_CFG = {
                                        'log_dir': '/var/log/pnda/impala',
                                        'impalad_scratch_directories_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                                        'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                                       'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                        'max_log_size': '100'}},
         {'type': 'CATALOGSERVER', 'config': {'log_dir': '/var/log/pnda/impala',
+                                             'catalogd_embedded_jvm_heapsize': "1073741824",
                                              'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                                             'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                              'max_log_size': '100'}},
         {'type': 'STATESTORE', 'config': {'log_dir': '/var/log/pnda/impala',
 									      'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                                          'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
 									      'max_log_size': '100'}},
         {'type': 'LLAMA', 'config': {'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
+                                     'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                                      'llama_log_dir': '/var/log/pnda/impala-llama',
 									 'max_log_backup_index': '2',
 									 'max_log_size': '100'}}
