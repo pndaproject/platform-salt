@@ -18,6 +18,14 @@ elasticsearch:
   confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
+elasticsearch-cluster:
+  version: 5.0.0
+  name: pnda-cluster
+  directory: /opt/pnda
+  logdir: /var/log/elasticsearch
+  datadir: /var/lib/elasticsearch
+  workdir: /tmp/elasticsearch
+
 zookeeper:
   version: 3.4.6
 
