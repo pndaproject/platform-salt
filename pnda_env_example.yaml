@@ -92,3 +92,16 @@ mirrors:
 
   # These mirrors are mandatory and may be hosted on any HTTP server, including the PNDA component package server
   JAVA_MIRROR: http://x.x.x.x/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
+
+elk-cluster:
+  # number of master nodes
+  MASTER_NODES: 0
+  # number of data nodes
+  DATA_NODES: 0
+  # number of ingest nodes
+  INGEST_NODES: 0
+  # number of coordinating nodes
+  COORDINATING_NODES: 0
+
+  # How many nodes that do all roles (simple setup). Please use eithar this simple setup or the above advanced setup. DON'T USE BOTH
+  MULTI_ROLE_NODES: 0
