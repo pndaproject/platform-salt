@@ -26,6 +26,14 @@ elasticsearch-cluster:
   datadir: /var/lib/elasticsearch
   workdir: /tmp/elasticsearch
 
+logstash-cluster:
+  version: 5.0.2
+  directory: /opt/pnda
+  logdir: /var/log/logstash
+  confdir: /etc/logstash
+  datadir: /var/lib/logstash
+  inputdir: /tmp/logstash
+
 zookeeper:
   version: 3.4.6
 
