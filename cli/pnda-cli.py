@@ -90,7 +90,7 @@ def display_elasped():
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
 
 
-def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis):
+def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis, logstashNodes):
     common_filepath = 'cloud-formation/cf-common.json'
     with open(common_filepath, 'r') as template_file:
         template_data = json.loads(template_file.read())
@@ -123,6 +123,8 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esm
         instance_escoordinator = json.dumps(template_data['Resources'].pop('instanceESCoordinator'))
     if 'instanceESMulti' in template_data['Resources']:
         instance_esmulti = json.dumps(template_data['Resources'].pop('instanceESMulti'))
+    if 'instanceLogstash' in template_data['Resources']:
+        instance_logstash = json.dumps(template_data['Resources'].pop('instanceLogstash'))
 
     for datanode in range(0, datanodes):
         instance_cdh_dn_n = instance_cdh_dn.replace('$node_idx$', str(datanode))
@@ -159,6 +161,10 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esm
     for esmulti in range(0, esmultis):
         instance_esmulti_n = instance_esmulti.replace('$node_idx$', str(esmulti))
         template_data['Resources']['instanceESMulti%s' % esmulti] = json.loads(instance_esmulti_n)
+
+    for eslogstash in range(0, logstashNodes):
+        instance_logstash_n = instance_logstash.replace('$node_idx$', str(eslogstash))
+        template_data['Resources']['instanceLogstash%s' % eslogstash] = json.loads(instance_logstash_n)
 
     return json.dumps(template_data)
 
@@ -630,6 +636,7 @@ def main():
     esIngestNodes = PNDA_ENV['elk-cluster']['INGEST_NODES']
     esCoordinatorNodes = PNDA_ENV['elk-cluster']['COORDINATING_NODES']
     esMultiNodes = PNDA_ENV['elk-cluster']['MULTI_ROLE_NODES']
+    logstashNodes = PNDA_ENV['elk-cluster']['LOGSTASH_NODES']
 
     # Branch defaults to master
     # but may be overridden by pnda_env.yaml
@@ -781,6 +788,8 @@ def main():
         esCoordinatorNodes = 0
     if esMultiNodes is None:
         esMultiNodes = 0
+    if logstashNodes is None:
+        logstashNodes = 0
 
     node_limit("datanodes", datanodes)
     node_limit("opentsdb-nodes", tsdbnodes)
@@ -791,9 +800,12 @@ def main():
     node_limit("elk-es-ingest", esIngestNodes)
     node_limit("elk-es-coordinator", esCoordinatorNodes)
     node_limit("elk-es-multi", esMultiNodes)
+    node_limit("elk-logstash", logstashNodes)
 
     template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes,
-                                           esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes, esMultiNodes)
+                                           esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
+                                           esMultiNodes, logstashNodes)
+
     console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')

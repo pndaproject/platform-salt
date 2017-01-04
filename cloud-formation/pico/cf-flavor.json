@@ -50,6 +50,11 @@
       "Default" : "t2.medium",
       "Description" : "Instance type for ELK ES cluster multi-role node"  
     },
+    "instancetypeLogstash" : {
+      "Type" : "String",
+      "Default" : "t2.medium",
+      "Description" : "Instance type for ELK Logstash node"
+    },
     "logVolumeSizeGb" : {
       "Type" : "String",
       "Default" : "10",
@@ -473,6 +478,47 @@
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
           }        
+        ],
+        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+      }
+    },
+    "instanceLogstash":{
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "ImageId": { "Ref" : "imageId" },
+        "InstanceType": { "Ref" : "instancetypeLogstash" },
+        "SubnetId": { "Ref" : "PrivateSubnet" },
+        "KeyName": { "Ref" : "keyName" },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "elk-logstash-$node_idx$" ] ]}
+          },
+          {
+            "Key": "pnda_cluster",
+            "Value": {"Ref": "pndaCluster"}
+          },
+          {
+            "Key": "node_type",
+            "Value": "elk-logstash"
+          },
+          {
+            "Key": "node_idx",
+            "Value": "$node_idx$"
+          }
+        ],
+        "BlockDeviceMappings" : [
+          {
+              "DeviceName" : "/dev/sda1",
+              "Ebs" : { "VolumeSize" : "20" }
+          },
+          {
+              "DeviceName" : "/dev/sdc",
+              "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
