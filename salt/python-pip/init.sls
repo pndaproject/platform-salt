@@ -6,7 +6,9 @@ python-pip-install-pip-package:
 
 python-pip-install_python_pip:
   pip.installed:
-    - name: pip == 8.1.2
+    - pkgs:
+      - pip == 9.0.1
+      - virtualenv == 15.1.0
     - upgrade: True
     - reload_modules: True
     - require:

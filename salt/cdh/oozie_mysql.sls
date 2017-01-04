@@ -134,3 +134,21 @@ cdh-Grant privileges to hue user from outside:
     - host: '%'
     - connection_user: root
     - connection_pass: {{ mysql_root_password }}
+
+cdh-Create root user remote:
+  mysql_user.present:
+    - name: root
+    - host: '%'
+    - password: {{ mysql_root_password }}
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}
+
+cdh-Grant privileges to root user from outside:
+   mysql_grants.present:
+    - grant: all privileges
+    - grant_option: True
+    - database: '*.*'
+    - user: root
+    - host: '%'
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}

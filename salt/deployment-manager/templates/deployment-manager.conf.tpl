@@ -6,5 +6,7 @@ respawn
 respawn limit unlimited
 post-stop exec sleep 2
 
+env PYTHON_HOME={{ install_dir }}/deployment_manager/venv
+
 chdir {{ install_dir }}/deployment_manager
-exec python app.py
+exec ${PYTHON_HOME}/bin/python app.py

@@ -5,6 +5,9 @@ respawn
 respawn limit unlimited
 post-stop exec sleep 2
 setuid hdfs
+
+env PYTHON_HOME={{ install_dir }}/data-service/venv
+
 chdir {{ install_dir }}/data-service
 env programDir={{ install_dir }}/data-service
-exec python ${programDir}/apiserver.py
+exec ${PYTHON_HOME}/bin/python ${programDir}/apiserver.py

@@ -24,7 +24,6 @@ elasticsearch-cluster:
   directory: /opt/pnda
   logdir: /var/log/elasticsearch
   datadir: /var/lib/elasticsearch
-#  confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
 logstash-cluster:
@@ -34,15 +33,6 @@ logstash-cluster:
   confdir: /etc/logstash
   datadir: /var/lib/logstash
   inputdir: /tmp/logstash
-
-jupyter:
-  version: 4.2.0
-  confdir: /usr/local/etc/jupyter
-  kerneldir: /usr/local/share/jupyter/kernels
-
-jupyterhub:
-  version: 0.6.1
-  confdir: /etc/jupyterhub
 
 zookeeper:
   version: 3.4.6
@@ -65,6 +55,7 @@ kafkamanager:
 opentsdb:
   version: 2.2.0
   release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
+  bind_port: 4242
 
 grafana:
   version: 3.1.1-1470047149

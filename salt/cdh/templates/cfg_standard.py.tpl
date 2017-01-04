@@ -262,18 +262,18 @@ HDFS_CFG = {
 HBASE_CFG = {
     "service": "HBASE",
     "name": "hbase01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'hbase_client_keyvalue_maxsize': '209715200'},
+    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01'},
     "roles":
         [
             {
                 "name": "master",
                 "type": "MASTER",
-                "target": "MGR03"
+                "target": "MGR01"
             },
             {
                 "name": "master_sec",
                 "type": "MASTER",
-                "target": "MGR04"
+                "target": "MGR02"
             },
             {
                 "name": "regionserver",
