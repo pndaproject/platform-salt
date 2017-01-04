@@ -3,6 +3,12 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
 
+jupyter-extension-enable_widget_nbextensions:
+  cmd.run:
+    - name: {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system
+    - unless: |
+        {{ virtual_env_dir }}/bin/jupyter nbextension list --system|grep 'jupyter-spark/extension.*enabled'
+
 # lxml improves perforance on server side communication to Spark
 jupyter-extension_install_jupyter_spark:
   pip.installed:
