@@ -9,6 +9,15 @@
 
 set -e
 
+# If system packages are being installed from an offline bundle then download
+# that bundle and make the packages available for installation
+if [ "x$OS_PACKAGE_MIRROR" != "x" ] ; then
+wget ${OS_PACKAGE_MIRROR%/*}/apt-offline.deb
+dpkg -i apt-offline.deb
+wget $OS_PACKAGE_MIRROR
+apt-offline install ${OS_PACKAGE_MIRROR##*/}
+fi
+
 apt-get update
 apt-get -y install xfsprogs
 

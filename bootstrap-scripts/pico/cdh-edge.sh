@@ -9,6 +9,15 @@
 # variables
 set -ex
 
+# If system packages are being installed from an offline bundle then download
+# that bundle and make the packages available for installation
+if [ "x$OS_PACKAGE_MIRROR" != "x" ] ; then
+wget ${OS_PACKAGE_MIRROR%/*}/apt-offline.deb
+dpkg -i apt-offline.deb
+wget $OS_PACKAGE_MIRROR
+apt-offline install ${OS_PACKAGE_MIRROR##*/}
+fi
+
 # Set up ssh access to the platform-salt git repo on the package server,
 # if secure access is required this key will be used automatically.
 # This mode is not normally used now the public github is available
