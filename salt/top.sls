@@ -71,7 +71,6 @@
     - match: grain
     - cdh.create_data_dirs
     - snappy
-    - gobblin.user
 
   'roles:cloudera_manager':
     - match: grain
