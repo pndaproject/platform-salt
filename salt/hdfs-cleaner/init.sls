@@ -7,6 +7,9 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
+{% set pnda_user  = pillar['pnda']['user'] %}
+{% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
+
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
@@ -48,6 +51,7 @@ hdfs-cleaner-copy_config:
         repo_path: {{ pnda_cluster }}
         archive_type: '{{ archive_type }}'
         archive_service: '{{ archive_service }}'
+        gobblin_work_dir: {{ gobblin_work_dir }}
     - require:
       - file: hdfs-cleaner-create_link
 
@@ -72,4 +76,3 @@ hdfs-cleaner-add_crontab_entry:
     - user: root
     - mode: 777
     - makedirs: True
-
