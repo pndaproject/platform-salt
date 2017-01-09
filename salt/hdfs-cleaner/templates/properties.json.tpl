@@ -18,7 +18,8 @@
     ],
     "general_dirs_to_clean":["/user/history/done/"],
     "old_dirs_to_clean": [
-        {"name": "/user/gobblin/work/metrics", "age_seconds": 172800}
+        {"name": "{{ gobblin_work_dir }}/metrics", "age_seconds": 172800},
+        {"name": "{{ gobblin_work_dir }}/state-store/PullFromKafkaMR", "age_seconds": 172800}
     ],
     "swift_repo": "{{ archive_type }}://{{ container }}{{ archive_service }}/{{ repo_path }}",
     "container_name": "{{ container }}",
