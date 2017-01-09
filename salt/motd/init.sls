@@ -5,3 +5,4 @@ motd-install:
     - group: root
     - mode: 0644
     - source: salt://motd/motd
+    - template: jinja
