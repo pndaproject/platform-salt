@@ -61,3 +61,8 @@ cdh-create_cloudera_configuration_script:
 cdh-execute_cloudera_installation_script:
   cmd.run:
     - name: python {{ scripts_location }}/cloudera_config.py
+    - require:
+      - file: cdh-copy_cm_config
+      - file: cdh-copy_install_sharedlib
+      - file: cdh-create_cloudera_configuration_script
+      - file: cdh-copy_script_manager_installation_script
