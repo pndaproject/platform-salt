@@ -302,48 +302,9 @@ def generic_create_service(cluster, cfg, nodes):
 
     return service
 
-
-def create_mysql_connector_symlink(user, key, ip_addr, target_dir):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                [
-                    "bash",
-                    "-c",
-                    ("TARGET_DIR=%s;"
-                     "MYSQL_JAVA_CONNECTOR=/usr/share/java/mysql-connector-java.jar;"
-                     "[ -f $MYSQL_JAVA_CONNECTOR ]&& sudo ln -s $MYSQL_JAVA_CONNECTOR $TARGET_DIR/mysql-connector-java.jar"
-                     " || echo \"ERROR - Unable to create symbolic link for 'mysql-connector-java.jar'. Oozie service might not work properly.\"") %
-                    (target_dir)]]}
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating mysql symlink", exc_info=True)
-        raise
-
 def create_hdfs_dirs(yarn):
     wait_on_success(yarn.create_yarn_job_history_dir())
     wait_on_success(yarn.create_yarn_node_manager_remote_app_log_dir())
-
-def create_hive_tmp(user, key, ip_addr):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                ["bash", "-c", "sudo mkdir -p /data0/tmp"],
-                ["bash", "-c", "sudo chmod 777 /data0/tmp"]
-            ]
-        }
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating hive temporary directory", exc_info=True)
-        raise
 
 def assign_roles(service, roles, nodes):
 
@@ -548,20 +509,8 @@ def create_services(user, key, cluster, nodes, ha_enabled):
         logging.info("Creating Impala")
         impala = generic_create_service(cluster, _CFG.IMPALA_CFG, nodes)
 
-        # The mysql-server is installed on node-1 (i.e. NAMENODE) and is used for oozie, hive and hue databases.
-        # This must be done prior to oozie db creation.
-        logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
-        create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
-
         logging.info("Create Oozie db")
         wait_on_success(oozie.create_oozie_db())
-
-        logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
-        create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
-
-        # This must be done prior to hive metastore db creation.
-        logging.info("Creating /tmp for Hive")
-        create_hive_tmp(user, key, hive_detail['public_addr'])
 
         logging.info("Creating Hive metastore database tables")
         wait_on_success(hive.create_hive_metastore_tables())
