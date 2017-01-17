@@ -9,6 +9,8 @@
                                 'network.ip_addrs',
                                 expr_form='compound').keys()|first %}
 
+{% set ssh_prv_key = '/tmp/cloudera.pem' %}
+
 cdh-create_cloudera_user:
   user.present:
     - name: {{ cloudera['username'] }}
@@ -19,14 +21,19 @@ cdh-get-cloudera-public-key:
   module.run:
     - name: cp.get_file
     - path: salt://{{ cm_id }}/keys/cloudera.pem.pub
-    - dest: /tmp/cloudera.pem.pub
+    - dest: {{ ssh_prv_key}}.pub
 
 cdh-add_authorized_key:
   ssh_auth.present:
     - user: {{ cloudera['username'] }}
-    - source: /tmp/cloudera.pem.pub
+    - source: {{ ssh_prv_key }}.pub
+    - require:
+      - user: cdh-create_cloudera_user
+      - module: cdh-get-cloudera-public-key
 
 cdh-add_cloudera_user_to_passwordless_sudoers:
   file.managed:
     - name: /etc/sudoers.d/cloudera
     - contents: '{{ cloudera['username'] }} ALL = (ALL) NOPASSWD: ALL'
+    - require:
+      - user: cdh-create_cloudera_user
