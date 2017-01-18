@@ -1,6 +1,5 @@
 import requests
 
-
 def get_named_service(cm_host, cluster_name, service_name):
     """ Returns named service for HA Cluster """
     user_name = __salt__['pillar.get']('admin_login:user')
@@ -27,7 +26,7 @@ def namenodes_ips():
     cm_name = cluster_name()
     cm_host = cloudera_manager_ip()
     service_name = 'hdfs01'
-    named_service = get_named_service(cm_host, cm_name, service_name) 
+    named_service = get_named_service(cm_host, cm_name, service_name)
     if named_service:
         return [named_service]
     return ip_addresses('cloudera_namenode')
@@ -54,7 +53,7 @@ def ldap_ip():
     result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
     # Only get first ip address
     return result[0][0] if len(result) > 0 else None
-       
+
 def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
@@ -75,3 +74,28 @@ def generate_http_link(role, suffix):
         return 'http://%s%s' % (nodes[0], suffix)
     else:
         return ''
+
+def cloudera_get_hosts_by_role(service, role_type):
+    user = __salt__['pillar.get']('admin_login:user')
+    password = __salt__['pillar.get']('admin_login:password')
+    endpoint = cloudera_manager_ip() + ':7180'
+    cluster = cluster_name()
+
+    request_url = 'http://{}/api/v14/clusters/{}/services/{}/roles'.format(endpoint, cluster, service)
+    r = requests.get(request_url, auth=(user, password))
+    r.raise_for_status()
+    roles = r.json()
+
+    # Filter hosts with the right role type
+    hosts_ids = [item['hostRef']['hostId'] for item in roles['items'] if item['type'] == role_type]
+
+    # Get ip addresses
+    hosts_ips = []
+    for host_id in hosts_ids:
+        request_host_url = 'http://{}/api/v14/hosts/{}'.format(endpoint, host_id)
+        r = requests.get(request_host_url, auth=(user, password))
+        r.raise_for_status()
+        ip_address = r.json()['ipAddress']
+        hosts_ips.append(ip_address)
+
+    return hosts_ips
