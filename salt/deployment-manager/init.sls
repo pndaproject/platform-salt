@@ -7,7 +7,6 @@
 {% set virtual_env_dir = install_dir + "/" + deployment_manager_directory_name + "/venv" %}
 
 include:
-  - cdh.cloudera-api
   - python-pip
 
 deployment-manager-install_dev_deps:
