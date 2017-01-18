@@ -1,5 +1,12 @@
-    ____  _   ______  ___
-   / __ \/ | / / __ \/   |
-  / /_/ /  |/ / / / / /| |
- / ____/ /|  / /_/ / ___ |
-/_/   /_/ |_/_____/_/  |_|
+
+     ____  _   ______  ___
+    / __ \/ | / / __ \/   |   This server is managed using a configuration
+   / /_/ /  |/ / / / / /| |   management system.
+  / ____/ /|  / /_/ / ___ |   Changes made to this box directly will likely
+ /_/   /_/ |_/_____/_/  |_|   be over-written.
+
+
+    Cluster Name: {{ grains['pnda_cluster'] }}
+          Flavor: {{ grains['pnda']['flavor'] }}
+ Saltstack roles: {{ grains['roles'] | default([])  | join(', ') | wordwrap(75, break_long_words=False) | indent(18) }}
+

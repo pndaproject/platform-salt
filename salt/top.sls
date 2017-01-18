@@ -2,6 +2,7 @@
 
   '*':
     - tasks.system_update
+    - motd
     - pnda.user
     - hostsfile
     - java
