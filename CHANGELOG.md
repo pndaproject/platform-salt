@@ -1,14 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-## Fixes
-- xvdc volume mounted on /var/log/pnda instead of /var/log/panda
+## [1.2.0] 2017-01-20
+### Fixed
+- PNDA-2595: xvdc volume mounted on /var/log/pnda instead of /var/log/panda
 
-## Added
-- The CLI now checks for salt error and halt execution if found
-- Ability to create an ElasticSearch cluster for external usage
-- Future updates to allow Offline installation
+### Added
+- PNDA-2043: The CLI now checks for salt error and halt execution if found
+- PNDA-2533: Ability to create an ElasticSearch cluster for external usage
+- PNDA-2571: Work to allow, future, Offline installation
 
 ## [1.1.0] 2016-12-12
 ### Changed
