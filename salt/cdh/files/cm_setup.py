@@ -707,6 +707,7 @@ def create_services(user, key, cluster, nodes, ha_enabled):
             save_progress(setup_progress, "25_IMPALA_CAT_TABLE")
 
         ensure_started(impala)
+
         save_progress(setup_progress, "99_COMPLETE")
     except Exception:
         logging.error("Error while creating services", exc_info=True)
@@ -769,6 +770,7 @@ def setup_hadoop(
     logging.info("Installing hosts")
     new_nodes = create_hosts(api, cloudera_manager, user, nodes, key_name)
     assign_host_ids(api, nodes)
+
     setup_progress = load_progress()
     if not check_progress(setup_progress, "99_COMPLETE"):
         # setup hasn't completed, force it to run again
