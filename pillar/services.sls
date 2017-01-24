@@ -18,14 +18,21 @@ elasticsearch:
   confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
-jupyter:
-  version: 4.2.0
-  confdir: /usr/local/etc/jupyter
-  kerneldir: /usr/local/share/jupyter/kernels
+elasticsearch-cluster:
+  version: 5.0.0
+  name: pnda-cluster
+  directory: /opt/pnda
+  logdir: /var/log/elasticsearch
+  datadir: /var/lib/elasticsearch
+  workdir: /tmp/elasticsearch
 
-jupyterhub:
-  version: 0.6.1
-  confdir: /etc/jupyterhub
+logstash-cluster:
+  version: 5.0.2
+  directory: /opt/pnda
+  logdir: /var/log/logstash
+  confdir: /etc/logstash
+  datadir: /var/lib/logstash
+  inputdir: /tmp/logstash
 
 zookeeper:
   version: 3.4.6
@@ -55,34 +62,34 @@ grafana:
   release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
 
 gobblin:
-  release_version: 0.1.2
-
-console_frontend:
   release_version: 0.1.3
 
+console_frontend:
+  release_version: 0.1.4
+
 console_backend_data_logger:
-  release_version: 0.2.3
+  release_version: 0.3.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.2.3
+  release_version: 0.3.0
   bind_port: 3123
 
 deployment_manager:
-  release_version: 0.2.1
+  release_version: 0.3.0
 
 package_repository:
-  release_version: 0.2.1
+  release_version: 0.3.0
 
 data-service:
-  release_version: 0.1.2
+  release_version: 0.2.0
 
 hdfs_cleaner:
-  release_version: 0.1.2
+  release_version: 0.2.0
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 0.2.0
+  release_version: 0.3.0
 
 platformlib:
   release_version: 0.1.2

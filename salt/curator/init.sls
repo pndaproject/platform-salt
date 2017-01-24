@@ -1,12 +1,13 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+{% set virtual_env_dir = pillar['pnda']['homedir'] + "/elasticsearch-curator" %}
 
 include:
   - python-pip
 
 curator-python-elasticsearch-curator:
-  pip.installed:
-    - name: elasticsearch-curator==3.5.1
-    - reload_modules: True
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
+    - requirements: salt://curator/files/requirements.txt
     - require:
       - pip: python-pip-install_python_pip
 
@@ -16,5 +17,4 @@ curator-update-crontab-inc-curator:
     - user: root
     - minute: 01
     - hour: 00
-    - name: /usr/local/bin/curator delete indices --older-than {{ flavor_cfg.days_to_keep }} --time-unit days --prefix logstash- --timestring \%Y.\%m.\%d >> /tmp/curator.log 2>&1
-
+    - name: {{ virtual_env_dir }}/bin/curator delete indices --older-than {{ flavor_cfg.days_to_keep }} --time-unit days --prefix logstash- --timestring \%Y.\%m.\%d >> /tmp/curator.log 2>&1

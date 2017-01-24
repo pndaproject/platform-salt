@@ -2,6 +2,7 @@
 
   '*':
     - tasks.system_update
+    - motd
     - pnda.user
     - hostsfile
     - java
@@ -64,14 +65,12 @@
 
   'roles:opentsdb':
     - match: grain
-    - pnda_opentsdb.install
     - snappy
 
   'cloudera:*':
     - match: grain
     - cdh.create_data_dirs
     - snappy
-    - gobblin.user
 
   'roles:cloudera_manager':
     - match: grain
@@ -97,4 +96,12 @@
   'roles:pnda_restart':
     - match: grain
     - reboot.install_restart
+
+  'roles:elk-es-*':
+   - match: grain
+   - elasticsearch-cluster
+
+  'roles:elk-logstash':
+   - match: grain
+   - logstash
 

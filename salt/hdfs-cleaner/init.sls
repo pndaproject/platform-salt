@@ -7,20 +7,15 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
+{% set pnda_user  = pillar['pnda']['user'] %}
+{% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
+
 {% set install_dir = pillar['pnda']['homedir'] %}
+
+{% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
 
 include:
   - python-pip
-
-hdfs-cleaner-install_python_deps:
-  pip.installed:
-    - pkgs:
-      - pyhdfs
-      - happybase
-      - cm_api == 11.0.0
-    - reload_modules: True
-    - require:
-      - pip: python-pip-install_python_pip
 
 hdfs-cleaner-dl-and-extract:
   archive.extracted:
@@ -31,10 +26,20 @@ hdfs-cleaner-dl-and-extract:
     - tar_options: v
     - if_missing: {{ install_dir }}/{{ app_directory_name }}
 
+hdfs-cleaner-create-venv:
+  virtualenv.managed:
+    - name: {{ virtual_env_dir }}
+    - requirements: salt://hdfs-cleaner/files/requirements.txt
+    - require:
+      - pip: python-pip-install_python_pip
+      - archive: hdfs-cleaner-dl-and-extract
+
 hdfs-cleaner-create_link:
   file.symlink:
     - name: {{ install_dir }}/hdfs-cleaner
     - target: {{ install_dir }}/{{ app_directory_name }}
+    - require:
+      - archive: hdfs-cleaner-dl-and-extract
 
 hdfs-cleaner-copy_config:
   file.managed:
@@ -46,7 +51,9 @@ hdfs-cleaner-copy_config:
         repo_path: {{ pnda_cluster }}
         archive_type: '{{ archive_type }}'
         archive_service: '{{ archive_service }}'
-
+        gobblin_work_dir: {{ gobblin_work_dir }}
+    - require:
+      - file: hdfs-cleaner-create_link
 
 hdfs-cleaner-copy_upstart:
   file.managed:
@@ -69,4 +76,3 @@ hdfs-cleaner-add_crontab_entry:
     - user: root
     - mode: 777
     - makedirs: True
-

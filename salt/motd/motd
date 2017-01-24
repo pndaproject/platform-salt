@@ -1,22 +1,12 @@
-    ______     _   _______  ___  
-    | ___ \   | \ | |  _  \/ _ \ 
-    | |_/ /_ _|  \| | | | / /_\ \
-    |  __/ _` | . ` | | | |  _  |
-    | | | (_| | |\  | |/ /| | | |
-    \_|  \__,_\_| \_/___/ \_| |_/
-                                 
-                           
-            ,,,         ,,,
-          ;"   ^;     ;'   ",
-          ;    s$$$$$$$s     ;
-          ,  ss$$$$$$$$$$s  ,'
-          ;s$$$$$$$$$$$$$$$
-          $$$$$$$$$$$$$$$$$$
-         $$$$P""Y$$$Y""W$$$$$
-         $$$$  p"$$$"q  $$$$$
-         $$$$  .$$$$$.  $$$$
-          $$DcaU$$$$$$$$$$
-by          "Y$$$"*"$$$Y"    aka
-dcau            "$b.$$"     Pnda
 
+     ____  _   ______  ___
+    / __ \/ | / / __ \/   |   This server is managed using a configuration
+   / /_/ /  |/ / / / / /| |   management system.
+  / ____/ /|  / /_/ / ___ |   Changes made to this box directly will likely
+ /_/   /_/ |_/_____/_/  |_|   be over-written.
+
+
+    Cluster Name: {{ grains['pnda_cluster'] }}
+          Flavor: {{ grains['pnda']['flavor'] }}
+ Saltstack roles: {{ grains['roles'] | default([])  | join(', ') | wordwrap(75, break_long_words=False) | indent(18) }}
 

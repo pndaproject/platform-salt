@@ -1,7 +1,7 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
-{% set scripts_location = '/tmp' %}
-{% set ssh_prv_key = scripts_location + '/cloudera.pem' %}
+{% set scripts_location = '/tmp/pnda-install/' + sls %}
+{% set ssh_prv_key = '/tmp/cloudera.pem' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 {% set cloudera_p = salt['pillar.get']('cloudera', {}) %}
 
@@ -15,7 +15,15 @@
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 
 include:
-  - .cloudera-api
+  - python-pip
+
+# Create a temporary virtualenv to execute the cm_setup scripts_location
+cdh-create_tmp_virtualenv:
+  virtualenv.managed:
+    - name: {{ scripts_location }}/venv
+    - requirements: salt://cdh/files/requirements-cm_setup.txt
+    - require:
+      - pip: python-pip-install_python_pip
 
 cdh-copy_script_manager_installation_script:
   file.managed:
@@ -25,7 +33,6 @@ cdh-copy_script_manager_installation_script:
 cdh-copy_cm_config:
   file.managed:
     - source: salt://cdh/templates/{{ flavor_cfg.template_file }}.tpl
-    - name: {{ scripts_location }}/{{ flavor_cfg.template_file }}
     - name: {{ scripts_location }}/cfg_flavor.py
     - template: jinja
     - defaults:
@@ -60,4 +67,10 @@ cdh-create_cloudera_configuration_script:
 
 cdh-execute_cloudera_installation_script:
   cmd.run:
-    - name: python {{ scripts_location }}/cloudera_config.py
+    - name: {{ scripts_location }}/venv/bin/python {{ scripts_location }}/cloudera_config.py
+    - require:
+      - virtualenv: cdh-create_tmp_virtualenv
+      - file: cdh-copy_cm_config
+      - file: cdh-copy_install_sharedlib
+      - file: cdh-create_cloudera_configuration_script
+      - file: cdh-copy_script_manager_installation_script

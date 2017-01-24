@@ -65,10 +65,6 @@
         "jupyter_host": "{{ jupyter_host }}",
         "jupyter_notebook_directory": "{{ pnda_home_directory }}/jupyter_notebooks"
     },
-    "HDFSRegistrar": {
-        "records_path": "user/deployment/record.json",
-        "webhdfs_user": "hdfs"
-    },
     "config": {
         "stage_root": "stage",
         "plugins_path": "plugins",
