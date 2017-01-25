@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] 2017-01-20
+### Fixed
+- PNDA-2595: xvdc volume mounted on /var/log/pnda instead of /var/log/panda
+
+### Added
+- PNDA-2043: The CLI now checks for salt error and halt execution if found
+- PNDA-2533: Ability to create an ElasticSearch cluster for external usage
+- PNDA-2571: Work to allow, future, Offline installation
+
 ## [1.1.0] 2016-12-12
 ### Changed
  - PNDA-2397: Generate the list of valid flavors dynamically. The valid values for the --branch parameter were hard coded, now they are generated based on the folder names under 'cloud-formation/'
