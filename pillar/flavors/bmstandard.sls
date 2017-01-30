@@ -11,6 +11,9 @@
         },
         "cdh.setup_hadoop": {
             "template_file": "cfg_bmstandard.py"
+        },
+        "curator": {
+            "days_to_keep": 6
         }
     }
 }
