@@ -1,9 +1,38 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [Unreleased]
 ### Changed
 - PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
+
+## [1.3.0] 2017-01-20
+### Added
+- PNDA-2533: Ability to create an ElasticSearch cluster for external usage
+- A new motd when login to nodes via SSH
+
+### Changed
+- PNDA-2121: Improve jupyter sls files
+- PNDA-2239: The 'pnda' user and 'pnda' group are able to write/delete files written by Gobblin which now runs as 'pnda' user instead of 'gobblin' user
+- PNDA-2467: Put platform-data-mgmt in a virtualenv
+- PNDA-2468: Put platform-deployment manager in a virtualenv
+- PNDA-2469: Put platform-package-repository in a virtualenv
+- PNDA-2484: Put hdfs-cleaner in a virtualenv
+- PNDA-2485: Pin all versions of pnda python components and upgrade the version of libraries
+- PNDA-2489: Remove _modules/zk.py file and move it to _modules/pnda.py and do simple REST queries instead of using cm-api
+- PNDA-2542: Put elastic-search-curator in a virtualenv
+- PNDA-2544: Download Zookeeper from top level mirror instead of US mirror
+- PNDA-2547: Put impala-shell in a virtualenv
+- PNDA-2550: kibana dashboard are now imported without elasticdump, which simplifies the installation
+- PNDA-2551: Put Jupyter python components in a virtualenv
+- PNDA-2552: Put graphite of the console in a virtualenv
+- PNDA-2560: Put cm_setup cloudera installation script in a virtualenv
+- PNDA-2598: Put pnda_restart script in a virtualenv
+
+### Fixed
+- PNDA-2494: Concurrency issue during deployment related to master dataset creation
+- PNDA-2498: Deployment-manager was passing the wrong thrift server to the Happybase library
+- PNDA-2511: Pin version of nodejs to avoid installation failure of kibana
+- PNDA-2543: Make the creation of the cloudera manager external database idempotent
 
 ## [1.2.0] 2016-12-12
 ### Added
