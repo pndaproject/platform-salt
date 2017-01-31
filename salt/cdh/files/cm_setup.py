@@ -61,7 +61,7 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
             # change name of proxy if necessary
             proxy = urllib2.ProxyHandler({'http': 'proxy'})
 
-            api = ApiResource(cm_api, username=cm_username, password=cm_password)
+            api = ApiResource(cm_api, username=cm_username, password=cm_password, version=14)
 
             if use_proxy:
             # pylint: disable=W0212
