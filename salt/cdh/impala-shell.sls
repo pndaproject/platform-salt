@@ -6,6 +6,7 @@ include:
 cdh-impala_shell_venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
+    - python: python2
     - requirements: salt://cdh/files/impala-shell-requirements.txt
     - require:
       - pip: python-pip-install_python_pip

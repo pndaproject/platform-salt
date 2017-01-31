@@ -8,6 +8,7 @@ curator-python-elasticsearch-curator:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: salt://curator/files/requirements.txt
+    - python: python2
     - require:
       - pip: python-pip-install_python_pip
 

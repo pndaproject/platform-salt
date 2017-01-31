@@ -14,7 +14,11 @@ ntp-install_conf:
 
 ntp-service-running:
   service.running:
+    {% if grains['os'] == 'RedHat' %}
+    - name: ntpd
+    {% elif grains['os'] == 'Ubuntu' %}
     - name: ntp
+    {% endif %}
     - enable: true
     - watch:
       - file: ntp-install_conf

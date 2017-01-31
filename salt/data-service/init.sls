@@ -23,6 +23,7 @@ data-service-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: salt://data-service/files/requirements.txt
+    - python: python2
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip
@@ -47,8 +48,13 @@ data-service-copy_config:
 
 data-service-copy_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/dataservice.conf
     - source: salt://data-service/templates/data-service.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/dataservice.service
+    - source: salt://data-service/templates/data-service.service.tpl
+{%- endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}

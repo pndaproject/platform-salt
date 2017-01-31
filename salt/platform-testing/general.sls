@@ -42,8 +42,15 @@ include:
 platform-testing-general-install_dev_deps:
   pkg.installed:
     - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
       - libsasl2-dev
       - g++
+{% elif grains['os'] == 'RedHat' %}
+      - nmap-ncat
+      - gcc-c++
+      - libgsasl-devel
+      - cyrus-sasl-devel
+{% endif %}
 
 platform-testing-general-dl-and-extract:
   archive.extracted:
@@ -58,6 +65,7 @@ platform-testing-general-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
+    - python: python2
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-general-dl-and-extract
@@ -76,8 +84,13 @@ platform-testing-general-install-requirements-kafka:
 
 platform-testing-general-kafka_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-kafka.conf.tpl
     - name: /etc/init/platform-testing-general-kafka.conf
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/platform-testing-general-kafka.service
+    - source: salt://platform-testing/templates/platform-testing-general-kafka.service.tpl
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -91,7 +104,11 @@ platform-testing-general-crontab-kafka:
   cron.present:
     - identifier: PLATFORM-TESTING-KAFKA
     - user: root
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-kafka
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-general-kafka
+{% endif %}
 
 platform-testing-general-install-requirements-zookeeper:
   pip.installed:
@@ -102,8 +119,13 @@ platform-testing-general-install-requirements-zookeeper:
 
 platform-testing-general-zookeeper-upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.conf.tpl
     - name: /etc/init/platform-testing-general-zookeeper.conf
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/platform-testing-general-zookeeper.service
+    - source: salt://platform-testing/templates/platform-testing-general-zookeeper.service.tpl
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -116,7 +138,11 @@ platform-testing-general-crontab-zookeeper:
   cron.present:
     - identifier: PLATFORM-TESTING-ZOOKEEPER
     - user: root
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-zookeeper
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-general-zookeeper
+{% endif %}
 
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}
 platform-testing-general-install-requirements-dm-blackbox:
@@ -128,8 +154,13 @@ platform-testing-general-install-requirements-dm-blackbox:
 
 platform-testing-general-dm-blackbox_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.conf.tpl
     - name: /etc/init/platform-testing-general-dm-blackbox.conf
+{% elif grains['os'] == 'RedHat' %}
+    - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.service.tpl
+    - name: /usr/lib/systemd/system/platform-testing-general-dm-blackbox.service
+{%- endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -142,5 +173,17 @@ platform-testing-general-crontab-dm-blackbox:
   cron.present:
     - identifier: PLATFORM-TESTING-DM-BLACKBOX
     - user: root
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-dm-blackbox
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-general-dm-blackbox
+{% endif %}
+
+{% endif %}
+
+{% if grains['os'] == 'RedHat' %}
+platform-testing-general-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
 {%- endif %}
+

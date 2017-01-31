@@ -6,15 +6,26 @@
 include:
   - java
 
+{% if grains['os'] == 'RedHat' %}
+logshipper-syslog:
+  pkg.installed:
+    - pkgs:
+      - syslog-ng
+{% endif %}
+
 logshipper-lbc6:
   pkg.installed:
     - pkgs:
+      {% if grains['os'] == 'RedHat' %}
+      - glibc-devel
+      {% elif grains['os'] == 'Ubuntu' %}
       - libc6-dev
+      {% endif %}
       - acl
 
 logshipper-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
     - source_hash: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz.sha1.txt
     - archive_format: tar
@@ -69,10 +80,15 @@ logshipper-create_sincedb_folder:
   file.directory:
     - name: {{ install_dir }}/logstash/sincedb
     - user: root
+    {% if grains['os'] == 'RedHat' %}
+    - group: root
+    {% elif grains['os'] == 'Ubuntu' %}
     - group: syslog
+    {% endif %}
     - mode: 777
     - makedirs: True
 
+{% if grains['os'] == 'Ubuntu' %}
 logshipper-copy_upstart:
   file.managed:
     - name: /etc/init/logshipper.conf
@@ -80,15 +96,45 @@ logshipper-copy_upstart:
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
+{% elif grains['os'] == 'RedHat' %}
+logshipper-copy_systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/logshipper.service
+    - source: salt://logserver/logshipper_templates/logstash.service.tpl
+    - template: jinja
+    - defaults:
+        install_dir: {{ install_dir }}
+logshipper-service_enabled:
+  service.running:
+    - name: logshipper
+    - enable: True
+    - reload: True
+    - watch:
+      - file: logshipper-copy_systemd
+{% endif %}
+
+{% if grains['os'] == 'RedHat' %}
+logshipper-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{%- endif %}
 
 logshipper-stop_service:
   cmd.run:
+{% if grains['os'] == 'Ubuntu' %}
     - name: 'initctl stop logshipper || echo logshipper already stopped'
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl stop logshipper
+{% endif %}
     - user: root
     - group: root
 
 logshipper-start_service:
   cmd.run:
+{% if grains['os'] == 'Ubuntu' %}
     - name: 'initctl start logshipper'
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start logshipper
+{% endif %}
     - user: root
     - group: root

@@ -305,28 +305,6 @@ def generic_create_service(cluster, cfg, nodes):
 
     return service
 
-
-def create_mysql_connector_symlink(user, key, ip_addr, target_dir):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                [
-                    "bash",
-                    "-c",
-                    ("TARGET_DIR=%s;"
-                     "MYSQL_JAVA_CONNECTOR=/usr/share/java/mysql-connector-java.jar;"
-                     "[ -f $MYSQL_JAVA_CONNECTOR ]&& sudo ln -s $MYSQL_JAVA_CONNECTOR $TARGET_DIR/mysql-connector-java.jar"
-                     " || echo \"ERROR - Unable to create symbolic link for 'mysql-connector-java.jar'. Oozie service might not work properly.\"") %
-                    (target_dir)]]}
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating mysql symlink", exc_info=True)
-        raise
-
 def create_hdfs_dirs(yarn):
     wait_on_success(yarn.create_yarn_job_history_dir())
     wait_on_success(yarn.create_yarn_node_manager_remote_app_log_dir())
@@ -606,22 +584,10 @@ def create_services(user, key, cluster, nodes, ha_enabled):
         else:
             impala = cluster.get_service(_CFG.IMPALA_CFG['name'])
 
-        if not check_progress(setup_progress, "11_OOZIE_MYSQL_CONNECTOR"):
-            # The mysql-server is installed on node-1 (i.e. NAMENODE) and is used for oozie, hive and hue databases.
-            # This must be done prior to oozie db creation.
-            logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
-            create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
-            save_progress(setup_progress, "11_OOZIE_MYSQL_CONNECTOR")
-
         if not check_progress(setup_progress, "12_OOZIE_MYSQL_DB"):
             logging.info("Create Oozie db")
             wait_on_success(oozie.create_oozie_db())
             save_progress(setup_progress, "12_OOZIE_MYSQL_DB")
-
-        if not check_progress(setup_progress, "13_HIVE_MYSQL_CONNECTOR"):
-            logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
-            create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
-            save_progress(setup_progress, "13_HIVE_MYSQL_CONNECTOR")
 
         if not check_progress(setup_progress, "14_HIVE_TMP"):
             # This must be done prior to hive metastore db creation.

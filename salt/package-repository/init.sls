@@ -23,6 +23,7 @@ package-repository-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ package_repository_directory_name }}/requirements.txt
+    - python: python2
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip
@@ -41,6 +42,7 @@ package-repository-copy_configuration:
     - require:
       - archive: package-repository-dl-and-extract
 
+{% if grains['os'] == 'Ubuntu' %}
 package-repository-copy_upstart:
   file.managed:
     - name: /etc/init/package-repository.conf
@@ -48,12 +50,30 @@ package-repository-copy_upstart:
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-
 package-repository-stop_package_repository:
   cmd.run:
     - name: 'initctl stop package-repository || echo app already stopped'
     - user: root
     - group: root
+{% elif grains['os'] == 'RedHat' %}
+package-repository-copy_systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/package-repository.service
+    - source: salt://package-repository/templates/package-repository.service.tpl
+    - template: jinja
+    - defaults:
+        install_dir: {{ install_dir }}
+  module.run:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: package-repository-copy_systemd
+package-repository-stop_package_repository:
+  service.dead:
+    - name: package-repository
+    - enable: true
+    - watch:
+      - file: /usr/lib/systemd/system/package-repository.service
+{% endif %}
 
 {% if package_repository_fs_type == 'sshfs' %}
 {% include "package-repository/sshfs.sls" %}
@@ -67,8 +87,17 @@ package-repository-create_fs_location_path:
 
 {% endif %}
 
+{% if grains['os'] == 'Ubuntu' %}
 package-repository-start_package_repository:
   cmd.run:
     - name: 'initctl start package-repository'
     - user: root
     - group: root
+{% elif grains['os'] == 'RedHat' %}
+package-repository-start_package_repository:
+  service.running:
+    - name: package-repository
+    - enable: true
+    - watch:
+      - file: /usr/lib/systemd/system/package-repository.service
+{% endif %}
