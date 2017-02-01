@@ -38,8 +38,13 @@ jupyterhub-install_configurable_http_proxy:
 # set up upstart script
 jupyterhub-copy_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://jupyter/templates/jupyterhub.conf.tpl
     - name: /etc/init/jupyterhub.conf
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/jupyterhub.service
+    - source: salt://jupyter/templates/jupyterhub.service.tpl
+{%- endif %}
     - mode: 644
     - template: jinja
     - context:

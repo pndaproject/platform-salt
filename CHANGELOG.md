@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- PNDA-2456: Initial work to support for Redhat 7. Salt highstate and orchestrate run on a Redhat7 HEAT cluster with no errors but requires further testing and work.
+### Changed
+- PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
+- PNDA-2672: Explicitly set CM API version number
+
 ## [1.3.0] 2017-01-20
 ### Added
 - PNDA-2533: Ability to create an ElasticSearch cluster for external usage

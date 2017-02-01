@@ -37,6 +37,7 @@ jmxproxy-configuration_file:
     - name: {{ install_dir }}/etc/jmxproxy.yaml
     - source: salt://{{ sls }}/files/jmxproxy.yaml
 
+{% if grains['os'] == 'Ubuntu' %}
 jmxproxy-upstart_script:
   file.managed:
     - name: /etc/init/jmxproxy.conf
@@ -45,6 +46,16 @@ jmxproxy-upstart_script:
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
+{% elif grains['os'] == 'RedHat' %}
+jmxproxy-systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/jmxproxy.service
+    - source: salt://{{ sls }}/templates/jmxproxy.service.tpl
+    - mode: 755
+    - template: jinja
+    - defaults:
+        install_dir: {{ install_dir }}
+{% endif %}
 
 jmxproxy-start_service:
   service.running:
@@ -52,5 +63,9 @@ jmxproxy-start_service:
     - enable: true
     - watch:
       - file: jmxproxy-configuration_file
+{% if grains['os'] == 'Ubuntu' %}
       - file: jmxproxy-upstart_script
+{% elif grains['os'] == 'RedHat' %}
+      - file: jmxproxy-systemd
+{% endif %}
       - file: jmxproxy-link

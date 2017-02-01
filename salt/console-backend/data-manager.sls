@@ -32,7 +32,7 @@ include:
 
 console-backend-data-manager-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ packages_server }}/{{ backend_app_package }}
     - source_hash: {{ packages_server }}/{{ backend_app_package }}.sha512.txt
     - archive_format: tar
@@ -93,6 +93,7 @@ console-backend-install_backend_app_dependencies:
     - require:
       - npm: nodejs-update_npm
 
+{% if grains['os'] == 'Ubuntu' %}
 # Create upstart script from template
 console-backend-copy_upstart:
   file.managed:
@@ -103,6 +104,20 @@ console-backend-copy_upstart:
         host_ip: {{ host_ip }}
         backend_app_port: {{ backend_app_port }}
         app_dir: {{ app_dir }}
+{% elif grains['os'] == 'RedHat' %}
+console-backend-dm-systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/data-manager.service
+    - source: salt://console-backend/templates/backend_nodejs_app.service.tpl
+    - template: jinja
+    - defaults:
+        host_ip: {{ host_ip }}
+        backend_app_port: {{ backend_app_port }}
+        app_dir: {{ app_dir }}
+console-backend-dm-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{% endif %}
 
 # Restart the backend app if necessary
 data-manager:
@@ -112,4 +127,8 @@ data-manager:
     - watch:
       - file: {{app_config_dir}}/config.js
       - file: {{app_config_dir}}/ldap_config.js
+{% if grains['os'] == 'Ubuntu' %}
       - file: console-backend-copy_upstart
+{% elif grains['os'] == 'RedHat' %}
+      - file: console-backend-dm-systemd
+{% endif %}

@@ -1,8 +1,13 @@
 python-pip-install-pip-package:
   pkg.installed:
     - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
       - python-pip
       - python-dev
+{% elif grains['os'] == 'RedHat' %}
+      - python2-pip
+      - python-devel
+{% endif %}
 
 python-pip-install_python_pip:
   pip.installed:

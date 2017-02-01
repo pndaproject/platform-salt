@@ -37,6 +37,7 @@ kibana-copy_configuration_kibana:
     - user: kibana
     - group: kibana
 
+{% if grains['os'] == 'Ubuntu' %}
 kibana-copy_kibana_upstart:
   file.managed:
     - source: salt://kibana/templates/kibana.init.conf.tpl
@@ -45,11 +46,27 @@ kibana-copy_kibana_upstart:
     - template: jinja
     - context:
       installdir: {{kibana_directory}}/kibana-{{ kibana_version }}
+{% elif grains['os'] == 'RedHat' %}
+kibana-copy_systemd:
+  file.managed:
+    - source: salt://kibana/templates/kibana.service.tpl
+    - name: /usr/lib/systemd/system/kibana.service
+    - mode: 644
+    - template: jinja
+    - context:
+      installdir: {{kibana_directory}}/kibana-{{ kibana_version }}
+kibana-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{% endif %}
 
 kibana-service:
   service.running:
     - name: kibana
     - enable: True
     - watch:
+{% if grains['os'] == 'Ubuntu' %}
       - file: kibana-copy_kibana_upstart
+{% elif grains['os'] == 'RedHat' %}
       - file: {{kibana_directory}}/kibana-{{ kibana_version }}/config/kibana.yml
+{% endif %}

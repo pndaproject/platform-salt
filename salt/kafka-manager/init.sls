@@ -41,6 +41,7 @@ kafka-manager-install-application_configuration:
     - name: {{ release_directory }}/kafka-manager-{{ release_version }}/conf/application.ini
     - source: salt://kafka-manager/files/application.ini
 
+{% if grains['os'] == 'Ubuntu' %}
 kafka-manager-install-kafka-manager-upstart-script:
   file.managed:
     - name: /etc/init/kafka-manager.conf
@@ -48,6 +49,18 @@ kafka-manager-install-kafka-manager-upstart-script:
     - template: jinja
     - context:
       kafka_manager_port: {{ km_port }}
+{% elif grains['os'] == 'RedHat' %}
+kafka-manager-install_systemd:
+    file.managed:
+    - name: /usr/lib/systemd/system/kafka-manager.service
+    - source: salt://kafka-manager/templates/kafka-manager.service.tpl
+    - template: jinja
+    - context:
+      kafka_manager_port: {{ km_port }}
+kafka-manager-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{% endif %}
 
 kafka-manager-update-kafka-manager:
   file.managed:
@@ -63,4 +76,8 @@ kafka-manager-service:
       - file: kafka-manager-create_link
       - file: kafka-manager-set-configuration-file
       - file: kafka-manager-install-application_configuration
+{% if grains['os'] == 'Ubuntu' %}
       - file: kafka-manager-install-kafka-manager-upstart-script
+{% elif grains['os'] == 'RedHat' %}
+      - file: kafka-manager-install_systemd
+{% endif %}
