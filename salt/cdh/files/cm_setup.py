@@ -309,23 +309,6 @@ def create_hdfs_dirs(yarn):
     wait_on_success(yarn.create_yarn_job_history_dir())
     wait_on_success(yarn.create_yarn_node_manager_remote_app_log_dir())
 
-def create_hive_tmp(user, key, ip_addr):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                ["bash", "-c", "sudo mkdir -p /data0/tmp"],
-                ["bash", "-c", "sudo chmod 777 /data0/tmp"]
-            ]
-        }
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating hive temporary directory", exc_info=True)
-        raise
-
 def assign_roles(service, roles, nodes):
 
     for role in roles:
@@ -588,12 +571,6 @@ def create_services(user, key, cluster, nodes, ha_enabled):
             logging.info("Create Oozie db")
             wait_on_success(oozie.create_oozie_db())
             save_progress(setup_progress, "12_OOZIE_MYSQL_DB")
-
-        if not check_progress(setup_progress, "14_HIVE_TMP"):
-            # This must be done prior to hive metastore db creation.
-            logging.info("Creating /tmp for Hive")
-            create_hive_tmp(user, key, hive_detail['public_addr'])
-            save_progress(setup_progress, "14_HIVE_TMP")
 
         if not check_progress(setup_progress, "15_HIVE_MYSQL_DB"):
             logging.info("Creating Hive metastore database tables")
