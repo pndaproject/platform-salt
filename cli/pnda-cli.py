@@ -338,9 +338,10 @@ def write_ssh_config(cluster, bastion_ip, os_user, keyfile):
 def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     init_runfile(cluster)
+    bastion = NODE_CONFIG['bastion-instance']
 
     to_runfile({'cmdline':sys.argv,
-                'bastion':NODE_CONFIG['bastion-instance'],
+                'bastion':bastion,
                 'saltmaster':NODE_CONFIG['salt-master-instance']})
 
     keyfile = '%s.pem' % keyname
@@ -375,7 +376,9 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'],
+    bastion_ip = instance_map[cluster + '-' + bastion]['ip_address']
+
+    write_ssh_config(cluster, bastion_ip,
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
@@ -391,17 +394,24 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         scp([platform_salt_tarball], cluster, saltmaster['private_ip_address'])
         os.remove(platform_salt_tarball)
 
+    nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
+    nc_install_cmd = nc_ssh_cmd.split(' ')
+    nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
+    ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
+
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
         sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
-    scp([sm_script, 'cli/pnda_env_%s.sh' % cluster, 'git.pem'], cluster, saltmaster['private_ip_address'])
+    scp([sm_script, 'cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', 'git.pem'], cluster, saltmaster['private_ip_address'])
     ssh(['source /tmp/pnda_env_%s.sh' % cluster,
          'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
          'export PNDA_CLUSTER=%s' % cluster,
          'export PNDA_FLAVOR=%s' % flavor,
          'export PLATFORM_GIT_BRANCH=%s' % branch,
          'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
+         'sudo chmod a+x /tmp/base.sh',
          'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
+         '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,         
          '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % (saltmaster['node_type'], THROW_BASH_ERROR)],
         cluster, saltmaster['private_ip_address'])
 
@@ -460,7 +470,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         sys.exit(1)
 
     instance_map = get_instance_map(cluster)
-    write_ssh_config(cluster, instance_map[cluster + '-' + NODE_CONFIG['bastion-instance']]['ip_address'],
+    bastion = NODE_CONFIG['bastion-instance']
+    bastion_ip = instance_map[cluster + '-' + bastion]['ip_address']
+    write_ssh_config(cluster, bastion_ip,
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
 
@@ -484,7 +496,6 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     time.sleep(30)
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
-    bastion = NODE_CONFIG['bastion-instance']
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],

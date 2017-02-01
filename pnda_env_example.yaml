@@ -8,6 +8,8 @@ ec2_access:
   AWS_REGION: eu-west-1
 
   # The user name to use when logging into the AWS ec2 instances
+  # Ubuntu: ubuntu
+  # Redhat: ec2-user
   OS_USER: ubuntu
 
 cloud_formation_parameters:
@@ -15,7 +17,9 @@ cloud_formation_parameters:
   # creating the cloud formation template. The cloud formation template must
   # define a matching input parameter for each value listed here.
 
-  # Base image to use, should be a standard 64-bit Ubuntu 14.04
+  # Base image to use, use the default AWS Ubuntu/Redhat image for the AWS region 
+  # Ubuntu: 64-bit Ubuntu 14.04
+  # Redhat: Red Hat Enterprise Linux 7
   imageId: ami-f95ef58a
 
   # CIDR specifying the address range that may access the created PNDA instances

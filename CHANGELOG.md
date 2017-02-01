@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+- PNDA-2676: Support for redhat 7 in the bootstrap scripts. To use redhat set `OS_USER` to `ec2_user` and `imageId` to a redhat 7 AMI in pnda_env.yaml.
+
 ## [1.2.0] 2017-01-20
 ### Fixed
 - PNDA-2595: xvdc volume mounted on /var/log/pnda instead of /var/log/panda
