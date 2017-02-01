@@ -572,12 +572,6 @@ def create_services(user, key, cluster, nodes, ha_enabled):
             wait_on_success(oozie.create_oozie_db())
             save_progress(setup_progress, "12_OOZIE_MYSQL_DB")
 
-        if not check_progress(setup_progress, "14_HIVE_TMP"):
-            # This must be done prior to hive metastore db creation.
-            logging.info("Creating /tmp for Hive")
-            create_hive_tmp(user, key, hive_detail['public_addr'])
-            save_progress(setup_progress, "14_HIVE_TMP")
-
         if not check_progress(setup_progress, "15_HIVE_MYSQL_DB"):
             logging.info("Creating Hive metastore database tables")
             wait_on_success(hive.create_hive_metastore_tables())
