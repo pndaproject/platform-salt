@@ -5,4 +5,5 @@ Description=package repository service
 Type=simple
 WorkingDirectory={{ install_dir }}/package_repository
 ExecStart={{ install_dir }}/package_repository/venv/bin/python {{ install_dir }}/package_repository/package_repository_rest_server.py
-ExecStopPost=/bin/sleep 2
+Restart=always
+RestartSec=2

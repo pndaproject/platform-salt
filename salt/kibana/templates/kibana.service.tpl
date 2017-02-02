@@ -5,3 +5,5 @@ Description=kibana service
 Type=simple
 LimitNOFILE=32768
 ExecStart={{ installdir }}/bin/kibana
+Restart=always
+RestartSec=2

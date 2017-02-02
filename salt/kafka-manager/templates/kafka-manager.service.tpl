@@ -5,4 +5,5 @@ Description=kafka manager
 Type=simple
 LimitNOFILE=8192
 ExecStart=/opt/pnda/kafka-manager/bin/kafka-manager -Dconfig.file=/opt/pnda/kafka-manager/conf/application.conf -Dapplication.home=/opt/pnda/kafka-manager -Dhttp.port={{ kafka_manager_port }}
-ExecStopPost=/bin/sleep 2
+Restart=always
+RestartSec=2
