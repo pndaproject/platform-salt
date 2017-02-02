@@ -2,6 +2,7 @@
 {% set pc = p.get('config', {}) %}
 {% set g  = salt['grains.get']('kafka', {}) %}
 {% set gc = g.get('config', {}) %}
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'http://www.mirrorservice.org/sites/ftp.apache.org/kafka/') %}
 
 # these are global - hence pillar-only
 {%- set prefix            = p.get('prefix', '/opt/pnda/kafka') %}
@@ -11,7 +12,7 @@
 
 {%- set version_name = 'kafka_' + scala_version + '-' + version %}
 {%- set real_home    = prefix + '_' + scala_version + '-' + version %}
-{%- set default_url  = 'http://www.mirrorservice.org/sites/ftp.apache.org/kafka/' + version + '/' + version_name + '.tgz' %}
+{%- set default_url  = extra_mirror + version + '/' + version_name + '.tgz' %}
 {%- set source_url   = g.get('source_url', p.get('source_url', default_url)) %}
 
 # bind_address is only supported as a grain, because it has to be host-specific

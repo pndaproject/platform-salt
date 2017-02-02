@@ -1,3 +1,5 @@
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+
 include:
   - python-pip
 
@@ -17,6 +19,7 @@ python-pip-install_python_pip3:
     - pkgs:
       - pip == 9.0.1
       - virtualenv == 15.1.0
+    - index_url: {{ pip_index_url }}
     - bin_env: /usr/bin/pip3
     - upgrade: True
     - reload_modules: True

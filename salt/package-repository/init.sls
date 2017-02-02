@@ -4,6 +4,7 @@
 {% set package_repository_package = 'package-repository-' + package_repository_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 {% set virtual_env_dir = install_dir + "/" + package_repository_directory_name + "/venv" %}
 
@@ -22,12 +23,27 @@ package-repository-dl-and-extract:
 package-repository-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
-    - requirements: {{ install_dir }}/{{ package_repository_directory_name }}/requirements.txt
     - python: python2
-    - reload_modules: True
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
       - archive: package-repository-dl-and-extract
+
+package-repository-pbr:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - name: pbr==1.10
+    - index_url: {{ pip_index_url }}
+    - require:
+      - virtualenv: package-repository-create-venv
+
+package-repository-install-requirements:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - requirements: {{ install_dir }}/{{ package_repository_directory_name }}/requirements.txt
+    - index_url: {{ pip_index_url }}
+    - require:
+      - pip: package-repository-pbr
 
 package-repository-create_package_repository_link:
   file.symlink:

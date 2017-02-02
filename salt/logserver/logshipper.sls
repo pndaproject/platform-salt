@@ -2,6 +2,8 @@
 {% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://download.elastic.co/logstash/logstash/') %}
+{% set logstash_url = extra_mirror +  'logstash-' +  logstash_version + '.tar.gz' %}
 
 include:
   - java
@@ -26,8 +28,8 @@ logshipper-lbc6:
 logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
-    - source: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
-    - source_hash: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz.sha1.txt
+    - source: {{ logstash_url }}
+    - source_hash: {{ logstash_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/logstash-1.5.4

@@ -70,6 +70,7 @@
   'cloudera:*':
     - match: grain
     - cdh.create_data_dirs
+    - cdh.cloudera_mirror
     - snappy
 
   'roles:mysql_connector':

@@ -1,0 +1,6 @@
+ipython>=4
+jupyter==1.0.0
+notebook>=4.2
+beautifulsoup4==4.5.3
+widgetsnbextension==1.2.6
+
