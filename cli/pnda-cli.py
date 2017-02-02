@@ -382,6 +382,11 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
+    nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
+    nc_install_cmd = nc_ssh_cmd.split(' ')
+    nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
+    ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
+
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
 
@@ -393,11 +398,6 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)
         scp([platform_salt_tarball], cluster, saltmaster['private_ip_address'])
         os.remove(platform_salt_tarball)
-
-    nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
-    nc_install_cmd = nc_ssh_cmd.split(' ')
-    nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
-    ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
 
     sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
     if not os.path.isfile(sm_script):
