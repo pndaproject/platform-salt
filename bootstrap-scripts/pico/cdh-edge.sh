@@ -9,14 +9,7 @@
 # variables
 set -ex
 
-# If system packages are being installed from an offline bundle then download
-# that bundle and make the packages available for installation
-if [ "x$OS_PACKAGE_MIRROR" != "x" ] ; then
-wget ${OS_PACKAGE_MIRROR%/*}/apt-offline.deb
-dpkg -i apt-offline.deb
-wget $OS_PACKAGE_MIRROR
-apt-offline install ${OS_PACKAGE_MIRROR##*/}
-fi
+DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 
 # Set up ssh access to the platform-salt git repo on the package server,
 # if secure access is required this key will be used automatically.
@@ -26,45 +19,19 @@ echo "Host $PACKAGES_SERVER_IP" >> /root/.ssh/config
 echo "  IdentityFile /tmp/git.pem" >> /root/.ssh/config
 echo "  StrictHostKeyChecking no" >> /root/.ssh/config
 
+# Install a saltmaster and minion, plus saltmaster config
+if [ "x$DISTRO" == "xubuntu" ]; then
+export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -y install xfsprogs
-
-# Mount the log volume this is always xvdc
-if [ -b /dev/xvdc ];
-then
-  echo "Mounting xvdc for logs"
-  umount /dev/xvdc || echo 'not mounted'
-  mkfs.xfs -f /dev/xvdc
-  mkdir -p /var/log/pnda
-  sed -i "/xvdc/d" /etc/fstab
-  echo "/dev/xvdc /var/log/pnda auto defaults,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
+apt-get -y install unzip git
 fi
 
-# Mount the other log volumes if they exist, up to 3 more may be mounted but this list could be extended if required
-DISKS="xvdd xvde xvdf"
-DISK_IDX=0
-for DISK in $DISKS; do
-   echo $DISK
-   if [ -b /dev/$DISK ];
-   then
-      echo "Mounting $DISK"
-      umount /dev/$DISK || echo 'not mounted'
-      mkfs.xfs -f /dev/$DISK
-      mkdir -p /data$DISK_IDX
-      sed -i "/$DISK/d" /etc/fstab
-      echo "/dev/$DISK /data$DISK_IDX auto defaults,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
-      DISK_IDX=$((DISK_IDX+1))
-   fi
-done
-cat /etc/fstab
-mount -a
+if [ "x$DISTRO" == "xrhel" ]; then
+yum -y install unzip git
+fi
 
-# Install a saltmaster and minion, plus saltmaster config
-apt-get -y install python-pip
-apt-get -y install python-git
 wget -O install_salt.sh https://bootstrap.saltstack.com
 sh install_salt.sh -D -U -M stable 2015.8.11
-apt-get -y install unzip
 
 cat << EOF > /etc/salt/master
 ## specific PNDA saltmaster config
@@ -194,7 +161,7 @@ package_repository:
 EOF
 fi
 
-restart salt-master
+service salt-master restart
 
 # The cloudera:role grain is used by the cm_setup.py (in platform-salt) script to
 # place specific cloudera roles on this instance.
@@ -233,7 +200,6 @@ pnda_cluster: $PNDA_CLUSTER
 EOF
 
 cat >> /etc/salt/minion <<EOF
-master: $PNDA_SALTMASTER_IP
 id: $PNDA_CLUSTER-cdh-edge
 EOF
 
