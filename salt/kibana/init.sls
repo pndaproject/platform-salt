@@ -1,7 +1,7 @@
 {% set kibana_version = salt['pillar.get']('kibana:version', '4.1.6-linux-x64') %}
 {% set kibana_directory = salt['pillar.get']('kibana:directory', '/opt/pnda') %}
-
-#TODO: see elasticsearch URL in param
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://download.elastic.co/kibana/kibana/') %}
+{% set kibana_url = extra_mirror +  'kibana-' +  kibana_version + '.tar.gz' %}
 
 #TODO: manage once multiple elasticsearch instances
 
@@ -25,8 +25,8 @@ kibana-create_kibana_dir:
 kibana-dl_and_extract_kibana:
   archive.extracted:
     - name: {{kibana_directory}}
-    - source: https://download.elastic.co/kibana/kibana/kibana-{{ kibana_version }}.tar.gz
-    - source_hash: https://download.elastic.co/kibana/kibana/kibana-{{ kibana_version }}.tar.gz.sha1.txt
+    - source: {{ kibana_url }}
+    - source_hash: {{ kibana_url }}.sha1.txt
     - archive_format: tar
     - if_missing: {{kibana_directory}}/kibana-{{kibana_version }}
 

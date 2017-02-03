@@ -1,3 +1,4 @@
 snappy-install-snappy:
   pkg.installed:
-    - name: snappy
+    - name: python-snappy
+    - reload_modules: True

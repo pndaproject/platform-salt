@@ -1,5 +1,7 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
 
 {% set jupyterhub_config_dir = '/etc/jupyterhub' %}
 
@@ -10,6 +12,7 @@ jupyterhub-install:
   pip.installed:
     - requirements: salt://jupyter/files/requirements-jupyterhub.txt
     - bin_env: {{ virtual_env_dir }}
+    - index_url: {{ pip_index_url }}
     - require:
       - virtualenv: jupyter-create-venv
 
@@ -32,8 +35,9 @@ jupyterhub-create_configuration:
 jupyterhub-install_configurable_http_proxy:
   npm.installed:
     - name: configurable-http-proxy
+    - registry: {{ npm_registry }}
     - require:
-      - npm: nodejs-update_npm
+      - pkg: nodejs-install_useful_packages
 
 # set up upstart script
 jupyterhub-copy_upstart:
