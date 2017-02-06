@@ -45,4 +45,6 @@ metrics.reporting.file.enabled=true
 # ==== Blacklist topics ====
 # Recent Kafka version uses internal __consumer_offsets topic, which we don't
 # want to ingest
-topic.blacklist=__consumer_offsets
+# Don't ingest the avro.internal.testbot topic as it's only an internal PNDA
+# testing topic
+topic.blacklist=__consumer_offsets,avro.internal.testbot
