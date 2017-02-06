@@ -17,6 +17,8 @@ cdh-impala_shell_install:
     - source: salt://cdh/templates/impala-shell.tpl
     - mode: 755
     - template: jinja
+    - defaults:
+        virtual_env_dir: {{ virtual_env_dir }}
     - require:
       - virtualenv: cdh-impala_shell_venv
 
