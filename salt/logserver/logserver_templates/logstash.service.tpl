@@ -3,6 +3,6 @@ Description=logserver service
 
 [Service]
 Type=simple
-ExecStart={{ home_dir }}/logstash/bin/logstash -f {{ home_dir }}/logstash/collector.conf
+ExecStart={{ install_dir }}/logstash/bin/logstash -f {{ install_dir }}/logstash/collector.conf
 Restart=always
 RestartSec=2

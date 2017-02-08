@@ -82,52 +82,33 @@ logserver-create_log_folder:
     - mode: 777
     - makedirs: True
 
-{% if grains['os'] == 'Ubuntu' %}
 logserver-copy_upstart:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/logserver.conf
-    - template: jinja
     - source: salt://logserver/logserver_templates/logstash.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/logserver.service
+    - source: salt://logserver/logserver_templates/logstash.service.tpl
+{% endif %}
+    - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-logserver-stop_app:
-  cmd.run:
-    - name: 'initctl stop logserver || echo logserver already stopped'
-    - user: root
-    - group: root
-logserver-start_app:
-  cmd.run:
-    - name: 'initctl start logserver'
-    - user: root
-    - group: root
-{% elif grains['os'] == 'RedHat' %}
-logserver-copy_systemd:
-  file.managed:
-    - name: /usr/lib/systemd/system/logstash.service
-    - source: salt://logserver/logserver_templates/logstash.service.tpl
-    - template: jinja
-    - context:
-        home_dir: {{ install_dir }}
+
+{% if grains['os'] == 'RedHat' %}
 logserver-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload
-logserver-service:
-  service.running:
-    - name: logstash
-    - enable: True
-    - watch:
-      - file: logserver-copy_systemd
-{% endif %}
+{%- endif %}
 
-{% if grains['os'] == 'Ubuntu' %}
-redis-service_restart:
+logserver-start_service:
   cmd.run:
+    - name: 'service logserver restart'
+
+redis-start_service:
+  cmd.run:
+{% if grains['os'] == 'Ubuntu' %}
     - name: 'service redis-server restart'
-    - user: root
-    - group: root
 {% elif grains['os'] == 'RedHat' %}
-redis-service:
-    service.running:
-      - name: redis
-      - enable: True
+    - name: 'service redis restart'
 {% endif %}
