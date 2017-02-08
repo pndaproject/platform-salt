@@ -113,10 +113,13 @@ console-frontend-remove_nginx_default_config:
   file.absent:
     - name: {{nginx_config_location}}/default
 
-# Reload nginx configuration
-console-frontend-reload_nginx_config:
-  service.running:
-    - name: nginx
-    - reload: True
-    - watch:
-      - file: console-frontend-create_pnda_nginx_config
+{% if grains['os'] == 'RedHat' %}
+console-frontend-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable nginx
+{%- endif %}
+
+console-frontend-start_service:
+  cmd.run:
+    - name: 'service nginx stop || echo already stopped; service nginx start'
+

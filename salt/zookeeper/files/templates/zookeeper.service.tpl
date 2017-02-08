@@ -10,3 +10,6 @@ ExecStartPre={{ conf_dir }}/../bin/zookeeper-service-startpre.sh
 ExecStart={{ conf_dir }}/../bin/zookeeper-service-start.sh
 Restart=always
 RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

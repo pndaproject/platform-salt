@@ -38,7 +38,7 @@ kafka-server-conf:
       kafka_log_retention_bytes: {{ flavor_cfg.kafka_log_retention_bytes }}
 
 {% if grains['os'] == 'Ubuntu' %}
-kafka-copy_kafka_upstart:
+kafka-copy_kafka_service:
   file.managed:
     - source: salt://kafka/templates/kafka.init.conf.tpl
     - name: /etc/init/kafka.conf
@@ -78,7 +78,7 @@ kafka-copy_kafka_systemd:
 
 kafka-systemctl_reload:
   cmd.run:
-    - name: /bin/systemctl daemon-reload
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable kafka
 {% endif %}
 
 kafka-logs-configuration-dirs:
@@ -99,14 +99,6 @@ kafka-logs-configuration:
     - pattern: '(\${kafka.logs.dir})'
     - repl: '/var/log/pnda/kafka'
 
-kafka-service:
-  service.running:
-    - name: kafka
-    - enable: true
-    - watch:
-      - file: kafka-server-conf
-{% if grains['os'] == 'Ubuntu' %}
-      - file: kafka-copy_kafka_upstart
-{% elif grains['os'] == 'RedHat' %}
-      - file: kafka-copy_kafka_systemd
-{% endif %}
+kafka-start_service:
+  cmd.run:
+    - name: 'service kafka stop || echo already stopped; service kafka start'

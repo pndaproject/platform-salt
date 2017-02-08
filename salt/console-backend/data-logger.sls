@@ -65,58 +65,37 @@ console-backend-install_backend_data_logger_app_dependencies:
     - require:
       - npm: nodejs-update_npm
 
-{% if grains['os'] == 'Ubuntu' %}
-# Create upstart script from template
-console-backend-copy_data_logger_upstart:
+# Create service script from template
+console-backend-copy_data_logger_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/data-logger.conf
     - source: salt://console-backend/templates/backend_nodejs_app.conf.tpl
-    - template: jinja
-    - defaults:
-        no_console_log: True
-        host_ip: {{ host_ip }}
-        backend_app_port: {{ backend_app_port }}
-        app_dir: {{ app_dir }}
 {% elif grains['os'] == 'RedHat' %}
-console-backend-systemd:
-  file.managed:
     - name: /usr/lib/systemd/system/data-logger.service
     - source: salt://console-backend/templates/backend_nodejs_app.service.tpl
+{% endif %}
     - template: jinja
     - defaults:
         no_console_log: True
         host_ip: {{ host_ip }}
         backend_app_port: {{ backend_app_port }}
         app_dir: {{ app_dir }}
-  module.run:
-    - name: service.systemctl_reload
-    - onchanges:
-      - file: console-backend-systemd
-{% endif %}
 
-# Restart the data logger component
-data-logger_service:
-  service.running:
-    - name: data-logger
-    - enable: True
-    - reload: True
-    - watch:
-      - file: console-backend-symlink_data_logger_dir
-{% if grains['os'] == 'Ubuntu' %}
-      - file: console-backend-copy_data_logger_upstart
-{% elif grains['os'] == 'RedHat' %}
-      - file: console-backend-systemd
-{% endif %}
+{% if grains['os'] == 'RedHat' %}
+console-backend-data-logger-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable data-logger; /bin/systemctl enable redis
+{%- endif %}
 
-{% if grains['os'] == 'Ubuntu' %}
+console-backend-data-logger-start_service:
+  cmd.run:
+    - name: 'service data-logger stop || echo already stopped; service data-logger start'
+
 console-backend-redis_start:
   cmd.run:
-    - name: 'service redis-server restart'
-    - user: root
-    - group: root
+{% if grains['os'] == 'Ubuntu' %}
+    - name: 'service redis-server stop || echo already stopped; service redis-server start'
 {% elif grains['os'] == 'RedHat' %}
-console-backend-redis_start:
-    service.running:
-      - name: redis
-      - enable: True
+    - name: 'service redis stop || echo already stopped; service redis start'
 {% endif %}

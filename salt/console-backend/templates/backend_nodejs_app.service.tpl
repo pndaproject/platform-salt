@@ -9,3 +9,6 @@ Environment=PORT={{backend_app_port}}
 ExecStart=/bin/node {{app_dir}}/app.js
 Restart=always
 RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

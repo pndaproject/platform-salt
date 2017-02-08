@@ -42,38 +42,18 @@ package-repository-copy_configuration:
     - require:
       - archive: package-repository-dl-and-extract
 
-{% if grains['os'] == 'Ubuntu' %}
-package-repository-copy_upstart:
+package-repository-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/package-repository.conf
     - source: salt://package-repository/templates/package-repository.conf.tpl
-    - template: jinja
-    - defaults:
-        install_dir: {{ install_dir }}
-package-repository-stop_package_repository:
-  cmd.run:
-    - name: 'initctl stop package-repository || echo app already stopped'
-    - user: root
-    - group: root
 {% elif grains['os'] == 'RedHat' %}
-package-repository-copy_systemd:
-  file.managed:
     - name: /usr/lib/systemd/system/package-repository.service
     - source: salt://package-repository/templates/package-repository.service.tpl
+{% endif %}    
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-  module.run:
-    - name: service.systemctl_reload
-    - onchanges:
-      - file: package-repository-copy_systemd
-package-repository-stop_package_repository:
-  service.dead:
-    - name: package-repository
-    - enable: true
-    - watch:
-      - file: /usr/lib/systemd/system/package-repository.service
-{% endif %}
 
 {% if package_repository_fs_type == 'sshfs' %}
 {% include "package-repository/sshfs.sls" %}
@@ -87,17 +67,12 @@ package-repository-create_fs_location_path:
 
 {% endif %}
 
-{% if grains['os'] == 'Ubuntu' %}
-package-repository-start_package_repository:
+{% if grains['os'] == 'RedHat' %}
+package-repository-systemctl_reload:
   cmd.run:
-    - name: 'initctl start package-repository'
-    - user: root
-    - group: root
-{% elif grains['os'] == 'RedHat' %}
-package-repository-start_package_repository:
-  service.running:
-    - name: package-repository
-    - enable: true
-    - watch:
-      - file: /usr/lib/systemd/system/package-repository.service
-{% endif %}
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable package-repository
+{%- endif %}
+
+package-repository-start_service:
+  cmd.run:
+    - name: 'service package-repository stop || echo already stopped; service package-repository start'

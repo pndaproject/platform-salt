@@ -70,21 +70,18 @@ mysql-update-mysql-configuration2:
     - require:
       - pkg: mysql-install-mysql-server
 
+{% if grains['os'] == 'RedHat' %}
+mysql-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable mysqld
+{%- endif %}
+
 mysql-mysql-running:
-  service.running:
+  cmd.run:
 {% if grains['os'] == 'Ubuntu' %}
-    - name: mysql
+    - name: 'service mysql stop || echo already stopped; service mysql start'
 {% elif grains['os'] == 'RedHat' %}
-    - name: mysqld
-    - enable: True
-    - reload: True
-{% endif %}
-    - watch:
-      - pkg: mysql-install-mysql-server
-{% if grains['os'] == 'Ubuntu' %}
-      - file: /etc/mysql/my.cnf
-{% elif grains['os'] == 'RedHat' %}
-      - file: /etc/my.cnf
+    - name: 'service mysqld stop || echo already stopped; service mysqld start'
 {% endif %}
 
 {% if grains['os'] == 'RedHat' %}

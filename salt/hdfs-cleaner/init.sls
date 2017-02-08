@@ -56,7 +56,7 @@ hdfs-cleaner-copy_config:
     - require:
       - file: hdfs-cleaner-create_link
 
-hdfs-cleaner-copy_upstart:
+hdfs-cleaner-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/hdfs-cleaner.conf

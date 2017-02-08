@@ -46,7 +46,7 @@ data-service-copy_config:
     - require:
       - archive: data-service-dl-and-extract
 
-data-service-copy_upstart:
+data-service-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/dataservice.conf
@@ -59,10 +59,13 @@ data-service-copy_upstart:
     - defaults:
         install_dir: {{ install_dir }}
 
-dataservice:
-  service.running:
-    - enable: True
-    - watch:
-      - file: data-service-copy_upstart
-      - file: data-service-create_link
+{% if grains['os'] == 'RedHat' %}
+data-service-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable dataservice
+{%- endif %}
+
+data-service-start_service:
+  cmd.run:
+    - name: 'service dataservice stop || echo already stopped; service dataservice start'
 

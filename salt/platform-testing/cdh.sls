@@ -59,7 +59,7 @@ platform-testing-cdh-install-requirements-cdh:
     - require:
       - virtualenv: platform-testing-cdh-create-venv
 
-platform-testing-cdh_upstart:
+platform-testing-cdh_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-cdh.conf.tpl
@@ -90,7 +90,7 @@ platform-testing-cdh-crontab-cdh:
 {% endif %}
     - require:
       - pip: platform-testing-cdh-install-requirements-cdh
-      - file: platform-testing-cdh_upstart
+      - file: platform-testing-cdh_service
 
 platform-testing-cdh-install-requirements-cdh_blackbox:
   pip.installed:
@@ -99,7 +99,7 @@ platform-testing-cdh-install-requirements-cdh_blackbox:
     - require:
       - virtualenv: platform-testing-cdh-create-venv
 
-platform-testing-cdh-blackbox_upstart:
+platform-testing-cdh-blackbox_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-cdh-blackbox.conf.tpl
@@ -130,7 +130,7 @@ platform-testing-cdh-crontab-cdh_blackbox:
 {% endif %}
     - require:
       - pip: platform-testing-cdh-install-requirements-cdh_blackbox
-      - file: platform-testing-cdh-blackbox_upstart
+      - file: platform-testing-cdh-blackbox_service
 
 {% if grains['os'] == 'RedHat' %}
 platform-testing-cdh-systemctl_reload:

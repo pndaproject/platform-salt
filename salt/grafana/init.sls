@@ -28,12 +28,15 @@ grafana-server_pkg:
       - grafana: {{ grafana_rpm_location }}
 {% endif %}
 
+{% if grains['os'] == 'RedHat' %}
+grafana-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable grafana-server
+{%- endif %}
+
 grafana-server_start:
-  service.running:
-    - name: grafana-server
-    - enable: True
-    - watch:
-      - pkg: grafana-server_pkg
+  cmd.run:
+    - name: 'service grafana-server stop || echo already stopped; service grafana-server start'
 
 grafana-login_script_run:
   cmd.script:
@@ -44,7 +47,7 @@ grafana-login_script_run:
         pnda_password: {{ pillar['pnda']['password'] }}
     - cwd: /
     - require:
-      - service: grafana-server_start
+      - cmd: grafana-server_start
 
 {% for ds in datasources %}
 grafana-create_datasources_{{ loop.index }}:
