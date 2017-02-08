@@ -1,5 +1,7 @@
 {%- from 'kafka/settings.sls' import kafka, config with context %}
 
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
 {%- set kafka_zookeepers = [] -%}
@@ -33,6 +35,7 @@ kafka-server-conf:
     - template: jinja
     - context:
       zk_hosts: {{ kafka_zookeepers|join(',') }}
+      kafka_log_retention_bytes: {{ flavor_cfg.kafka_log_retention_bytes }}
 
 {% if grains['os'] == 'Ubuntu' %}
 kafka-copy_kafka_upstart:

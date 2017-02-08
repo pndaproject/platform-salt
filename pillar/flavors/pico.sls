@@ -9,6 +9,9 @@
         "gobblin": {
             "max_mappers": 5
         },
+        "kafka.server": {
+            "kafka_log_retention_bytes": 314572800
+        },
         "cdh.setup_hadoop": {
             "template_file": "cfg_pico.py"
         },
