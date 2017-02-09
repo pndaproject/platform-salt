@@ -17,6 +17,9 @@
         },
         "kafka.settings": {
             "listen_iface": "vlan2006"
+        },
+        "zookeeper": {
+            "listen_iface": "vlan2006"
         }
     }
 }
