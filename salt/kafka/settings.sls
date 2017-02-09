@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'].get('kafka.settings', {}) %}
+
 {% set p  = salt['pillar.get']('kafka', {}) %}
 {% set pc = p.get('config', {}) %}
 {% set g  = salt['grains.get']('kafka', {}) %}
@@ -27,6 +29,14 @@
   'host_name': gc.get('host_name', pc.host_name),
   'advertised_host_name': salt['grains.get']('ip_interfaces:eth0:0', pc.advertised_host_name)
   } %}
+
+{% if flavor_cfg.listen_iface is defined %}
+    {% set listen_ip = grains['ip_interfaces'][flavor_cfg.listen_iface][0] %}
+    {% do config.update({
+            'listen_ip': listen_ip,
+            'advertised_host_name': listen_ip
+            }) %}
+{% endif %}
 
 #  'advertised_host_name': gc.get('advertised_host_name', pc.advertised_host_name)
 {%- set kafka = {} %}

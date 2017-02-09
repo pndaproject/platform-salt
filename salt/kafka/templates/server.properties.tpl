@@ -31,7 +31,11 @@ delete.topic.enable=true
 
 ############################# Socket Server Settings #############################
 
+{%- if c.listen_ip is defined %}
+listeners=PLAINTEXT://{{ c.listen_ip }}:9092
+{%- else %}
 listeners=PLAINTEXT://:9092
+{%- endif %}
 
 # The port the socket server listens on
 port={{ c.port }}

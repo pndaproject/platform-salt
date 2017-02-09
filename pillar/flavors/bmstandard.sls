@@ -14,6 +14,9 @@
         },
         "curator": {
             "days_to_keep": 6
+        },
+        "kafka.settings": {
+            "listen_iface": "vlan2006"
         }
     }
 }
