@@ -4,6 +4,13 @@
 include:
   - python-pip
 
+{% if grains['os'] == 'RedHat' %}
+reboot-install_deps:
+  pkg.installed:
+    - pkgs:
+      - at
+{% endif %}
+
 reboot-create-venv:
   virtualenv.managed:
     - name: {{ install_dir }}
