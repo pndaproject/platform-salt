@@ -31,7 +31,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 9. Edit pnda_env.yaml with the component package server IP address (`pnda_component_packages.PACKAGES_SERVER_URI`). A component package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a component package server.
 
-10. Create [an ssh keypair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) to use when creating the EC2 instances for PNDA as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions.
+10. Create [an ssh keypair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) to use when creating the EC2 instances for PNDA as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions. For example, if the keypair in AWS is 'pnda' then the local private key file should be named 'pnda.pem' and the corresponding cli parameter should be '-s pnda'.
 
 11. Install pip packages required by the CLI 
     ```sh
