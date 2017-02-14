@@ -31,6 +31,12 @@ logshipper-link_release:
     - cwd: {{ install_dir }}
     - unless: test -L {{ install_dir }}/logstash
 
+{% if grains['os'] == 'RedHat' %}
+logshipper-journald-plugin:
+  cmd.run:
+    - name: {{ install_dir }}/logstash/bin/plugin install logstash-input-journald
+{% endif %}
+
 logshipper-copy_configuration:
   file.managed:
     - name: {{ install_dir }}/logstash/shipper.conf

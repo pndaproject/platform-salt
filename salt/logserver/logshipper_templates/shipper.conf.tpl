@@ -1,27 +1,21 @@
 {%- set logdest = salt['pnda.ip_addresses']('logserver')[0] -%}
 input {
+{% if grains['os'] == 'RedHat' %}
+   journald {
+          path => '/run/log/journal'
+          sincedb_path => "/opt/pnda/logstash/sincedb/db2"
+          add_field => {"path" => "journald"}
+          lowercase => true
+   }
+{% elif grains['os'] == 'Ubuntu' %}
    file {
-          path => ["/var/log/upstart/kafka.log",
-                  "/var/log/pnda/kafka/server.log",
-                  "/var/log/pnda/kafka/controller.log"]
+          path => ["/var/log/upstart/kafka.log"]
           add_field => {"source" => "kafka"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
    file {
-          path => ["/var/log/pnda/zookeeper/zookeeper.log"]
-          add_field => {"source" => "zookeeper"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-   }
-   file {
-          path => ["/var/log/upstart/gobblin.log",
-                   "/var/log/pnda/gobblin/*.log"]
+          path => ["/var/log/upstart/gobblin.log"]
           add_field => {"source" => "gobblin"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-   }
-   file {
-          path => ["/var/log/salt/minion",
-                   "/tmp/cm_setup.log"]
-          add_field => {"source" => "provisioning"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
    file {
@@ -35,6 +29,34 @@ input {
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
    file {
+          path => ["/var/log/upstart/jupyterhub.log"]
+          add_field => {"source" => "jupyter"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+{% endif %}
+   file {
+          path => ["/var/log/pnda/kafka/server.log",
+                   "/var/log/pnda/kafka/controller.log"]
+          add_field => {"source" => "kafka"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/zookeeper/zookeeper.log"]
+          add_field => {"source" => "zookeeper"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/pnda/gobblin/*.log"]
+          add_field => {"source" => "gobblin"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
+          path => ["/var/log/salt/minion",
+                   "/tmp/cm_setup.log"]
+          add_field => {"source" => "provisioning"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+   file {
           path => ["/var/log/opentsdb/opentsdb.log"]
           add_field => {"source" => "opentsdb"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
@@ -42,11 +64,6 @@ input {
    file {
           path => ["/var/log/grafana/grafana.log"]
           add_field => {"source" => "grafana"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-   }
-   file {
-          path => ["/var/log/upstart/jupyterhub.log"]
-          add_field => {"source" => "jupyter"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
    file {
@@ -60,7 +77,7 @@ input {
    }
    file {
           path => ["/var/log/pnda/hadoop/*/*.log",
-                  "/var/log/pnda/hadoop/*/*.log.out"]
+                   "/var/log/pnda/hadoop/*/*.log.out"]
           add_field => {"source" => "hadoop"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
@@ -71,7 +88,7 @@ input {
    }
    file {
           path => ["/var/log/pnda/hadoop-mapreduce/*.log",
-                  "/var/log/pnda/hadoop-mapreduce/*.log.out"]
+                   "/var/log/pnda/hadoop-mapreduce/*.log.out"]
           add_field => {"source" => "hadoop-mapreduce"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
@@ -82,9 +99,9 @@ input {
    }
    file {
           path => ["/var/log/pnda/impala/*.ERROR",
-                  "/var/log/pnda/impala/*.WARNING",
-                  "/var/log/pnda/impala/*.INFO",
-                  "/var/log/pnda/impala-llama/*.log"]
+                   "/var/log/pnda/impala/*.WARNING",
+                   "/var/log/pnda/impala/*.INFO",
+                   "/var/log/pnda/impala-llama/*.log"]
           add_field => {"source" => "impala"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
@@ -95,9 +112,32 @@ input {
    }
    file {
           path => ["/var/log/pnda/oozie/*.log",
-                  "/var/log/pnda/oozie/*.log.out"]
+                   "/var/log/pnda/oozie/*.log.out"]
           add_field => {"source" => "oozie"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+   }
+}
+
+filter {
+   if [_systemd_unit] {
+       if [_systemd_unit] == "kafka.service" {
+           mutate {add_field => {"source" => "kafka"}}
+       }
+       else if [_systemd_unit] == "gobblin.service" {
+           mutate {add_field => {"source" => "gobblin"}}
+       }
+       else if [_systemd_unit] == "deployment-manager.service" {
+           mutate {add_field => {"source" => "deployment-manager"}}
+       }
+       else if [_systemd_unit] == "package-repository.service" {
+           mutate {add_field => {"source" => "package-repository"}}
+       }
+       else if [_systemd_unit] == "jupytehub.service" {
+           mutate {add_field => {"source" => "jupyterhub"}}
+       }
+       else {
+           drop { }
+       }
    }
 }
 
