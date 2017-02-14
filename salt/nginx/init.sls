@@ -7,11 +7,13 @@ nginx_conf_file:
     - name: /etc/nginx/nginx.conf
     - source: salt://nginx/files/nginx.conf
 {% endif %}
-nginx-service:
-  service.running:
-    - name: nginx
-    - enable: True
+
 {% if grains['os'] == 'RedHat' %}
-    - watch:
-      - file: nginx_conf_file
-{% endif %}
+nginx-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable nginx
+{%- endif %}
+
+nginx-start_service:
+  cmd.run:
+    - name: 'service nginx stop || echo already stopped; service nginx start'

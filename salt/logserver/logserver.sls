@@ -82,7 +82,7 @@ logserver-create_log_folder:
     - mode: 777
     - makedirs: True
 
-logserver-copy_upstart:
+logserver-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/logserver.conf
@@ -98,17 +98,17 @@ logserver-copy_upstart:
 {% if grains['os'] == 'RedHat' %}
 logserver-systemctl_reload:
   cmd.run:
-    - name: /bin/systemctl daemon-reload
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable logserver
 {%- endif %}
 
 logserver-start_service:
   cmd.run:
-    - name: 'service logserver restart'
+    - name: 'service logserver stop || echo already stopped; service logserver start'
 
-redis-start_service:
+logserver-redis-start_service:
   cmd.run:
 {% if grains['os'] == 'Ubuntu' %}
-    - name: 'service redis-server restart'
+    - name: 'service logserver stop || echo already stopped; service logserver start'
 {% elif grains['os'] == 'RedHat' %}
-    - name: 'service redis restart'
+    - name: 'service redis stop || echo already stopped; service redis start'
 {% endif %}

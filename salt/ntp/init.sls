@@ -12,13 +12,10 @@ ntp-install_conf:
     - context:
       ntp_servers: {{ ntp_servers }}
 
-ntp-service-running:
-  service.running:
+ntp-start_service:
+  cmd.run:
     {% if grains['os'] == 'RedHat' %}
-    - name: ntpd
+    - name: 'service ntpd stop || echo already stopped; service ntpd start'
     {% elif grains['os'] == 'Ubuntu' %}
-    - name: ntp
+    - name: 'service ntp stop || echo already stopped; service ntp start'
     {% endif %}
-    - enable: true
-    - watch:
-      - file: ntp-install_conf

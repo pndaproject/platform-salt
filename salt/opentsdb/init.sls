@@ -19,20 +19,25 @@ opentsdb-server:
     - sources:
       - opentsdb: {{ opentsdb_pkg_location }}
 
-{% if grains['os'] == 'RedHat' %}
-opentsdb-copy_upstart:
+{% if grains['os'] == 'Ubuntu' %}
+opentsdb-copy_defaults:
+  file.managed:
+    - name: /etc/default/opentsdb
+    - source: salt://opentsdb/files/opentsdb.default
+{% elif grains['os'] == 'RedHat' %}
+opentsdb-copy_service:
   file.managed:
     - name: /usr/lib/systemd/system/opentsdb.service
     - source: salt://opentsdb/templates/opentsdb.service.tpl
     - template: jinja
 {%- endif %}
 
-opentsdb-service_start:
-  service.running:
-    - name: opentsdb
-    - enable: True
-    - reload: True
-    - watch:
-      - file: /etc/opentsdb/opentsdb.conf
-      - file: /etc/default/opentsdb
-      - pkg: opentsdb-server
+{% if grains['os'] == 'RedHat' %}
+opentsdb-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable opentsdb
+{%- endif %}
+
+opentsdb-start_service:
+  cmd.run:
+    - name: 'service opentsdb stop || echo already stopped; service opentsdb start'

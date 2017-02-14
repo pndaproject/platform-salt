@@ -37,36 +37,26 @@ kibana-copy_configuration_kibana:
     - user: kibana
     - group: kibana
 
-{% if grains['os'] == 'Ubuntu' %}
-kibana-copy_kibana_upstart:
+kibana-copy_kibana_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - source: salt://kibana/templates/kibana.init.conf.tpl
     - name: /etc/init/kibana.conf
-    - mode: 644
-    - template: jinja
-    - context:
-      installdir: {{kibana_directory}}/kibana-{{ kibana_version }}
 {% elif grains['os'] == 'RedHat' %}
-kibana-copy_systemd:
-  file.managed:
     - source: salt://kibana/templates/kibana.service.tpl
     - name: /usr/lib/systemd/system/kibana.service
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
       installdir: {{kibana_directory}}/kibana-{{ kibana_version }}
+
+{% if grains['os'] == 'RedHat' %}
 kibana-systemctl_reload:
   cmd.run:
-    - name: /bin/systemctl daemon-reload
-{% endif %}
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable kibana
+{%- endif %}
 
-kibana-service:
-  service.running:
-    - name: kibana
-    - enable: True
-    - watch:
-{% if grains['os'] == 'Ubuntu' %}
-      - file: kibana-copy_kibana_upstart
-{% elif grains['os'] == 'RedHat' %}
-      - file: {{kibana_directory}}/kibana-{{ kibana_version }}/config/kibana.yml
-{% endif %}
+kibana-start_service:
+  cmd.run:
+    - name: 'service kibana stop || echo already stopped; service kibana start'

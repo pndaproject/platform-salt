@@ -28,7 +28,7 @@ reboot-copy_config:
       - virtualenv: reboot-create-venv
 
 {% if grains['os'] == 'Ubuntu' %}
-reboot-copy_upstart:
+reboot-copy_service:
   file.managed:
     - name: /etc/init/pnda-restart.conf
     - source: salt://reboot/templates/pnda-restart.conf.tpl

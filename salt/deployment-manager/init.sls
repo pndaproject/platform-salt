@@ -67,50 +67,25 @@ deployment-manager-push_key:
     - require:
       - cmd: deployment-manager-gen_key
 
-{% if grains['os'] == 'Ubuntu' %}
-deployment-manager-copy_upstart:
+deployment-manager-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/deployment-manager.conf
     - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
-    - template: jinja
-    - defaults:
-        install_dir: {{ install_dir }}
-deployment-manager-stop_deployment_manager:
-  cmd.run:
-    - name: 'initctl stop deployment-manager || echo app already stopped'
-    - user: root
-    - group: root
 {% elif grains['os'] == 'RedHat' %}
-deployment-manager-copy_systemd:
-  file.managed:
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
+{% endif %}    
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-  module.run:
-    - name: service.systemctl_reload
-    - onchanges:
-      - file: deployment-manager-copy_systemd
-deployment-manager-stop_deployment_manager:
-  service.dead:
-    - name: deployment-manager
-    - enable: true
-    - watch:
-      - file: /usr/lib/systemd/system/deployment-manager.service
-{% endif %}
 
-{% if grains['os'] == 'Ubuntu' %}
-deployment-manager-start_deployment_manager:
+{% if grains['os'] == 'RedHat' %}
+deployment-manager-systemctl_reload:
   cmd.run:
-    - name: 'initctl start deployment-manager'
-    - user: root
-    - group: root
-{% elif grains['os'] == 'RedHat' %}
-deployment-manager-start_deployment_manager:
-  service.running:
-    - name: deployment-manager
-    - enable: true
-    - watch:
-      - file: /usr/lib/systemd/system/deployment-manager.service
-{% endif %}
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager
+{%- endif %}
+
+deployment-manager-start_service:
+  cmd.run:
+    - name: 'service deployment-manager stop || echo already stopped; service deployment-manager start'

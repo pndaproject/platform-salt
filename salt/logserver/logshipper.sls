@@ -74,7 +74,7 @@ logshipper-create_sincedb_folder:
     - mode: 777
     - makedirs: True
 
-logshipper-copy_upstart:
+logshipper-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/logshipper.conf
@@ -90,9 +90,9 @@ logshipper-copy_upstart:
 {% if grains['os'] == 'RedHat' %}
 logshipper-systemctl_reload:
   cmd.run:
-    - name: /bin/systemctl daemon-reload
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable logshipper
 {%- endif %}
 
 logshipper-start_service:
   cmd.run:
-    - name: 'service logshipper restart'
+    - name: 'service logshipper stop || echo already stopped; service logshipper start'

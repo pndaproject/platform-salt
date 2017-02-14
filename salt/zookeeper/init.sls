@@ -89,7 +89,7 @@ zookeeper-link:
       - archive: zookeeper-dl-and-extract
 
 {% if grains['os'] == 'Ubuntu' %}
-zookeeper-upstart:
+zookeeper-service:
   file.managed:
     - name: /etc/init/zookeeper.conf
     - source: salt://zookeeper/files/templates/zookeeper.init.conf.tpl
@@ -132,22 +132,14 @@ zookeeper-systemd:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
-zookeeper-systemctl_reload:
-  cmd.run:
-    - name: /bin/systemctl daemon-reload
 {% endif %}
 
+{% if grains['os'] == 'RedHat' %}
+zookeeper-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable zookeeper
+{%- endif %}
+
 zookeeper-ensure-service-running:
-  service.running:
-    - name: zookeeper
-    - watch:
-      - archive: zookeeper-dl-and-extract
-      - file: zookeeper-environment
-      - file: zookeeper-configuration
-      - file: zookeeper-myid
-{% if grains['os'] == 'Ubuntu' %}
-      - file: zookeeper-upstart
-{% elif grains['os'] == 'RedHat' %}
-      - file: zookeeper-systemd
-{% endif %}
-      - file: zookeeper-link
+  cmd.run:
+    - name: 'service zookeeper stop || echo already stopped; service zookeeper start'

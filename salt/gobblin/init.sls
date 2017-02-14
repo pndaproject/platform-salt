@@ -76,7 +76,7 @@ gobblin-install_gobblin_pnda_job_file:
     - require:
       - file: gobblin-create_gobblin_jobs_directory
 
-gobblin-install_gobblin_upstart_script:
+gobblin-install_gobblin_service_script:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/gobblin.conf
@@ -109,4 +109,4 @@ gobblin-add_gobblin_crontab_entry:
     - user: root
     - minute: 0,30
     - require:
-      - file: gobblin-install_gobblin_upstart_script
+      - file: gobblin-install_gobblin_service_script

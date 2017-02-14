@@ -35,8 +35,12 @@ jupyterhub-install_configurable_http_proxy:
     - require:
       - npm: nodejs-update_npm
 
-# set up upstart script
-jupyterhub-copy_upstart:
+jupyterhub-create_log_dir:
+  file.directory:
+    - name: /var/log/pnda/jupyter
+
+# set up service script
+jupyterhub-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://jupyter/templates/jupyterhub.conf.tpl
@@ -51,16 +55,17 @@ jupyterhub-copy_upstart:
       jupyterhub_config_dir: {{ jupyterhub_config_dir }}
       virtual_env_dir: {{ virtual_env_dir }}
 
+{% if grains['os'] == 'RedHat' %}
+jupyterhub-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable jupyterhub
+{%- endif %}
+
 jupyterhub-service_started:
-  service.running:
-    - name: jupyterhub
-    - enable: True
-    - reload: False
+  cmd.run:
+    - name: 'service jupyterhub stop || echo already stopped; service jupyterhub start'
     - require:
       - pip: jupyterhub-install
-      - file: jupyterhub-copy_upstart
+      - file: jupyterhub-copy_service
       - npm: jupyterhub-install_configurable_http_proxy
-    - watch:
-      - file: jupyterhub-copy_upstart
-      - pip: jupyterhub-install
-      - file: jupyterhub-create_configuration
+

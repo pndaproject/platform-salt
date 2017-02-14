@@ -82,7 +82,7 @@ platform-testing-general-install-requirements-kafka:
     - require:
       - virtualenv: platform-testing-general-create-venv
 
-platform-testing-general-kafka_upstart:
+platform-testing-general-kafka_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-kafka.conf.tpl
@@ -117,7 +117,7 @@ platform-testing-general-install-requirements-zookeeper:
     - require:
       - virtualenv: platform-testing-general-create-venv
 
-platform-testing-general-zookeeper-upstart:
+platform-testing-general-zookeeper-service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.conf.tpl
@@ -152,7 +152,7 @@ platform-testing-general-install-requirements-dm-blackbox:
     - require:
       - virtualenv: platform-testing-general-create-venv
 
-platform-testing-general-dm-blackbox_upstart:
+platform-testing-general-dm-blackbox_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.conf.tpl

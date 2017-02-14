@@ -1,6 +1,6 @@
 include:
   - reboot.install_restart
 
-restart-start:
-  service.running:
-    - name: pnda-restart
+restart-start_service:
+  cmd.run:
+    - name: 'service pnda-restart stop || echo already stopped; service pnda-restart start'
