@@ -80,3 +80,9 @@ pnda:
 
 pnda_cluster: $PNDA_CLUSTER 
 EOF
+
+if [ "x$DISTRO" == "xrhel" ]; then
+cat >> /etc/cloud/cloud.cfg <<EOF
+preserve_hostname: true
+EOF
+fi
