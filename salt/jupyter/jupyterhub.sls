@@ -38,6 +38,7 @@ jupyterhub-install_configurable_http_proxy:
 jupyterhub-create_log_dir:
   file.directory:
     - name: /var/log/pnda/jupyter
+    - makedirs: True
 
 # set up service script
 jupyterhub-copy_service:
