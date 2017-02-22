@@ -1,5 +1,6 @@
 {% set app_directory_name = '/restart' %}
 {% set install_dir = pillar['pnda']['homedir'] + app_directory_name %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 include:
   - python-pip
@@ -8,6 +9,7 @@ reboot-create-venv:
   virtualenv.managed:
     - name: {{ install_dir }}
     - requirements: salt://reboot/files/requirements.txt
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
 
