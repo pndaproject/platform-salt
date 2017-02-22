@@ -75,7 +75,7 @@
   'roles:mysql_connector':
     - match: grain
     - mysql.connector
-    
+
   'roles:oozie_database':
     - match: grain
     - cdh.oozie_mysql
@@ -83,7 +83,6 @@
   'roles:cloudera_manager':
     - match: grain
     - cdh.cloudera-keys
-    - cdh.cloudera-manager
 
   'roles:platform_testing_cdh':
     - match: grain
