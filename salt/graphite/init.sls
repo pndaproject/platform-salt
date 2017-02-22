@@ -38,12 +38,6 @@ _graphite:
   user.present
 {% endif %}
 
-install-graphite-api:
-  pip.installed:
-    - pkgs:
-      - cairocffi == 0.6
-      - graphite-api == 1.1.3
-
 graphite-create-virtualenv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
