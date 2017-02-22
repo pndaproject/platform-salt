@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-2456: Initial work to support for Redhat 7. Salt highstate and orchestrate run on a Redhat7 HEAT cluster with no errors but requires further testing and work.
 - PNDA-2480: Added a per flavor pillar setting for kafka log retention (log.retention.bytes) set to 300MB (pico) 1GB (standard) to stop disks filling up on pico clusters.
+
 ### Changed
 - PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
 - PNDA-2672: Explicitly set CM API version number
 - PNDA-2596: Stop ingesting internal PNDA testbot topic
+- PNDA-2756: Move Cloudera Manager installation in orchestrate stage instead of highstate stage
 
 ## [1.3.0] 2017-01-20
 ### Added
