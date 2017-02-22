@@ -72,6 +72,14 @@
     - cdh.create_data_dirs
     - snappy
 
+  'roles:cloudera_manager':
+    - match: grain
+    - cdh.cloudera-keys
+
+  'roles:platform_testing_cdh':
+    - match: grain
+    - platform-testing.cdh
+
   'roles:mysql_connector':
     - match: grain
     - mysql.connector
