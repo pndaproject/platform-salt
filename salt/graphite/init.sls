@@ -17,22 +17,19 @@ graphite-reqs:
       - nginx
       - uwsgi
       - uwsgi-plugin-python
-      - libcairo2-dev
-libffi-dev:
-  pkg.installed
-libapache2-mod-wsgi:
-  pkg.installed
-graphite-carbon:
-  pkg.installed
+      - libffi-dev
+      - libapache2-mod-wsgi
+      - graphite-carbon
 {% elif grains['os'] == 'RedHat' %}
-Development Tools:
-  pkg.group_installed
-libffi-devel:
-  pkg.installed
-uwsgi:
-  pkg.installed
-python-carbon:
-  pkg.installed
+graphite-reqs:
+  pkg.installed:
+    - refresh: True
+    - pkgs:
+      - libffi-devel
+      - uwsgi
+      - python-carbon
+      - gcc
+
 _graphite:
   user.present
 {% endif %}
