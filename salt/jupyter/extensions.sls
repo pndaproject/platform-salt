@@ -13,10 +13,9 @@ jupyter-extension-enable_widget_nbextensions:
 # lxml improves perforance on server side communication to Spark
 jupyter-extension_install_jupyter_spark:
   pip.installed:
-    - pkgs:
-      - https://github.com/klyr/jupyter-spark/releases/download/0.3.0-patch/jupyter-spark-0.3.0-patch.tar.gz
-      - lxml==3.6.4
-      - index_url: {{ pip_index_url }}
+    - requirements: salt://jupyter/files/requirements-jupyter-extensions.txt
+    - python: python3
+    - index_url: {{ pip_index_url }}
     - bin_env: {{ virtual_env_dir }}
 
 jupyter-extension_jupyter_spark:
