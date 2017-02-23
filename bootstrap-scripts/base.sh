@@ -10,18 +10,28 @@
 set -e
 
 DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
+
 if [ "x$DISTRO" == "xubuntu" ]; then
+rm -rf /etc/apt/sources.list.d/*
+rm -rf /etc/apt/sources.list
+touch /etc/apt/sources.list
+cat > /etc/apt/sources.list.d/local.list <<EOF
+  deb $PNDA_MIRROR/debs/ ./
+EOF
+wget -O - $PNDA_MIRROR/debs/pnda.gpg.key | apt-key add -
 export DEBIAN_FRONTEND=noninteractive
-fi
-
-if [ "x$DISTRO" == "xubuntu" ]; then
 apt-get update
-apt-get -y install xfsprogs
-fi
-
-if [ "x$DISTRO" == "xrhel" ]; then
-yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
-yum -y install xfsprogs wget
+apt-get -y install xfsprogs salt-minion
+elif [ "x$DISTRO" == "xrhel" ]; then
+rm -rf /etc/yum.repos.d/*
+yum-config-manager --add-repo $PNDA_MIRROR/rpms
+rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-redhat-release
+rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-mysql
+rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-cloudera
+rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-EPEL-7
+rpm --import $PNDA_MIRROR/rpms/SALTSTACK-GPG-KEY.pub
+rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-CentOS-7
+yum -y install xfsprogs wget salt-minion
 fi
 
 # Mount the log volume, this is always xvdc
@@ -34,7 +44,7 @@ then
    sed -i "/xvdc/d" /etc/fstab
    echo "/dev/xvdc /var/log/pnda auto defaults 0 2" >> /etc/fstab
 fi
-# Mount the other log volumes if they exist, up to 3 more may be mounted but this list could be extended if required
+# Mount the other volumes if they exist, up to 3 more may be mounted but this list could be extended if required
 DISKS="xvdd xvde xvdf"
 DISK_IDX=0
 for DISK in $DISKS; do
@@ -52,10 +62,6 @@ for DISK in $DISKS; do
 done
 cat /etc/fstab
 mount -a
-
-# Install the salt minion
-wget -O install_salt.sh https://bootstrap.saltstack.com
-sh install_salt.sh -D -U stable 2015.8.11
 
 # Set the master address the minion will register itself with
 cat > /etc/salt/minion <<EOF

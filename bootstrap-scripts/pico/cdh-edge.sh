@@ -23,15 +23,12 @@ echo "  StrictHostKeyChecking no" >> /root/.ssh/config
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -y install unzip git
+apt-get -y install unzip git salt-minion salt-master
 fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
-yum -y install unzip git
+yum -y install unzip git salt-minion salt-master
 fi
-
-wget -O install_salt.sh https://bootstrap.saltstack.com
-sh install_salt.sh -D -U -M stable 2015.8.11
 
 cat << EOF > /etc/salt/master
 ## specific PNDA saltmaster config

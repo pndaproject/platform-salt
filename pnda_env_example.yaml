@@ -96,7 +96,8 @@ mirrors:
 
   # These mirrors are mandatory and may be hosted on any HTTP server, including the PNDA component package server
   JAVA_MIRROR: http://x.x.x.x/components/java/jdk/8u74-b02/jdk-8u74-linux-x64.tar.gz
-
+  
+  PNDA_MIRROR: http://x.x.x.x
 elk-cluster:
   # number of master nodes
   MASTER_NODES: 0
