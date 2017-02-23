@@ -478,10 +478,11 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
 
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     bootstrap_threads = []
+    bootstrap_errors = Queue.Queue()
     for _, instance in instance_map.iteritems():
         if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
              or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
-            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -490,8 +491,10 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
 
     for thread in bootstrap_threads:
         ret_val = thread.join()
-        if ret_val is not None:
-            raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
+
+    while not bootstrap_errors.empty():
+        ret_val = bootstrap_errors.get()
+        raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
 
     time.sleep(30)
 
