@@ -4,7 +4,8 @@
 {% set logstash_confdir = salt['pillar.get']('logstash-cluster:confdir', '') %}
 {% set logstash_datadir = salt['pillar.get']('logstash-cluster:datadir', '') %}
 {% set logstash_inputdir = salt['pillar.get']('logstash-cluster:inputdir', '') %}
-
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://artifacts.elastic.co/downloads/logstash/') %}
+{% set logstash_url = extra_mirror +  'logstash-' +  logstash_version + '.tar.gz' %}
 
 {%- set es_ingest_grains = salt['mine.get']('G@roles:elk-es-ingest', 'grains.items', expr_form='compound') %}
 
@@ -57,8 +58,8 @@ logstash-create_logstash_inputdir:
 logstash-dl_and_extract_logstash:
   archive.extracted:
     - name: {{logstash_directory}}
-    - source: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz.sha1
+    - source: {{logstash_url}
+    - source_hash: {{logstash_url}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{logstash_directory}}/logstash-{{ logstash_version }}

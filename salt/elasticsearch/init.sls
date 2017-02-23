@@ -4,6 +4,8 @@
 {% set elasticsearch_logdir = salt['pillar.get']('elasticsearch:logdir', '') %}
 {% set elasticsearch_confdir = salt['pillar.get']('elasticsearch:confdir', '') %}
 {% set elasticsearch_workdir = salt['pillar.get']('elasticsearch:workdir', '') %}
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://download.elastic.co/elasticsearch/elasticsearch/') %}
+{% set elasticsearch_url = extra_mirror +  'elasticsearch-' +  elasticsearch_version + '.tar.gz' %}
 
 elasticsearch-elasticsearch:
   group.present:
@@ -65,8 +67,8 @@ elasticsearch-copy_configuration_elasticsearch:
 elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
-    - source: https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1.txt
+    - source: {{ elasticsearch_url }}
+    - source_hash: {{ elasticsearch_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}

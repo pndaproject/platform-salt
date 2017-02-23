@@ -1,6 +1,8 @@
 {% set jmxproxy_version = salt['pillar.get']('jmxproxy:release_version', '') %}
 {% set jmxproxy_hash = salt['pillar.get']('jmxproxy:release_hash', '') %}
 {% set jmxproxy_jar = 'jmxproxy-' + jmxproxy_version + '.jar' %}
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://github.com/mk23/jmxproxy/releases/download/') %}
+{% set jmxproxy_url = extra_mirror +  'jmxproxy.' +  jmxproxy_version + '/'+ jmxproxy_jar %}
 
 {% set install_dir = pillar['pnda']['homedir'] %}
 
@@ -24,7 +26,7 @@ jmxproxy-create_release_dir_etc:
 jmx-proxy-dl-and-extract:
   file.managed:
     - name: {{ install_dir }}/{{ jmxproxy_jar }}
-    - source: https://github.com/mk23/jmxproxy/releases/download/jmxproxy.{{ jmxproxy_version }}/{{ jmxproxy_jar }}
+    - source: {{ jmxproxy_url }}
     - source_hash: {{ jmxproxy_hash }}
 
 jmxproxy-link:

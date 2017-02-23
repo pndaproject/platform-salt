@@ -3,6 +3,7 @@
 {% set deployment_manager_directory_name = 'deployment-manager-' + deployment_manager_version %}
 {% set deployment_manager_package = 'deployment-manager-' + deployment_manager_version + '.tar.gz' %}
 {% set install_dir = pillar['pnda']['homedir'] %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 {% set virtual_env_dir = install_dir + "/" + deployment_manager_directory_name + "/venv" %}
 
@@ -33,9 +34,25 @@ deployment-manager-dl-and-extract:
 deployment-manager-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
+    - index_url: {{ pip_index_url }}
+    - require:
+      - pip: python-pip-install_python_pip
+      - archive: deployment-manager-dl-and-extract
+
+deployment-manager-pbr:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - name: pbr==1.10
+    - index_url: {{ pip_index_url }}
+    - require:
+      - virtualenv: deployment-manager-create-venv
+
+deployment-manager-install-requirements:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ deployment_manager_directory_name }}/requirements.txt
     - python: python2
-    - reload_modules: True
+    - index_url: {{ pip_index_url }}
     - require:
       - archive: deployment-manager-dl-and-extract
 

@@ -1,5 +1,3 @@
-{%- set cm_ver = '5.9.0' -%}
-
 {%- set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') -%}
 {%- set cmdb_host = salt['pnda.ip_addresses']('oozie_database')[0] -%}
 {%- set cm_host = salt['pnda.ip_addresses']('cloudera_manager')[0] -%}

@@ -3,6 +3,7 @@
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 include:
   - python-pip
@@ -13,9 +14,17 @@ jupyter-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - python: python3
-    - requirements: salt://jupyter/files/requirements-jupyter.txt
     - require:
       - pip: python-pip-install_python_pip
+      - pip: python-pip-install_python_pip3
+
+jupyter-install-requirements:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - index_url: {{ pip_index_url }}
+    - requirements: salt://jupyter/files/requirements-jupyter.txt
+    - require:
+      - virtualenv: jupyter-create-venv
 
 jupyter-create_notebooks_directory:
   file.directory:
@@ -34,7 +43,7 @@ jupyter-install_python2_kernel:
   cmd.run:
     - name: '/opt/cloudera/parcels/Anaconda/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
     - require:
-      - virtualenv: jupyter-create-venv
+      - pip: jupyter-install-requirements
 
 jupyter-create_pyspark_kernel_dir:
   file.directory:

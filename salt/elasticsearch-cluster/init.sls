@@ -7,6 +7,8 @@
 {% set elasticsearch_workdir = salt['pillar.get']('elasticsearch-cluster:workdir', '') %}
 {% set elasticsearch_pluginsdir =  elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/plugins' %}
 {% set elasticsearch_confdir = elasticsearch_directory + '/elasticsearch-' + elasticsearch_version + '/config' %}
+{% set extra_mirror = salt['pillar.get']('extra:mirror', 'https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch/') %}
+{% set elasticsearch_url = extra_mirror +  'elasticsearch-' +  elasticsearch_version + '.tar.gz' %}
 
 {% set minion_roles = salt['grains.get']('roles', []) %}
 {% set num_of_masters = salt['grains.get']('num_of_masters', 1) %}
@@ -57,8 +59,8 @@ elasticsearch-create_elasticsearch_logdir:
 elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
-    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
+    - source: {{ elasticsearch_url }}
+    - source_hash:{{ elasticsearch_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}

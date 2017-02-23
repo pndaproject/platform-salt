@@ -14,6 +14,7 @@
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
+{% set npm_registry = salt['pillar.get']('npm:registry', 'https://registry.npmjs.org/') %}
 
 {% set data_manager_host = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
@@ -57,10 +58,11 @@ console-frontend-create_directory_link:
 
 # Install npm dependencies
 console-frontend-install_app_dependencies:
-  npm.bootstrap:
-    - name: {{ console_dir }}
+  cmd.run:
+    - cwd: {{ console_dir }}
+    - name: npm config set registry {{ npm_registry }} && npm install --json
     - require:
-      - npm: nodejs-update_npm
+      - pkg: nodejs-install_useful_packages
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:
