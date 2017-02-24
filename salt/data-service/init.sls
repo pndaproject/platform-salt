@@ -6,6 +6,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 include:
   - python-pip
@@ -24,6 +25,7 @@ data-service-create-venv:
     - name: {{ virtual_env_dir }}
     - requirements: salt://data-service/files/requirements.txt
     - python: python2
+    - index_url: {{ pip_index_url }}
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip

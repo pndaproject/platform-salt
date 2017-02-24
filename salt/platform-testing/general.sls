@@ -5,6 +5,7 @@
 {% set platform_testing_package = 'platform-testing-general' %}
 
 {% set virtual_env_dir = platform_testing_directory + "/" + platform_testing_package + "-" + platform_testing_version + "/venv" %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 {% set kafka_jmx_port = '9050' %}
 {% set console_port = '3001' %}
@@ -66,6 +67,7 @@ platform-testing-general-create-venv:
     - name: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/requirements.txt
     - python: python2
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-general-dl-and-extract
@@ -79,6 +81,7 @@ platform-testing-general-install-requirements-kafka:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/kafka/requirements.txt
+    - index_url: {{ pip_index_url }}
     - require:
       - virtualenv: platform-testing-general-create-venv
 
@@ -114,6 +117,7 @@ platform-testing-general-install-requirements-zookeeper:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/zookeeper/requirements.txt
+    - index_url: {{ pip_index_url }}
     - require:
       - virtualenv: platform-testing-general-create-venv
 
@@ -149,6 +153,7 @@ platform-testing-general-install-requirements-dm-blackbox:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
     - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/dm_blackbox/requirements.txt
+    - index_url: {{ pip_index_url }}
     - require:
       - virtualenv: platform-testing-general-create-venv
 

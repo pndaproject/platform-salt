@@ -13,6 +13,7 @@
 {% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
 {% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 include:
   - python-pip
@@ -23,6 +24,7 @@ cdh-create_tmp_virtualenv:
     - name: {{ scripts_location }}/venv
     - requirements: salt://cdh/files/requirements-cm_setup.txt
     - python: python2
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
 
