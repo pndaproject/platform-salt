@@ -73,7 +73,7 @@ logstash-create_logstash_confdir:
 
 logstash-copy_configuration_logstash:
   file.managed:
-    - source: salt://logstash/files/templates/logstash.conf.tpl
+    - source: salt://logstash/templates/logstash.conf.tpl
     - user: logstash
     - group: logstash
     - name: {{logstash_confdir}}/logstash.conf
@@ -82,9 +82,15 @@ logstash-copy_configuration_logstash:
       list_of_ingest: {{ es_ingest_hostnames }}
       input_dir: {{logstash_inputdir}}/*
 
+{% if grains['os'] == 'Ubuntu' %}
 /etc/init/logstash.conf:
   file.managed:
-    - source: salt://logstash/files/templates/logstash.init.conf.tpl
+    - source: salt://logstash/templates/logstash.init.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+/usr/lib/systemd/system/logstash.service:
+  file.managed:
+    - source: salt://logstash/templates/logstash.service.tpl  
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -93,10 +99,13 @@ logstash-copy_configuration_logstash:
       confpath: {{logstash_confdir }}/logstash.conf
       datadir: {{logstash_datadir}}
 
-logstash-service:
-  service.running:
-    - name: logstash
-    - enable: true
-    - watch:
-      - file: /etc/init/logstash.conf
+{% if grains['os'] == 'RedHat' %}
+logstash-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable logstash
+{%- endif %}
+
+logstash-start_service:
+  cmd.run:
+    - name: 'service logstash stop || echo already stopped; service logstash start'
 
