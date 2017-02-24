@@ -1,5 +1,6 @@
 # based on http://graphite-api.readthedocs.io/en/latest/deployment.html#nginx-uwsgi
 {% set virtual_env_dir = '/opt/pnda/graphite-api' %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 include:
   - python-pip
@@ -17,37 +18,29 @@ graphite-reqs:
       - nginx
       - uwsgi
       - uwsgi-plugin-python
-      - libcairo2-dev
-libffi-dev:
-  pkg.installed
-libapache2-mod-wsgi:
-  pkg.installed
-graphite-carbon:
-  pkg.installed
+      - libffi-dev
+      - libapache2-mod-wsgi
+      - graphite-carbon
 {% elif grains['os'] == 'RedHat' %}
-Development Tools:
-  pkg.group_installed
-libffi-devel:
-  pkg.installed
-uwsgi:
-  pkg.installed
-python-carbon:
-  pkg.installed
+graphite-reqs:
+  pkg.installed:
+    - refresh: True
+    - pkgs:
+      - libffi-devel
+      - uwsgi
+      - python-carbon
+      - gcc
+
 _graphite:
   user.present
 {% endif %}
-
-install-graphite-api:
-  pip.installed:
-    - pkgs:
-      - cairocffi == 0.6
-      - graphite-api == 1.1.3
 
 graphite-create-virtualenv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: salt://graphite/files/requirements.txt
     - python: python2
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
 

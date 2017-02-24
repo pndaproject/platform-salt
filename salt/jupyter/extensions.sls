@@ -2,6 +2,7 @@
 
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
+{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
 
 jupyter-extension-enable_widget_nbextensions:
   cmd.run:
@@ -12,9 +13,9 @@ jupyter-extension-enable_widget_nbextensions:
 # lxml improves perforance on server side communication to Spark
 jupyter-extension_install_jupyter_spark:
   pip.installed:
-    - pkgs:
-      - https://github.com/klyr/jupyter-spark/releases/download/0.3.0-patch/jupyter-spark-0.3.0-patch.tar.gz
-      - lxml==3.6.4
+    - requirements: salt://jupyter/files/requirements-jupyter-extensions.txt
+    - python: python3
+    - index_url: {{ pip_index_url }}
     - bin_env: {{ virtual_env_dir }}
 
 jupyter-extension_jupyter_spark:
