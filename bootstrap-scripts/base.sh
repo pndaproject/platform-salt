@@ -76,6 +76,20 @@ pnda:
 pnda_cluster: $PNDA_CLUSTER 
 EOF
 
+if [ "x$PNDA_MIRROR" != "x" ] ; then
+PIP_INDEX_URL="$PNDA_MIRROR/simple"
+TRUSTED_HOST=$(echo $PIP_INDEX_URL | awk -F'[/:]' '/http:\/\//{print $4}')
+cat << EOF > /etc/pip.conf
+[global]
+index-url=$PIP_INDEX_URL
+trusted-host=$TRUSTED_HOST
+EOF
+cat << EOF > /root/.pydistutils.cfg
+[easy_install]
+index_url=$PIP_INDEX_URL
+EOF
+fi
+
 if [ "x$DISTRO" == "xrhel" ]; then
 cat >> /etc/cloud/cloud.cfg <<EOF
 preserve_hostname: true

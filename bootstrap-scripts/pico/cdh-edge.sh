@@ -123,6 +123,14 @@ anaconda:
 EOF
 fi
 
+if [ "x$PNDA_MIRROR" != "x" ] ; then
+PIP_INDEX_URL="$PNDA_MIRROR/simple"
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+pip:
+  index_url: '$PIP_INDEX_URL'
+EOF
+fi
+
 if [ "x$PACKAGES_SERVER_URI" != "x" ] ; then
 cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
 packages_server:
