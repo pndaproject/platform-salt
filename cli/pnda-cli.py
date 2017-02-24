@@ -89,8 +89,15 @@ def display_elasped():
     elapsed = datetime.datetime.now() - START
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
 
+def generate_instance_templates(template_data, instance_name, instance_count):
+    if instance_name in template_data['Resources']:
+        instance_def = json.dumps(template_data['Resources'].pop(instance_name))
 
-def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis, logstashNodes):
+    for instance_index in range(0, instance_count):
+        instance_def_n = instance_def.replace('$node_idx$', str(instance_index))
+        template_data['Resources']['%s%s' % (instance_name, instance_index)] = json.loads(instance_def_n)
+
+def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esmasters, esingests, esdatas, escoords, esmultis, logstashs):
     common_filepath = 'cloud-formation/cf-common.json'
     with open(common_filepath, 'r') as template_file:
         template_data = json.loads(template_file.read())
@@ -106,65 +113,16 @@ def generate_template_file(flavor, datanodes, opentsdbs, kafkas, zookeepers, esm
             for child in flavor_data[element]:
                 template_data[element][child] = flavor_data[element][child]
 
-    instance_cdh_dn = json.dumps(template_data['Resources'].pop('instanceCdhDn'))
-    if 'instanceOpenTsdb' in template_data['Resources']:
-        instance_open_tsdb = json.dumps(template_data['Resources'].pop('instanceOpenTsdb'))
-    if 'instanceKafka' in template_data['Resources']:
-        instance_kafka = json.dumps(template_data['Resources'].pop('instanceKafka'))
-    if 'instanceZookeeper' in template_data['Resources']:
-        instance_zookeeper = json.dumps(template_data['Resources'].pop('instanceZookeeper'))
-    if 'instanceESMaster' in template_data['Resources']:
-        instance_esmaster = json.dumps(template_data['Resources'].pop('instanceESMaster'))
-    if 'instanceESData' in template_data['Resources']:
-        instance_esdata = json.dumps(template_data['Resources'].pop('instanceESData'))
-    if 'instanceESIngest' in template_data['Resources']:
-        instance_esingest = json.dumps(template_data['Resources'].pop('instanceESIngest'))
-    if 'instanceESCoordinator' in template_data['Resources']:
-        instance_escoordinator = json.dumps(template_data['Resources'].pop('instanceESCoordinator'))
-    if 'instanceESMulti' in template_data['Resources']:
-        instance_esmulti = json.dumps(template_data['Resources'].pop('instanceESMulti'))
-    if 'instanceLogstash' in template_data['Resources']:
-        instance_logstash = json.dumps(template_data['Resources'].pop('instanceLogstash'))
-
-    for datanode in range(0, datanodes):
-        instance_cdh_dn_n = instance_cdh_dn.replace('$node_idx$', str(datanode))
-        template_data['Resources']['instanceCdhDn%s' % datanode] = json.loads(instance_cdh_dn_n)
-
-    for opentsdb in range(0, opentsdbs):
-        instance_open_tsdb_n = instance_open_tsdb.replace('$node_idx$', str(opentsdb))
-        template_data['Resources']['instanceOpenTsdb%s' % opentsdb] = json.loads(instance_open_tsdb_n)
-
-    for kafka in range(0, kafkas):
-        instance_kafka_n = instance_kafka.replace('$node_idx$', str(kafka))
-        template_data['Resources']['instanceKafka%s' % kafka] = json.loads(instance_kafka_n)
-
-    for zookeeper in range(0, zookeepers):
-        instance_zookeeper_n = instance_zookeeper.replace('$node_idx$', str(zookeeper))
-        template_data['Resources']['instanceZookeeper%s' % zookeeper] = json.loads(instance_zookeeper_n)
-
-    for esmaster in range(0, esmasters):
-        instance_esmaster_n = instance_esmaster.replace('$node_idx$', str(esmaster))
-        template_data['Resources']['instanceESMaster%s' % esmaster] = json.loads(instance_esmaster_n)
-    
-    for esingest in range(0, esingests):
-        instance_esingest_n = instance_esingest.replace('$node_idx$', str(esingest))
-        template_data['Resources']['instanceESIngest%s' % esingest] = json.loads(instance_esingest_n)
-    
-    for esdata in range(0, esdatas):
-        instance_esdata_n = instance_esdata.replace('$node_idx$', str(esdata))
-        template_data['Resources']['instanceESData%s' % esdata] = json.loads(instance_esdata_n)
-    
-    for escoord in range(0, escoords):
-        instance_escoordinator_n = instance_escoordinator.replace('$node_idx$', str(escoord))
-        template_data['Resources']['instanceESCoordinator%s' % escoord] = json.loads(instance_escoordinator_n)
-
-    for esmulti in range(0, esmultis):
-        instance_esmulti_n = instance_esmulti.replace('$node_idx$', str(esmulti))
-        template_data['Resources']['instanceESMulti%s' % esmulti] = json.loads(instance_esmulti_n)
-
-    for eslogstash in range(0, logstashNodes):
-        instance_logstash_n = instance_logstash.replace('$node_idx$', str(eslogstash))
-        template_data['Resources']['instanceLogstash%s' % eslogstash] = json.loads(instance_logstash_n)
+    generate_instance_templates(template_data, 'instanceCdhDn', datanodes)
+    generate_instance_templates(template_data, 'instanceOpenTsdb', opentsdbs)
+    generate_instance_templates(template_data, 'instanceKafka', kafkas)
+    generate_instance_templates(template_data, 'instanceZookeeper', zookeepers)
+    generate_instance_templates(template_data, 'instanceESMaster', esmasters)
+    generate_instance_templates(template_data, 'instanceESData', esdatas)
+    generate_instance_templates(template_data, 'instanceESIngest', esingests)
+    generate_instance_templates(template_data, 'instanceESCoordinator', escoords)
+    generate_instance_templates(template_data, 'instanceESMulti', esmultis)
+    generate_instance_templates(template_data, 'instanceLogstash', logstashs)
 
     return json.dumps(template_data)
 
