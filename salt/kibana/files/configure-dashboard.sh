@@ -3,7 +3,7 @@ num_tries=30
 while [ $es_result -ne 0 ] && [ $num_tries -gt 0 ]
 do
   echo "Checking es connectivity ($num_tries remaining)..."
-  curl 'localhost:9200'
+  curl -f 'localhost:9200'
   es_result=$?
   if [ $es_result -ne 0 ]; then
     sleep 5
