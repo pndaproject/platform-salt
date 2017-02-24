@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
 - PNDA-2672: Explicitly set CM API version number
 - PNDA-2596: Stop ingesting internal PNDA testbot topic
+- PNDA-2577: Use spur 0.3.20 for cm_setup.py
 - PNDA-2756: Move Cloudera Manager installation in orchestrate stage instead of highstate stage
 
 ## [1.3.0] 2017-01-20
