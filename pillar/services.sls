@@ -105,3 +105,6 @@ jmxproxy:
 anaconda:
   parcel_version: "4.0.0"
   parcel_repo: "https://repo.continuum.io/pkgs/misc/parcels/"
+
+java:
+  version: "jdk-8u74-linux-x64"

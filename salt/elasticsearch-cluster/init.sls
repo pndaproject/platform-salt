@@ -21,6 +21,14 @@ expr_form='compound') %}
   {% do es_master_hostnames.append(grains['fqdn']) %}
 {% endfor %}
 
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set elasticsearch_version = pillar['elasticsearch-cluster']['version'] %}
+{% set elasticsearch_package = 'elasticsearch-' + elasticsearch_version + '.tar.gz' %}
+{% set elasticsearch_url = mirror_location + elasticsearch_package %}
+
 elasticsearch-elasticsearch:
   group.present:
     - name: elasticsearch
@@ -57,8 +65,8 @@ elasticsearch-create_elasticsearch_logdir:
 elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
-    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
+    - source: {{ elasticsearch_url }}
+    - source_hash: {{ elasticsearch_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}

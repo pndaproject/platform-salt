@@ -1,12 +1,15 @@
 {% set settings = salt['pillar.get']('grafana', {}) -%}
 {% set grafana_version = settings.get('version', '3.1.1-1470047149') %}
-{% set grafana_hash = settings.get('release_hash', 'sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328') %}
-{% set grafana_rpm_hash = settings.get('release_hash', 'sha256=5989ad695554c5bc924c2284bc035feb379e1e8c') %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
 
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
 {% set grafana_rpm_package = 'grafana_' + grafana_version + '.x86_64.rpm' %}
-{% set grafana_deb_location = 'https://grafanarel.s3.amazonaws.com/builds/' + grafana_deb_package %}
-{% set grafana_rpm_location = 'https://grafanarel.s3.amazonaws.com/builds/grafana-3.1.1-1470047149.x86_64.rpm' %}
+{% set grafana_deb_location = mirror_location + grafana_deb_package %}
+{% set grafana_rpm_location = mirror_location + grafana_rpm_package %}
+
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
 
