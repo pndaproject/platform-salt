@@ -18,6 +18,11 @@
 include:
   - python-pip
 
+cdh-install_deps:
+  pkg.installed:
+    - pkgs:
+      - libssl-dev
+
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:
   virtualenv.managed:
