@@ -52,6 +52,9 @@ kafkamanager:
   release_version: 1.3.1.6
   bind_port: 10900
 
+jupyterproxy:
+  release_version: 1.3.1
+  
 opentsdb:
   version: 2.2.0
   release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60

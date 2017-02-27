@@ -1,6 +1,9 @@
+{% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
 {% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set proxy_version = pillar['jupyterproxy']['release_version'] %}
+{% set proxy_package = 'jupyterproxy-' + proxy_version + '.tar.gz' %}
 
 {% set jupyterhub_config_dir = '/etc/jupyterhub' %}
 
@@ -31,17 +34,34 @@ jupyterhub-create_configuration:
     - require:
       - file: jupyterhub-create_config_dir
 
-jupyterhub-install_configurable_http_proxy:
-  npm.installed:
-    - name: configurable-http-proxy
-    - require:
-      - npm: nodejs-update_npm
-
 jupyterhub-create_log_dir:
   file.directory:
     - name: /var/log/pnda/jupyter
     - makedirs: True
 
+jupyterhub-proxy-dl-and-extract:
+  archive.extracted:
+    - name: {{ pnda_home_directory }}
+    - source: {{ packages_server }}/{{ proxy_package }}
+    - source_hash: {{ packages_server }}/{{ proxy_package }}.sha512.txt
+    - archive_format: tar
+    - if_missing: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
+
+jupyterhub-proxy-rebuild:
+  cmd.run: 
+    - name: npm rebuild
+    - cwd: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
+      
+jupyterhub-install-proxy-modules:
+  file.symlink:
+    - target: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
+    - name: /usr/lib/node_modules/configurable-http-proxy
+
+jupyterhub-install-proxy-command:
+  file.symlink:
+    - target: /usr/lib/node_modules/configurable-http-proxy/bin/configurable-http-proxy
+    - name: /usr/bin/configurable-http-proxy    
+    
 # set up service script
 jupyterhub-copy_service:
   file.managed:
@@ -70,5 +90,5 @@ jupyterhub-service_started:
     - require:
       - pip: jupyterhub-install
       - file: jupyterhub-copy_service
-      - npm: jupyterhub-install_configurable_http_proxy
+      - file: jupyterhub-install-proxy-command
 
