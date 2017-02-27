@@ -31,6 +31,7 @@ rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-cloudera
 rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-EPEL-7
 rpm --import $PNDA_MIRROR/rpms/SALTSTACK-GPG-KEY.pub
 rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-CentOS-7
+rpm --import $PNDA_MIRROR/rpms/NODESOURCE-GPG-SIGNING-KEY-EL
 yum -y install xfsprogs wget salt-minion
 fi
 
