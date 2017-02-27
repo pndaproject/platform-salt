@@ -241,25 +241,21 @@ def check_aws_connection():
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
-def check_java_mirror():
+def check_pnda_mirror():
     try:
-        java_mirror = PNDA_ENV['mirrors']['JAVA_MIRROR']
-        response = requests.head(java_mirror)
+        pnda_mirror = PNDA_ENV['mirrors']['PNDA_MIRROR']
+        response = requests.head(pnda_mirror)
         response.raise_for_status()
-        CONSOLE.info('Java mirror...... OK')
-    except KeyError:
-        CONSOLE.info('Java mirror...... WARN')
-        CONSOLE.warning('Java mirror was not defined in pnda_env.yaml,' +
-                        ' provisioning will be more reliable and quicker if you host this in the same AWS availability zone.')
+        CONSOLE.info('PNDA mirror...... OK')
     except:
-        CONSOLE.info('Java mirror...... ERROR')
-        CONSOLE.error('Failed to connect to java mirror. Verify connection to %s, update config in pnda_env.yaml if required and try again.', '')
+        CONSOLE.info('PNDA mirror...... ERROR')
+        CONSOLE.error('Failed to connect to PNDA mirror. Verify connection to %s, update config in pnda_env.yaml if required and try again.', '')
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
 
 def check_package_server():
     try:
-        package_uri = '%s/%s' % (PNDA_ENV['pnda_component_packages']['PACKAGES_SERVER_URI'], 'platform/releases/')
+        package_uri = '%s/%s' % (PNDA_ENV['mirrors']['PNDA_MIRROR'], 'pnda/platform/releases/')
         response = requests.head(package_uri)
         if response.status_code != 403 and response.status_code != 200:
             raise Exception("Unexpected status code from %s: %s" % (package_uri, response.status_code))
@@ -313,7 +309,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         check_aws_connection()
         check_keypair(keyname, keyfile)
         check_package_server()
-        check_java_mirror()
+        check_pnda_mirror()
 
     CONSOLE.info('Creating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
