@@ -56,7 +56,7 @@ elasticsearch-create_elasticsearch_workdir:
 
 elasticsearch-copy_configuration_elasticsearch:
   file.managed:
-    - source: salt://elasticsearch/files/templates/elasticsearch.yml.tpl
+    - source: salt://elasticsearch/templates/elasticsearch.yml.tpl
     - user: elasticsearch
     - group: elasticsearch
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
@@ -74,11 +74,11 @@ elasticsearch-dl_and_extract_elasticsearch:
 {% if grains['os'] == 'Ubuntu' %}
 /etc/init/elasticsearch.conf:
   file.managed:
-    - source: salt://elasticsearch/files/templates/elasticsearch.init.conf.tpl
+    - source: salt://elasticsearch/templates/elasticsearch.init.conf.tpl
 {% elif grains['os'] == 'RedHat' %}
 /usr/lib/systemd/system/elasticsearch.service:
   file.managed:
-    - source: salt://elasticsearch/files/templates/elasticsearch.service.tpl
+    - source: salt://elasticsearch/templates/elasticsearch.service.tpl
 {% endif %}
     - mode: 644
     - template: jinja

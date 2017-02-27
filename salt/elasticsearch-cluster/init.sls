@@ -89,7 +89,7 @@ elasticsearch-create_elasticsearch_workdir:
 
 elasticsearch-copy_configuration_elasticsearch:
   file.managed:
-    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.yml.tpl
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.yml.tpl
     - user: elasticsearch
     - group: elasticsearch
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
@@ -102,9 +102,15 @@ elasticsearch-copy_configuration_elasticsearch:
       master_name: {{master_name}}
       list_of_masters: {{ es_master_hostnames }}
 
+{% if grains['os'] == 'Ubuntu' %}
 /etc/init/elasticsearch.conf:
   file.managed:
-    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.init.conf.tpl
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.init.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+/usr/lib/systemd/system/elasticsearch.service:
+  file.managed:
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.service.tpl
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -116,12 +122,15 @@ elasticsearch-copy_configuration_elasticsearch:
       workdir: {{elasticsearch_workdir }}
       defaultconfig: {{elasticsearch_confdir}}/elasticsearch.yml
 
-elasticsearch-service:
-  service.running:
-    - name: elasticsearch
-    - enable: true
-    - watch:
-      - file: /etc/init/elasticsearch.conf
+{% if grains['os'] == 'RedHat' %}
+elasticsearch-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable elasticsearch
+{%- endif %}
+
+elasticsearch-start_service:
+  cmd.run:
+    - name: 'service elasticsearch stop || echo already stopped; service elasticsearch start'
 
 elastic-ulimit:
   cmd.run:
