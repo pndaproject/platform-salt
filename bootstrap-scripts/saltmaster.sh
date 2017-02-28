@@ -101,27 +101,24 @@ pnda.archive_type: 's3a'
 pnda.archive_service: ''
 EOF
 
-if [ "x$JAVA_MIRROR" != "x" ] ; then
 cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
-java:
-  source_url: '$JAVA_MIRROR'
-EOF
-fi
+pnda_mirror:
+  base_url: '$PNDA_MIRROR'
+  misc_packages_path: /misc/
 
-if [ "x$CLOUDERA_MIRROR" != "x" ] ; then
-cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
 cloudera:
-  parcel_repo: '$CLOUDERA_MIRROR'
-EOF
-fi
+  parcel_repo: '$PNDA_MIRROR/cloudera_repo'
 
-if [ "x$ANACONDA_MIRROR" != "x" ] ; then
-cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
 anaconda:
   parcel_version: "4.0.0"
-  parcel_repo: '$ANACONDA_MIRROR'
+  parcel_repo: '$PNDA_MIRROR/anaconda_repo'
+
+pip:
+  index_url: '$PNDA_MIRROR/simple'
+
+packages_server:
+  base_uri: '$PNDA_MIRROR/pnda'
 EOF
-fi
 
 if [ "x$PNDA_MIRROR" != "x" ] ; then
 PIP_INDEX_URL="$PNDA_MIRROR/simple"
