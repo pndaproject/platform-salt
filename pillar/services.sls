@@ -75,6 +75,9 @@ console_backend_data_manager:
   release_version: develop
   bind_port: 3123
 
+console_backend_utils:
+  release_version: develop
+
 deployment_manager:
   release_version: develop
 
