@@ -57,10 +57,11 @@ console-frontend-create_directory_link:
 
 # Install npm dependencies
 console-frontend-install_app_dependencies:
-  npm.bootstrap:
-    - name: {{ console_dir }}
+  cmd.run:
+    - cwd: {{ console_dir }}
+    - name: npm rebuild
     - require:
-      - npm: nodejs-update_npm
+      - pkg: nodejs-install_useful_packages
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:

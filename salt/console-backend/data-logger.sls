@@ -30,41 +30,20 @@ console-backend-dl-and-extract:
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/console-backend-data-logger-{{ backend_app_version }}
-
+    
 console-backend-symlink_data_logger_dir:
   file.symlink:
     - name: {{ app_dir }}
     - target: {{ install_dir }}/console-backend-data-logger-{{ backend_app_version }}
 
-# Move utils directory from the archive one directory up
-console-backend-symlink_data_logger_utils_dir:
-  file.symlink:
-    - name: {{ install_dir }}/console-backend-utils
-    - target: {{ app_dir }}/console-backend-utils
-
-# Create utils config file
-console-backend-create_data_logger_util_conf:
-  file.managed:
-    - name: {{ install_dir }}/console-backend-utils/conf/config.json
-    - source: salt://console-backend/templates/backend_utils_config.json.tpl
-    - template: jinja
-    - defaults:
-        log_file: /var/log/pnda/console/platform-console-logs.log
-
-# Install npm dependencies for utils
-console-backend-install_data_logger_utils_dependencies:
-  npm.bootstrap:
-    - name: {{ install_dir }}/console-backend-utils
-    - require:
-      - npm: nodejs-update_npm
-
 # Install npm dependencies
 console-backend-install_backend_data_logger_app_dependencies:
-  npm.bootstrap:
-    - name: {{ app_dir }}
+  cmd.run:
+    - cwd: {{ app_dir }}
+    - name: npm rebuild
     - require:
-      - npm: nodejs-update_npm
-
+      - pkg: nodejs-install_useful_packages
+      
 # Create service script from template
 console-backend-copy_data_logger_service:
   file.managed:
