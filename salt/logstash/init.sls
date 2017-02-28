@@ -13,6 +13,14 @@
   {% do es_ingest_hostnames.append(grains['fqdn']) %}
 {% endfor %}
 
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set logstash_version = pillar['logstash-cluster']['version'] %}
+{% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
+{% set logstash_url = mirror_location + logstash_package %}
+
 logstash-logstash:
   group.present:
     - name: logstash
@@ -57,8 +65,8 @@ logstash-create_logstash_inputdir:
 logstash-dl_and_extract_logstash:
   archive.extracted:
     - name: {{logstash_directory}}
-    - source: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz.sha1
+    - source: {{ logstash_url }}
+    - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{logstash_directory}}/logstash-{{ logstash_version }}

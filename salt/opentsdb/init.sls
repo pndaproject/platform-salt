@@ -1,6 +1,9 @@
 {% set settings = salt['pillar.get']('opentsdb', {}) -%}
 {% set opentsdb_version = settings.get('version', '2.2.0') %}
-{% set opentsdb_hash = settings.get('release_hash', 'sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60') %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
 
 {% if grains['os'] == 'Ubuntu' %}
 {% set opentsdb_package = 'opentsdb-' + opentsdb_version + '_all.deb' %}
@@ -8,7 +11,7 @@
 {% set opentsdb_package = 'opentsdb-' + opentsdb_version + '.noarch.rpm' %}
 {%- endif %}
 
-{% set opentsdb_pkg_location = 'https://github.com/OpenTSDB/opentsdb/releases/download/v' + opentsdb_version + '/' + opentsdb_package %}
+{% set opentsdb_pkg_location = mirror_location + opentsdb_package %}
 
 include:
   - gnuplot

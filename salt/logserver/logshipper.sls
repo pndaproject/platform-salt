@@ -1,7 +1,12 @@
-{% set packages_server = pillar['packages_server']['base_uri'] %}
+{% set install_dir = pillar['pnda']['homedir'] %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
 {% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
-{% set install_dir = pillar['pnda']['homedir'] %}
+{% set logstash_url = mirror_location + logstash_package %}
 
 include:
   - java
@@ -19,11 +24,11 @@ logshipper-lbc6:
 logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
-    - source: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
-    - source_hash: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz.sha1.txt
+    - source: {{ logstash_url }}
+    - source_hash: {{ logstash_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/logstash-1.5.4
+    - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logshipper-link_release:
   cmd.run:

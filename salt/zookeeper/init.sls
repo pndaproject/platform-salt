@@ -1,6 +1,13 @@
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
-{% set zookeeper_version = settings.get('version', '3.4.6') %}
-{% set zookeeper_url  = 'http://www.apache.org/dist/zookeeper/zookeeper-' + zookeeper_version + '/zookeeper-' + zookeeper_version + '.tar.gz' %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set zookeeper_version = pillar['zookeeper']['version'] %}
+{% set zookeeper_package = 'zookeeper-' + zookeeper_version + '.tar.gz' %}
+{% set zookeeper_url = mirror_location + zookeeper_package %}
+
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set zookeeper_data_dir = '/var/lib/zookeeper' %}
 
