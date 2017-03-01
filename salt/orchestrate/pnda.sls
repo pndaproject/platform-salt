@@ -21,6 +21,13 @@ cdh-install_hadoop:
     - sls: cdh.setup_hadoop
     - timeout: 120
 
+cdh-clean_up:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
+    - tgt_type: compound
+    - sls: cdh.clean_up_sources
+    - timeout: 120
+
 cdh-create_master_dataset:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:master_dataset'
