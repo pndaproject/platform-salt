@@ -16,22 +16,22 @@ rm -rf /etc/apt/sources.list.d/*
 rm -rf /etc/apt/sources.list
 touch /etc/apt/sources.list
 cat > /etc/apt/sources.list.d/local.list <<EOF
-  deb $PNDA_MIRROR/debs/ ./
+  deb $PNDA_MIRROR/mirror_deb/ ./
 EOF
-wget -O - $PNDA_MIRROR/debs/pnda.gpg.key | apt-key add -
+wget -O - $PNDA_MIRROR/mirror_deb/pnda.gpg.key | apt-key add -
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get -y install xfsprogs salt-minion
 elif [ "x$DISTRO" == "xrhel" ]; then
 rm -rf /etc/yum.repos.d/*
-yum-config-manager --add-repo $PNDA_MIRROR/rpms
-rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-redhat-release
-rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-mysql
-rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-cloudera
-rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-EPEL-7
-rpm --import $PNDA_MIRROR/rpms/SALTSTACK-GPG-KEY.pub
-rpm --import $PNDA_MIRROR/rpms/RPM-GPG-KEY-CentOS-7
-rpm --import $PNDA_MIRROR/rpms/NODESOURCE-GPG-SIGNING-KEY-EL
+yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-redhat-release
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-mysql
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-cloudera
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-EPEL-7
+rpm --import $PNDA_MIRROR/mirror_rpm/SALTSTACK-GPG-KEY.pub
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-CentOS-7
+rpm --import $PNDA_MIRROR/mirror_rpm/NODESOURCE-GPG-SIGNING-KEY-EL
 yum -y install xfsprogs wget salt-minion
 fi
 
@@ -77,8 +77,7 @@ pnda:
 pnda_cluster: $PNDA_CLUSTER 
 EOF
 
-if [ "x$PNDA_MIRROR" != "x" ] ; then
-PIP_INDEX_URL="$PNDA_MIRROR/simple"
+PIP_INDEX_URL="$PNDA_MIRROR/mirror_python/simple"
 TRUSTED_HOST=$(echo $PIP_INDEX_URL | awk -F'[/:]' '/http:\/\//{print $4}')
 cat << EOF > /etc/pip.conf
 [global]
@@ -89,7 +88,6 @@ cat << EOF > /root/.pydistutils.cfg
 [easy_install]
 index_url=$PIP_INDEX_URL
 EOF
-fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
 cat >> /etc/cloud/cloud.cfg <<EOF
