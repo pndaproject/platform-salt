@@ -242,29 +242,27 @@ def check_aws_connection():
         sys.exit(1)
 
 def check_pnda_mirror():
-    try:
-        pnda_mirror = PNDA_ENV['mirrors']['PNDA_MIRROR']
-        response = requests.head(pnda_mirror)
-        response.raise_for_status()
-        CONSOLE.info('PNDA mirror...... OK')
-    except:
-        CONSOLE.info('PNDA mirror...... ERROR')
-        CONSOLE.error('Failed to connect to PNDA mirror. Verify connection to %s, update config in pnda_env.yaml if required and try again.', '')
-        CONSOLE.error(traceback.format_exc())
-        sys.exit(1)
 
-def check_package_server():
-    try:
-        package_uri = '%s/%s' % (PNDA_ENV['mirrors']['PNDA_MIRROR'], 'pnda/platform/releases/')
-        response = requests.head(package_uri)
-        if response.status_code != 403 and response.status_code != 200:
-            raise Exception("Unexpected status code from %s: %s" % (package_uri, response.status_code))
-        CONSOLE.info('Package server... OK')
-    except:
-        CONSOLE.info('Package server... ERROR')
-        CONSOLE.error('Failed to connect to package server. Verify connection to %s, update URL in pnda_env.yaml if required and try again.', package_uri)
+    def raise_error(reason):
+        CONSOLE.info('PNDA mirror...... ERROR')
+        CONSOLE.error(reason)
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
+    
+    try:
+        mirror = PNDA_ENV['mirrors']['PNDA_MIRROR']
+        response = requests.head(mirror)
+        # expect 200 (open mirror) 403 (no listing allowed) 
+        # or any redirect (in case of proxy/redirect)
+        if response.status_code not in [200, 403, 301, 302, 303, 307, 308]:
+            raise_error("PNDA mirror configured and present "
+                        "but responded with unexpected status code (%s). " % response.status_code)
+        CONSOLE.info('PNDA mirror...... OK')
+    except KeyError:
+        raise_error('PNDA mirror was not defined in pnda_env.yaml')
+    except:
+        raise_error("Failed to connect to PNDA mirror. Verify connection "
+                    "to %s, check mirror in pnda_env.yaml and try again." % mirror)
 
 def write_pnda_env_sh(cluster):
     client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'PLATFORM_GIT_BRANCH']
@@ -308,7 +306,6 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     if not no_config_check:
         check_aws_connection()
         check_keypair(keyname, keyfile)
-        check_package_server()
         check_pnda_mirror()
 
     CONSOLE.info('Creating Cloud Formation stack')
