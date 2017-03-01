@@ -23,7 +23,9 @@ cdh-install_deps:
     - pkgs:
 {% if grains['os'] == 'Ubuntu' %}
       - libssl-dev
+      - libffi-dev
 {% elif grains['os'] == 'RedHat' %}
+      - libffi-devel
       - openssl-devel
 {% endif %}
 
