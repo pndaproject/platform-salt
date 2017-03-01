@@ -13,7 +13,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip

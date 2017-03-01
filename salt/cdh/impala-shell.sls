@@ -1,5 +1,5 @@
 {% set virtual_env_dir = pillar['pnda']['homedir'] + "/impala-wrapper" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip

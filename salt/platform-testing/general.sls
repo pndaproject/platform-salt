@@ -5,7 +5,7 @@
 {% set platform_testing_package = 'platform-testing-general' %}
 
 {% set virtual_env_dir = platform_testing_directory + "/" + platform_testing_package + "-" + platform_testing_version + "/venv" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set kafka_jmx_port = '9050' %}
 {% set console_port = '3001' %}

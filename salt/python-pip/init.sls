@@ -1,4 +1,4 @@
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 python-pip-install-pip-package:
   pkg.installed:

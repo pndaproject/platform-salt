@@ -5,7 +5,7 @@
 {% set platform_testing_package = 'platform-testing-cdh' %}
 
 {% set virtual_env_dir = platform_testing_directory + "/" + platform_testing_package + "-" + platform_testing_version + "/venv" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set console_port = '3001' %}
 {% set cm_port = '7180' %}

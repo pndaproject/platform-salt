@@ -1,6 +1,6 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 {% set virtual_env_dir = pillar['pnda']['homedir'] + "/elasticsearch-curator" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip
