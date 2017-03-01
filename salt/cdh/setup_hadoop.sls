@@ -18,12 +18,17 @@
 include:
   - python-pip
 
+{% if grains['os'] == 'Ubuntu' %}
 cdh-install_deps:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
       - libssl-dev
+      - libffi-dev
 {% elif grains['os'] == 'RedHat' %}
+cdh-install_deps:
+  pkg.installed:
+    - pkgs:
+      - libffi-devel
       - openssl-devel
 {% endif %}
 
