@@ -21,7 +21,11 @@ include:
 cdh-install_deps:
   pkg.installed:
     - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
       - libssl-dev
+{% elif grains['os'] == 'RedHat' %}
+      - openssl-devel
+{% endif %}
 
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:
