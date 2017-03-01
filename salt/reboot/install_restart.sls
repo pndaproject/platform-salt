@@ -1,6 +1,6 @@
 {% set app_directory_name = '/restart' %}
 {% set install_dir = pillar['pnda']['homedir'] + app_directory_name %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip

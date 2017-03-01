@@ -6,7 +6,7 @@
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
 {% set virtual_env_dir = install_dir + "/" + package_repository_directory_name + "/venv" %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip

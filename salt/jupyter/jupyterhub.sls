@@ -1,7 +1,7 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 {% set proxy_version = pillar['jupyterproxy']['release_version'] %}
 {% set proxy_package = 'jupyterproxy-' + proxy_version + '.tar.gz' %}
 

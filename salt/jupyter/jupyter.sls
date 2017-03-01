@@ -1,6 +1,6 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
-{% set pip_index_url = salt['pillar.get']('pip:index_url', 'https://pypi.python.org/simple/') %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
 {% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
