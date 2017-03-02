@@ -6,7 +6,7 @@
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
 {% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
-{% set grafana_rpm_package = 'grafana_' + grafana_version + '.x86_64.rpm' %}
+{% set grafana_rpm_package = 'grafana-' + grafana_version + '.x86_64.rpm' %}
 {% set grafana_deb_location = mirror_location + grafana_deb_package %}
 {% set grafana_rpm_location = mirror_location + grafana_rpm_package %}
 
