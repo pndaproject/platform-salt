@@ -38,9 +38,11 @@ jupyter-extension_jupyter_spark:
     - name: |
         {{ virtual_env_dir }}/bin/jupyter serverextension enable --py jupyter_spark --system &&
         {{ virtual_env_dir }}/bin/jupyter nbextension install --py jupyter_spark --system &&
-        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py jupyter_spark --system
+        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py jupyter_spark --system &&
+        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system 
     - unless: |
         {{ virtual_env_dir }}/bin/jupyter serverextension list --system|grep 'jupyter_spark.*enabled' &&
-        {{ virtual_env_dir }}/bin/jupyter nbextension list --system|grep 'jupyter-spark/extension.*enabled'
+        {{ virtual_env_dir }}/bin/jupyter nbextension list --system|grep 'jupyter-spark/extension.*enabled' &&
+        {{ virtual_env_dir }}/bin/jupyter nbextension list --system|grep 'jupyter-js-widgets/extension.*enabled'
     - require:
       - pip: jupyter-extension_install_jupyter_spark
