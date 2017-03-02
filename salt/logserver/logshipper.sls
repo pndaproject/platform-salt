@@ -7,6 +7,8 @@
 {% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
 {% set logstash_url = mirror_location + logstash_package %}
+{% set plugin_pack_url = mirror_location + 'logstash_plugins.tar.gz' %}
+
 
 include:
   - java
@@ -39,7 +41,7 @@ logshipper-link_release:
 {% if grains['os'] == 'RedHat' %}
 logshipper-journald-plugin:
   cmd.run:
-    - name: {{ install_dir }}/logstash/bin/plugin install logstash-input-journald
+    - name: curl {{ plugin_pack_url }} > {{ install_dir }}/logstash/logstash_plugins.tar.gz; cd {{ install_dir }}/logstash; tar zxf logstash_plugins.tar.gz
 {% endif %}
 
 logshipper-copy_configuration:
