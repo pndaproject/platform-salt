@@ -77,36 +77,49 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
     logging.error("CM did not come UP")
     sys.exit(-1)
 
-def create_hosts(api, cloudera_manager, user, nodes, key_name):
+def create_hosts(api, cloudera_manager, user, nodes):
 
-    key = file(key_name, 'rb')
-    key_string = key.read()
+    host_heartbeat_retries = 36
+    host_heartbeat_sleep = 5
+    for retry_attempt in xrange(host_heartbeat_retries):
+        logging.info("Waiting for all hosts to heartbeat....")
+        hosts_known = [h.ipAddress for h in api.get_all_hosts()]
+        if len(hosts_known) == len(nodes):
+            break
+
+        if retry_attempt < (host_heartbeat_retries - 1):
+            logging.info("%s/%s hosts are heartbeating", len(hosts_known), len(nodes))
+            time.sleep(host_heartbeat_sleep)
+        else:
+            logging.error("Only %s/%s hosts are heartbeating after %s seconds", len(hosts_known), len(nodes), host_heartbeat_retries * host_heartbeat_sleep)
+            sys.exit(-1)
+
     new_nodes = []
-    hosts_toinstall = []
-    hosts_current = [h.ipAddress for h in api.get_all_hosts()]
+    hosts_current = []
+
+    cluster_name = None
+    for cluster_detail in api.get_all_clusters():
+        cluster_name = cluster_detail.name
+        break
+
+    if cluster_name is not None:
+        cluster = api.get_cluster(cluster_name)
+        for service in cluster.get_all_services():
+            for role in service.get_all_roles():
+                hosts_current.append(api.get_host(role.hostRef.hostId).ipAddress)
+
+    try:
+        cms = cloudera_manager.get_service()
+        for role in cms.get_all_roles():
+            hosts_current.append(api.get_host(role.hostRef.hostId).ipAddress)
+    except:
+        logging.info('No CMS to check current roles for')
+
     for host in nodes:
         if host['private_addr'] not in hosts_current:
-            hosts_toinstall.append(host['private_addr'])
             new_nodes.append(host)
 
-    logging.info(hosts_toinstall)
-
-    if len(hosts_toinstall) > 0:
-
-        for attempt in xrange(1, 4):
-            logging.info('Host install attempt %d', attempt)
-            success, msgs = wait_on_command(cloudera_manager.host_install(user,
-                                                                          hosts_toinstall,
-                                                                          private_key=key_string,
-                                                                          java_install_strategy="NONE",
-                                                                          parallel_install_count=4))
-            if success:
-                break
-            else:
-                logging.warn('create_hosts: ' + ' '.join(msgs))
-                if attempt == 3:
-                    logging.error('Giving up on create_hosts: ' + ' '.join(msgs))
-                    sys.exit(-1)
+    logging.info(new_nodes)
 
     return new_nodes
 
@@ -709,10 +722,8 @@ def setup_hadoop(
     logging.info("Waiting for CM API to become contactable")
     pause_until_api_up(api)
 
-    # There are several ways to add hosts to a cluster, this is the only one that
-    # works reliably - introduce hosts & let CM handle installation of agents
     logging.info("Installing hosts")
-    new_nodes = create_hosts(api, cloudera_manager, user, nodes, key_name)
+    new_nodes = create_hosts(api, cloudera_manager, user, nodes)
     assign_host_ids(api, nodes)
     setup_progress = load_progress()
     if not check_progress(setup_progress, "99_COMPLETE"):
