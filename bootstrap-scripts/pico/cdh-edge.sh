@@ -117,7 +117,7 @@ pip:
   index_url: '$PNDA_MIRROR/mirror_python/simple'
 
 packages_server:
-  base_uri: '$PNDA_MIRROR/pnda'
+  base_uri: '$PNDA_MIRROR'
 EOF
 
 if [ "$PR_FS_TYPE" == "swift" ] ; then
