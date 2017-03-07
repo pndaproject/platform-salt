@@ -173,7 +173,7 @@ def ssh(cmds, cluster, host):
     if ret_val != 0:
         raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (host, LOG_FILE_NAME))
 
-def bootstrap(instance, saltmaster, cluster, flavor, branch, error_queue):
+def bootstrap(instance, saltmaster, cluster, flavor, branch, salt_tarball, error_queue):
     ret_val = None
     try:
         ip_address = instance['private_ip_address']
@@ -189,6 +189,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch, error_queue):
              'export PNDA_CLUSTER=%s' % cluster,
              'export PNDA_FLAVOR=%s' % flavor,
              'export PLATFORM_GIT_BRANCH=%s' % branch,
+             'export PLATFORM_SALT_TARBALL=%s' % salt_tarball if salt_tarball is not None else ':',
              'sudo chmod a+x /tmp/base.sh',
              '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
              'sudo chmod a+x /tmp/%s.sh' % node_type,
@@ -287,6 +288,23 @@ def write_ssh_config(cluster, bastion_ip, os_user, keyfile):
         config_file.write('ssh-add %s\n' % keyfile)
         config_file.write('ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -A -D 9999 %s@%s\n' % (keyfile, os_user, bastion_ip))
 
+def process_errors(errors):
+    while not errors.empty():
+        error_message = errors.get()
+        raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (error_message, LOG_FILE_NAME))
+
+def wait_for_host_connectivity(hosts, cluster):
+    for host in hosts:
+        while True:
+            try:
+                CONSOLE.info('Checking connectivity to %s' % host)
+                ssh(['ls ~'], cluster, host)
+                break
+            except:
+                CONSOLE.info('Still waiting for connectivity to %s' % host)
+                LOG.info(traceback.format_exc())
+                time.sleep(2)
+
 def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     init_runfile(cluster)
@@ -333,10 +351,19 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
-    nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
-    nc_install_cmd = nc_ssh_cmd.split(' ')
-    nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
-    ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
+    while True:
+        try:
+            nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
+            nc_install_cmd = nc_ssh_cmd.split(' ')
+            nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
+            ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
+            break
+        except:
+            CONSOLE.info('Still waiting for connectivity to bastion...')
+            LOG.info(traceback.format_exc())
+            time.sleep(2)
+
+    wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
@@ -350,28 +377,15 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         scp([platform_salt_tarball], cluster, saltmaster['private_ip_address'])
         os.remove(platform_salt_tarball)
 
-    sm_script = 'bootstrap-scripts/%s/%s.sh' % (flavor, saltmaster['node_type'])
-    if not os.path.isfile(sm_script):
-        sm_script = 'bootstrap-scripts/%s.sh' % (saltmaster['node_type'])
-    scp([sm_script, 'cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', 'git.pem'], cluster, saltmaster['private_ip_address'])
-    ssh(['source /tmp/pnda_env_%s.sh' % cluster,
-         'export PNDA_SALTMASTER_IP=%s' % saltmaster['private_ip_address'],
-         'export PNDA_CLUSTER=%s' % cluster,
-         'export PNDA_FLAVOR=%s' % flavor,
-         'export PLATFORM_GIT_BRANCH=%s' % branch,
-         'export PLATFORM_SALT_TARBALL=%s' % platform_salt_tarball if platform_salt_tarball is not None else ':',
-         'sudo chmod a+x /tmp/base.sh',
-         'sudo chmod a+x /tmp/%s.sh' % saltmaster['node_type'],
-         '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,         
-         '(sudo -E /tmp/%s.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % (saltmaster['node_type'], THROW_BASH_ERROR)],
-        cluster, saltmaster['private_ip_address'])
-
-    CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     bootstrap_threads = []
     bootstrap_errors = Queue.Queue()
+    bootstrap(saltmaster, saltmaster['private_ip_address'], cluster, flavor, branch, platform_salt_tarball, bootstrap_errors)
+    process_errors(bootstrap_errors)
+
+    CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     for key, instance in instance_map.iteritems():
         if '-' + NODE_CONFIG['salt-master-instance'] not in key:
-            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch, bootstrap_errors])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch, platform_salt_tarball, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -381,9 +395,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     for thread in bootstrap_threads:
         ret_val = thread.join()
 
-    while not bootstrap_errors.empty():
-        ret_val = bootstrap_errors.get()
-        raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
+    process_errors(bootstrap_errors)
 
     time.sleep(30)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
@@ -427,13 +439,14 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
 
+    wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     bootstrap_threads = []
     bootstrap_errors = Queue.Queue()
     for _, instance in instance_map.iteritems():
         if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
              or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
-            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch, bootstrap_errors])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch, None, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -611,11 +624,6 @@ def main():
         branch = PNDA_ENV['platform_salt']['PLATFORM_GIT_BRANCH']
     if args.branch is not None:
         branch = args.branch
-
-    if not os.path.isfile('git.pem'):
-        with open('git.pem', 'w') as git_key_file:
-            git_key_file.write('If authenticated access to the platform-salt git repository is required then' +
-                               ' replace this file with a key that grants access to the git server.\n')
 
     if args.command == 'destroy':
         if pnda_cluster is not None:

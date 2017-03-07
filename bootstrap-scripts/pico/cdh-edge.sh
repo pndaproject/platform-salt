@@ -11,14 +11,6 @@ set -ex
 
 DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 
-# Set up ssh access to the platform-salt git repo on the package server,
-# if secure access is required this key will be used automatically.
-# This mode is not normally used now the public github is available
-chmod 400 /tmp/git.pem
-echo "Host $PACKAGES_SERVER_IP" >> /root/.ssh/config
-echo "  IdentityFile /tmp/git.pem" >> /root/.ssh/config
-echo "  StrictHostKeyChecking no" >> /root/.ssh/config
-
 # Install a saltmaster and minion, plus saltmaster config
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
