@@ -12,6 +12,11 @@
 {% set java_package = java_version + '.tar.gz' %}
 {% set java_location = mirror_location + java_package %}
 
+java-install_dependencies:
+  pkg.installed:
+    - pkgs:
+      - wget
+
 {{ java.prefix }}:
   file.directory:
     - user: root
@@ -28,7 +33,7 @@
 
 unpack-jdk-tarball:
   cmd.run:
-    - name: curl {{ java.dl_opts }} '{{ java_location }}' | tar xz --no-same-owner
+    - name: wget '{{ java_location }}' -O - | tar zx
     - cwd: {{ java.prefix }}
     - unless: test -d {{ java.java_real_home }}
     - require:
