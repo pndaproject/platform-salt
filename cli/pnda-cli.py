@@ -183,18 +183,28 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch, salt_tarball, error
         if not os.path.isfile(type_script):
             type_script = 'bootstrap-scripts/%s.sh' % (node_type)
         node_idx = instance['node_idx']
-        scp(['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script], cluster, ip_address)
-        ssh(['source /tmp/pnda_env_%s.sh' % cluster,
-             'export PNDA_SALTMASTER_IP=%s' % saltmaster,
-             'export PNDA_CLUSTER=%s' % cluster,
-             'export PNDA_FLAVOR=%s' % flavor,
-             'export PLATFORM_GIT_BRANCH=%s' % branch,
-             'export PLATFORM_SALT_TARBALL=%s' % salt_tarball if salt_tarball is not None else ':',
-             'sudo chmod a+x /tmp/base.sh',
-             '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
-             'sudo chmod a+x /tmp/%s.sh' % node_type,
-             # TODO: Add param to number of master of instances (perhaps hard coded in salt?)
-             '(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR)], cluster, ip_address)
+        files_to_scp = ['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script]
+        if node_type == NODE_CONFIG['salt-master-instance']:
+            files_to_scp.append('bootstrap-scripts/saltmaster-common.sh')
+
+        cmds_to_run = ['source /tmp/pnda_env_%s.sh' % cluster,
+                       'export PNDA_SALTMASTER_IP=%s' % saltmaster,
+                       'export PNDA_CLUSTER=%s' % cluster,
+                       'export PNDA_FLAVOR=%s' % flavor,
+                       'export PLATFORM_GIT_BRANCH=%s' % branch,
+                       'export PLATFORM_SALT_TARBALL=%s' % salt_tarball if salt_tarball is not None else ':',
+                       'sudo chmod a+x /tmp/base.sh',
+                       '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR]
+
+        if node_type == NODE_CONFIG['salt-master-instance']:
+            cmds_to_run.append('sudo chmod a+x /tmp/saltmaster-common.sh')
+            cmds_to_run.append('(sudo -E /tmp/saltmaster-common.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR)
+
+        cmds_to_run.append('sudo chmod a+x /tmp/%s.sh' % node_type)
+        cmds_to_run.append('(sudo -E /tmp/%s.sh %s 2>&1) | tee -a pnda-bootstrap.log; %s' % (node_type, node_idx, THROW_BASH_ERROR))
+
+        scp(files_to_scp, cluster, ip_address)
+        ssh(cmds_to_run, cluster, ip_address)
     except:
         ret_val = 'Error for host %s. %s' % (instance['name'], traceback.format_exc())
         CONSOLE.error(ret_val)
