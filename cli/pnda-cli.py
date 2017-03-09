@@ -259,11 +259,11 @@ def check_pnda_mirror():
         CONSOLE.error(reason)
         CONSOLE.error(traceback.format_exc())
         sys.exit(1)
-    
+
     try:
         mirror = PNDA_ENV['mirrors']['PNDA_MIRROR']
         response = requests.head(mirror)
-        # expect 200 (open mirror) 403 (no listing allowed) 
+        # expect 200 (open mirror) 403 (no listing allowed)
         # or any redirect (in case of proxy/redirect)
         if response.status_code not in [200, 403, 301, 302, 303, 307, 308]:
             raise_error("PNDA mirror configured and present "
@@ -307,11 +307,11 @@ def wait_for_host_connectivity(hosts, cluster):
     for host in hosts:
         while True:
             try:
-                CONSOLE.info('Checking connectivity to %s' % host)
+                CONSOLE.info('Checking connectivity to %s', host)
                 ssh(['ls ~'], cluster, host)
                 break
             except:
-                CONSOLE.info('Still waiting for connectivity to %s' % host)
+                CONSOLE.info('Still waiting for connectivity to %s', host)
                 LOG.info(traceback.format_exc())
                 time.sleep(2)
 
@@ -363,10 +363,13 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     while True:
         try:
-            nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile, PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
+            nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile,
+                                                                                                          PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
             nc_install_cmd = nc_ssh_cmd.split(' ')
             nc_install_cmd.append('sudo yum install -y nc || echo nc already installed')
             ret_val = subprocess_to_log.call(nc_install_cmd, LOG, bastion_ip)
+            if ret_val != 0:
+                raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (bastion_ip, LOG_FILE_NAME))
             break
         except:
             CONSOLE.info('Still waiting for connectivity to bastion...')
@@ -395,7 +398,8 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     for key, instance in instance_map.iteritems():
         if '-' + NODE_CONFIG['salt-master-instance'] not in key:
-            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'], cluster, flavor, branch, platform_salt_tarball, bootstrap_errors])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'],
+                                                    cluster, flavor, branch, platform_salt_tarball, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -619,12 +623,12 @@ def main():
         print '  AWS_SECRET_ACCESS_KEY = %s' % PNDA_ENV['ec2_access']['AWS_SECRET_ACCESS_KEY']
 
     # read ES cluster setup from yaml
-    esMasterNodes = PNDA_ENV['elk-cluster']['MASTER_NODES']
-    esDataNodes = PNDA_ENV['elk-cluster']['DATA_NODES']
-    esIngestNodes = PNDA_ENV['elk-cluster']['INGEST_NODES']
-    esCoordinatorNodes = PNDA_ENV['elk-cluster']['COORDINATING_NODES']
-    esMultiNodes = PNDA_ENV['elk-cluster']['MULTI_ROLE_NODES']
-    logstashNodes = PNDA_ENV['elk-cluster']['LOGSTASH_NODES']
+    es_master_nodes = PNDA_ENV['elk-cluster']['MASTER_NODES']
+    es_data_nodes = PNDA_ENV['elk-cluster']['DATA_NODES']
+    es_ingest_nodes = PNDA_ENV['elk-cluster']['INGEST_NODES']
+    es_coordinator_nodes = PNDA_ENV['elk-cluster']['COORDINATING_NODES']
+    es_multi_nodes = PNDA_ENV['elk-cluster']['MULTI_ROLE_NODES']
+    logstash_nodes = PNDA_ENV['elk-cluster']['LOGSTASH_NODES']
 
     # Branch defaults to master
     # but may be overridden by pnda_env.yaml
@@ -698,8 +702,8 @@ def main():
                 print "Increasing the number of kafkanodes from %s to %s" % (node_counts['kafka'], kafkanodes)
 
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
-                                                   esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
-                                                   esMultiNodes, logstashNodes)
+                                                   es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
+                                                   es_multi_nodes, logstash_nodes)
             expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, branch)
             sys.exit(0)
         else:
@@ -762,33 +766,33 @@ def main():
         kafkanodes = 0
     if zknodes is None:
         zknodes = 0
-    if esMasterNodes is None:
-        esMasterNodes = 0
-    if esDataNodes is None:
-        esDataNodes = 0
-    if esIngestNodes is None:
-        esIngestNodes = 0
-    if esCoordinatorNodes is None:
-        esCoordinatorNodes = 0
-    if esMultiNodes is None:
-        esMultiNodes = 0
-    if logstashNodes is None:
-        logstashNodes = 0
+    if es_master_nodes is None:
+        es_master_nodes = 0
+    if es_data_nodes is None:
+        es_data_nodes = 0
+    if es_ingest_nodes is None:
+        es_ingest_nodes = 0
+    if es_coordinator_nodes is None:
+        es_coordinator_nodes = 0
+    if es_multi_nodes is None:
+        es_multi_nodes = 0
+    if logstash_nodes is None:
+        logstash_nodes = 0
 
     node_limit("datanodes", datanodes)
     node_limit("opentsdb-nodes", tsdbnodes)
     node_limit("kafka-nodes", kafkanodes)
     node_limit("zk-nodes", zknodes)
-    node_limit("elk-es-master", esMasterNodes)
-    node_limit("elk-es-data", esDataNodes)
-    node_limit("elk-es-ingest", esIngestNodes)
-    node_limit("elk-es-coordinator", esCoordinatorNodes)
-    node_limit("elk-es-multi", esMultiNodes)
-    node_limit("elk-logstash", logstashNodes)
+    node_limit("elk-es-master", es_master_nodes)
+    node_limit("elk-es-data", es_data_nodes)
+    node_limit("elk-es-ingest", es_ingest_nodes)
+    node_limit("elk-es-coordinator", es_coordinator_nodes)
+    node_limit("elk-es-multi", es_multi_nodes)
+    node_limit("elk-logstash", logstash_nodes)
 
     template_data = generate_template_file(flavor, datanodes, tsdbnodes, kafkanodes, zknodes,
-                                           esMasterNodes, esIngestNodes, esDataNodes, esCoordinatorNodes,
-                                           esMultiNodes, logstashNodes)
+                                           es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
+                                           es_multi_nodes, logstash_nodes)
 
     console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
