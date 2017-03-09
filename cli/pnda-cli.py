@@ -46,10 +46,13 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 LOG_FILE_NAME = 'logs/pnda-cli.%s.log' % time.time()
 logging.basicConfig(filename=LOG_FILE_NAME,
                     level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+                    format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+LOG_FORMATTER = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 LOG = logging.getLogger('everything')
 CONSOLE = logging.getLogger('console')
 CONSOLE.addHandler(logging.StreamHandler())
+CONSOLE.handlers[0].setFormatter(LOG_FORMATTER)
 
 NAME_REGEX = r"^[\.a-zA-Z0-9-]+$"
 VALIDATION_RULES = None
