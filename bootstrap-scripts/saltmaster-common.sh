@@ -137,8 +137,3 @@ package_repository:
   fs_location_path: "$PR_FS_LOCATION_PATH"
 EOF
 fi
-
-echo $PNDA_CLUSTER-saltmaster > /etc/hostname
-hostname $PNDA_CLUSTER-saltmaster
-
-service salt-master restart
