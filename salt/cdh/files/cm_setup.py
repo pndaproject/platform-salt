@@ -15,7 +15,7 @@ import sys
 import json
 import os.path
 
-import spur
+from pywebhdfs.webhdfs import PyWebHdfsClient
 from cm_api.endpoints.services import ApiServiceSetupInfo
 from cm_api.api_client import ApiResource
 from cm_api.endpoints import users
@@ -77,7 +77,7 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
     logging.error("CM did not come UP")
     sys.exit(-1)
 
-def create_hosts(api, cloudera_manager, user, nodes):
+def create_hosts(api, cloudera_manager, nodes):
 
     host_heartbeat_retries = 36
     host_heartbeat_sleep = 5
@@ -498,7 +498,7 @@ def load_progress():
     except:
         return {}
 
-def create_services(user, key, cluster, nodes, ha_enabled):
+def create_services(cluster, nodes, ha_enabled):
 
     try:
         # note: the order of creation, configuration & activation here is critical
@@ -687,9 +687,7 @@ def ensure_started(service):
 
 def setup_hadoop(
         cm_api,
-        user,
         nodes,
-        key_name,
         cluster_name,
         cm_username='admin',
         cm_password='admin',
@@ -723,7 +721,7 @@ def setup_hadoop(
     pause_until_api_up(api)
 
     logging.info("Installing hosts")
-    new_nodes = create_hosts(api, cloudera_manager, user, nodes)
+    new_nodes = create_hosts(api, cloudera_manager, nodes)
     assign_host_ids(api, nodes)
     setup_progress = load_progress()
     if not check_progress(setup_progress, "99_COMPLETE"):
@@ -780,12 +778,15 @@ def setup_hadoop(
         ensure_started(cms)
 
         logging.info("Creating, configuring and starting Hadoop services")
-        services = create_services(user, key_name, cluster, nodes, ha_enabled)
+        services = create_services(cluster, nodes, ha_enabled)
         # there isn't much space for parcels but we know we are not going to
         # install any so it's safe to disable this warning
         cloudera_manager.update_all_hosts_config(_CFG.CM_CFG['hosts_config'])
-        # Install system shared libs into defined deployment path
-        setup_sharedlib(nodes, user, key_name, services['hdfs'], cm_api)
+        # Install commonly used libraries into defined deployment path
+        # Get the namenode private ip address
+        nn_role = get_role_name(services['hdfs'], "HTTPFS")
+        nnode_detail = get_role_vm(nodes, services['hdfs'], nn_role)
+        setup_common_oozie_libs(nnode_detail['private_addr'])
 
         # For CORONA-3045 sometimes CMS can't find an active namenode until
         # after a restart even though everything is actually fine
@@ -798,31 +799,29 @@ def setup_hadoop(
         logging.info("Re-applying hadoop config to all nodes")
         configure_services(cloudera_manager, cluster, nodes)
 
-def setup_sharedlib(nodes, user, key_name, hdfs, cm_api):
-    # Get the namenode private ip address
-    nn_role = get_role_name(hdfs, "HTTPFS")
-    nnode_detail = get_role_vm(nodes, hdfs, nn_role)
-    cmd_config = {
-        'host': cm_api,
-        'ssh_username': user,
-        'ssh_pem_file': key_name,
-        'ssh_commands': [
-            ['/tmp/pnda-install/cdh.setup_hadoop/venv/bin/python', '/tmp/pnda-install/cdh.setup_hadoop/install_sharedlib.py', '-n', nnode_detail['private_addr']]
-        ]
-    }
-    setup_remotehost(cmd_config)
+def setup_common_oozie_libs(name_node):
+    webhdfs_port = '14000'
+    webhdfs_user = 'hdfs'
+    platform_dir = 'user/deployment/platform'
+    lib_path_list = ['/opt/cloudera/parcels/CDH/lib/hbase/hbase-client.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-common.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-protocol.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-server.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/lib/htrace-core.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-hadoop-compat.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-it.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-prefix-tree.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/lib/zookeeper.jar',
+                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar']
 
+    # Setup a connection with hdfs using namenode.
+    hdfs_client = PyWebHdfsClient(host=name_node, port=webhdfs_port, user_name=webhdfs_user, timeout=None)
+    # Create directory on hadoop file system (HDFS).
+    hdfs_client.make_dir(platform_dir)
+    # Creates a new file on HDFS and write contents from local FS.
+    for path in lib_path_list:
+        platform_file = '%s/%s' % (platform_dir, os.path.basename(path))
+        logging.info('Copying source file: %s to HDFS path %s', path, platform_file)
+        with open(path) as file_data:
+            hdfs_client.create_file(platform_file, file_data, overwrite=True)
 
-def setup_remotehost(config):
-    shell = spur.SshShell(hostname=config['host'],
-                          username=config['ssh_username'],
-                          private_key_file=config['ssh_pem_file'],
-                          missing_host_key=spur.ssh.MissingHostKey.accept)
-    with shell:
-        for ssh_command in config['ssh_commands']:
-            logging.info('Host - %s: Command - %s', config['host'], ssh_command)
-            try:
-                result = shell.run(ssh_command)
-                logging.debug(string.join(ssh_command, " ") + " - output: " + result.output)
-            except spur.results.RunProcessError as exception:
-                logging.error(string.join(ssh_command, " ") + " - error: " + exception.stderr_output)

@@ -80,10 +80,6 @@
     - match: grain
     - cdh.oozie_mysql
 
-  'roles:cloudera_manager':
-    - match: grain
-    - cdh.cloudera-keys
-
   'roles:platform_testing_cdh':
     - match: grain
     - platform-testing.cdh

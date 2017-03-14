@@ -51,7 +51,7 @@ parcel_version = None
 {% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
 
 if __name__ == '__main__':
-    cm_setup.setup_hadoop(manager, "cloudera", nodes, '{{ private_key_filename }}',
+    cm_setup.setup_hadoop(manager, nodes,
                           cluster_name='{{ cluster_name }}', cm_username='{{ cm_username }}',
                           cm_password='{{ cm_password }}',
                           parcel_repo=parcel_repo, parcel_version=parcel_version,
