@@ -21,6 +21,13 @@ cdh-install_hadoop:
     - sls: cdh.setup_hadoop
     - timeout: 120
 
+cdh-install_platform_libraries:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt_type: compound
+    - sls: pnda.platform-libraries
+    - timeout: 120
+
 cdh-install_deployment_manager_keys:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}}'

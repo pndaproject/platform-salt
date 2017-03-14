@@ -56,6 +56,13 @@ cdh-install_gobblin:
     - sls: gobblin
     - timeout: 120
 
+cdh-install_platform_libraries:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt_type: compound
+    - sls: pnda.platform-libraries
+    - timeout: 120
+
 cdh-install_jupyter:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:jupyter'
