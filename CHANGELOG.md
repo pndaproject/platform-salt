@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2596: Stop ingesting internal PNDA testbot topic
 - PNDA-2577: Use spur 0.3.20 for cm_setup.py
 - PNDA-2756: Move Cloudera Manager installation in orchestrate stage instead of highstate stage
+- PNDA-2808: Install PNDA platform-libraries on all CDH nodes instead of just the jupyter node.
 
 ## [1.3.0] 2017-01-20
 ### Added
