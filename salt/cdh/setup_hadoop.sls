@@ -1,7 +1,6 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
-{% set ssh_prv_key = '/tmp/cloudera.pem' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 {% set cloudera_p = salt['pillar.get']('cloudera', {}) %}
 
@@ -74,7 +73,6 @@ cdh-create_cloudera_configuration_script:
     - defaults:
         ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
         cloudera_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
-        private_key_filename: {{ ssh_prv_key }}
         cluster_name: {{ pnda_cluster }}
         parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}
         parcel_version: {{ cloudera_p.get('parcel_version', '') }}
