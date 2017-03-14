@@ -52,7 +52,7 @@ input {
    }
    file {
           path => ["/var/log/salt/minion",
-                   "/tmp/cm_setup.log"]
+                   "/var/log/pnda/cm_setup.log"]
           add_field => {"source" => "provisioning"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
    }
