@@ -31,9 +31,9 @@ change-bind-address_redis:
 
 logserver-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }}
-    - source: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
-    - source_hash: https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz.sha1.txt
+    - name: {{ install_dir }} 
+    - source: {{ packages_server }}/logstash-1.5.4.tar.gz
+    - source_hash: {{ packages_server }}/logstash-1.5.4.tar.gz.sha1.txt
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/logstash-1.5.4
