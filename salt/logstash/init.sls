@@ -33,9 +33,6 @@ logstash-logstash:
 logstash-create_logstash_dir:
   file.directory:
     - name: {{logstash_directory}}
-    - user: root
-    - group: root
-    - dir_mode: 777
     - makedirs: True
 
 logstash-create_logstash_logdir:
