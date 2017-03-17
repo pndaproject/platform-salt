@@ -314,7 +314,7 @@ def wait_for_host_connectivity(hosts, cluster):
                 ssh(['ls ~'], cluster, host)
                 break
             except:
-                CONSOLE.info('Still waiting for connectivity to %s', host)
+                CONSOLE.info('Still waiting for connectivity to %s. See debug log (%s) for details.', host, LOG_FILE_NAME)
                 LOG.info(traceback.format_exc())
                 time.sleep(2)
 
@@ -375,7 +375,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
                 raise Exception("Error running ssh commands on host %s. See debug log (%s) for details." % (bastion_ip, LOG_FILE_NAME))
             break
         except:
-            CONSOLE.info('Still waiting for connectivity to bastion...')
+            CONSOLE.info('Still waiting for connectivity to bastion. See debug log (%s) for details.', LOG_FILE_NAME)
             LOG.info(traceback.format_exc())
             time.sleep(2)
 
