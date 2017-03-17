@@ -88,10 +88,6 @@
     - match: grain
     - cdh.oozie_mysql
 
-  'roles:platform_testing_cdh':
-    - match: grain
-    - platform-testing.cdh
-
   'roles:package_repository':
     - match: grain
     - package-repository
