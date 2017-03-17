@@ -67,10 +67,6 @@ console-backend-data-logger-systemctl_reload:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable data-logger; /bin/systemctl enable redis
 {%- endif %}
 
-console-backend-data-logger-start_service:
-  cmd.run:
-    - name: 'service data-logger stop || echo already stopped; service data-logger start'
-
 console-backend-redis_start:
   cmd.run:
 {% if grains['os'] == 'Ubuntu' %}
@@ -78,3 +74,7 @@ console-backend-redis_start:
 {% elif grains['os'] == 'RedHat' %}
     - name: 'service redis stop || echo already stopped; service redis start'
 {% endif %}
+
+console-backend-data-logger-start_service:
+  cmd.run:
+    - name: 'service data-logger stop || echo already stopped; service data-logger start'
