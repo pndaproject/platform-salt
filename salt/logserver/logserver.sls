@@ -31,12 +31,12 @@ change-bind-address_redis:
 
 logserver-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
-    - source: {{ packages_server }}/logstash-1.5.4.tar.gz
-    - source_hash: {{ packages_server }}/logstash-1.5.4.tar.gz.sha1.txt
+    - name: {{ install_dir }}
+    - source: {{ logstash_url }}
+    - source_hash: {{ logstash_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/logstash-1.5.4
+    - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logserver-link_release:
   cmd.run:
