@@ -1,13 +1,11 @@
 {%- from 'kafka/settings.sls' import kafka, config with context %}
-{%- set zk_flavor_cfg = pillar['pnda_flavor']['states']['zookeeper'] %}
 
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
-{% set listen_iface = zk_flavor_cfg.get('listen_iface', None) %}
 {%- set kafka_zookeepers = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips'](listen_iface) -%}
+{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
 {%- do kafka_zookeepers.append(ip+':2181') -%}
 {%- endfor -%}
 
