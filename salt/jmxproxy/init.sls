@@ -8,7 +8,7 @@
 
 {% set jmxproxy_url = mirror_location + jmxproxy_jar %}
 
-{% set install_dir = pillar['pnda']['homedir'] %}
+{% set install_dir = pillar['pnda']['homedir'] + '/jmxproxy' %}
 
 
 jmxproxy-create_release_dir:

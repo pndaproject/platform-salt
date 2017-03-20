@@ -21,9 +21,6 @@ kibana-kibana:
 kibana-create_kibana_dir:
   file.directory:
     - name: {{kibana_directory}}
-    - user: root
-    - group: root
-    - dir_mode: 777
     - makedirs: True
 
 kibana-dl_and_extract_kibana:
