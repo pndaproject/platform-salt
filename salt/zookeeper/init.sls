@@ -1,5 +1,3 @@
-{% set flavor_cfg = pillar['pnda_flavor']['states'].get(sls, {}) %}
-
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
@@ -71,7 +69,6 @@ zookeeper-configuration:
     - source: salt://zookeeper/files/templates/zoo.cfg.tpl
     - template: jinja
     - context:
-      {% if flavor_cfg.listen_iface is defined %}listen_ip: {{ grains['ip_interfaces'][flavor_cfg.listen_iface][0] }}{% endif %}
       nodes:
       {%- for node in nodes %}
         -

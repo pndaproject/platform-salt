@@ -8,7 +8,3 @@ server.{{ node.id }}={{ node.ip }}:2888:3888
 {%- endfor %}
 maxClientCnxns=100
 cnxTimeout=10
-
-{% if listen_ip is defined %}
-clientPortAddress={{ listen_ip }}
-{% endif %}

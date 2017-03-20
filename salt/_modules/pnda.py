@@ -43,9 +43,9 @@ def kafka_brokers_ips():
     """Returns kafka brokers ip addresses"""
     return ip_addresses('kafka')
 
-def kafka_zookeepers_ips(iface=None):
+def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
-    return ip_addresses('zookeeper', iface)
+    return ip_addresses('zookeeper')
 
 def ldap_ip():
     """Returns the ip address of the LDAP server"""
@@ -54,7 +54,7 @@ def ldap_ip():
     # Only get first ip address
     return result[0][0] if len(result) > 0 else None
 
-def ip_addresses(role, iface=None):
+def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
     result = __salt__['mine.get'](query, 'grains.items', 'compound').values()
@@ -63,16 +63,9 @@ def ip_addresses(role, iface=None):
         return result
 
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
-    if iface is None:
-        # Do it the old way
-        # XXX: Update this to make only one case (network.ip_addrs vs network.interfaces)
-        result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
-        # Only get first ip address
-        result = [r[0] for r in result]
-    else:
-        result = __salt__['mine.get'](query, 'network.interfaces', 'compound').values()
-        result = [r[iface]['inet'][0]['address'] for r in result]
-
+    result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
+    # Only get first ip address
+    result = [r[0] for r in result]
     return result if len(result) > 0 else None
 
 def generate_http_link(role, suffix):

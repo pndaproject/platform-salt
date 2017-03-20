@@ -1,6 +1,5 @@
 mine_functions:
-  network.ip_addrs: []
-  network.interfaces: []
+  network.ip_addrs: [eth0]
   grains.items: []
 
 logstash:
