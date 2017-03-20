@@ -1,0 +1,2 @@
+GRAPHITE_API_CONFIG=/etc/graphite-api.yaml
+DAEMON_ARGS="graphite_api.app:app -b 0.0.0.0:8013"
