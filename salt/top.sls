@@ -56,7 +56,7 @@
 
   'roles:graphite':
     - match: grain
-    - graphite
+    - graphite-api
 
   'roles:grafana':
     - match: grain

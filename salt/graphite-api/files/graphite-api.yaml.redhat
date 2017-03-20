@@ -1,4 +1,4 @@
-search_index: /srv/graphite/index
+search_index: /var/lib/graphite-api/index
 finders:
   - graphite_api.finders.whisper.WhisperFinder
 functions:
@@ -6,4 +6,5 @@ functions:
   - graphite_api.functions.PieFunctions
 whisper:
   directories:
-    - /var/lib/graphite/whisper
+    - /var/lib/carbon/whisper
+time_zone: UTC

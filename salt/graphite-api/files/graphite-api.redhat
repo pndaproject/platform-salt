@@ -1,0 +1,8 @@
+# Address to bind the graphite-api-gunicorn to
+GRAPHITE_API_ADDRESS=0.0.0.0
+
+# Port to bind the registry to
+GRAPHITE_API_PORT=8013
+
+# Number of workers to handle the connections
+GUNICORN_WORKERS=4
