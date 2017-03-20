@@ -41,9 +41,6 @@ elasticsearch-elasticsearch:
 elasticsearch-create_elasticsearch_dir:
   file.directory:
     - name: {{elasticsearch_directory}}
-    - user: root
-    - group: root
-    - dir_mode: 777
     - makedirs: True
 
 elasticsearch-create_elasticsearch_datadir:
