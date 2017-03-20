@@ -20,6 +20,9 @@
         },
         "zookeeper": {
             "listen_iface": "vlan2006"
+        },
+        "kafka.server": {
+            "kafka_log_retention_bytes": 1073741824
         }
     }
 }
