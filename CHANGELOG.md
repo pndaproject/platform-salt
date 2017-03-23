@@ -2,10 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+
+### Changed
+- PNDA-2809: Update m3 instance type defaults to use the latest m4 family instead.
+- Removed support for key based login to git server hosting platform-salt.
+
 ### Added
 - PNDA-2676: Support for redhat 7 in the bootstrap scripts. To use redhat set `OS_USER` to `ec2_user` and `imageId` to a redhat 7 AMI in pnda_env.yaml.
 - PNDA-2776. Wait on connectivity to cloud instances before trying to use them.
-- Removed support for key based login to git server hosting platform-salt.
+
 
 ## [1.2.0] 2017-01-20
 ### Fixed

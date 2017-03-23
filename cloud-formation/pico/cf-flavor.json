@@ -7,12 +7,12 @@
     },    
     "instancetypeKafka" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for databus combined instance"
     },
     "instancetypeCdhMgr" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for CDH management"
     },
     "instancetypeCdhDn" : {
@@ -22,28 +22,8 @@
     },
     "instancetypeEdge" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for cluster edge node"
-    },
-    "instancetypeESMaster" : {
-      "Type" : "String",
-      "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster master node"  
-    },
-    "instancetypeESIngest" : {
-      "Type" : "String",
-      "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster ingest node"  
-    },
-    "instancetypeESData" : {
-      "Type" : "String",
-      "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster data node"  
-    },
-    "instancetypeESCoordinator" : {
-      "Type" : "String",
-      "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster coordinator node"  
     },
     "instancetypeESMulti" : {
       "Type" : "String",
