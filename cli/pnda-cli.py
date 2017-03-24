@@ -189,6 +189,7 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch, salt_tarball, error
         files_to_scp = ['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/base.sh', type_script]
         if node_type == NODE_CONFIG['salt-master-instance']:
             files_to_scp.append('bootstrap-scripts/saltmaster-common.sh')
+            files_to_scp.append('git.pem')
 
         cmds_to_run = ['source /tmp/pnda_env_%s.sh' % cluster,
                        'export PNDA_SALTMASTER_IP=%s' % saltmaster,
@@ -641,6 +642,14 @@ def main():
         branch = PNDA_ENV['platform_salt']['PLATFORM_GIT_BRANCH']
     if args.branch is not None:
         branch = args.branch
+
+    if not os.path.isfile('git.pem'):
+        with open('git.pem', 'w') as git_key_file:
+            git_key_file.write('If authenticated access to the platform-salt git repository is required then' +
+                               ' replace this file with a key that grants access to the git server.\n\n' +
+                               'Set PLATFORM_GIT_REPO_HOST and PLATFORM_GIT_REPO_URI in pnda_env.yaml, for example:\n' +
+                               'PLATFORM_GIT_REPO_HOST: github.com\n' +
+                               'PLATFORM_GIT_REPO_URI: git@github.com:pndaproject/platform-salt.git\n')
 
     if args.command == 'destroy':
         if pnda_cluster is not None:

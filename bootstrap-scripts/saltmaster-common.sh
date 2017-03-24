@@ -59,6 +59,15 @@ mkdir -p /srv/salt
 cd /srv/salt
 
 if [ "x$PLATFORM_GIT_REPO_URI" != "x" ]; then
+  # Set up ssh access to the platform-salt git repo on the package server,
+  # if secure access is required this key will be used automatically.
+  # This mode is not normally used now the public github is available
+  chmod 400 /tmp/git.pem
+
+  echo "Host $PLATFORM_GIT_REPO_HOST" >> /root/.ssh/config
+  echo "  IdentityFile /tmp/git.pem" >> /root/.ssh/config
+  echo "  StrictHostKeyChecking no" >> /root/.ssh/config
+
   git clone -q --branch $PLATFORM_GIT_BRANCH $PLATFORM_GIT_REPO_URI
 elif [ "x$PLATFORM_URI" != "x" ] ; then
   mkdir -p /srv/salt/platform-salt && cd /srv/salt/platform-salt && \

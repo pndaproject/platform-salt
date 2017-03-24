@@ -39,6 +39,10 @@ platform_salt:
   # URI of platform salt git repository
   PLATFORM_GIT_REPO_URI: https://github.com/pndaproject/platform-salt.git
 
+  # Host name of server for platform salt git repository. Make sure to set this if
+  # authenticated ssh access (using git.pem) to the git repo is desired.
+  PLATFORM_GIT_REPO_HOST: github.com
+
   # The branch to select from PLATFORM_GIT_REPO_URI
   PLATFORM_GIT_BRANCH: master
 
