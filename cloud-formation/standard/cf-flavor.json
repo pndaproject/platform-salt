@@ -9,22 +9,22 @@
     },    
     "instancetypeLogserver" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for logserver"
     },
     "instancetypeDbZookeeper" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for databus zookeeper"
     },
     "instancetypeDbKafka" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for databus kafka"
     },
     "instancetypeCdhMgr" : {
       "Type" : "String",
-      "Default" : "m3.2xlarge",
+      "Default" : "m4.2xlarge",
       "Description" : "Instance type for CDH management"
     },
     "instancetypeCdhDn" : {
@@ -34,22 +34,22 @@
     },
     "instancetypeOpenTsdb" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for open TSDB"
     },
     "instancetypeJupyter" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for Jupyter"
     },
     "instancetypeSaltmaster" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for saltmaster"
     },
     "instancetypeCdhCm" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for CDH Cloudera Manager"
     },
     "instancetypeCdhEdge" : {
@@ -59,7 +59,7 @@
     },
     "instancetypeDbTools" : {
       "Type" : "String",
-      "Default" : "m3.large",
+      "Default" : "m4.large",
       "Description" : "Instance type for databus tools"
     },
     "whitelistSshAccess" : {
@@ -84,17 +84,17 @@
     },
     "instancetypeESCoordinator" : {
       "Type" : "String",
-      "Default" : "m3.2xlarge",
+      "Default" : "m4.2xlarge",
       "Description" : "Instance type for ELK ES cluster coordinator node"  
     },
     "instancetypeESMulti" : {
       "Type" : "String",
-      "Default" : "m3.2xlarge",
+      "Default" : "m4.2xlarge",
       "Description" : "Instance type for ELK ES cluster multi-role node"  
     },
     "instancetypeLogstash" : {
       "Type" : "String",
-      "Default" : "m3.xlarge",
+      "Default" : "m4.xlarge",
       "Description" : "Instance type for ELK Logstash node"
     }
   },  
