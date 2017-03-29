@@ -1,11 +1,10 @@
-{% set kibana_version = salt['pillar.get']('kibana:version', '4.1.6-linux-x64') %}
-{% set kibana_directory = salt['pillar.get']('kibana:directory', '/opt/pnda') %}
+{% set kibana_version = pillar['kibana']['version'] %}
+{% set kibana_directory = salt['pillar.get']('kibana:directory', '/opt/pnda') + '/kibana-' + kibana_version) %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set kibana_version = pillar['kibana']['version'] %}
 {% set kibana_package = 'kibana-' + kibana_version + '.tar.gz' %}
 {% set kibana_url = mirror_location + kibana_package %}
 
@@ -18,22 +17,20 @@ kibana-kibana:
     - groups:
       - kibana
 
-kibana-create_kibana_dir:
-  file.directory:
-    - name: {{kibana_directory}}
-    - makedirs: True
-
 kibana-dl_and_extract_kibana:
   archive.extracted:
-    - name: {{kibana_directory}}
+    - name: {{ kibana_directory }}
     - source: {{ kibana_url }}
     - source_hash: {{ kibana_url }}.sha1.txt
+    - user: kibana
+    - group: kibana
     - archive_format: tar
-    - if_missing: {{kibana_directory}}/kibana-{{kibana_version }}
+    - tar_options: --strip-components=1
+    - if_missing: {{ kibana_directory }}/bin/kibana
 
 kibana-copy_configuration_kibana:
   file.managed:
-    - name: {{kibana_directory}}/kibana-{{ kibana_version }}/config/kibana.yml
+    - name: {{ kibana_directory }}/config/kibana.yml
     - source: salt://kibana/files/kibana.yml
     - user: kibana
     - group: kibana
@@ -50,7 +47,7 @@ kibana-copy_kibana_service:
     - mode: 644
     - template: jinja
     - context:
-      installdir: {{kibana_directory}}/kibana-{{ kibana_version }}
+      installdir: {{ kibana_directory }}
 
 {% if grains['os'] == 'RedHat' %}
 kibana-systemctl_reload:
