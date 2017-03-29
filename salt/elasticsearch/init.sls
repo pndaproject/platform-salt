@@ -1,4 +1,5 @@
 {% set es_p = pillar['elasticsearch'] %}
+{% do es_p.update({'directory': es_p.directory + '/elasticsearch-' + es_p.version}) %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
@@ -15,11 +16,6 @@ elasticsearch-elasticsearch:
     - gid_from_name: True
     - groups:
       - elasticsearch
-
-elasticsearch-create_elasticsearch_dir:
-  file.directory:
-    - name: {{ es_p.directory }}
-    - makedirs: True
 
 elasticsearch-create_elasticsearch_datadir:
   file.directory:
@@ -66,9 +62,11 @@ elasticsearch-dl_and_extract_elasticsearch:
     - name: {{ es_p.directory }}
     - source: {{ elasticsearch_url }}
     - source_hash: {{ elasticsearch_url }}.sha1.txt
+    - user: elasticsearch
+    - group: elasticsearch
     - archive_format: tar
-    - tar_options: v
-    - if_missing: {{ es_p.directory }}/elasticsearch-{{ es_p.version }}
+    - tar_options: --strip-components=1
+    - if_missing: {{ es_p.directory }}/bin/elasticsearch
 
 {% if grains['os'] == 'Ubuntu' %}
 /etc/init/elasticsearch.conf:
@@ -82,7 +80,7 @@ elasticsearch-dl_and_extract_elasticsearch:
     - mode: 644
     - template: jinja
     - context:
-      installdir: {{ es_p.directory}}/elasticsearch-{{ es_p.version }}
+      installdir: {{ es_p.directory }}
       logdir: {{ es_p.logdir }}
       datadir: {{ es_p.datadir }}
       confdir: {{ es_p.confdir }}
