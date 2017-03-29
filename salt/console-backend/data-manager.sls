@@ -8,13 +8,16 @@
 
 {% set host_ip = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 
-# get host id of the instance where the console backend is running on the cluster
-{% set host_id = '' %}
-{% set namenode = [] %}
-{% for id, addr_list in salt['mine.get']('G@roles:console_backend and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound').items() %}
-{% do namenode.append(id) %}
+{% set console_frontend_port = salt['pillar.get']('console_frontend:bind_port', '') %}
+# get host names of the instance where the console frontend is running in the cluster
+{% set console_frontend_fqdn = salt['mine.get']('roles:console_frontend', 'grains.items', expr_form='grain').values()[0]['fqdn'] %}
+{% set console_frontend_hosts = [ console_frontend_fqdn ] %}
+{% for id, addr_list in salt['mine.get']('G@roles:console_frontend and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound').items() %}
+{%   for addr in addr_list %}
+{%     do console_frontend_hosts.append(addr) %}
+{%   endfor %}
 {% endfor %}
-{% set host_id = namenode|join(" ") %}
+{% set console_frontend_hosts_csv = console_frontend_hosts|join(",") %}
 
 {% set dm_link = salt['pnda.generate_http_link']('deployment_manager',':5000') %}
 {% set data_service_link = salt['pnda.generate_http_link']('data_service',':7000') %}
@@ -25,7 +28,6 @@
 {% endif %}
 
 {% set backend_app_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
-
 
 include:
   - nodejs
@@ -51,7 +53,8 @@ console-backend-data-manager-config:
     - source: salt://console-backend/templates/backend_data_manager_conf.js.tpl
     - template: jinja
     - defaults:
-        nodename: {{ host_id }}
+        console_frontend_port: {{ console_frontend_port }}
+        console_frontend_hosts_csv: {{ console_frontend_hosts_csv }}
         dm_endpoint: {{dm_link}}
         data_service_url: {{data_service_link}}
 
@@ -71,7 +74,7 @@ console-backend-install_backend_app_dependencies:
     - name: npm rebuild
     - require:
       - pkg: nodejs-install_useful_packages
-      
+
 # Create service script from template
 console-backend-copy_service:
   file.managed:
