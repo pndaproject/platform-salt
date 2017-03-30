@@ -34,13 +34,18 @@ graphite-api-carbon-enable-and-start:
       - file: graphite-api-carbon-enable-ubuntu
 {% endif %}
 
+{% if grains['os_family'] == 'Debian' %}
+{% set misc_packages_path = pillar['pnda_mirror']['base_url'] + pillar['pnda_mirror']['misc_packages_path'] %}
+{% set graphite_api_deb_package = misc_packages_path + 'graphite-api_1.1.2-1447943657-ubuntu14.04_amd64.deb' %}
+{%- endif %}
+
 graphite-api-install-graphite:
   pkg.installed:
 {% if grains['os_family'] == 'RedHat' %}
     - name: graphite-api
 {% elif grains["os_family"] == 'Debian' %}
     - sources:
-      - graphite-api: https://github.com/brutasse/graphite-api/releases/download/1.1.2/graphite-api_1.1.2-1447943657-ubuntu14.04_amd64.deb
+      - graphite-api: {{ graphite_api_deb_package }}
 {% endif %}
 
 graphite-api-configure-default:
