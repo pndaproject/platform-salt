@@ -1,5 +1,5 @@
 {% set kibana_version = pillar['kibana']['version'] %}
-{% set kibana_directory = salt['pillar.get']('kibana:directory', '/opt/pnda') + '/kibana-' + kibana_version) %}
+{% set kibana_directory = salt['pillar.get']('kibana:directory', '/opt/pnda') + '/kibana-' + kibana_version %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
