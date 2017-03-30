@@ -43,11 +43,17 @@ include:
 
 console-frontend-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }}
+    - name: {{ console_dir }}-{{ console_frontend_version }}
     - source: {{ packages_server }}/{{ console_frontend_package }}
     - source_hash: {{ packages_server }}/{{ console_frontend_package }}.sha512.txt
+    - user: root
+{% if grains['os'] == 'Ubuntu' %}
+    - group: www-data
+{% elif grains['os'] == 'RedHat' %}
+    - group: nginx
+{% endif %}
     - archive_format: tar
-    - tar_options: v
+    - tar_options: --strip-components=1
     - if_missing: {{ console_dir }}-{{ console_frontend_version }}
 
 console-frontend-create_directory_link:
