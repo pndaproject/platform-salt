@@ -1,7 +1,11 @@
 /* This file was generated from a template */
 
-var hostname = process.env.HOSTNAME || 'localhost';
-var whitelist = ['http://{{nodename}}', 'http://' + hostname, 'http://' + hostname + ':8006', 'http://0.0.0.0:8006'];
+var hosts = '{{ console_frontend_hosts_csv }}';
+var port = '{{ console_frontend_port }}';
+var whitelist = hosts.split(',');
+whitelist.forEach(function(p, i, a) {
+  a[i] = "http://"+a[i]+ ((port=='None')?'':':'+port);
+});
 module.exports = {
   whitelist: whitelist,
   deployment_manager: {

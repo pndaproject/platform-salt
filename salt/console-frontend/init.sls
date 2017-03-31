@@ -10,7 +10,7 @@
 {% set console_dir = install_dir + '/console-frontend' %}
 {% set console_config_dir = console_dir + '/conf' %}
 {% set console_demo_dir = console_dir + '/js/demo' %}
-{% set nginx_port = '80' %}
+{% set nginx_port = salt['pillar.get']('console_frontend:bind_port', '80') %}
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
