@@ -4,13 +4,14 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set app_dir = install_dir + '/console-backend-data-logger' %}
 {% set app_config_dir = app_dir + '/conf' %}
-
 {% set host_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] %}
-
 {% set backend_app_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') %}
+{% set data_logger_log_file = '/var/log/pnda/console/data-logger.log' %}
+{% set data_logger_log_level = 'debug' %}
 
 include:
   - nodejs
+  - .utils
 
 # Install nodejs, npm and redis-server
 console-backend-install_data_logger_redis:
@@ -36,6 +37,16 @@ console-backend-symlink_data_logger_dir:
     - name: {{ app_dir }}
     - target: {{ install_dir }}/console-backend-data-logger-{{ backend_app_version }}
 
+# Create logger config file
+console-backend-create_data_logger_logger_conf:
+  file.managed:
+    - name: {{ app_config_dir }}/logger.json
+    - source: salt://console-backend/templates/logger.json.tpl
+    - template: jinja
+    - defaults:
+        log_file: {{ data_logger_log_file }}
+        log_level: {{ data_logger_log_level }}
+
 # Install npm dependencies
 console-backend-install_backend_data_logger_app_dependencies:
   cmd.run:
@@ -43,6 +54,7 @@ console-backend-install_backend_data_logger_app_dependencies:
     - name: npm rebuild
     - require:
       - pkg: nodejs-install_useful_packages
+      - cmd: console-backend-install_utils_dependencies
       
 # Create service script from template
 console-backend-copy_data_logger_service:

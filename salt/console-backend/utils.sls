@@ -21,15 +21,6 @@ console-backend-symlink_utils_dir:
     - name: {{ utils_dir }}
     - target: {{ install_dir }}/console-backend-utils-{{ backend_utils_version }}
 
-# Create utils config file
-console-backend-create_util_conf:
-  file.managed:
-    - name: {{ install_dir }}/console-backend-utils/conf/config.json
-    - source: salt://console-backend/templates/backend_utils_config.json.tpl
-    - template: jinja
-    - defaults:
-        log_file: /var/log/pnda/console/platform-console-logs.log
-
 # Install npm dependencies for utils
 console-backend-install_utils_dependencies:
   cmd.run:
