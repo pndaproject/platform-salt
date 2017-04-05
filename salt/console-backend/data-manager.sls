@@ -5,9 +5,7 @@
 {% set app_dir = install_dir + '/console-backend-data-manager' %}
 {% set app_config_dir = app_dir + '/conf' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
-
 {% set host_ip = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
-
 {% set console_frontend_port = salt['pillar.get']('console_frontend:bind_port', '') %}
 # get host names of the instance where the console frontend is running in the cluster
 {% set console_frontend_fqdn = salt['mine.get']('roles:console_frontend', 'grains.items', expr_form='grain').values()[0]['fqdn'] %}
@@ -18,19 +16,19 @@
 {%   endfor %}
 {% endfor %}
 {% set console_frontend_hosts_csv = console_frontend_hosts|join(",") %}
-
 {% set dm_link = salt['pnda.generate_http_link']('deployment_manager',':5000') %}
 {% set data_service_link = salt['pnda.generate_http_link']('data_service',':7000') %}
-
 {% set ldap_ip = salt['pnda.ldap_ip']() %}
 {% if ldap_ip == None %}
 {%   set ldap_ip = "" %}
 {% endif %}
-
 {% set backend_app_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
+{% set data_manager_log_file = '/var/log/pnda/console/data-manager.log' %}
+{% set data_manager_log_level = 'debug' %}
 
 include:
   - nodejs
+  - .utils
 
 console-backend-data-manager-dl-and-extract:
   archive.extracted:
@@ -67,6 +65,16 @@ console-backend-ldap-config:
     - defaults:
         ldap_endpoint: {{ ldap_ip }}
 
+# Create logger config file
+console-backend-create_data_manager_logger_conf:
+  file.managed:
+    - name: {{ app_config_dir }}/logger.json
+    - source: salt://console-backend/templates/logger.json.tpl
+    - template: jinja
+    - defaults:
+        log_file: {{ data_manager_log_file }}
+        log_level: {{ data_manager_log_level }}
+
 # Install npm dependencies
 console-backend-install_backend_app_dependencies:
   cmd.run:
@@ -74,6 +82,7 @@ console-backend-install_backend_app_dependencies:
     - name: npm rebuild
     - require:
       - pkg: nodejs-install_useful_packages
+      - cmd: console-backend-install_utils_dependencies
 
 # Create service script from template
 console-backend-copy_service:

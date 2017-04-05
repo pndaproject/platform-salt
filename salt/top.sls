@@ -48,7 +48,6 @@
 
   'roles:console_backend_data_logger':
     - match: grain    
-    - console-backend.utils
     - console-backend.data-logger
 
   'roles:console_backend_data_manager':
