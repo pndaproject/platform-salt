@@ -88,7 +88,7 @@ EOF
 cat << EOF > /root/.pydistutils.cfg
 [easy_install]
 index_url=$PIP_INDEX_URL
-extra-index-url=https://pypi.python.org/simple/
+find_links=https://pypi.python.org/simple/
 EOF
 
 if [ "x$DISTRO" == "xrhel" ]; then
