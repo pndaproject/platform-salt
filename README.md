@@ -32,7 +32,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 8. Edit pnda_env.yaml with the names of the buckets to use for PNDA applications (`pnda_application_repo.PNDA_APPS_CONTAINER`) and PNDA archived data (`pnda_data_archive.PNDA_ARCHIVE_CONTAINER`) and the credentials to access them. These credentials should be created for IAM user(s) with access to the specific S3 buckets only as these credentials will be stored in plain text on some of the nodes launched in AWS. For help creating a user with these permissions, please refer [here](s3help.md).
 
-9. Edit pnda_env.yaml with the component package server IP address (`pnda_component_packages.PACKAGES_SERVER_URI`). A component package server provides a webserver for the binaries for the pnda components, the PNDA guide contains instructions on how to set up a component package server.
+9. Edit pnda_env.yaml with the PNDA mirror IP address (`pnda_component_packages.PNDA_MIRROR`). The PNDA mirror server provides a webserver for the binaries for the pnda components plus all the third party resources. [This documentation contains instructions](https://github.com/pndaproject/pnda/blob/develop/CREATING_PNDA.md) on how to set up a PNDA mirror.
 
 10. Create [an ssh keypair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) to use when creating the EC2 instances for PNDA as ```key_name```. Place the private key ```key_name.pem``` in the root of the pnda-aws-templates directory. Ensure that key_name.pem has 0600 permissions. For example, if the keypair in AWS is 'pnda' then the local private key file should be named 'pnda.pem' and the corresponding cli parameter should be '-s pnda'.
 
