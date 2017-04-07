@@ -125,3 +125,8 @@ elk-cluster:
 
   # number of logstash nodes
   LOGSTASH_NODES: 0
+
+resource_registry:
+  # To enable the ip rejecting config script set to iprejecter and you can put on IP in RD_IP which will be allowed to access the cluster
+  PRECONFIG: ""
+  RD_IP: ""
