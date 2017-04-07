@@ -309,7 +309,8 @@ def process_errors(errors):
 
 def wait_for_host_connectivity(hosts, cluster):
     for host in hosts:
-        while True:
+        attempts_per_host = 150
+        while attempts_per_host > 0:
             try:
                 CONSOLE.info('Checking connectivity to %s', host)
                 ssh(['ls ~'], cluster, host)
@@ -317,6 +318,7 @@ def wait_for_host_connectivity(hosts, cluster):
             except:
                 CONSOLE.info('Still waiting for connectivity to %s. See debug log (%s) for details.', host, LOG_FILE_NAME)
                 LOG.info(traceback.format_exc())
+                attempts_per_host -= 1
                 time.sleep(2)
 
 def create(template_data, cluster, flavor, keyname, no_config_check, branch):
@@ -365,7 +367,8 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     CONSOLE.debug('The PNDA console will come up on: http://%s', instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address'])
 
-    while True:
+    attempts_per_host = 150
+    while attempts_per_host > 0:
         try:
             nc_ssh_cmd = 'ssh -i %s -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %s@%s' % (keyfile,
                                                                                                           PNDA_ENV['ec2_access']['OS_USER'], bastion_ip)
@@ -378,6 +381,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         except:
             CONSOLE.info('Still waiting for connectivity to bastion. See debug log (%s) for details.', LOG_FILE_NAME)
             LOG.info(traceback.format_exc())
+            attempts_per_host -= 1
             time.sleep(2)
 
     wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
