@@ -3,9 +3,6 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-### Fixed
-- PNDA-2851: manually sync grains before running salt commands as sometimes the ec2 grain wasn't available yet when running highstate.
-
 ### Changed
 - PNDA-2809: Update m3 instance type defaults to use the latest m4 family instead.
 
