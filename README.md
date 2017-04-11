@@ -21,7 +21,7 @@ This repository contains resources for launching PNDA on [Amazon Web Services](h
 
 4. Copy ```pnda_env_example.yaml``` to create ```pnda_env.yaml```
 
-5. Edit pnda_env.yaml with an Ubuntu 14.04 image ID (`cloud_formation_parameters.imageId`). This should be the AWS default ubuntu AMI for the region you are provisioning into.
+5. Edit pnda_env.yaml with an Ubuntu 14.04 or Redhat Enterprise Linux 7 image ID (`cloud_formation_parameters.imageId`). This should be the AWS default ubuntu or Redhat AMI for the region you are provisioning into. If using an Ubuntu AMI set `ec2_access.OS_USER` to ubuntu; for a Redhat AMI set `ec2_access.OS_USER` to ec2-user.
 
 6. Edit pnda_env.yaml with [AWS credentials](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html) to use to launch the cloud formation stack (`ec2_access.AWS_ACCESS_KEY_ID` and `ec2_access.AWS_SECRET_ACCESS_KEY`). These credentials should have permissions to launch cloud formation stacks and are only ever stored on the client machine.
 
