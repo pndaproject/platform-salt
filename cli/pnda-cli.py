@@ -388,25 +388,25 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     CONSOLE.info('Bootstrapping saltmaster. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
-
+    saltmaster_ip = saltmaster['private_ip_address']
     platform_salt_tarball = None
     if 'PLATFORM_SALT_LOCAL' in PNDA_ENV['platform_salt']:
         local_salt_path = PNDA_ENV['platform_salt']['PLATFORM_SALT_LOCAL']
         platform_salt_tarball = '%s.tmp' % str(uuid.uuid1())
         with tarfile.open(platform_salt_tarball, mode='w:gz') as archive:
             archive.add(local_salt_path, arcname='platform-salt', recursive=True)
-        scp([platform_salt_tarball], cluster, saltmaster['private_ip_address'])
+        scp([platform_salt_tarball], cluster, saltmaster_ip)
         os.remove(platform_salt_tarball)
 
     bootstrap_threads = []
     bootstrap_errors = Queue.Queue()
-    bootstrap(saltmaster, saltmaster['private_ip_address'], cluster, flavor, branch, platform_salt_tarball, bootstrap_errors)
+    bootstrap(saltmaster, saltmaster_ip, cluster, flavor, branch, platform_salt_tarball, bootstrap_errors)
     process_errors(bootstrap_errors)
 
     CONSOLE.info('Bootstrapping other instances. Expect this to take a few minutes, check the debug log for progress (%s).', LOG_FILE_NAME)
     for key, instance in instance_map.iteritems():
         if '-' + NODE_CONFIG['salt-master-instance'] not in key:
-            thread = Thread(target=bootstrap, args=[instance, saltmaster['private_ip_address'],
+            thread = Thread(target=bootstrap, args=[instance, saltmaster_ip,
                                                     cluster, flavor, branch, platform_salt_tarball, bootstrap_errors])
             bootstrap_threads.append(thread)
 
@@ -420,12 +420,15 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     process_errors(bootstrap_errors)
 
     time.sleep(30)
+
+    scp(['bootstrap-scripts/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
+    ssh(['chmod a+x /tmp/wait-for-ec2-grains.sh', '/tmp/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],
-        cluster, saltmaster['private_ip_address'])
+        cluster, saltmaster_ip)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
@@ -460,6 +463,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     write_ssh_config(cluster, bastion_ip,
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
     saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
+    saltmaster_ip = saltmaster['private_ip_address']
 
     wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
     CONSOLE.info('Bootstrapping new instances. Expect this to take a few minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
@@ -483,6 +487,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
 
     time.sleep(30)
+
+    scp(['bootstrap-scripts/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
+    ssh(['chmod a+x /tmp/wait-for-ec2-grains.sh', '/tmp/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
