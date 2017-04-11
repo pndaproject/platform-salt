@@ -10,7 +10,7 @@ This arrangement is based on the AWS guide "Scenario 2: VPC with Public and Priv
 ## cf-common.json
 cf-common.json contains the elements of the PNDA stack that are common to all flavors.
 
-The flavor specific file `<flavor>/cf-clavor.json` is merged over the top of this file by pnda-cli.py before sumbitting it to AWS.
+The flavor specific file `<flavor>/cf-clavor.json` is merged over the top of this file by pnda-cli.py before submitting it to AWS.
 
 ### Parameters
 The parameters can all be set in pnda_env.yaml under cloud_formation_parameters section.
