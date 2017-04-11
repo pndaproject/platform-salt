@@ -17,7 +17,7 @@ The parameters can all be set in pnda_env.yaml under cloud_formation_parameters 
 
 Some useful parameters include:
 
-  - imageId should be the latest AWS default Ubuntu 14.04 image
+  - imageId should be the latest AWS default Ubuntu 14.04, or RHEL 7 image
   - whitelistSshAccess can be set to a restricted range to further secure cluster access
   - instancetypeCdhDn can be set to an instance type with more resources to vertically scale the cluster compute resources
 
