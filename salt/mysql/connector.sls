@@ -8,7 +8,9 @@
 {% if grains['os'] == 'Ubuntu' %}
 mysql-connector-install-java-library:
   pkg.installed:
-    - name: libmysql-java
+    - name: {{ pillar['libmysql-java']['package-name'] }}
+    - version: {{ pillar['libmysql-java']['version'] }}
+    - ignore_epoch: True
 {% elif grains['os'] == 'RedHat' %}
 mysql-connector-create-dir:
   file.directory:

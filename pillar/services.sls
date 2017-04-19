@@ -55,15 +55,6 @@ kafkamanager:
 jupyterproxy:
   release_version: 1.3.1
   
-opentsdb:
-  version: 2.2.0
-  release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
-  bind_port: 4242
-
-grafana:
-  version: 3.1.1-1470047149
-  release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
-
 gobblin:
   release_version: develop
 

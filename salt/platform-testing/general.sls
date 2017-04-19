@@ -43,15 +43,13 @@ include:
 platform-testing-general-install_dev_deps:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - libsasl2-dev
-      - g++
-{% elif grains['os'] == 'RedHat' %}
-      - nmap-ncat
-      - gcc-c++
-      - libgsasl-devel
-      - cyrus-sasl-devel
+{% if grains['os'] == 'RedHat' %}
+      - {{ pillar['nmap-ncat']['package-name'] }}: {{ pillar['nmap-ncat']['version'] }}
+      - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
 {% endif %}
+      - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
+      - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
 
 platform-testing-general-dl-and-extract:
   archive.extracted:

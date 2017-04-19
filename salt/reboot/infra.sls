@@ -1,8 +1,9 @@
 {% if grains['os'] == 'RedHat' %}
 reboot-install_deps:
   pkg.installed:
-    - pkgs:
-      - at
+    - name: {{ pillar['at']['package-name'] }}
+    - version: {{ pillar['at']['version'] }}
+    - ignore_epoch: True
 
 reboot-start_atd:
   service.running:

@@ -15,8 +15,8 @@ include:
 cloudera-manager-install_cloudera_manager:
   pkg.installed:
     - pkgs:
-      - cloudera-manager-daemons
-      - cloudera-manager-server
+      - {{ pillar['cloudera-manager-daemons']['package-name'] }}: {{ pillar['cloudera-manager-daemons']['version'] }}
+      - {{ pillar['cloudera-manager-server']['package-name'] }}: {{ pillar['cloudera-manager-server']['version'] }}
 
 {% if grains['os'] == 'RedHat' %}
 cloudera-manager-ensure_cloudera_manager_enabled:

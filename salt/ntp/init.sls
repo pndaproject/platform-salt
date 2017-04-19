@@ -2,7 +2,9 @@
 
 ntp-install_ntp_package:
   pkg.installed:
-    - name: ntp
+    - name: {{ pillar['ntp']['package-name'] }}
+    - version: {{ pillar['ntp']['version'] }}
+    - ignore_epoch: True
 
 ntp-install_conf:
   file.managed:

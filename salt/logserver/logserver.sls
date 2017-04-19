@@ -13,19 +13,13 @@ include:
 
 install-redis_server:
   pkg.installed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: redis-server
-{% elif grains['os'] == 'RedHat' %}
-    - name: redis
-{% endif %}
+    - name: {{ pillar['redis-server']['package-name'] }}
+    - version: {{ pillar['redis-server']['version'] }}
+    - ignore_epoch: True
 
 change-bind-address_redis:
   file.replace:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/redis/redis.conf
-{% elif grains['os'] == 'RedHat' %}
-    - name: /etc/redis.conf
-{% endif %}
+    - name: {{ pillar['redis-server']['configuration_filename'] }}
     - pattern: 'bind 127.0.0.1'
     - repl: 'bind 0.0.0.0'
 

@@ -16,12 +16,9 @@ include:
 # Install nodejs, npm and redis-server
 console-backend-install_data_logger_redis:
   pkg.installed:
-    - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - redis-server
-{% elif grains['os'] == 'RedHat' %}
-      - redis
-{% endif %}
+    - name: {{ pillar['redis-server']['package-name'] }}
+    - version: {{ pillar['redis-server']['version'] }}
+    - ignore_epoch: True
 
 console-backend-dl-and-extract:
   archive.extracted:

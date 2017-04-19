@@ -3,8 +3,9 @@
 cloudera-manager-agent-install_packages:
   pkg.installed:
     - pkgs:
-      - cloudera-manager-daemons
-      - cloudera-manager-agent
+      - {{ pillar['cloudera-manager-daemons']['package-name'] }}: {{ pillar['cloudera-manager-daemons']['version'] }}
+      - {{ pillar['cloudera-manager-agent']['package-name'] }}: {{ pillar['cloudera-manager-agent']['version'] }}
+    - ignore_epoch: True
 
 cloudera-manager-agent-configure_ini:
   cmd.run:
