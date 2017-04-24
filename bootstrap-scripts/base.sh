@@ -21,7 +21,7 @@ EOF
 wget -O - $PNDA_MIRROR/mirror_deb/pnda.gpg.key | apt-key add -
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -y install xfsprogs salt-minion
+apt-get -y install xfsprogs=3.1.9ubuntu2 salt-minion=2015.8.11+ds-1
 elif [ "x$DISTRO" == "xrhel" ]; then
 rm -rf /etc/yum.repos.d/*
 yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
@@ -32,7 +32,7 @@ rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-EPEL-7
 rpm --import $PNDA_MIRROR/mirror_rpm/SALTSTACK-GPG-KEY.pub
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-CentOS-7
 rpm --import $PNDA_MIRROR/mirror_rpm/NODESOURCE-GPG-SIGNING-KEY-EL
-yum -y install xfsprogs wget salt-minion
+yum -y install xfsprogs-4.5.0-9.el7_3 wget-1.14-13.el7 salt-minion-2015.8.11-1.el7
 fi
 
 # Mount the log volume, this is always xvdc
