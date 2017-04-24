@@ -11,6 +11,15 @@
 include:
   - python-pip
 
+package-repository-install_dev_deps:
+  pkg.installed:
+    - pkgs:
+{% if grains['os'] == 'Ubuntu' %}
+      - g++
+{% elif grains['os'] == 'RedHat' %}
+      - gcc-c++
+{% endif %}
+
 package-repository-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
