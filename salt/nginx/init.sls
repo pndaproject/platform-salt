@@ -1,6 +1,9 @@
 nginx-pkg:
   pkg.installed:
-    - name: nginx
+    - name: {{ pillar['nginx']['package-name'] }}
+    - version: {{ pillar['nginx']['version'] }}
+    - ignore_epoch: True
+    
 {% if grains['os'] == 'RedHat' %}
 nginx_conf_file:
   file.managed:

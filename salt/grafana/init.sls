@@ -5,14 +5,8 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set grafana_deb_package = 'grafana_' + grafana_version + '_amd64.deb' %}
-{% set grafana_rpm_package = 'grafana-' + grafana_version + '.x86_64.rpm' %}
-{% set grafana_deb_location = mirror_location + grafana_deb_package %}
-{% set grafana_rpm_location = mirror_location + grafana_rpm_package %}
-
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
-
 {% set datasources = [
     '{ "name": "PNDA OpenTSDB", "type": "opentsdb", "url": "http://localhost:4242", "access": "proxy", "basicAuth": false, "isDefault": true }',
     '{{ "name": "PNDA Graphite", "type": "graphite", "url": "http://{}:{}", "access": "proxy", "basicAuth": false, "isDefault": false }}'.format(pnda_graphite_host, pnda_graphite_port) ] %}
@@ -25,11 +19,7 @@
 grafana-server_pkg:
   pkg.installed:
     - sources:
-{% if grains['os'] == 'Ubuntu' %}
-      - grafana: {{ grafana_deb_location }}
-{% elif grains['os'] == 'RedHat' %}
-      - grafana: {{ grafana_rpm_location }}
-{% endif %}
+      - grafana: {{ mirror_location+pillar['grafana']['package-source'] }}
 
 {% if grains['os'] == 'RedHat' %}
 grafana-systemctl_reload:

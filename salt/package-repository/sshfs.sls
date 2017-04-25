@@ -8,7 +8,9 @@
 
 sshfs-install:
   pkg.installed:
-    - name: sshfs
+    - name: {{ pillar['sshfs']['package-name'] }}
+    - version: {{ pillar['sshfs']['version'] }}
+    - ignore_epoch: True
 
 sshfs-create_directory:
   file.directory:

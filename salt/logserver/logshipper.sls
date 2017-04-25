@@ -16,12 +16,9 @@ include:
 logshipper-lbc6:
   pkg.installed:
     - pkgs:
-      {% if grains['os'] == 'RedHat' %}
-      - glibc-devel
-      {% elif grains['os'] == 'Ubuntu' %}
-      - libc6-dev
-      {% endif %}
-      - acl
+      - {{ pillar['glibc-devel']['package-name'] }}: {{ pillar['glibc-devel']['version'] }}
+      - {{ pillar['acl']['package-name'] }}: {{ pillar['acl']['version'] }}
+    - ignore_epoch: True
 
 logshipper-dl-and-extract:
   archive.extracted:

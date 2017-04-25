@@ -20,13 +20,9 @@ include:
 cdh-install_deps:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - libssl-dev
-      - libffi-dev
-{% elif grains['os'] == 'RedHat' %}
-      - libffi-devel
-      - openssl-devel
-{% endif %}
+      - {{ pillar['libffi-dev']['package-name'] }}: {{ pillar['libffi-dev']['version'] }}
+      - {{ pillar['libssl-dev']['package-name'] }}: {{ pillar['libssl-dev']['version'] }}
+    - ignore_epoch: True
 
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:

@@ -14,8 +14,9 @@
 
 java-install_dependencies:
   pkg.installed:
-    - pkgs:
-      - wget
+    - name: {{ pillar['wget']['package-name'] }}
+    - version: {{ pillar['wget']['version'] }}
+    - ignore_epoch: True
 
 {{ java.prefix }}:
   file.directory:

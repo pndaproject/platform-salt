@@ -30,13 +30,12 @@ platform-testing-cdh-dl-and-extract:
 platform-testing-cdh-install_dev_deps:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - libsasl2-dev
-      - g++
-{% elif grains['os'] == 'RedHat' %}
-      - gcc-c++
-      - cyrus-sasl-devel
+{% if grains['os'] == 'RedHat' %}
+      - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
 {% endif %}
+      - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
+      - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
 
 platform-testing-cdh-create-venv:
   virtualenv.managed:

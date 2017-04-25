@@ -6,7 +6,9 @@ include:
 {% if grains['os'] == 'Ubuntu' %}
 mysql-install-debconf-utils:
   pkg.installed:
-    - name: debconf-utils
+    - name: {{ pillar['debconf-utils']['package-name'] }}
+    - version: {{ pillar['debconf-utils']['version'] }}
+    - ignore_epoch: True
 
 mysql-setup-mysql:
   debconf.set:
@@ -21,30 +23,22 @@ mysql-setup-mysql:
 
 mysql-install-python-library:
   pkg.installed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: python-mysqldb
-{% elif grains['os'] == 'RedHat' %}
-    - name: MySQL-python
-{% endif %}
+    - name: {{ pillar['python-mysqldb']['package-name'] }}
+    - version: {{ pillar['python-mysqldb']['version'] }}
     - reload_modules: True
 
 mysql-install-mysql-server:
   pkg.installed:
 {% if grains['os'] == 'Ubuntu' %}
-    - name: mysql-server-5.6
     - require:
       - debconf: mysql-setup-mysql
-{% elif grains['os'] == 'RedHat' %}
-    - name: mysql-community-server
 {% endif %}
+    - name: {{ pillar['mysql-server']['package-name'] }}
+    - version: {{ pillar['mysql-server']['version'] }}
 
 mysql-update-mysql-configuration:
   file.replace:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/mysql/my.cnf
-{% elif grains['os'] == 'RedHat' %}
-    - name: /etc/my.cnf
-{% endif %}
+    - name: {{ pillar['mysql-server']['configuration_file'] }}
     - pattern: bind-address\s*=.*$
     - repl: bind-address      = 0.0.0.0
     - require:
@@ -52,11 +46,7 @@ mysql-update-mysql-configuration:
 
 mysql-update-mysql-configuration2:
   file.replace:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/mysql/my.cnf
-{% elif grains['os'] == 'RedHat' %}
-    - name: /etc/my.cnf
-{% endif %}
+    - name: {{ pillar['mysql-server']['configuration_file'] }}
     - pattern: '# Recommended in standard MySQL setup'
     - repl: skip-name-resolve
     - require:
@@ -65,16 +55,12 @@ mysql-update-mysql-configuration2:
 {% if grains['os'] == 'RedHat' %}
 mysql-systemctl_reload:
   cmd.run:
-    - name: /bin/systemctl daemon-reload; /bin/systemctl enable mysqld
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable {{ pillar['mysql-server']['service_name'] }}
 {%- endif %}
 
 mysql-mysql-running:
   cmd.run:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: 'service mysql stop || echo already stopped; service mysql start'
-{% elif grains['os'] == 'RedHat' %}
-    - name: 'service mysqld stop || echo already stopped; service mysqld start'
-{% endif %}
+    - name: 'service {{ pillar['mysql-server']['service_name'] }} stop || echo already stopped; service {{ pillar['mysql-server']['service_name'] }} start'
 
 {% if grains['os'] == 'RedHat' %}
 mysql_root_password:

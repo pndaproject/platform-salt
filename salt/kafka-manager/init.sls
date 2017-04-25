@@ -12,7 +12,9 @@
 
 kafka-manager-install_unzip:
   pkg.installed:
-    - name: unzip
+    - name: {{ pillar['unzip']['package-name'] }}
+    - version: {{ pillar['unzip']['version'] }}
+    - ignore_epoch: True
 
 kafka-manager-dl-and-extract:
   archive.extracted:

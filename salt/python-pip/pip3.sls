@@ -13,6 +13,9 @@ python-pip-install-pip3-package:
       - python34-pip
       - python34-devel
 {% endif %}
+      - {{ pillar['python3-pip']['package-name'] }}: {{ pillar['python3-pip']['version'] }}
+      - {{ pillar['python3-dev']['package-name'] }}: {{ pillar['python3-dev']['version'] }}
+    - ignore_epoch: True
 
 python-pip-install_python_pip3:
   pip.installed:

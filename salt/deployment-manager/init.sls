@@ -13,14 +13,12 @@ include:
 deployment-manager-install_dev_deps:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - libsasl2-dev
-      - g++
-{% elif grains['os'] == 'RedHat' %}
-      - gcc-c++
-      - libgsasl-devel
-      - cyrus-sasl-devel
+{% if grains['os'] == 'RedHat' %}
+      - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
 {% endif %}
+      - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
+      - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
 
 deployment-manager-dl-and-extract:
   archive.extracted:

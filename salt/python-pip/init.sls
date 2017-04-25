@@ -3,13 +3,9 @@
 python-pip-install-pip-package:
   pkg.installed:
     - pkgs:
-{% if grains['os'] == 'Ubuntu' %}
-      - python-pip
-      - python-dev
-{% elif grains['os'] == 'RedHat' %}
-      - python2-pip
-      - python-devel
-{% endif %}
+      - {{ pillar['python-pip']['package-name'] }}: {{ pillar['python-pip']['version'] }}
+      - {{ pillar['python-dev']['package-name'] }}: {{ pillar['python-dev']['version'] }}
+    - ignore_epoch: True
 
 python-pip-install_python_pip:
   pip.installed:
