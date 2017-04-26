@@ -13,7 +13,7 @@ DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -y install unzip=6.0-9ubuntu1.5 salt-master=2015.8.11+ds-1 git=1:1.9.1-1ubuntu0.3
+apt-get -y install unzip=6.0-9ubuntu1.5 salt-master=2015.8.11+ds-1 git=1:1.9.1-1ubuntu0.4
 fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
