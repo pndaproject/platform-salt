@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2808: Install PNDA platform-libraries on all CDH nodes instead of just the jupyter node.
 - PNDA-2787: Write cm_setup.log to /var/log/pnda instead of /tmp
 - PNDA-2810: Update boto library to 2.46.1 required to work with certain AWS regions (e.g. London)
+- PNDA-2883: add `auth_version` to `pr-config.json` to set the swift keystone auth version associated with `auth_url`
 
 ## [1.3.0] 2017-01-20
 ### Added
