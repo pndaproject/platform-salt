@@ -73,8 +73,8 @@ redis-server:
   version: "2:2.8.4-2"
   configuration_filename: "/etc/redis/redis.conf"
 snappy:
-  package-name: snappy
-  version: "0.2-1"
+  package-name: libsnappy-dev
+  version: "1.1.0-1ubuntu1"
 sshfs:
   package-name: sshfs
   version: "2.5-1ubuntu1"

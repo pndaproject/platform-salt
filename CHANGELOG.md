@@ -18,6 +18,9 @@ All notable changes to this project will be documented in this file.
 - PNDA-2787: Write cm_setup.log to /var/log/pnda instead of /tmp
 - PNDA-2810: Update boto library to 2.46.1 required to work with certain AWS regions (e.g. London)
 
+### Fixed
+- PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
+
 ## [1.3.0] 2017-01-20
 ### Added
 - PNDA-2533: Ability to create an ElasticSearch cluster for external usage

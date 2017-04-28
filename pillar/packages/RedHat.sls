@@ -76,7 +76,7 @@ redis-server:
   version: "2.8.19-2.el7"
   configuration_filename: "/etc/redis.conf"
 snappy:
-  package-name: snappy
+  package-name: snappy-devel
   version: "1.1.0-3.el7"
 sshfs:
   package-name: fuse-sshfs
