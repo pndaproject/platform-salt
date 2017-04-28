@@ -6,13 +6,13 @@ at:
   version: "3.1.13-22.el7"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
-  version: "5.10.0-1.cm5100.p0.85.el7"
+  version: "5.9.0-1.cm590.p0.249.el7"
 cloudera-manager-daemons:
   package-name: cloudera-manager-daemons
-  version: "5.10.0-1.cm5100.p0.85.el7"
+  version: "5.9.0-1.cm590.p0.249.el7"
 cloudera-manager-server:
   package-name: cloudera-manager-server
-  version: "5.10.0-1.cm5100.p0.85.el7"
+  version: "5.9.0-1.cm590.p0.249.el7"
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
   version: "2.1.26-20.el7_2"
@@ -73,7 +73,7 @@ python-mysqldb:
   version: "1.2.5-1.el7"
 redis-server:
   package-name: redis
-  version: "2.8.19-2.el7"
+  version: "3.2.3-1.el7"
   configuration_filename: "/etc/redis.conf"
 snappy:
   package-name: snappy-devel
