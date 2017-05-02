@@ -14,7 +14,6 @@ if [ "x$DISTRO" == "xubuntu" ]; then
 
 elif [ "x$DISTRO" == "xrhel" ]; then
 
-rm -rf /etc/yum.repos.d/*
 yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-redhat-release
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-mysql
