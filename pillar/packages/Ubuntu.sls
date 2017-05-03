@@ -44,9 +44,6 @@ mysql-server:
 nginx:
   package-name: nginx
   version: "1.4.6-1ubuntu3.7"
-nodejs:
-  package-name: nodejs
-  version: "6.10.2-1nodesource1~trusty1"
 ntp:
   package-name: ntp
   version: "1:4.2.6.p5+dfsg-3ubuntu2.14.04.10"

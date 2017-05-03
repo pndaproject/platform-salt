@@ -67,7 +67,7 @@ console-frontend-install_app_dependencies:
     - cwd: {{ console_dir }}
     - name: npm rebuild
     - require:
-      - pkg: nodejs-install_useful_packages
+      - archive: nodejs-dl_and_extract_node
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:
