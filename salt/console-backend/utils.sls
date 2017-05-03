@@ -27,4 +27,4 @@ console-backend-install_utils_dependencies:
     - cwd: {{ install_dir }}/console-backend-utils
     - name: npm rebuild
     - require:
-      - pkg: nodejs-install_useful_packages
+      - archive: nodejs-dl_and_extract_node

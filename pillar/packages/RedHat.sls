@@ -47,9 +47,6 @@ nginx:
 nmap-ncat:
   package-name: nmap-ncat
   version: "6.40-7.el7"
-nodejs:
-  package-name: nodejs
-  version: "6.10.0-1nodesource.el7.centos"
 ntp:
   package-name: ntp
   version: "4.2.6p5-25.el7_3.1"

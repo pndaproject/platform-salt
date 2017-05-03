@@ -81,7 +81,7 @@ console-backend-install_backend_app_dependencies:
     - cwd: {{ app_dir }}
     - name: npm rebuild
     - require:
-      - pkg: nodejs-install_useful_packages
+      - archive: nodejs-dl_and_extract_node
       - cmd: console-backend-install_utils_dependencies
 
 # Create service script from template
