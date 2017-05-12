@@ -1,6 +1,12 @@
 acl:
   package-name: acl
   version: ""
+ambari-agent:
+  package-name: ambari-agent
+  version: "2.5.0.3-7"
+ambari-server:
+  package-name: ambari-server
+  version: "2.5.0.3-7"
 at:
   package-name: at
   version: ""
