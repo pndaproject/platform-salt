@@ -133,9 +133,9 @@ MAPRED_CFG = {
         },
         {
             "type": "JOBHISTORY",
-            "config": 
+            "config":
                 {
-                    'mr2_jobhistory_log_dir': '/var/log/pnda/hadoop-mapreduce', 
+                    'mr2_jobhistory_log_dir': '/var/log/pnda/hadoop-mapreduce',
                     'mapreduce_jobhistory_max_age_ms': '265000000',
                     'mr2_jobhistory_java_heapsize': '8589934592'
                 }
