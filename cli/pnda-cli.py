@@ -186,16 +186,16 @@ def bootstrap(instance, saltmaster, cluster, flavor, branch, salt_tarball, error
         if not os.path.isfile(type_script):
             type_script = 'bootstrap-scripts/%s.sh' % (node_type)
         node_idx = instance['node_idx']
-        files_to_scp = ['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/package_install.sh', 'bootstrap-scripts/base.sh', type_script]
+        files_to_scp = ['cli/pnda_env_%s.sh' % cluster, 'bootstrap-scripts/package-install.sh', 'bootstrap-scripts/base.sh', type_script]
         cmds_to_run = ['source /tmp/pnda_env_%s.sh' % cluster,
                        'export PNDA_SALTMASTER_IP=%s' % saltmaster,
                        'export PNDA_CLUSTER=%s' % cluster,
                        'export PNDA_FLAVOR=%s' % flavor,
                        'export PLATFORM_GIT_BRANCH=%s' % branch,
                        'export PLATFORM_SALT_TARBALL=%s' % salt_tarball if salt_tarball is not None else ':',
-                       'sudo chmod a+x /tmp/package_install.sh',
+                       'sudo chmod a+x /tmp/package-install.sh',
                        'sudo chmod a+x /tmp/base.sh',
-                       '(sudo -E /tmp/package_install.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
+                       '(sudo -E /tmp/package-install.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR,
                        '(sudo -E /tmp/base.sh 2>&1) | tee -a pnda-bootstrap.log; %s' % THROW_BASH_ERROR]
 
         if node_type == NODE_CONFIG['salt-master-instance']:
