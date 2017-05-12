@@ -1,9 +1,16 @@
 include:
   - reboot.install_restart
 
-restart-start_cloudera_manager:
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set hadoop_manager_service = 'ambari-server' %}
+{% else %}
+{% set hadoop_manager_service = 'cloudera-scm-manager' %}
+{% endif %}
+
+
+restart-start_hadoop_manager:
   cmd.run:
-    - name: 'service cloudera-scm-manager start'
+    - name: 'service {{ hadoop_manager_service }} start || echo {{ hadoop_manager_service }} already running'
 
 restart-start_service:
   cmd.run:

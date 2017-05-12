@@ -1,10 +1,11 @@
 {
+  "hadoop_distro": "{{hadoop_distro}}",
   "clustername": "{{clustername}}",
   "edge_node": "{{ edge_node }}",
   "user_interfaces": [
     {
-      "name": "Cloudera Manager",
-      "link": "{{ cloudera_manager_link }}"
+      "name": "Hadoop Cluster Manager",
+      "link": "{{ hadoop_manager_link }}"
     },
     {
       "name": "Kafka Manager",

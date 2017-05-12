@@ -3,7 +3,7 @@
 ###############################################################################
 
 # File system URIs
-fs.uri=hdfs://{{ namenode }}:8020
+fs.uri={{ namenode }}
 writer.fs.uri=${fs.uri}
 
 job.name=PullFromKafkaMR
