@@ -4,6 +4,16 @@
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
 
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set anaconda_home = '/opt/pnda/anaconda' %}
+{% set spark_home = '/usr/hdp/current/spark-client' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf' %}
+{% else %}
+{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
+{% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
+{% endif %}
+
 include:
   - python-pip
   - python-pip.pip3
@@ -33,7 +43,7 @@ jupyter-copy_initial_notebooks:
 # install jupyter kernels (python2, python3, and pyspark)
 jupyter-install_python2_kernel:
   cmd.run:
-    - name: '/opt/cloudera/parcels/Anaconda/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
+    - name: '{{ anaconda_home }}/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
     - require:
       - virtualenv: jupyter-create-venv
 
@@ -49,6 +59,10 @@ jupyter-copy_pyspark_kernel:
     - template: jinja
     - require:
       - file: jupyter-create_pyspark_kernel_dir
+    - defaults:
+        anaconda_home: {{ anaconda_home }}
+        spark_home: {{ spark_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:

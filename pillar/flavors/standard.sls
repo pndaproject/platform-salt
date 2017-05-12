@@ -15,6 +15,9 @@
         "cdh.setup_hadoop": {
             "template_file": "cfg_standard.py"
         },
+        "hdp.setup_hadoop": {
+            "template_file": "cfg_standard.py"
+        },
         "curator": {
             "days_to_keep": 6
         }
