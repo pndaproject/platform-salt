@@ -9,7 +9,6 @@ Created:    14/03/2016
 """
 import time
 import urllib2
-import string
 import logging
 import sys
 import json
@@ -26,7 +25,7 @@ import cfg_flavor as _CFG
 DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.9.0/'
 DEFAULT_PARCEL_VERSION = '5.9.0-1.cdh5.9.0.p0.23'
 
-DEFAULT_LOG_FILE = '/var/log/pnda/cm_setup.log'
+DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 SETUP_SUCCESS = os.path.expanduser('~/.CM_SETUP_SUCCESS')
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
@@ -815,7 +814,8 @@ def setup_common_oozie_libs(name_node):
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-it.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-prefix-tree.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/lib/zookeeper.jar',
-                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar']
+                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar',
+                     '/opt/cloudera/parcels/CDH/lib/spark/lib/spark-examples.jar']
 
     # Setup a connection with hdfs using namenode.
     hdfs_client = PyWebHdfsClient(host=name_node, port=webhdfs_port, user_name=webhdfs_user, timeout=None)
