@@ -4,9 +4,17 @@
 {% set platformlib_package = 'platformlibs-' + platformlib_version + '-py2.7.egg' %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
-{% set cm_ip = salt['pnda.ip_addresses']('cloudera_manager')[0] %}
+{% set cm_ip = salt['pnda.ip_addresses']('hadoop_manager')[0] %}
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
+
+{% set hadoop_distro = pillar['hadoop.distro'] %}
+
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set anaconda_home = '/opt/pnda/anaconda' %}
+{% else %}
+{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
+{% endif %}
 
 include:
   - python-pip
@@ -34,9 +42,14 @@ platform-libraries-download_egg_file:
     - require:
       - file: platform-libraries-create_target_dir
 
+platform-libraries-link_egg_file:
+  file.symlink:
+    - name: {{ platformlib_target_directory }}/platformlibs-py2.7.egg
+    - target: {{ platformlib_target_directory }}/{{ platformlib_package }}
+
 platform-libaries-easy-install:
   cmd.run:
-    - name: /opt/cloudera/parcels/Anaconda/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
+    - name: {{ anaconda_home }}/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
 
 platform-libraries-create-conf-dir:
   file.directory:
@@ -51,3 +64,4 @@ platform-libraries-copy-conf-file:
       cm_ip: {{ cm_ip }}
       cm_user: {{ cm_username }}
       cm_pass: {{ cm_password }}
+      hadoop_distro: {{ hadoop_distro }}

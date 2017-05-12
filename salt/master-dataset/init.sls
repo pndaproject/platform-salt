@@ -1,17 +1,22 @@
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set pnda_group = pillar['pnda']['group'] %}
 
-{% set namenodes_ips = salt['pnda.namenodes_ips']() %}
-# Only take the first one
-{% set namenode = namenodes_ips[0] %}
+{% set namenode = salt['pnda.hadoop_namenode']() %}
 
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
-{% set pnda_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_master_dataset_location %}
+{% set pnda_kite_dataset_uri = "dataset:" + namenode + pnda_master_dataset_location %}
 
 {% set pnda_master_bulk_location = pillar['pnda']['master_dataset']['bulk_directory'] %}
 
 {% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
-{% set pnda_quarantine_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_quarantine_dataset_location %}
+{% set pnda_quarantine_kite_dataset_uri = "dataset:" + namenode + pnda_quarantine_dataset_location %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+{% set kite_package = 'kite-tools-1.0.0-binary.jar' %}
+{% set kite_install_path = '/opt/pnda/kite-sdk/' %}
+{% set kite_tool_wrapper = '/usr/bin/kite-dataset' %}
 
 include:
   - .pnda_hdfs_user
@@ -25,6 +30,30 @@ master-dataset_copy_kite_parition_conf:
   file.managed:
     - name: /tmp/pnda_kite_partition.json
     - source: salt://master-dataset/files/pnda_kite_partition.json
+
+{% if pillar['hadoop.distro'] == 'HDP' %}
+master-dataset-kitesdk_dir:
+  file.directory:
+    - name: {{ kite_install_path }}
+    - makedirs: True
+
+master-dataset-kitesdk_dl:
+  file.managed:
+    - name: {{ kite_install_path }}{{ kite_package }}
+    - mode: 0755
+    - source: {{ mirror_location }}/{{ kite_package }}
+    - source_hash: {{ mirror_location }}/{{ kite_package }}.sha512.txt
+
+master-dataset-kitesdk_path:
+  cmd.run:
+    - name: printf '#!/usr/bin/env bash\nexport HADOOP_HOME=/usr/hdp/current/hadoop-client/\n{{ kite_install_path }}{{ kite_package }} $@' > {{ kite_tool_wrapper }}
+
+master-dataset-kitesdk_perms:
+  file.managed:
+    - name: {{ kite_tool_wrapper }}
+    - mode: 755
+    - replace: False
+{% endif %}
 
 master-dataset-create_PNDA_master_kite_dataset:
   cmd.run:

@@ -1,8 +1,17 @@
 acl:
   package-name: acl
   version: ""
+ambari-agent:
+  package-name: ambari-agent
+  version: "2.5.0.3-7"
+ambari-server:
+  package-name: ambari-server
+  version: "2.5.0.3-7"
 at:
   package-name: at
+  version: ""
+bzip2:
+  package-name: bzip2
   version: ""
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
@@ -15,6 +24,12 @@ cloudera-manager-server:
   version: "5.9.0-1.cm590.p0.249.el7"
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
+  version: ""
+cyrus-sasl-gssapi:
+  package-name: cyrus-sasl-gssapi
+  version: ""
+cyrus-sasl-plain:
+  package-name: cyrus-sasl-plain
   version: ""
 g++:
   package-name: gcc-c++
@@ -32,6 +47,9 @@ libssl-dev:
   version: ""
 libffi-dev:
   package-name: libffi-devel
+  version:  ""
+libtirpc-devel:
+  package-name: libtirpc-devel
   version:  ""
 libsasl:
   package-name: libgsasl-devel
