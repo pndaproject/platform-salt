@@ -9,7 +9,7 @@ build/env/bin/hue  shell <<CHECKUSER
 import sys
 from django.contrib.auth.models import User
 
-pnda_user = None 
+pnda_user = None
 try:
     pnda_user = User.objects.get(username='{{ pnda_user }}')
 except User.DoesNotExist:
@@ -39,7 +39,7 @@ fi
 build/env/bin/hue createsuperuser --username={{ pnda_user }} --noinput --email not@used.com
 build/env/bin/hue  shell <<CREATE
 from django.contrib.auth.models import User
- 
+
 a = User.objects.get(username='{{ pnda_user }}')
 a.set_password('{{ pnda_password }}')
 a.save()
