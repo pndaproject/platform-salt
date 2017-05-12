@@ -1,5 +1,4 @@
 {% set settings = salt['pillar.get']('grafana', {}) -%}
-{% set grafana_version = settings.get('version', '3.1.1-1470047149') %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
@@ -19,7 +18,7 @@
 grafana-server_pkg:
   pkg.installed:
     - sources:
-      - grafana: {{ mirror_location+pillar['grafana']['package-source'] }}
+      - grafana: {{ mirror_location + settings['package-source'] }}
 
 {% if grains['os'] == 'RedHat' %}
 grafana-systemctl_reload:

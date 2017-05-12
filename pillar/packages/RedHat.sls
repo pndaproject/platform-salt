@@ -26,7 +26,7 @@ gnuplot:
   package-name: gnuplot
   version: "4.6.2-3.el7"
 grafana:
-  package-source: 'grafana-3.1.1-1470047149.x86_64.rpm'
+  package-source: 'grafana-4.2.0-1.x86_64.rpm'
 libssl-dev:
   package-name: openssl-devel
   version: "1.0.1e-60.el7_3.1"
