@@ -1,6 +1,6 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set release_directory = salt['pillar.get']('kafkamanager:release_directory', '/srv') %}
-{% set release_version = salt['pillar.get']('kafkamanager:release_version', '1.3.0.4') %}
+{% set release_version = salt['pillar.get']('kafkamanager:release_version', '1.3.3.6') %}
 {% set release_filename = 'kafka-manager-' + release_version + '.zip' %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
