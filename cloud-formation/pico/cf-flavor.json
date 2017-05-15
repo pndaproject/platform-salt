@@ -4,7 +4,7 @@
       "Type" : "String",
       "Default" : "t2.medium",
       "Description" : "Instance type for the access bastion"
-    },    
+    },
     "instancetypeKafka" : {
       "Type" : "String",
       "Default" : "m4.large",
@@ -28,7 +28,7 @@
     "instancetypeESMulti" : {
       "Type" : "String",
       "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster multi-role node"  
+      "Description" : "Instance type for ELK ES cluster multi-role node"
     },
     "instancetypeLogstash" : {
       "Type" : "String",
@@ -39,7 +39,7 @@
       "Type" : "String",
       "Default" : "10",
       "Description" : "Size in GB for the log volume"
-    }    
+    }
   },
   "Resources": {
     "instanceBastion": {
@@ -72,8 +72,8 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
-          }       
+              "Ebs" : { "VolumeSize" : "30" }
+          }
         ],
         "NetworkInterfaces": [
           {
@@ -95,7 +95,7 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeKafka" },
-        "SubnetId": { "Ref" : "PrivateSubnet" },        
+        "SubnetId": { "Ref" : "PrivateSubnet" },
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
@@ -120,13 +120,13 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
-          },         
+              "Ebs" : { "VolumeSize" : "30" }
+          },
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }         
-        ],       
+          }
+        ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
     },
@@ -143,7 +143,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-dn-$node_idx$" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-dn-$node_idx$" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -151,7 +151,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-dn"
+            "Value": "hadoop-dn"
           },
           {
             "Key": "node_idx",
@@ -161,12 +161,12 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
+              "Ebs" : { "VolumeSize" : "30" }
           },
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          },                   
+          },
           {
               "DeviceName"  : "/dev/sdd",
               "Ebs" : { "VolumeSize" : "35" }
@@ -182,13 +182,13 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeEdge" },
-        "SubnetId": { "Ref" : "PrivateSubnet" },        
+        "SubnetId": { "Ref" : "PrivateSubnet" },
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-edge" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-edge" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -196,7 +196,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-edge"
+            "Value": "hadoop-edge"
           },
           {
             "Key": "node_idx",
@@ -206,7 +206,7 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
+              "Ebs" : { "VolumeSize" : "30" }
           },
           {
               "DeviceName" : "/dev/sdc",
@@ -229,7 +229,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-1" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-mgr-1" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -237,7 +237,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-mgr"
+            "Value": "hadoop-mgr"
           },
           {
             "Key": "node_idx",
@@ -247,7 +247,7 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
+              "Ebs" : { "VolumeSize" : "30" }
           },
           {
               "DeviceName" : "/dev/sdc",
@@ -293,7 +293,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -329,7 +329,7 @@
         "BlockDeviceMappings" : [
           {
               "DeviceName" : "/dev/sda1",
-              "Ebs" : { "VolumeSize" : "20" }
+              "Ebs" : { "VolumeSize" : "30" }
           },
           {
               "DeviceName" : "/dev/sdc",

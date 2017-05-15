@@ -1,5 +1,5 @@
 {
-  "Description" : "AWS CloudFormation Template for PNDA. Creates a VPC with Private and Public IP subnets, with access to most instances via a single public bastion node.",  
+  "Description" : "AWS CloudFormation Template for PNDA. Creates a VPC with Private and Public IP subnets, with access to most instances via a single public bastion node.",
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters" : {
     "pndaCluster" : {
@@ -47,7 +47,7 @@
       "Default" : "10.0.1.0/24",
       "Description" : "CIDR specifying the address range for the private subnet"
     }
-  }, 
+  },
   "Resources": {
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
@@ -312,7 +312,7 @@
         "ToPort": "22",
         "CidrIp": { "Ref" : "whitelistSshAccess" }
       }
-    },         
+    },
     "pndaSg": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -331,7 +331,7 @@
         "ToPort": "22",
         "CidrIp": { "Ref" : "whitelistSshAccess" }
       }
-    },         
+    },
     "ingressInternal": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
@@ -355,7 +355,7 @@
         "ToPort": "65535",
         "SourceSecurityGroupId": { "Ref" : "pndaSg" }
       }
-    }, 
+    },
     "ingressInternal3": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
@@ -367,7 +367,7 @@
         "ToPort": "65535",
         "SourceSecurityGroupId": { "Ref" : "sshSg" }
       }
-    },       
+    },
     "egressAll": {
       "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {

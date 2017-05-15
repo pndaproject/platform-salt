@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-# This script runs on instances with a node_type tag of "cdh-edge"
+# This script runs on instances with a node_type tag of "hadoop-edge"
 # The base.sh script does not run on this instance type
 # It mounts the disks and installs a salt master
 
@@ -9,22 +9,22 @@
 # variables
 set -ex
 
-echo $PNDA_CLUSTER-cdh-edge > /etc/hostname
-hostname $PNDA_CLUSTER-cdh-edge
+echo $PNDA_CLUSTER-hadoop-edge > /etc/hostname
+hostname $PNDA_CLUSTER-hadoop-edge
 
 service salt-master restart
 
-# The cloudera:role grain is used by the cm_setup.py (in platform-salt) script to
-# place specific cloudera roles on this instance.
-# The mapping of cloudera roles to cloudera:role grains is
+# The hadoop:role grain is used by the cm_setup.py (in platform-salt) script to
+# place specific hadoop roles on this instance.
+# The mapping of hadoop roles to hadoop:role grains is
 # defined in the cfg_<flavor>.py.tpl files (in platform-salt)
 cat > /etc/salt/grains <<EOF
 pnda:
   flavor: $PNDA_FLAVOR
-cloudera:
+hadoop:
   role: EDGE
 roles:
-  - cloudera_edge
+  - hadoop_edge
   - console_frontend
   - console_backend_data_logger
   - console_backend_data_manager
@@ -33,7 +33,7 @@ roles:
   - deployment_manager
   - package_repository
   - data_service
-  - cloudera_manager
+  - hadoop_manager
   - platform_testing_cdh
   - mysql_connector
   - jupyter
@@ -51,7 +51,7 @@ pnda_cluster: $PNDA_CLUSTER
 EOF
 
 cat >> /etc/salt/minion <<EOF
-id: $PNDA_CLUSTER-cdh-edge
+id: $PNDA_CLUSTER-hadoop-edge
 EOF
 
 service salt-minion restart

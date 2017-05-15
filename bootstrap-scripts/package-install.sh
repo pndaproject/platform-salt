@@ -38,5 +38,6 @@ rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-cloudera
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-EPEL-7
 rpm --import $PNDA_MIRROR/mirror_rpm/SALTSTACK-GPG-KEY.pub
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-CentOS-7
+rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-Jenkins
 
 fi

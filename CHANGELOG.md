@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+- PNDA-2955: Add pnda_env.yaml setting for choosing hadoop distro to install
+
+### Changed
+- PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
+
 ## [1.3.0] 2017-08-01
 ### Added
 - PNDA-2375: Isolate PNDA from breaking dependency change

@@ -3,10 +3,10 @@
   "kafka-nodes":"1-10",
   "opentsdb-nodes":"1-20",
   "datanodes":"1-20",
-  "elk-es-master":"0-20",  
-  "elk-es-data":"0-20",  
-  "elk-es-ingest":"0-20",  
-  "elk-es-coordinator":"0-20",  
+  "elk-es-master":"0-20",
+  "elk-es-data":"0-20",
+  "elk-es-ingest":"0-20",
+  "elk-es-coordinator":"0-20",
   "elk-es-multi":"0-20",
   "elk-logstash":"0-20"
 }

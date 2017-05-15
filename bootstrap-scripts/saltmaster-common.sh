@@ -14,10 +14,12 @@ if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get -y install unzip salt-master=2015.8.11+ds-1 git
+HDP_OS=ubuntu14
 fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
 yum -y install unzip salt-master-2015.8.11-1.el7 git
+HDP_OS=centos7
 fi
 
 cat << EOF > /etc/salt/master
@@ -98,9 +100,8 @@ aws.archive_secret: '$PNDA_ARCHIVE_SECRET_ACCESS_KEY'
 pnda.archive_container: '$PNDA_ARCHIVE_CONTAINER'
 pnda.archive_type: 's3a'
 pnda.archive_service: ''
-EOF
+hadoop.distro: '$HADOOP_DISTRO'
 
-cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
 pnda_mirror:
   base_url: '$PNDA_MIRROR'
   misc_packages_path: /mirror_misc/
@@ -117,6 +118,10 @@ pip:
 
 packages_server:
   base_uri: '$PNDA_MIRROR'
+
+hdp:
+  hdp_core_stack_repo: '$PNDA_MIRROR/mirror_hdp/HDP/$HDP_OS/'
+  hdp_utils_stack_repo: '$PNDA_MIRROR/mirror_hdp/HDP-UTILS-1.1.0.21/repos/$HDP_OS/'
 EOF
 
 if [ "$PR_FS_TYPE" == "swift" ] ; then

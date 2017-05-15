@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-# This script runs on instances with a node_type tag of "cdh-mgr"
+# This script runs on instances with a node_type tag of "hadoop-mgr"
 # It sets the roles that determine what software is installed
 # on this instance by platform-salt scripts and the minion
 # id and hostname
@@ -10,15 +10,14 @@
 # variables
 set -e
 
-# The cloudera:role grain is used by the cm_setup.py (in platform-salt) script to
-# place specific cloudera roles on this instance.
-# The mapping of cloudera roles to cloudera:role grains is
+# The hadoop:role grain is used by the cm_setup.py (in platform-salt) script to
+# place specific hadoop roles on this instance.
+# The mapping of hadoop roles to hadoop:role grains is
 # defined in the cfg_<flavor>.py.tpl files (in platform-salt)
 cat >> /etc/salt/grains <<EOF
-cloudera:
+hadoop:
   role: MGR01
 roles:
-  - cloudera_namenode
   - oozie_database
   - mysql_connector
   - hue
@@ -28,10 +27,10 @@ roles:
 EOF
 
 cat >> /etc/salt/minion <<EOF
-id: $PNDA_CLUSTER-cdh-mgr-1
+id: $PNDA_CLUSTER-hadoop-mgr-1
 EOF
 
-echo $PNDA_CLUSTER-cdh-mgr-1 > /etc/hostname
-hostname $PNDA_CLUSTER-cdh-mgr-1
+echo $PNDA_CLUSTER-hadoop-mgr-1 > /etc/hostname
+hostname $PNDA_CLUSTER-hadoop-mgr-1
 
 service salt-minion restart

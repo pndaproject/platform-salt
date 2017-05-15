@@ -1,4 +1,4 @@
-# Cloud Formation Templates for PNDA 
+# Cloud Formation Templates for PNDA
 
 This readme describes the elements found in the cloud formation templates and their purpose in the cloud formatation stack
 
@@ -50,7 +50,7 @@ The route table for the private subnet contains an entry that enables instances 
 #### Security Groups
 Security groups are used to restrict which ports are open to the outside world and to open all ports for internal communication.
 
-The only port opened to external traffic is 22 on the bastion for ssh access the whitelistSshAccess parameter can be used to restrict who can access this.    
+The only port opened to external traffic is 22 on the bastion for ssh access the whitelistSshAccess parameter can be used to restrict who can access this.
 
 Internally, all ports are opened between the bastion and the other instances, and between the other instances themselves.
 
@@ -64,28 +64,28 @@ These files contain the instance definitions for each machine in PNDA.
 
 To re-organise the instances in a given flavor:
   1. Add or remove instances definitions
-  2. Set the node_type tag to match the name of the bootstrap script that should run on it. 
-  3. Edit the bootstrap scripts to assign roles that you want each instance to have. The instances are then targetted by roles by platform-salt scripts which install software on the right instances. 
+  2. Set the node_type tag to match the name of the bootstrap script that should run on it.
+  3. Edit the bootstrap scripts to assign roles that you want each instance to have. The instances are then targetted by roles by platform-salt scripts which install software on the right instances.
 
 ### Standard
 
-The standard flavor is intended for PoC systems handling reasonable quantities of data. 
+The standard flavor is intended for PoC systems handling reasonable quantities of data.
 
 The main hadoop management services are run in HA.
-  
+
 It consists of the following instances:
   - bastion:     ssh access into the other instances on the private subnet
   - kafka:       the kafka databus, can be horizontally scaled using the -k parameter to pnda-cli.py
   - zookeeper:   zookeeper used by kafka, can be horizontally scaled using the -z parameter to pnda-cli.py
   - tools        hosts kafka manager and other tools for administering the databus
-  - cdh-dn:      the hadoop worker nodes, can be horizontally scaled using the -n parameter to pnda-cli.py
-  - cdh-edge:    an instance to access the hadoop services from, also hosts the pnda console
-  - cdh-mgr:     the hadoop management services node, there are 4 of these and they run the main services in HA mode
+  - hadoop-dn:      the hadoop worker nodes, can be horizontally scaled using the -n parameter to pnda-cli.py
+  - hadoop-edge:    an instance to access the hadoop services from, also hosts the pnda console
+  - hadoop-mgr:     the hadoop management services node, there are 4 of these and they run the main services in HA mode
   - logserver:   runs ELK and aggregates logs from across the cluster
   - opentsdb:    runs the opentsdb daemon, can be horizontally scaled using the -o parameter to pnda-cli.py
   - jupyter:     the Jupyter notebook server for data exploration
   - saltmaster:  the saltmaster runs the scripts for installing software on the other instances
-  - cdh-cm:      the cloudera manager cluster manager
+  - hadoop-cm:      the hadoop manager cluster manager
 
 ### Pico
 
@@ -96,6 +96,6 @@ The main hadoop management services are *not* run in HA.
 It consists of the following instances:
   - bastion:  ssh access into the other instances on the private subnet
   - kafka:    the kafka databus, can be horizontally scaled using the -k parameter to pnda-cli.py
-  - cdh-dn:   the hadoop worker nodes, can be horizontally scaled using the -n parameter to pnda-cli.py
-  - cdh-edge: an instance to access the hadoop services from, also hosts the pnda console, the saltmaster and cloudera manager
-  - cdh-mgr1: the hadoop management services node, also hosts opentsdb
+  - hadoop-dn:   the hadoop worker nodes, can be horizontally scaled using the -n parameter to pnda-cli.py
+  - hadoop-edge: an instance to access the hadoop services from, also hosts the pnda console, the saltmaster and hadoop manager
+  - hadoop-mgr1: the hadoop management services node, also hosts opentsdb
