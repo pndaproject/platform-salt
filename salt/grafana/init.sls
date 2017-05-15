@@ -6,6 +6,12 @@
 
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
+
+{% set grafana_login = pillar['pnda']['user'] %}
+# Because grafana is checking for password length, we need a password of at least 8 characters
+# So, we double the password (if the pnda password is 'pnda' then the grafana password will be 'pndapnda'
+{% set grafana_pass = pillar['pnda']['password']*2 %}
+
 {% set datasources = [
     '{ "name": "PNDA OpenTSDB", "type": "opentsdb", "url": "http://localhost:4242", "access": "proxy", "basicAuth": false, "isDefault": true }',
     '{{ "name": "PNDA Graphite", "type": "graphite", "url": "http://{}:{}", "access": "proxy", "basicAuth": false, "isDefault": false }}'.format(pnda_graphite_host, pnda_graphite_port) ] %}
@@ -35,18 +41,18 @@ grafana-login_script_run:
     - name: salt://grafana/templates/grafana-user-setup.sh.tpl
     - template: jinja
     - context:
-        pnda_user: {{ pillar['pnda']['user'] }}
-        pnda_password: {{ pillar['pnda']['password'] }}
+        pnda_user: {{ grafana_login }}
+        pnda_password: {{ grafana_pass }}
     - cwd: /
     - require:
-      - cmd: grafana-server_start
+      - service: grafana-server_start
 
 {% for ds in datasources %}
 grafana-create_datasources_{{ loop.index }}:
   cmd.script:
     - name: salt://grafana/files/scripts/create_or_update_ds.py
     - args: |
-        {{ pillar['pnda']['user'] }} {{ pillar['pnda']['password'] }} 'http://localhost:3000' '{{ ds }}'
+        {{ grafana_login }} {{ grafana_pass }} 'http://localhost:3000' '{{ ds }}'
     - shell: /bin/bash
     - cwd: /
     - require:
@@ -69,8 +75,8 @@ grafana-import_dashboard-{{ dash }}:
     - args: "'/tmp/{{ dash }}.salt.tmp'"
     - template: jinja
     - context:
-        pnda_user: {{ pillar['pnda']['user'] }}
-        pnda_password: {{ pillar['pnda']['password'] }}
+        pnda_user: {{ grafana_login }}
+        pnda_password: {{ grafana_pass }}
     - cwd: /
     - require:
       - file: grafana-copy_dashboard_{{ dash }}
