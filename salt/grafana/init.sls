@@ -26,15 +26,12 @@ grafana-server_pkg:
     - sources:
       - grafana: {{ mirror_location + settings['package-source'] }}
 
-{% if grains['os'] == 'RedHat' %}
-grafana-systemctl_reload:
-  cmd.run:
-    - name: /bin/systemctl daemon-reload; /bin/systemctl enable grafana-server
-{%- endif %}
-
 grafana-server_start:
-  cmd.run:
-    - name: 'service grafana-server stop || echo already stopped; service grafana-server start'
+  service.running:
+    - name: grafana-server
+    - enable: True
+    - watch:
+      - pkg: grafana-server_pkg
 
 grafana-login_script_run:
   cmd.script:
