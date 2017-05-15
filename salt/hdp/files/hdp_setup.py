@@ -10,7 +10,7 @@ Created:    15/05/2017
 
 import logging
 
-DEFAULT_LOG_FILE = '/var/log/pnda/hdp_setup.log'
+DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.INFO,
