@@ -39,6 +39,9 @@ libssl-dev:
 libffi-dev:
   package-name: libffi-devel
   version:  ""
+libtirpc-devel:
+  package-name: libtirpc-devel
+  version:  ""
 libsasl:
   package-name: libgsasl-devel
   version: ""
