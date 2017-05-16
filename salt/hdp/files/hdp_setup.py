@@ -64,7 +64,7 @@ def setup_hadoop(
     if 'ubuntu14' in hdp_core_stack_repo:
         hdp_os_type = 'ubuntu14'
     elif 'centos7' in hdp_core_stack_repo:
-        hdp_os_type = 'centos7'
+        hdp_os_type = 'redhat7'
     else:
         raise Exception('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
