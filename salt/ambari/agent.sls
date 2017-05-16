@@ -8,8 +8,11 @@ ambari-agent-user:
 
 ambari-agent-pkg:
   pkg.installed:
-    - name: {{ pillar['ambari-agent']['package-name'] }}
-    - version: {{ pillar['ambari-agent']['version'] }}
+    - pkgs:
+      - {{ pillar['ambari-agent']['package-name'] }}: {{ pillar['ambari-agent']['version'] }}
+{% if grains['os'] == 'RedHat' %}
+      - {{ pillar['libtirpc-devel']['package-name'] }}: {{ pillar['libtirpc-devel']['version'] }}
+{%- endif %}
     - ignore_epoch: True
 
 ambari-agent-properties:
