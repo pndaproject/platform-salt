@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2919: Added Ambari salt formula
 - PNDA-2919: Option to install HDP instead of CDH and outline of HDP sls
 - PNDA-2949: Configure Ambari with pnda mirror URLs for HDP stack repos
+- PNDA-2951: Submit super simple blueprint to Ambari
 
 ### Changed
 - PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
