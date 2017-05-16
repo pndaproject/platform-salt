@@ -15,7 +15,7 @@ import requests
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def setup_hadoop(
@@ -49,23 +49,28 @@ def setup_hadoop(
         try:
             logging.info("Checking API availability....")
             response = requests.get("%s/api/v1/hosts" % ambari_api, timeout=5, auth=(ambari_username, ambari_password), headers=headers)
+            logging.debug("%s" % response.text)
             api_up = True
             break
         except Exception:
             logging.warning("API is not up")
             time.sleep(5)
 
+    def exit_setup(error_message):
+        logging.error(error_message)
+        raise Exception(error_message)
+
     if api_up is False:
-        raise Exception("The API did not come up: %s" % ambari_api)
+        exit_setup("The API did not come up: %s" % ambari_api)
 
     logging.info("Configuring Ambari to use HDP stack repos")
 
     if 'ubuntu14' in hdp_core_stack_repo:
         hdp_os_type = 'ubuntu14'
     elif 'centos7' in hdp_core_stack_repo:
-        hdp_os_type = 'centos7'
+        hdp_os_type = 'redhat7'
     else:
-        raise Exception('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
+        exit_setup('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
     repo_requests = [('%s/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_core_stack_repo),
@@ -73,10 +78,12 @@ def setup_hadoop(
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
 
     for repo_request in repo_requests:
+        logging.debug("Registering repo: %s" % repo_request[0])
         response = requests.put(repo_request[0], repo_request[1],
                                 auth=(ambari_username, ambari_password), headers=headers)
         if response.status_code != 200:
-            raise Exception(response.text)
+            exit_setup(response.text)
+        logging.debug("Registered repo: %s" % repo_request[0])
 
     logging.info("Creating blueprint")
     blueprint = '''{
