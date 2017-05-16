@@ -49,6 +49,7 @@ def setup_hadoop(
         try:
             logging.info("Checking API availability....")
             response = requests.get("%s/api/v1/hosts" % ambari_api, timeout=5, auth=(ambari_username, ambari_password), headers=headers)
+            logging.debug("%s" % response.text)
             api_up = True
             break
         except Exception:
@@ -73,12 +74,12 @@ def setup_hadoop(
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
 
     for repo_request in repo_requests:
-        logging.info("Registering repo: %s" % repo_request[0])
+        logging.debug("Registering repo: %s" % repo_request[0])
         response = requests.put(repo_request[0], repo_request[1],
                                 auth=(ambari_username, ambari_password), headers=headers)
         if response.status_code != 200:
             raise Exception(response.text)
-        logging.info("Registered repo: %s" % repo_request[0])
+        logging.debug("Registered repo: %s" % repo_request[0])
 
     logging.info("Creating blueprint")
     blueprint = '''{
