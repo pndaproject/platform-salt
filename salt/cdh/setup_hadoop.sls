@@ -54,11 +54,6 @@ cdh-copy_cm_config:
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
 
-cdh-copy_install_sharedlib:
-  file.managed:
-    - source: salt://cdh/files/install_sharedlib.py
-    - name: {{ scripts_location }}/install_sharedlib.py
-
 # Create a python configured scripts to call the cm_setup.setup_hadoop function with
 # the needed aguments (nodes to install cloudera to)
 cdh-create_cloudera_configuration_script:
@@ -79,6 +74,5 @@ cdh-execute_cloudera_installation_script:
     - require:
       - virtualenv: cdh-create_tmp_virtualenv
       - file: cdh-copy_cm_config
-      - file: cdh-copy_install_sharedlib
       - file: cdh-create_cloudera_configuration_script
       - file: cdh-copy_script_manager_installation_script
