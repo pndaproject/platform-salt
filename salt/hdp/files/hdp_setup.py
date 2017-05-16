@@ -15,7 +15,7 @@ import requests
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def setup_hadoop(
@@ -73,10 +73,12 @@ def setup_hadoop(
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
 
     for repo_request in repo_requests:
+        logging.info("Registering repo: %s" % repo_request[0])
         response = requests.put(repo_request[0], repo_request[1],
                                 auth=(ambari_username, ambari_password), headers=headers)
         if response.status_code != 200:
             raise Exception(response.text)
+        logging.info("Registered repo: %s" % repo_request[0])
 
     logging.info("Creating blueprint")
     blueprint = '''{
