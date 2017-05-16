@@ -9,6 +9,7 @@ Created:    15/05/2017
 """
 
 import logging
+import time
 import requests
 
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
@@ -18,7 +19,7 @@ logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def setup_hadoop(
-        ambari_api,
+        ambari_host,
         nodes,
         cluster_name,
         ambari_username='admin',
@@ -29,7 +30,7 @@ def setup_hadoop(
         anaconda_version=None):
 
     logging.info("setup_hadoop:")
-    logging.info(ambari_api)
+    logging.info(ambari_host)
     logging.info(nodes)
     logging.info(cluster_name)
     logging.info(ambari_username)
@@ -38,6 +39,24 @@ def setup_hadoop(
     logging.info(hdp_utils_stack_repo)
     logging.info(anaconda_repo)
     logging.info(anaconda_version)
+
+    ambari_api = 'http://%s:8080' % ambari_host
+    headers = {'X-Requested-By': ambari_username}
+
+    logging.info("Waiting for Ambari API to be up")
+    api_up = False
+    for _ in xrange(120):
+        try:
+            logging.info("Checking API availability....")
+            response = requests.get("%s/api/v1/hosts" % ambari_api, timeout=5, auth=(ambari_username, ambari_password), headers=headers)
+            api_up = True
+            break
+        except Exception:
+            logging.warning("API is not up")
+            time.sleep(5)
+
+    if api_up is False:
+        raise Exception("The API did not come up: %s" % ambari_api)
 
     logging.info("Configuring Ambari to use HDP stack repos")
 
@@ -48,14 +67,128 @@ def setup_hadoop(
     else:
         raise Exception('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
-    repo_requests = [('http://%s:8080/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
+    repo_requests = [('%s/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_core_stack_repo),
-                      ('http://%s:8080/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
+                     ('%s/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
 
-    headers = {'X-Requested-By': ambari_username}
     for repo_request in repo_requests:
-        response = requests.put(repo_request[0], repo_request[1], 
+        response = requests.put(repo_request[0], repo_request[1],
                                 auth=(ambari_username, ambari_password), headers=headers)
         if response.status_code != 200:
             raise Exception(response.text)
+
+    logging.info("Creating blueprint")
+    blueprint = '''{
+                    "host_groups" : [
+                        {
+                        "name" : "master",
+                        "components" : [
+                            {
+                            "name" : "NAMENODE"
+                            },
+                            {
+                            "name" : "SECONDARY_NAMENODE"
+                            },       
+                            {
+                            "name" : "RESOURCEMANAGER"
+                            },
+                            {
+                            "name" : "HISTORYSERVER"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_SERVER"
+                            },
+                            {
+                            "name" : "APP_TIMELINE_SERVER"
+                            }
+                        ],
+                        "cardinality" : "1"
+                        },
+                        {
+                        "name" : "slaves",
+                        "components" : [
+                            {
+                            "name" : "DATANODE"
+                            },
+                            {
+                            "name" : "HDFS_CLIENT"
+                            },
+                            {
+                            "name" : "NODEMANAGER"
+                            },
+                            {
+                            "name" : "YARN_CLIENT"
+                            },
+                            {
+                            "name" : "MAPREDUCE2_CLIENT"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_CLIENT"
+                            }
+                        ],
+                        "cardinality" : "1+"
+                        },
+                        {
+                        "name" : "edge",
+                        "components" : [
+                            {
+                            "name" : "HDFS_CLIENT"
+                            },
+                            {
+                            "name" : "YARN_CLIENT"
+                            },
+                            {
+                            "name" : "MAPREDUCE2_CLIENT"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_CLIENT"
+                            }
+                        ],
+                        "cardinality" : "1+"
+                        }
+                    ],
+                    "Blueprints" : {
+                        "blueprint_name" : "hdp-sample-blueprint",
+                        "stack_name" : "HDP",
+                        "stack_version" : "2.6"
+                    }
+                }'''
+    response = requests.post('%s/api/v1/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
+    logging.info('Response to blueprint creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
+
+    cluster_instance = '''{
+                            "blueprint" : "hdp-sample-blueprint",
+                            "default_password" : "%s",
+                            "host_groups" :[
+                                {
+                                  "name" : "master", 
+                                  "hosts" : [         
+                                    {
+                                    "fqdn" : "%s-cdh-mgr-1"
+                                    }
+                                ]
+                                },
+                                {
+                                  "name" : "slaves", 
+                                  "hosts" : [         
+                                    {
+                                    "fqdn" : "%s-cdh-dn-0"
+                                    }                                                                       
+                                  ]
+                                },
+                                {
+                                  "name" : "edge", 
+                                  "hosts" : [         
+                                    {
+                                    "fqdn" : "%s-cdh-edge"
+                                    }                                                                       
+                                ]
+                                }
+                            ]
+                        }''' % (ambari_password, cluster_name, cluster_name, cluster_name)
+
+    response = requests.post('%s/api/v1/clusters/hdp-sample-pico-cluster' %
+                             ambari_api, cluster_instance, auth=(ambari_username, ambari_password), headers=headers)
+    logging.info('Response to cluster creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
+    logging.info(response.text)
