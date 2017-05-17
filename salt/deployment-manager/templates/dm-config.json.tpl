@@ -41,7 +41,7 @@
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 {%- set data_logger_link = salt['pnda.generate_http_link']('console_backend_data_logger',':'+data_logger_port|string) -%}
 
-{%- set cm_node_ip = salt['pnda.cloudera_manager_ip']() -%}
+{%- set cm_node_ip = salt['pnda.hadoop_manager_ip']() -%}
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}

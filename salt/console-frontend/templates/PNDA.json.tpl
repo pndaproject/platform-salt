@@ -4,7 +4,7 @@
   "user_interfaces": [
     {
       "name": "Cloudera Manager",
-      "link": "{{ cloudera_manager_link }}"
+      "link": "{{ hadoop_manager_link }}"
     },
     {
       "name": "Kafka Manager",
