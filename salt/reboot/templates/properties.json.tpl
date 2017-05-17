@@ -1,4 +1,4 @@
-{%- set cm_node_ip = salt['pnda.cloudera_manager_ip']() -%}
+{%- set cm_node_ip = salt['pnda.hadoop_manager_ip']() -%}
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
 {

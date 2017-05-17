@@ -1,6 +1,6 @@
 {%- set cm_node = [] %}
 {%- set pnda_cluster = salt['pnda.cluster_name']() %}
-{%- for server, addrs in salt['mine.get']("G@pnda_cluster:"+pnda_cluster+" and G@roles:cloudera_manager", 'network.ip_addrs', expr_form='compound').items() %}
+{%- for server, addrs in salt['mine.get']("G@pnda_cluster:"+pnda_cluster+" and G@roles:hadoop_manager", 'network.ip_addrs', expr_form='compound').items() %}
 {%- do cm_node.append(addrs[0]) %}
 {%- endfor %}
 {%- set cm_node_ip = cm_node|join(" ") %}
