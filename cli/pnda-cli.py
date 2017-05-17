@@ -421,8 +421,6 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
 
     time.sleep(30)
 
-    scp(['bootstrap-scripts/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
-    ssh(['chmod a+x /tmp/wait-for-ec2-grains.sh', '/tmp/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
@@ -487,9 +485,6 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
         raise Exception("Error bootstrapping host, error msg: %s. See debug log (%s) for details." % (ret_val, LOG_FILE_NAME))
 
     time.sleep(30)
-
-    scp(['bootstrap-scripts/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
-    ssh(['chmod a+x /tmp/wait-for-ec2-grains.sh', '/tmp/wait-for-ec2-grains.sh'], cluster, saltmaster_ip)
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
