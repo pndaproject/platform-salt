@@ -16,7 +16,7 @@ from cm_api.api_client import ApiResource
 
 def connect_cm(cm_api, cm_username, cm_password):
     api = ApiResource(cm_api, version=11, username=cm_username, password=cm_password)
-    cloudera_manager = api.get_cloudera_manager()
+    hadoop_manager = api.get_cloudera_manager()
     return api, cloudera_manager
 
 def wait_on_command(cmds):

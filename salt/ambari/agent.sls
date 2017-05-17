@@ -1,4 +1,4 @@
-{%- set ambari_server_host = salt['pnda.ip_addresses']('cloudera_manager')[0] -%}
+{%- set ambari_server_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
 
 ambari-agent-user:
   user.present:
