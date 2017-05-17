@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Use redis 3.2.3 on redhat
 - PNDA-2903: Install node.js from tar.gz instead of deb package
 - PNDA-2966: Replace separate `install_sharedlib.py` with function in `cm_setup.py`
+- PNDA-2964: Stop using ec2 grains during deployment as it's not needed anymore
 
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
