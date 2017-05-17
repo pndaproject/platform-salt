@@ -1,5 +1,5 @@
 #!{{ virtual_env_dir }}/bin/python
-{% set cm_ip = salt['pnda.ip_addresses']('cloudera_manager')[0] %}
+{% set cm_ip = salt['pnda.ip_addresses']('hadoop_manager')[0] %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
 import sys

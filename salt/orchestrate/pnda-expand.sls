@@ -16,7 +16,7 @@ cdh-install-agents:
 
 cdh-install_hadoop:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_manager'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: cdh.setup_hadoop
     - timeout: 120

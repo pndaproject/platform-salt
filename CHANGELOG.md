@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2984: Upgrade JDK to 8u131
 - PNDA-2881: Update Kafka Manager version to 1.3.3.6
 - PNDA-2839: Update Grafana version to 4.2.0. Warning: the default pnda password has changed.
+- PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
 
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again

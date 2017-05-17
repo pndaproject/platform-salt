@@ -8,9 +8,9 @@ orchestrate-pnda-run_cloudera_user:
     - sls: cdh.cloudera_user
     - timeout: 120
 
-orchestrate-pnda-install_cloudera_manager:
+orchestrate-pnda-install_hadoop_manager:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_manager'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: cdh.cloudera-manager
     - timeout: 120
@@ -24,7 +24,7 @@ orchestrate-pnda-install-agents:
 
 orchestrate-pnda-install_cdh_hadoop:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_manager'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: cdh.setup_hadoop
     - timeout: 120
@@ -33,7 +33,7 @@ orchestrate-pnda-install_cdh_hadoop:
 {% if pillar['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_ambari_server:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_manager'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: ambari.server
     - timeout: 120
@@ -47,7 +47,7 @@ orchestrate-pnda-install_ambari_agents:
 
 orchestrate-pnda-install_hdp_hadoop:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:cloudera_manager'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: hdp.setup_hadoop
     - timeout: 120
