@@ -24,16 +24,16 @@ def cluster_name():
 def namenodes_ips():
     """Returns hadoop name nodes ip addresses"""
     cm_name = cluster_name()
-    cm_host = cloudera_manager_ip()
+    cm_host = hadoop_manager_ip()
     service_name = 'hdfs01'
     named_service = get_named_service(cm_host, cm_name, service_name)
     if named_service:
         return [named_service]
     return ip_addresses('cloudera_namenode')
 
-def cloudera_manager_ip():
+def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
-    cm = ip_addresses('cloudera_manager')
+    cm = ip_addresses('hadoop_manager')
     if cm is not None and len(cm) > 0:
         return cm[0]
     else:
@@ -78,7 +78,7 @@ def generate_http_link(role, suffix):
 def cloudera_get_hosts_by_role(service, role_type):
     user = __salt__['pillar.get']('admin_login:user')
     password = __salt__['pillar.get']('admin_login:password')
-    endpoint = cloudera_manager_ip() + ':7180'
+    endpoint = hadoop_manager_ip() + ':7180'
     cluster = cluster_name()
 
     request_url = 'http://{}/api/v14/clusters/{}/services/{}/roles'.format(endpoint, cluster, service)

@@ -20,7 +20,7 @@
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
 
 # edge node IP
-{% set edge_nodes = salt['pnda.ip_addresses']('cloudera_edge') %}
+{% set edge_nodes = salt['pnda.ip_addresses']('hadoop_edge') %}
 {%- if edge_nodes is not none and edge_nodes|length > 0 -%}
     {%- set edge_node_ip = edge_nodes[0] -%}
 {%- else -%}
@@ -28,7 +28,7 @@
 {%- endif -%}
 
 # Set links
-{% set cloudera_manager_link = salt['pnda.generate_http_link']('cloudera_manager',':7180') %}
+{% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager',':7180') %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
 {% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
@@ -95,7 +95,7 @@ console-frontend-create_pnda_console_config:
         data_manager_host: {{ data_manager_host }}
         data_manager_port: {{ data_manager_port }}
         edge_node: {{ edge_node_ip }}
-        cloudera_manager_link: "{{ cloudera_manager_link }}"
+        hadoop_manager_link: "{{ hadoop_manager_link }}"
         kafka_manager_link: "{{ km_link }}"
         opentsdb_link: "{{ opentsdb_link }}"
         grafana_link: "{{ grafana_link }}"
