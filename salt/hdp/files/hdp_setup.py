@@ -162,7 +162,7 @@ def setup_hadoop(
                     }
                 }'''
     response = requests.post('%s/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
-    logging.info('Response to blueprint creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
+    logging.info('Response to blueprint creation %s: %s' % ('/blueprints/hdp-sample-blueprint', response.status_code))
 
     cluster_instance = '''{
                             "blueprint" : "hdp-sample-blueprint",
@@ -197,5 +197,5 @@ def setup_hadoop(
 
     response = requests.post('%s/clusters/hdp-sample-pico-cluster' %
                              ambari_api, cluster_instance, auth=(ambari_username, ambari_password), headers=headers)
-    logging.info('Response to cluster creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
+    logging.info('Response to cluster creation %s: %s' % ('/clusters/hdp-sample-pico-cluster', response.status_code))
     logging.info(response.text)
