@@ -40,7 +40,7 @@ def setup_hadoop(
     logging.info(anaconda_repo)
     logging.info(anaconda_version)
 
-    ambari_api = 'http://%s:8080' % ambari_host
+    ambari_api = 'http://%s:8080/api/v1' % ambari_host
     headers = {'X-Requested-By': ambari_username}
 
     logging.info("Waiting for Ambari API to be up")
@@ -48,7 +48,7 @@ def setup_hadoop(
     for _ in xrange(120):
         try:
             logging.info("Checking API availability....")
-            response = requests.get("%s/api/v1/hosts" % ambari_api, timeout=5, auth=(ambari_username, ambari_password), headers=headers)
+            response = requests.get("%s/hosts" % ambari_api, timeout=5, auth=(ambari_username, ambari_password), headers=headers)
             logging.debug("%s" % response.text)
             api_up = True
             break
@@ -72,9 +72,9 @@ def setup_hadoop(
     else:
         exit_setup('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
-    repo_requests = [('%s/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
+    repo_requests = [('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_core_stack_repo),
-                     ('%s/api/v1/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
+                     ('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
                       '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
 
     for repo_request in repo_requests:
@@ -161,7 +161,7 @@ def setup_hadoop(
                         "stack_version" : "2.6"
                     }
                 }'''
-    response = requests.post('%s/api/v1/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
+    response = requests.post('%s/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to blueprint creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
 
     cluster_instance = '''{
@@ -195,7 +195,7 @@ def setup_hadoop(
                             ]
                         }''' % (ambari_password, cluster_name, cluster_name, cluster_name)
 
-    response = requests.post('%s/api/v1/clusters/hdp-sample-pico-cluster' %
+    response = requests.post('%s/clusters/hdp-sample-pico-cluster' %
                              ambari_api, cluster_instance, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to cluster creation %s: %s' % ('api/v1/blueprints/hdp-sample-blueprint', response.status_code))
     logging.info(response.text)
