@@ -29,7 +29,7 @@ def namenodes_ips():
     named_service = get_named_service(cm_host, cm_name, service_name)
     if named_service:
         return [named_service]
-    return ip_addresses('cloudera_namenode')
+    return ip_addresses('hadoop_namenode')
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
