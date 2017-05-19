@@ -2,14 +2,14 @@
 
 cdh-create_cloudera_user:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: cdh.cloudera_user
     - timeout: 120
 
 cdh-install-agents:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: cdh.cloudera-manager-agent
     - timeout: 120
@@ -23,7 +23,7 @@ cdh-install_hadoop:
 
 cdh-install_platform_libraries:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: pnda.platform-libraries
     - timeout: 120

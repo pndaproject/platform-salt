@@ -3,7 +3,7 @@
 {% if pillar['hadoop.distro'] == 'CDH' %}
 orchestrate-pnda-run_cloudera_user:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: cdh.cloudera_user
     - timeout: 120
@@ -17,7 +17,7 @@ orchestrate-pnda-install_hadoop_manager:
 
 orchestrate-pnda-install-agents:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: cdh.cloudera-manager-agent
     - timeout: 120
@@ -40,7 +40,7 @@ orchestrate-pnda-install_ambari_server:
 
 orchestrate-pnda-install_ambari_agents:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: ambari.agent
     - timeout: 120
@@ -83,7 +83,7 @@ orchestrate-pnda-install_gobblin:
 
 orchestrate-pnda-install_platform_libraries:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@cloudera:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: pnda.platform-libraries
     - timeout: 120
@@ -111,7 +111,7 @@ orchestrate-pnda-install_deployment_manager:
 
 orchestrate-pnda-install_deployment_manager_keys:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@cloudera:* or G@roles:opentsdb )'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:* or G@roles:opentsdb )'
     - tgt_type: compound
     - sls: deployment-manager.keys
     - timeout: 120

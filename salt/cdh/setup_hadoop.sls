@@ -67,8 +67,8 @@ cdh-create_cloudera_configuration_script:
     - source: salt://cdh/templates/cloudera_config.py.tpl
     - template: jinja
     - defaults:
-        ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
-        cloudera_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
+        ips: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
+        hadoop_config: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         cluster_name: {{ pnda_cluster }}
         parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}
         parcel_version: {{ cloudera_p.get('parcel_version', '') }}
