@@ -66,7 +66,7 @@
     - match: grain
     - snappy
 
-  'cloudera:*':
+  'hadoop:*':
     - match: grain
     - cdh.create_data_dirs
     - snappy
