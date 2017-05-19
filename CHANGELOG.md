@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2883: add `auth_version` to `pr-config.json` to set the swift keystone auth version associated with `auth_url`
 - Use redis 3.2.3 on redhat
 - PNDA-2903: Install node.js from tar.gz instead of deb package
+- PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
 
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
