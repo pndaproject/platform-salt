@@ -19,7 +19,7 @@ ips['{{ host }}'] = '{{ ip[0] }}'
 
 roles = {}
 {% for host, minion_grains in hdp_config.items() -%}
-roles['{{ host }}'] = '{{ minion_grains['cloudera']['role'] }}'
+roles['{{ host }}'] = '{{ minion_grains['hadoop']['role'] }}'
 {% if 'hadoop_manager' in minion_grains.get('roles', []) %}
 manager = ips['{{ host }}']
 {% endif %}
