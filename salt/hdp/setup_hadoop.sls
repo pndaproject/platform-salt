@@ -31,8 +31,8 @@ hdp-create_hdp_configuration_script:
     - source: salt://hdp/templates/hdp_config.py.tpl
     - template: jinja
     - defaults:
-        ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
-        hdp_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
+        ips: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
+        hdp_config: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         cluster_name: {{ pnda_cluster }}
         hdp_core_stack_repo: {{ hdp_p.get('hdp_core_stack_repo', '') }}
         hdp_utils_stack_repo: {{ hdp_p.get('hdp_utils_stack_repo', '') }}
