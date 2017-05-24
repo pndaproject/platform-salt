@@ -78,10 +78,10 @@ package_repository:
   release_version: RELEASE-0.3.1
 
 data-service:
-  release_version: RELEASE-0.2.0
+  release_version: develop
 
 hdfs_cleaner:
-  release_version: RELEASE-0.2.0
+  release_version: develop
 
 platform_testing:
   release_directory: /opt/pnda
