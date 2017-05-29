@@ -57,12 +57,6 @@ def ldap_ip():
 def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
-    result = __salt__['mine.get'](query, 'grains.items', 'compound').values()
-    if len(result) > 0 and 'ec2' in result[0]:
-        result = [r['ec2']['local_ipv4'] for r in result]
-        return result
-
-    query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
     result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
     # Only get first ip address
     result = [r[0] for r in result]
