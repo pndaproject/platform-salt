@@ -87,16 +87,57 @@ def setup_hadoop(
 
     logging.info("Creating blueprint")
     blueprint = '''{
+	                "configurations": [
+                        {
+                            "hive-env" : {
+                                "properties" : {
+                                "hive_ambari_database" : "MySQL",
+                                "hive_ambari_host" : "%(s)s-hadoop-mgr-1",
+                                "hive_database" : "MySQL Database",
+                                "hive_database_name" : "hive",
+                                "hive_database_type" : "mysql",
+                                "hive_existing_mssql_server_2_host" : "%(s)s-hadoop-mgr-1",
+                                "hive_existing_mssql_server_host" : "%(s)s-hadoop-mgr-1",
+                                "hive_existing_mysql_host" : "%(s)s-hadoop-mgr-1",
+                                "hive_hostname" : "%(s)s-hadoop-mgr-1",
+                                "hive_user" : "hive",
+                                "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
+                                "javax.jdo.option.ConnectionPassword" : "hive",
+                                "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(s)s-hadoop-mgr-1/hive",
+                                "javax.jdo.option.ConnectionUserName" : "hive"
+                                }
+                            }
+                        },
+                        {
+                            "hive-site" : {
+                                "properties" : {
+                                "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
+                                "javax.jdo.option.ConnectionPassword" : "hive",
+                                "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(s)s-hadoop-mgr-1/hive?createDatabaseIfNotExist=true",
+                                "javax.jdo.option.ConnectionUserName" : "hive"
+                                }
+                            }
+                        }
+                    ],
                     "host_groups" : [
                         {
                         "name" : "master",
                         "components" : [
                             {
+                            "name" : "METRICS_MONITOR"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_SERVER"
+                            },
+                            {
                             "name" : "NAMENODE"
                             },
                             {
                             "name" : "SECONDARY_NAMENODE"
-                            },       
+                            },
+                            {
+                            "name" : "HBASE_MASTER"
+                            },
                             {
                             "name" : "RESOURCEMANAGER"
                             },
@@ -104,10 +145,46 @@ def setup_hadoop(
                             "name" : "HISTORYSERVER"
                             },
                             {
-                            "name" : "ZOOKEEPER_SERVER"
+                            "name" : "SPARK_JOBHISTORYSERVER"
                             },
                             {
                             "name" : "APP_TIMELINE_SERVER"
+                            },
+                            {
+                            "name" : "HIVE_SERVER"
+                            },
+                            {
+                            "name" : "HIVE_METASTORE"
+                            },
+                            {
+                            "name" : "WEBHCAT_SERVER"
+                            },
+                            {
+                            "name" : "FALCON_SERVER"
+                            },
+                            {
+                            "name" : "OOZIE_SERVER"
+                            },
+                            {
+                            "name" : "HDFS_CLIENT"
+                            },
+                            {
+                            "name" : "YARN_CLIENT"
+                            },
+                            {
+                            "name" : "MAPREDUCE2_CLIENT"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_CLIENT"
+                            },
+                            {
+                            "name" : "PIG"
+                            },
+                            {
+                            "name" : "TEZ_CLIENT"
+                            },
+                            {
+                            "name" : "OOZIE_CLIENT"
                             }
                         ],
                         "cardinality" : "1"
@@ -116,13 +193,19 @@ def setup_hadoop(
                         "name" : "slaves",
                         "components" : [
                             {
+                            "name" : "METRICS_MONITOR"
+                            },
+                            {
                             "name" : "DATANODE"
                             },
                             {
-                            "name" : "HDFS_CLIENT"
+                            "name" : "NODEMANAGER"
                             },
                             {
-                            "name" : "NODEMANAGER"
+                            "name" : "HBASE_REGIONSERVER"
+                            },
+                            {
+                            "name" : "HDFS_CLIENT"
                             },
                             {
                             "name" : "YARN_CLIENT"
@@ -140,16 +223,55 @@ def setup_hadoop(
                         "name" : "edge",
                         "components" : [
                             {
+                            "name" : "METRICS_MONITOR"
+                            },
+                            {
+                            "name" : "METRICS_COLLECTOR"
+                            },
+                            {
+                            "name" : "ZOOKEEPER_CLIENT"
+                            },
+                            {
+                            "name" : "PIG"
+                            },
+                            {
+                            "name" : "OOZIE_CLIENT"
+                            },
+                            {
+                            "name" : "HBASE_CLIENT"
+                            },
+                            {
+                            "name" : "HCAT"
+                            },
+                            {
+                            "name" : "KNOX_GATEWAY"
+                            },
+                            {
+                            "name" : "FALCON_CLIENT"
+                            },
+                            {
+                            "name" : "TEZ_CLIENT"
+                            },
+                            {
+                            "name" : "SPARK_CLIENT"
+                            },
+                            {
+                            "name" : "SLIDER"
+                            },
+                            {
+                            "name" : "SQOOP"
+                            },
+                            {
                             "name" : "HDFS_CLIENT"
+                            },
+                            {
+                            "name" : "HIVE_CLIENT"
                             },
                             {
                             "name" : "YARN_CLIENT"
                             },
                             {
                             "name" : "MAPREDUCE2_CLIENT"
-                            },
-                            {
-                            "name" : "ZOOKEEPER_CLIENT"
                             }
                         ],
                         "cardinality" : "1+"
@@ -160,7 +282,7 @@ def setup_hadoop(
                         "stack_name" : "HDP",
                         "stack_version" : "2.6"
                     }
-                }'''
+                }''' % {'s': cluster_name}
     response = requests.post('%s/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to blueprint creation %s: %s' % ('/blueprints/hdp-sample-blueprint', response.status_code))
 
@@ -169,27 +291,27 @@ def setup_hadoop(
                             "default_password" : "%s",
                             "host_groups" :[
                                 {
-                                  "name" : "master", 
-                                  "hosts" : [         
+                                  "name" : "master",
+                                  "hosts" : [
                                     {
-                                    "fqdn" : "%s-cdh-mgr-1"
+                                    "fqdn" : "%s-hadoop-mgr-1"
                                     }
                                 ]
                                 },
                                 {
-                                  "name" : "slaves", 
-                                  "hosts" : [         
+                                  "name" : "slaves",
+                                  "hosts" : [
                                     {
-                                    "fqdn" : "%s-cdh-dn-0"
-                                    }                                                                       
+                                    "fqdn" : "%s-hadoop-dn-0"
+                                    }
                                   ]
                                 },
                                 {
-                                  "name" : "edge", 
-                                  "hosts" : [         
+                                  "name" : "edge",
+                                  "hosts" : [
                                     {
-                                    "fqdn" : "%s-cdh-edge"
-                                    }                                                                       
+                                    "fqdn" : "%s-hadoop-edge"
+                                    }
                                 ]
                                 }
                             ]
