@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-2966: Replace separate `install_sharedlib.py` with function in `cm_setup.py`
 - PNDA-2964: Stop using ec2 grains during deployment as it's not needed anymore
 - PNDA-2984: Upgrade JDK to 8u131
+- PNDA-2839: Update Grafana version to 4.2.0. Warning: the default pnda password has changed.
+
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
 
