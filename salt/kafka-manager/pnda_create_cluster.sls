@@ -1,5 +1,5 @@
 {% set cluster = salt['pnda.cluster_name']() %}
-{% set kafka_version = '0.9.0.1' %}
+{% set kafka_version = salt['pillar.get']('kafka:version', '0.10.0.1') %}
 {% set jmx_enabled = 'true' %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
