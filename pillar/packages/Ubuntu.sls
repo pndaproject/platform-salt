@@ -23,7 +23,7 @@ glibc-devel:
   package-name: libc6-dev
   version: "2.19-0ubuntu6.11"
 grafana:
-  package-source: 'grafana_3.1.1-1470047149_amd64.deb'
+  package-source: 'grafana_4.2.0_amd64.deb'
 libmysql-java:
   package-name: libmysql-java
   version: "5.1.28-1"
