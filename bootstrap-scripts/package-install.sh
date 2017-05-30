@@ -13,7 +13,8 @@ if [ "x$DISTRO" == "xubuntu" ]; then
   apt-get update
 
 elif [ "x$DISTRO" == "xrhel" ]; then
-
+mkdir -p /etc/yum.repos.d.backup/
+mv /etc/yum.repos.d/* /etc/yum.repos.d.backup/
 yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-redhat-release
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-mysql
