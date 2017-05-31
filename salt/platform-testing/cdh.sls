@@ -14,6 +14,7 @@
 {% set console_hoststring = salt['pnda.ip_addresses']('console_backend_data_logger')[0] + ":" + console_port %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
+{% set hadoop_distro = pillar['hadoop.distro'] %}
 
 include:
   - python-pip
@@ -121,6 +122,7 @@ platform-testing-cdh-blackbox_service:
       cm_port: {{ cm_port }}
       cm_username: {{ cm_username }}
       cm_password: {{ cm_password }}
+      hadoop_distro: {{ hadoop_distro }}
 
 platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
