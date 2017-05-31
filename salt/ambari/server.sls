@@ -16,6 +16,8 @@ ambari-server-properties:
     - source: salt://ambari/templates/ambari-server.properties.tpl
     - template: jinja
     - permission: 0644
+    - defaults:
+        java_version_name: {{ pillar['java']['version_name'] }}
 
 ambari-server-log4j:
   file.managed:
@@ -37,7 +39,7 @@ ambari-server-systemctl_reload:
 
 ambari-server-setup:
   cmd.run:
-    - name: 'ambari-server setup -s -j /usr/share/java/jdk1.8.0_74/'
+    - name: 'ambari-server setup -s -j /usr/share/java/{{ pillar['java']['version_name'] }}/; ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar'
 
 ambari-server-start_service:
   cmd.run:
