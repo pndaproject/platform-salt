@@ -13,9 +13,25 @@ if [ "x$DISTRO" == "xubuntu" ]; then
   apt-get update
 
 elif [ "x$DISTRO" == "xrhel" ]; then
+
+if [ "x$YUM_OFFLINE" == "x" ]; then
+RPM_EXTRAS=rhui-REGION-rhel-server-extras
+RPM_OPTIONAL=rhui-REGION-rhel-server-optional
+RPM_EPEL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y $RPM_EPEL
+yum-config-manager --enable $RPM_EXTRAS $RPM_OPTIONAL
+yum install -y yum-plugin-priorities yum-utils 
+PNDA_REPO=${PNDA_MIRROR/http\:\/\//}
+PNDA_REPO=${PNDA_REPO/\//_mirror_rpm}
+yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
+yum-config-manager --setopt="$PNDA_REPO.priority=1" --enable $PNDA_REPO
+else
 mkdir -p /etc/yum.repos.d.backup/
 mv /etc/yum.repos.d/* /etc/yum.repos.d.backup/
 yum-config-manager --add-repo $PNDA_MIRROR/mirror_rpm
+fi
+
+
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-redhat-release
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-mysql
 rpm --import $PNDA_MIRROR/mirror_rpm/RPM-GPG-KEY-cloudera
