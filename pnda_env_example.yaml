@@ -91,6 +91,8 @@ pnda_data_archive:
 mirrors:
   # Mirror of resources required for provisioning PNDA, see PNDA guide for instructions on how to set this up
   PNDA_MIRROR: http://x.x.x.x
+  # For offline tests: remove yum repo if YUM_OFFLINE is not empty
+  # YUM_OFFLINE: ''
 
 elk-cluster:
   # number of master nodes
