@@ -27,21 +27,33 @@ platform-testing-cdh-dl-and-extract:
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}
-   
+
 {% if grains['os'] == 'RedHat' %}
 platform-testing-cdh-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
     - version: {{ pillar['cyrus-sasl-devel']['version'] }}
     - ignore_epoch: True
+
+platform-testing-cdh-install_dev_deps_cyrus_gssapi:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-gssapi']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-gssapi']['version'] }}
+    - ignore_epoch: True
+
+platform-testing-cdh-install_dev_deps_cyrus_plain:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-plain']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-plain']['version'] }}
+    - ignore_epoch: True
 {% endif %}
-    
+
 platform-testing-cdh-install_dev_deps_sasl:
   pkg.installed:
     - name: {{ pillar['libsasl']['package-name'] }}
     - version: {{ pillar['libsasl']['version'] }}
     - ignore_epoch: True
-    
+
 platform-testing-cdh-install_dev_deps_gcc:
   pkg.installed:
     - name: {{ pillar['g++']['package-name'] }}
