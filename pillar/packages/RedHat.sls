@@ -22,12 +22,18 @@ cloudera-manager-server:
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
   version: "2.1.26-20.el7_2"
+cyrus-sasl-gssapi:
+  package-name: cyrus-sasl-gssapi
+  version: "2.1.26-20.el7_2"
+cyrus-sasl-plain:
+  package-name: cyrus-sasl-plain
+  version: "2.1.26-20.el7_2"
 g++:
   package-name: gcc-c++
   version: "4.8.5-11.el7"
 glibc-devel:
   package-name: glibc-devel
-  version: "2.17-157.el7_3.1"
+  version: "2.17-157.el7_3.2"
 gnuplot:
   package-name: gnuplot
   version: "4.6.2-3.el7"
@@ -41,7 +47,7 @@ libffi-dev:
   version:  "3.0.13-18.el7"
 libtirpc-devel:
   package-name: libtirpc-devel
-  version:  "0.2.4-0.8.el7"  
+  version:  "0.2.4-0.8.el7"
 libsasl:
   package-name: libgsasl-devel
   version: "1.8.0-8.el7"

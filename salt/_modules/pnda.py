@@ -31,6 +31,11 @@ def namenodes_ips():
         return [named_service]
     return ip_addresses('hadoop_namenode')
 
+def hbase_master_host():
+    """Returns host name of hbase master host"""
+    #TODO: use Ambari/CM API to get this
+    return cluster_name() + '-hadoop-mgr-1'
+
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
     cm = ip_addresses('hadoop_manager')
