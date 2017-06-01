@@ -22,6 +22,12 @@ cloudera-manager-server:
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
   version: ""
+cyrus-sasl-gssapi:
+  package-name: cyrus-sasl-gssapi
+  version: ""
+cyrus-sasl-plain:
+  package-name: cyrus-sasl-plain
+  version: ""
 g++:
   package-name: gcc-c++
   version: ""
