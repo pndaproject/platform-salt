@@ -126,7 +126,42 @@ def setup_hadoop(
                                 "namenode_heapsize": "2048m"
                                 }
                             }
-                        }
+                        },
+                        {
+                            "core-site" : {
+                                "properties_attributes" : {
+                                "final" : {
+                                    "fs.defaultFS" : "true"
+                                }
+                                },
+                                "properties" : {
+                                "fs.defaultFS" : "hdfs://%(s)s-hadoop-mgr-1:8020",
+                                "fs.trash.interval" : "360",
+                                "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
+                                "hadoop.http.authentication.simple.anonymous.allowed" : "true",
+                                "hadoop.proxyuser.falcon.groups" : "users",
+                                "hadoop.proxyuser.falcon.hosts" : "*",
+                                "hadoop.proxyuser.hcat.groups" : "users",
+                                "hadoop.proxyuser.hcat.hosts" : "%(s)s-hadoop-mgr-1",
+                                "hadoop.proxyuser.hive.groups" : "*",
+                                "hadoop.proxyuser.hive.hosts" : "*",
+                                "hadoop.proxyuser.oozie.groups" : "*",
+                                "hadoop.proxyuser.oozie.hosts" : "%(s)s-hadoop-mgr-1",
+                                "hadoop.security.auth_to_local" : "DEFAULT",
+                                "hadoop.security.authentication" : "simple",
+                                "hadoop.security.authorization" : "false",
+                                "io.compression.codecs" : "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.SnappyCodec",
+                                "io.file.buffer.size" : "131072",
+                                "io.serializations" : "org.apache.hadoop.io.serializer.WritableSerialization",
+                                "ipc.client.connect.max.retries" : "50",
+                                "ipc.client.connection.maxidletime" : "30000",
+                                "ipc.client.idlethreshold" : "8000",
+                                "ipc.server.tcpnodelay" : "true",
+                                "mapreduce.jobtracker.webinterface.trusted" : "false",
+                                "proxyuser_group" : "users"
+                                }
+                            }
+                            }
                     ],
                     "host_groups" : [
                         {
@@ -294,7 +329,7 @@ def setup_hadoop(
                 }''' % {'s': cluster_name}
     response = requests.post('%s/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to blueprint creation %s: %s' % ('/blueprints/hdp-sample-blueprint', response.status_code))
-
+    logging.info(response.text)
     cluster_instance = '''{
                             "blueprint" : "hdp-sample-blueprint",
                             "default_password" : "%s",
