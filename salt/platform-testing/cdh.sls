@@ -33,6 +33,8 @@ platform-testing-cdh-install_dev_deps:
     - pkgs:
 {% if grains['os'] == 'RedHat' %}
       - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
+      - {{ pillar['cyrus-sasl-gssapi']['package-name'] }}: {{ pillar['cyrus-sasl-gssapi']['version'] }}
+      - {{ pillar['cyrus-sasl-plain']['package-name'] }}: {{ pillar['cyrus-sasl-plain']['version'] }}
 {% endif %}
       - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
       - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
