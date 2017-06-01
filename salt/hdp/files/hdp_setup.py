@@ -117,6 +117,15 @@ def setup_hadoop(
                                 "javax.jdo.option.ConnectionUserName" : "hive"
                                 }
                             }
+                        },
+                        {
+                            "hadoop-env" : {
+                                "properties" : {
+                                "dtnode_heapsize" : "2048m",
+                                "hadoop_heapsize" : "2048",
+                                "namenode_heapsize": "2048m"
+                                }
+                            }
                         }
                     ],
                     "host_groups" : [
@@ -321,3 +330,14 @@ def setup_hadoop(
                              ambari_api, cluster_instance, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to cluster creation %s: %s' % ('/clusters/hdp-sample-pico-cluster', response.status_code))
     logging.info(response.text)
+
+    logging.info('Waiting for blueprint to be instantiated by Ambari...')
+    blueprint_status = 'IN_PROGRESS'
+    while blueprint_status == 'IN_PROGRESS':
+        time.sleep(5)
+        blueprint_status = requests.get(response.json()['href'], cluster_instance,
+                                        auth=(ambari_username, ambari_password),
+                                        headers=headers).json()['Requests']['request_status']
+
+    if blueprint_status != 'OK':
+        exit_setup('Ambari blueprint instantiation failed')
