@@ -370,8 +370,8 @@ def setup_hadoop(
                             ]
                         }''' % (ambari_password, cluster_name, cluster_name, cluster_name)
 
-    response = requests.post('%s/clusters/hdp-sample-pico-cluster' % ambari_api, cluster_instance, auth=auth, headers=headers)
-    logging.info('Response to cluster creation %s: %s', '/clusters/hdp-sample-pico-cluster', response.status_code)
+    response = requests.post('%s/clusters/%s' % (ambari_api, cluster_name), cluster_instance, auth=auth, headers=headers)
+    logging.info('Response to cluster creation %s: %s', '/clusters/%s' % cluster_name, response.status_code)
     logging.info(response.text)
     status_tracking_uri = response.json()['href']
 
@@ -386,35 +386,13 @@ def setup_hadoop(
             logging.info('Progress for %s: %s', tracking_uri, cmd_status)
         return cmd_status
 
-    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari")
-
-    if blueprint_status == 'COMPLETED':
-        exit_setup('Ambari blueprint instantiation succeeded: %s' % blueprint_status)
-    else:
-        logging.info('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
-        time.sleep(120)
-        # Issuing a start all command is recommended by some to avoid timing issues that may occur when Ambari
-        # instantiates a blueprint. Do this if the cluster wasn't started successfully.
-        start_command = '''{
-                                "RequestInfo": {
-                                    "context": "_PARSE_.START.ALL_SERVICES",
-                                    "operation_level": {
-                                        "level": "CLUSTER",
-                                        "cluster_name": "hdp-sample-pico-cluster"
-                                    }
-                                },
-                                "Body": {
-                                    "ServiceInfo": {
-                                        "state": "STARTED"
-                                    }
-                                }
-                        }'''
+    def stop_all_services():
         stop_command = '''{
                                 "RequestInfo": {
                                     "context": "_PARSE_.STOP.ALL_SERVICES",
                                     "operation_level": {
                                         "level": "CLUSTER",
-                                        "cluster_name": "hdp-sample-pico-cluster"
+                                        "cluster_name": "%s"
                                     }
                                 },
                                 "Body": {
@@ -422,14 +400,42 @@ def setup_hadoop(
                                         "state": "INSTALLED"
                                     }
                                 }
-                        }'''
+                        }''' % cluster_name
 
-        response = requests.put('%s/clusters/hdp-sample-pico-cluster/services' % ambari_api, stop_command, auth=auth, headers=headers)
-        logging.info('Response to stop command %s: %s', '/clusters/hdp-sample-pico-cluster/services', response.status_code)
+        response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), stop_command, auth=auth, headers=headers)
+        logging.info('Response to stop command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
         logging.info(response.text)
         wait_on_cmd(response.json()['href'], 'services to be stopped by Ambari')
 
-        response = requests.put('%s/clusters/hdp-sample-pico-cluster/services' % ambari_api, start_command, auth=auth, headers=headers)
-        logging.info('Response to start command %s: %s', '/clusters/hdp-sample-pico-cluster/services', response.status_code)
+    def start_all_services():
+        start_command = '''{
+                                "RequestInfo": {
+                                    "context": "_PARSE_.START.ALL_SERVICES",
+                                    "operation_level": {
+                                        "level": "CLUSTER",
+                                        "cluster_name": "%s"
+                                    }
+                                },
+                                "Body": {
+                                    "ServiceInfo": {
+                                        "state": "STARTED"
+                                    }
+                                }
+                        }''' % cluster_name
+        response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), start_command, auth=auth, headers=headers)
+        logging.info('Response to start command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
         logging.info(response.text)
         wait_on_cmd(response.json()['href'], 'services to be started by Ambari')
+
+    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari")
+
+    if blueprint_status == 'COMPLETED':
+        logging.info('Ambari blueprint instantiation succeeded: %s', blueprint_status)
+        # Even if there were no errors starting the services try issuing a start just to make sure everything is running
+        start_all_services()
+    else:
+        logging.info('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
+        time.sleep(120)
+        # If there was an error starting the services try restarting them, this often succeeeds after a short wait
+        stop_all_services()
+        start_all_services()
