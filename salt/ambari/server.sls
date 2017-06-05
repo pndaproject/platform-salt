@@ -41,7 +41,7 @@ ambari-server-create_jdbc_dir:
     - name: /opt/pnda/jdbc-driver
     - makedirs: True
 
-jmx-proxy-dl-and-extract:
+ambari-server-jdbc-dl:
   file.managed:
     - name: /opt/pnda/jdbc-driver/{{ jdbc_package }}
     - source: {{ mirror_location }}/{{ jdbc_package }}
