@@ -1,3 +1,8 @@
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+{% set jdbc_package = 'je-5.0.73.jar' %}
+
 ambari-server-user:
   user.present:
     - name: ambari
@@ -31,6 +36,17 @@ ambari-server-create_log_dir:
     - name: /var/log/pnda/ambari/
     - makedirs: True
 
+ambari-server-create_jdbc_dir:
+  file.directory:
+    - name: /opt/pnda/jdbc-driver
+    - makedirs: True
+
+jmx-proxy-dl-and-extract:
+  file.managed:
+    - name: /opt/pnda/jdbc-driver/{{ jdbc_package }}
+    - source: {{ mirror_location }}/{{ jdbc_package }}
+    - source_hash: {{ mirror_location }}/{{ jdbc_package }}.sha512.txt
+
 {% if grains['os'] == 'RedHat' %}
 ambari-server-systemctl_reload:
   cmd.run:
@@ -39,7 +55,7 @@ ambari-server-systemctl_reload:
 
 ambari-server-setup:
   cmd.run:
-    - name: 'ambari-server setup -s -j /usr/share/java/{{ pillar['java']['version_name'] }}/; ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar'
+    - name: 'ambari-server setup -s -j /usr/share/java/{{ pillar['java']['version_name'] }}/; ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar; ambari-server setup --jdbc-db=bdb --jdbc-driver=/opt/pnda/jdbc-driver/{{ jdbc_package }}'
 
 ambari-server-start_service:
   cmd.run:
