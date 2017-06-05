@@ -123,7 +123,9 @@ def setup_hadoop(
                                 "properties" : {
                                 "dtnode_heapsize" : "2048m",
                                 "hadoop_heapsize" : "2048",
-                                "namenode_heapsize": "2048m"
+                                "namenode_heapsize": "2048m",
+                                "namenode_opt_maxnewsize": "361m",
+                                "namenode_opt_newsize": "361m"
                                 }
                             }
                         },
