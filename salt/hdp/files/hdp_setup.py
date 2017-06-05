@@ -119,6 +119,13 @@ def setup_hadoop(
                             }
                         },
                         {
+                            "hbase-site" : {
+                                "properties" : {
+                                 "zookeeper.session.timeout" : "300000"
+                                }
+                            }
+                        },
+                        {
                             "hadoop-env" : {
                                 "properties" : {
                                 "dtnode_heapsize" : "2048m",
@@ -163,7 +170,7 @@ def setup_hadoop(
                                 "proxyuser_group" : "users"
                                 }
                             }
-                            }
+                        }
                     ],
                     "host_groups" : [
                         {
