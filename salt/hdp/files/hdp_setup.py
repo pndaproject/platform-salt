@@ -119,11 +119,20 @@ def setup_hadoop(
                             }
                         },
                         {
+                            "hbase-site" : {
+                                "properties" : {
+                                 "zookeeper.session.timeout" : "300000"
+                                }
+                            }
+                        },
+                        {
                             "hadoop-env" : {
                                 "properties" : {
                                 "dtnode_heapsize" : "2048m",
                                 "hadoop_heapsize" : "2048",
-                                "namenode_heapsize": "2048m"
+                                "namenode_heapsize": "2048m",
+                                "namenode_opt_maxnewsize": "361m",
+                                "namenode_opt_newsize": "361m"
                                 }
                             }
                         },
@@ -161,7 +170,7 @@ def setup_hadoop(
                                 "proxyuser_group" : "users"
                                 }
                             }
-                            }
+                        }
                     ],
                     "host_groups" : [
                         {
@@ -365,14 +374,17 @@ def setup_hadoop(
                              ambari_api, cluster_instance, auth=(ambari_username, ambari_password), headers=headers)
     logging.info('Response to cluster creation %s: %s' % ('/clusters/hdp-sample-pico-cluster', response.status_code))
     logging.info(response.text)
-
+    status_tracking_uri = response.json()['href']
     logging.info('Waiting for blueprint to be instantiated by Ambari...')
     blueprint_status = 'IN_PROGRESS'
     while blueprint_status == 'IN_PROGRESS':
         time.sleep(5)
-        blueprint_status = requests.get(response.json()['href'], cluster_instance,
-                                        auth=(ambari_username, ambari_password),
-                                        headers=headers).json()['Requests']['request_status']
+        status_reponse = requests.get(status_tracking_uri, cluster_instance,
+                                      auth=(ambari_username, ambari_password),
+                                      headers=headers)
+        logging.info('Response to cluster creation progress check %s: %s' % (status_tracking_uri, status_reponse.status_code))
+        logging.debug(status_reponse.text)
+        blueprint_status = status_reponse.json()['Requests']['request_status']
 
-    if blueprint_status != 'OK':
-        exit_setup('Ambari blueprint instantiation failed')
+    if blueprint_status != 'COMPLETED':
+        exit_setup('Ambari blueprint instantiation failed: %s' % blueprint_status)
