@@ -1,9 +1,7 @@
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set pnda_group = pillar['pnda']['group'] %}
 
-{% set namenodes_ips = salt['pnda.namenodes_ips']() %}
-# Only take the first one
-{% set namenode = namenodes_ips[0] %}
+{% set namenode = salt['pnda.hadoop_namenode']() %}
 
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
 {% set pnda_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_master_dataset_location %}

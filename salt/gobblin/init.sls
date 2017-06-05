@@ -9,9 +9,7 @@
 {% set gobblin_real_dir = pnda_home + '/gobblin-' + gobblin_version %}
 {% set gobblin_link_dir = pnda_home + '/gobblin' %}
 
-{% set namenodes_ips = salt['pnda.namenodes_ips']() %}
-# Only take the first one
-{% set namenode = namenodes_ips[0] %}
+{% set namenode = salt['pnda.hadoop_namenode']() %}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}

@@ -1,19 +1,17 @@
 import requests
 
-def get_named_service(cm_host, cluster_name, service_name):
-    """ Returns named service for HA Cluster """
-    user_name = __salt__['pillar.get']('admin_login:user')
-    password = __salt__['pillar.get']('admin_login:password')
-    request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (cm_host,
-                                                                                   cluster_name,
-                                                                                   service_name)
+def get_name_service():
+    """ Returns name service for HA Cluster """
+    user_name = manager_username() 
+    password = manager_password()
+    request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (hadoop_manager_ip(), cluster_name(), 'hdfs01')
     r = requests.get(request_url, auth=(user_name, password))
-    named_service = ""
+    name_service = ""
     if r.status_code == 200:
         response = r.json()
         if 'items' in response:
-            named_service = response['items'][0]['name']
-    return named_service
+            name_service = response['items'][0]['name']
+    return name_service
 
 
 def cluster_name():
@@ -21,20 +19,49 @@ def cluster_name():
     cname = __grains__['pnda_cluster']
     return cname
 
-def namenodes_ips():
-    """Returns hadoop name nodes ip addresses"""
-    cm_name = cluster_name()
-    cm_host = hadoop_manager_ip()
-    service_name = 'hdfs01'
-    named_service = get_named_service(cm_host, cm_name, service_name)
-    if named_service:
-        return [named_service]
-    return ip_addresses('hadoop_namenode')
+def hadoop_manager_username():
+    """Returns username to log into the hadoop cluster manager"""
+    uname = __salt__['pillar.get']('admin_login:user')
+    return uname
+
+def hadoop_manager_password():
+    """Returns password to log into the hadoop cluster manager"""
+    pwrd = __salt__['pillar.get']('admin_login:password')
+    return pwrd
+
+def hadoop_distro():
+    """Returns hadoop distro"""
+    distro = __salt__['pillar.get']('hadoop.distro')
+    return distro
+
+def ambari_request(uri):
+    ambari_api = 'http://%s:8080/api/v1' % hadoop_manager_ip()
+    headers = {'X-Requested-By': hadoop_manager_username()}
+    auth = (hadoop_manager_username(), hadoop_manager_password())
+    return requests.get(uri, auth=auth, headers=headers).json()
+
+def get_namenode_from_ambari():
+    """Returns hadoop namenode IP address"""
+    return ambari_request('http://%s:8080/api/v1/clusters/%s/services/HDFS/components/NAMENODE' % (hadoop_manager_ip(), cluster_name()))['host_components'][0]['HostRoles']['host_name']
+
+def hadoop_namenode():
+    """Returns the hadoop namenode host or nameservice name in case of HA namenode"""
+    print hadoop_distro()
+    if hadoop_distro() == 'CDH':
+        name_service = get_name_service()
+        if name_service:
+            return [name_service]
+        return cloudera_get_hosts_by_role('hdfs01', 'NAMENODE')[0]
+    else:
+        # do something for HDP HA HDFS namenode here
+        return get_namenode_from_ambari()
 
 def hbase_master_host():
-    """Returns host name of hbase master host"""
-    #TODO: use Ambari/CM API to get this
-    return cluster_name() + '-hadoop-mgr-1'
+    """Returns host name of an hbase master host"""
+    if hadoop_distro() == 'CDH':
+        return 'todo'
+    else:
+        return ambari_request('http://%s:8080/api/v1/clusters/%s/services/HBASE/components/HBASE_MASTER' % (hadoop_manager_ip(), cluster_name()))['host_components'][0]['HostRoles']['host_name']
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
