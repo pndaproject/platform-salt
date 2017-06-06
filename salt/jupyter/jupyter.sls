@@ -3,7 +3,6 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
-{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 
 include:
   - python-pip
@@ -55,5 +54,5 @@ jupyter-copy_pyspark_kernel:
 jupyter-copy_data_generator_script:
   file.managed:
     - source: salt://jupyter/files/data_generator.py
-    - name: /home/{{ os_user }}/data_generator.py
+    - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
