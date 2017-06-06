@@ -386,6 +386,15 @@ def setup_hadoop(
             logging.info('Progress for %s: %s', tracking_uri, cmd_status)
         return cmd_status
 
+    def retry(function, retry_count, sleep_time_seconds):
+        while retry_count > 0:
+            try:
+                function()
+                retry_count = 0
+            except:
+                time.sleep(sleep_time_seconds)
+                retry_count -= 1
+
     def stop_all_services():
         stop_command = '''{
                                 "RequestInfo": {
@@ -432,10 +441,9 @@ def setup_hadoop(
     if blueprint_status == 'COMPLETED':
         logging.info('Ambari blueprint instantiation succeeded: %s', blueprint_status)
         # Even if there were no errors starting the services try issuing a start just to make sure everything is running
-        start_all_services()
+        retry(start_all_services, 5, 60)
     else:
         logging.info('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
-        time.sleep(120)
         # If there was an error starting the services try restarting them, this often succeeeds after a short wait
-        stop_all_services()
-        start_all_services()
+        retry(stop_all_services, 5, 60)
+        retry(start_all_services, 5, 60)
