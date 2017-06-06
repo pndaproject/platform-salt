@@ -28,6 +28,20 @@ orchestrate-pnda-install_cdh_hadoop:
     - tgt_type: compound
     - sls: cdh.setup_hadoop
     - timeout: 120
+
+orchestrate-pnda-impala_wrapper:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:impala-shell'
+    - tgt_type: compound
+    - sls: cdh.impala-shell
+    - timeout: 120
+
+orchestrate-pnda-hue_setup:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hue'
+    - tgt_type: compound
+    - sls: cdh.hue-login
+    - timeout: 120
 {% endif %}
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
@@ -65,20 +79,6 @@ orchestrate-pnda-create_master_dataset:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:master_dataset'
     - tgt_type: compound
     - sls: master-dataset
-    - timeout: 120
-
-orchestrate-pnda-impala_wrapper:
-  salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:impala-shell'
-    - tgt_type: compound
-    - sls: cdh.impala-shell
-    - timeout: 120
-
-orchestrate-pnda-hue_setup:
-  salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hue'
-    - tgt_type: compound
-    - sls: cdh.hue-login
     - timeout: 120
 
 orchestrate-pnda-install_gobblin:
