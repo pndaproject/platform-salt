@@ -42,18 +42,22 @@ def ambari_request(uri):
 
 def get_namenode_from_ambari():
     """Returns hadoop namenode IP address"""
-    return ambari_request('/clusters/%s/services/HDFS/components/NAMENODE' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
+    core_site = ambari_request('/clusters/%s?fields=Clusters/desired_configs/core-site' % cluster_name())
+    config_version = core_site['Clusters']['desired_configs']['core-site']['tag']
+    core_site_config = ambari_request('/clusters/%s/configurations/?type=core-site&tag=%s' % (cluster_name(), config_version))
+    return core_site_config['items'][0]['properties']['fs.defaultFS']
 
 def hadoop_namenode():
     """Returns the hadoop namenode host or nameservice name in case of HA namenode"""
-    print hadoop_distro()
     if hadoop_distro() == 'CDH':
+        namenode_host = None
         name_service = get_name_service()
         if name_service:
-            return [name_service]
-        return cloudera_get_hosts_by_role('hdfs01', 'NAMENODE')[0]
+            namenode_host = [name_service]
+        else:
+            namenode_host = cloudera_get_hosts_by_role('hdfs01', 'NAMENODE')[0]
+        return 'hdfs://%s:8020' % namenode_host
     else:
-        # do something for HDP HA HDFS namenode here
         return get_namenode_from_ambari()
 
 def hbase_master_host():
