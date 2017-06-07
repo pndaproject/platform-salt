@@ -26,9 +26,7 @@ def setup_hadoop(
         ambari_username='admin',
         ambari_password='admin',
         hdp_core_stack_repo=None,
-        hdp_utils_stack_repo=None,
-        anaconda_repo=None,
-        anaconda_version=None):
+        hdp_utils_stack_repo=None):
 
     logging.info("setup_hadoop:")
     logging.info(ambari_host)
@@ -38,8 +36,6 @@ def setup_hadoop(
     logging.info(ambari_password)
     logging.info(hdp_core_stack_repo)
     logging.info(hdp_utils_stack_repo)
-    logging.info(anaconda_repo)
-    logging.info(anaconda_version)
 
     ambari_api = 'http://%s:8080/api/v1' % ambari_host
     headers = {'X-Requested-By': ambari_username}
@@ -377,23 +373,15 @@ def setup_hadoop(
 
     def wait_on_cmd(tracking_uri, msg):
         logging.info('Waiting for %s...', msg)
-        cmd_status = 'IN_PROGRESS'
-        while cmd_status == 'IN_PROGRESS' or cmd_status == 'PENDING':
+        progress_percent = 0
+        while progress_percent < 100:
             time.sleep(5)
             status_reponse = requests.get(tracking_uri, auth=auth, headers=headers)
             logging.debug(status_reponse.json()['Requests'])
             cmd_status = status_reponse.json()['Requests']['request_status']
-            logging.info('Progress for %s: %s', tracking_uri, cmd_status)
+            progress_percent = int(status_reponse.json()['Requests']['progress_percent'])
+            logging.info('Progress for %s: %s%% - %s', tracking_uri, progress_percent, cmd_status)
         return cmd_status
-
-    def retry(function, retry_count, sleep_time_seconds):
-        while retry_count > 0:
-            try:
-                function()
-                retry_count = 0
-            except:
-                time.sleep(sleep_time_seconds)
-                retry_count -= 1
 
     def stop_all_services():
         stop_command = '''{
@@ -441,9 +429,9 @@ def setup_hadoop(
     if blueprint_status == 'COMPLETED':
         logging.info('Ambari blueprint instantiation succeeded: %s', blueprint_status)
         # Even if there were no errors starting the services try issuing a start just to make sure everything is running
-        retry(start_all_services, 5, 60)
+        start_all_services()
     else:
         logging.info('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
         # If there was an error starting the services try restarting them, this often succeeeds after a short wait
-        retry(stop_all_services, 5, 60)
-        retry(start_all_services, 5, 60)
+        stop_all_services()
+        start_all_services()

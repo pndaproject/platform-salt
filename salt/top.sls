@@ -47,7 +47,7 @@
     - console-frontend
 
   'roles:console_backend_data_logger':
-    - match: grain    
+    - match: grain
     - console-backend.data-logger
 
   'roles:console_backend_data_manager':
@@ -70,6 +70,9 @@
     - match: grain
     - cdh.create_data_dirs
     - snappy
+{% if pillar['hadoop.distro'] == 'HDP' %}
+    - anaconda
+{% endif %}
 
   'roles:platform_testing_cdh':
     - match: grain
