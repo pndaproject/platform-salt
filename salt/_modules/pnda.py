@@ -129,3 +129,12 @@ def cloudera_get_hosts_by_role(service, role_type):
         hosts_ips.append(ip_address)
 
     return hosts_ips
+
+def ambari_get_hosts_by_role(service, role_type):
+    return [host['HostRoles']['host_name'] for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
+
+def get_hosts_by_role(service, role_type):
+    if hadoop_distro() == 'CDH':
+        return cloudera_get_hosts_by_role(service, role_type)
+    else:
+        return ambari_get_hosts_by_role(service, role_type)
