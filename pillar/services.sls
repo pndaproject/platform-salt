@@ -89,7 +89,7 @@ platform_testing:
   release_version: hdp
 
 platformlib:
-  release_version: develop
+  release_version: hdp
   target_directory: "/opt/pnda"
 
 jmxproxy:
