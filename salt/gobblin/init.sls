@@ -17,10 +17,10 @@
 {%- endfor -%}
 
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
-{% set pnda_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_master_dataset_location %}
+{% set pnda_kite_dataset_uri = "dataset:" + namenode + pnda_master_dataset_location %}
 
 {% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
-{% set pnda_quarantine_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_quarantine_dataset_location %}
+{% set pnda_quarantine_kite_dataset_uri = "dataset:" + namenode + pnda_quarantine_dataset_location %}
 
 {% set gobblin_hdfs_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
@@ -51,7 +51,7 @@ gobblin-update_gobblin_reference_configuration_file:
   file.replace:
     - name: {{ gobblin_real_dir }}/gobblin-dist/conf/gobblin-mapreduce.properties
     - pattern: '^fs.uri=hdfs://localhost:8020$'
-    - repl: 'fs.uri=hdfs://{{ namenode }}:8020'
+    - repl: 'fs.uri={{ namenode }}'
     - require:
       - archive: gobblin-dl-and-extract
 
