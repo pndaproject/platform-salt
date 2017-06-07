@@ -2,7 +2,7 @@ import requests
 
 def get_name_service():
     """ Returns name service for HA Cluster """
-    user_name = manager_username() 
+    user_name = manager_username()
     password = manager_password()
     request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (hadoop_manager_ip(), cluster_name(), 'hdfs01')
     r = requests.get(request_url, auth=(user_name, password))
@@ -35,14 +35,14 @@ def hadoop_distro():
     return distro
 
 def ambari_request(uri):
-    ambari_api = 'http://%s:8080/api/v1' % hadoop_manager_ip()
+    full_uri = 'http://%s:8080/api/v1%s' % (hadoop_manager_ip(), uri)
     headers = {'X-Requested-By': hadoop_manager_username()}
     auth = (hadoop_manager_username(), hadoop_manager_password())
-    return requests.get(uri, auth=auth, headers=headers).json()
+    return requests.get(full_uri, auth=auth, headers=headers).json()
 
 def get_namenode_from_ambari():
     """Returns hadoop namenode IP address"""
-    return ambari_request('http://%s:8080/api/v1/clusters/%s/services/HDFS/components/NAMENODE' % (hadoop_manager_ip(), cluster_name()))['host_components'][0]['HostRoles']['host_name']
+    return ambari_request('/clusters/%s/services/HDFS/components/NAMENODE' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
 
 def hadoop_namenode():
     """Returns the hadoop namenode host or nameservice name in case of HA namenode"""
@@ -61,7 +61,7 @@ def hbase_master_host():
     if hadoop_distro() == 'CDH':
         return 'todo'
     else:
-        return ambari_request('http://%s:8080/api/v1/clusters/%s/services/HBASE/components/HBASE_MASTER' % (hadoop_manager_ip(), cluster_name()))['host_components'][0]['HostRoles']['host_name']
+        return ambari_request('/clusters/%s/services/HBASE/components/HBASE_MASTER' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
