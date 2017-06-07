@@ -8,6 +8,12 @@
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set anaconda_home = '/opt/pnda/anaconda' %}
+{% else %}
+{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
+{% endif %}
+
 include:
   - python-pip
 
@@ -36,7 +42,7 @@ platform-libraries-download_egg_file:
 
 platform-libaries-easy-install:
   cmd.run:
-    - name: /opt/cloudera/parcels/Anaconda/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
+    - name: {{ anaconda_home }}/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
 
 platform-libraries-create-conf-dir:
   file.directory:
