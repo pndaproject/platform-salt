@@ -72,7 +72,7 @@ console_backend_utils:
   release_version: develop
 
 deployment_manager:
-  release_version: develop
+  release_version: hdp
 
 package_repository:
   release_version: develop
