@@ -6,8 +6,12 @@
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
+{% set spark_home = '/usr/hdp/current/spark-client' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf' %}
 {% else %}
 {% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
+{% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
 {% endif %}
 
 include:
@@ -57,6 +61,8 @@ jupyter-copy_pyspark_kernel:
       - file: jupyter-create_pyspark_kernel_dir
     - defaults:
         anaconda_home: {{ anaconda_home }}
+        spark_home: {{ spark_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:
