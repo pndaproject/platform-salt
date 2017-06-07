@@ -35,12 +35,8 @@ for host in ips.keys():
 {% set ambari_username = pillar['admin_login']['user'] %}
 {% set ambari_password = pillar['admin_login']['password'] %}
 
-{% set anaconda_parcel_repo = pillar['anaconda']['parcel_repo'] %}
-{% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
-
 if __name__ == '__main__':
     hdp_setup.setup_hadoop(manager, nodes,
                           cluster_name='{{ cluster_name }}', ambari_username='{{ ambari_username }}',
                           ambari_password='{{ ambari_password }}',
-                          hdp_core_stack_repo='{{ hdp_core_stack_repo }}', hdp_utils_stack_repo='{{ hdp_utils_stack_repo }}',
-                          anaconda_repo='{{ anaconda_parcel_repo }}', anaconda_version='{{ anaconda_parcel_version }}')
+                          hdp_core_stack_repo='{{ hdp_core_stack_repo }}', hdp_utils_stack_repo='{{ hdp_utils_stack_repo }}')
