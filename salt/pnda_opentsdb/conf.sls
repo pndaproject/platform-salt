@@ -1,5 +1,14 @@
+
+{% if pillar['hadoop.distro'] == 'CDH' %}
+{% set zk_service = 'zk01' %}
+{% set zk_role = 'SERVER' %}
+{% else %}
+{% set zk_service = 'ZOOKEEPER' %}
+{% set zk_role = 'ZOOKEEPER_SERVER' %}
+{% endif %}
+
 {% set hadoop_zk = [] %}
-{% for ip in salt['pnda.cloudera_get_hosts_by_role']('zk01', 'SERVER') %}
+{% for ip in salt['pnda.get_hosts_by_role'](zk_service, zk_role) %}
 {% do hadoop_zk.append(ip+':2181') %}
 {% endfor %}
 
