@@ -2,7 +2,7 @@
  "display_name": "PySpark/Python2 (Anaconda)",
  "language": "python",
  "argv": [
-  "/opt/cloudera/parcels/Anaconda/bin/python",
+  "{{ anaconda_home }}/bin/python",
   "-m",
   "ipykernel",
   "-f",
@@ -10,7 +10,7 @@
  ],
  "env": {
   "HADOOP_CONF_DIR":"/etc/hadoop/conf.cloudera.yarn01",
-  "PYSPARK_PYTHON":"/opt/cloudera/parcels/Anaconda/bin/python",
+  "PYSPARK_PYTHON":"{{ anaconda_home }}/bin/python",
   "SPARK_HOME": "/opt/cloudera/parcels/CDH/lib/spark",
   "PYTHONPATH": "/opt/cloudera/parcels/CDH/lib/spark/python:/opt/cloudera/parcels/CDH/lib/spark/python/lib/py4j-0.9-src.zip",
   "PYTHONSTARTUP": "/opt/cloudera/parcels/CDH/lib/spark/python/pyspark/shell.py",
