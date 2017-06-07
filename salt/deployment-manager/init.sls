@@ -18,6 +18,8 @@ deployment-manager-install_dev_deps:
 {% endif %}
       - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
       - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+      - {{ pillar['libffi-dev']['package-name'] }}: {{ pillar['libffi-dev']['version'] }}
+      - {{ pillar['libssl-dev']['package-name'] }}: {{ pillar['libssl-dev']['version'] }}
     - ignore_epoch: True
 
 deployment-manager-dl-and-extract:
