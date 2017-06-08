@@ -4,6 +4,13 @@
 {% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
 {% set anaconda_package = 'Anaconda2-' + anaconda_parcel_version + '-Linux-x86_64.sh' %}
 
+{% if grains['os'] == 'RedHat' %}
+anaconda-deps:
+  pkg.installed:
+    - pkgs:
+      - {{ pillar['bzip2']['package-name'] }}: {{ pillar['bzip2']['version'] }}
+{%- endif %}
+
 anaconda-dir:
   file.directory:
     - name: /opt/pnda/
