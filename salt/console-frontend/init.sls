@@ -27,8 +27,14 @@
     {%- set edge_node_ip = '' -%}
 {%- endif -%}
 
+{%- if pillar['hadoop.distro'] == 'CDH' -%}
+{% set cm_port = ':7180' %}
+{%- else -%}
+{% set cm_port = ':8080' %}
+{%- endif -%}
+
 # Set links
-{% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager',':7180') %}
+{% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager', cm_port) %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
 {% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
