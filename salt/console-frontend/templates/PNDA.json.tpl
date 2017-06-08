@@ -3,7 +3,7 @@
   "edge_node": "{{ edge_node }}",
   "user_interfaces": [
     {
-      "name": "Cloudera Manager",
+      "name": "Hadoop Cluster Manager",
       "link": "{{ hadoop_manager_link }}"
     },
     {
