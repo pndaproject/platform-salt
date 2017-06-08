@@ -10,6 +10,9 @@ ambari-server:
 at:
   package-name: at
   version: ""
+bzip2:
+  package-name: bzip2
+  version: ""
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
   version: "5.9.0-1.cm590.p0.249.el7"
