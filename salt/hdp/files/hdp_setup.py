@@ -150,6 +150,8 @@ def setup_hadoop(
                                 "hadoop.proxyuser.hcat.hosts" : "%(s)s-hadoop-mgr-1",
                                 "hadoop.proxyuser.hive.groups" : "*",
                                 "hadoop.proxyuser.hive.hosts" : "*",
+                                "hadoop.proxyuser.ambari.groups" : "*",
+                                "hadoop.proxyuser.ambari.hosts" : "*",
                                 "hadoop.proxyuser.httpfs.groups" : "*",
                                 "hadoop.proxyuser.httpfs.hosts" : "*",
                                 "hadoop.proxyuser.root.groups" : "*",
