@@ -72,6 +72,13 @@ orchestrate-pnda-install_hdp_hadoop_additional_roles:
     - tgt_type: compound
     - sls: hdp.start_additional_roles
     - timeout: 120
+
+orchestrate-pnda-install_hdp_hadoop_httpfs:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:MGR*'
+    - tgt_type: compound
+    - sls: hdp.httpfs
+    - timeout: 120
 {% endif %}
 
 orchestrate-pnda-create_master_dataset:
