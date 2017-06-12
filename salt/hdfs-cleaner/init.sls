@@ -7,6 +7,7 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
+{% set hadoop_distro = pillar['hadoop.distro'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
@@ -50,6 +51,7 @@ hdfs-cleaner-copy_config:
     - source: salt://hdfs-cleaner/templates/properties.json.tpl
     - template: jinja
     - defaults:
+        hadoop_distro: {{ hadoop_distro }}
         container: {{ archive_container }}
         repo_path: {{ pnda_cluster }}
         archive_type: '{{ archive_type }}'
