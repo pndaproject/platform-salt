@@ -11,6 +11,7 @@ bind_address = '0.0.0.0'
 sync_period = 5000
 datasets_table = "platform_datasets"
 data_repo = "{{ location }}"
+hadoop_distro = "{{ hadoop_distro }}"
 cm_host = "{{ cm_node_ip }}"
 cm_user = "{{ cm_username }}"
 cm_pass = "{{ cm_password }}"
