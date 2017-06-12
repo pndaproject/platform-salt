@@ -4,6 +4,7 @@
 {% set app_package = 'data-service-' + app_version + '.tar.gz' %}
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
 {% set install_dir = pillar['pnda']['homedir'] %}
+{% set hadoop_distro = pillar['hadoop.distro'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
@@ -45,6 +46,7 @@ data-service-copy_config:
     - template: jinja
     - defaults:
         location: {{ pnda_master_dataset_location }}
+        hadoop_distro: {{ hadoop_distro }}
     - require:
       - archive: data-service-dl-and-extract
 
