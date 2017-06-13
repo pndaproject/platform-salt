@@ -79,6 +79,13 @@ orchestrate-pnda-install_hdp_hadoop_httpfs:
     - tgt_type: compound
     - sls: hdp.httpfs
     - timeout: 120
+
+orchestrate-pnda-install_hdp_hadoop_oozie_libs:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:EDGE'
+    - tgt_type: compound
+    - sls: hdp.oozie_libs
+    - timeout: 120
 {% endif %}
 
 orchestrate-pnda-create_master_dataset:
