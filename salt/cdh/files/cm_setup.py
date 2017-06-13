@@ -812,7 +812,8 @@ def setup_common_oozie_libs(name_node):
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-it.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-prefix-tree.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/lib/zookeeper.jar',
-                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar']
+                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar',
+                     '/opt/cloudera/parcels/CDH/lib/spark/lib/spark-examples.jar']
 
     # Setup a connection with hdfs using namenode.
     hdfs_client = PyWebHdfsClient(host=name_node, port=webhdfs_port, user_name=webhdfs_user, timeout=None)
