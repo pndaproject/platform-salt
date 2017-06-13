@@ -148,6 +148,8 @@ def setup_hadoop(
                                 "hadoop.proxyuser.falcon.hosts" : "*",
                                 "hadoop.proxyuser.hcat.groups" : "users",
                                 "hadoop.proxyuser.hcat.hosts" : "%(s)s-hadoop-mgr-1",
+                                "hadoop.proxyuser.hdfs.groups" : "*",
+                                "hadoop.proxyuser.hdfs.hosts" : "*",
                                 "hadoop.proxyuser.hive.groups" : "*",
                                 "hadoop.proxyuser.hive.hosts" : "*",
                                 "hadoop.proxyuser.ambari.groups" : "*",
@@ -408,7 +410,8 @@ def setup_hadoop(
         response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), stop_command, auth=auth, headers=headers)
         logging.info('Response to stop command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
         logging.info(response.text)
-        wait_on_cmd(response.json()['href'], 'services to be stopped by Ambari')
+        if response.status_code == 202:
+            wait_on_cmd(response.json()['href'], 'services to be stopped by Ambari')
 
     def start_all_services():
         start_command = '''{
@@ -428,7 +431,8 @@ def setup_hadoop(
         response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), start_command, auth=auth, headers=headers)
         logging.info('Response to start command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
         logging.info(response.text)
-        wait_on_cmd(response.json()['href'], 'services to be started by Ambari')
+        if response.status_code == 202:
+            wait_on_cmd(response.json()['href'], 'services to be started by Ambari')
 
     blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari")
 
