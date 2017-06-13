@@ -21,7 +21,7 @@ g++:
   version: "4.8.5-11.el7"
 glibc-devel:
   package-name: glibc-devel
-  version: "2.17-157.el7_3.1"
+  version: "2.17-157.el7_3.2"
 gnuplot:
   package-name: gnuplot
   version: "4.6.2-3.el7"
