@@ -40,6 +40,11 @@ platform-libraries-download_egg_file:
     - require:
       - file: platform-libraries-create_target_dir
 
+platform-libraries-link_egg_file:
+  file.symlink:
+    - name: {{ platformlib_target_directory }}/platformlibs-py2.7.egg
+    - target: {{ platformlib_target_directory }}/{{ platformlib_package }}
+
 platform-libaries-easy-install:
   cmd.run:
     - name: {{ anaconda_home }}/bin/python -m easy_install {{ platformlib_target_directory }}/{{ platformlib_package }}
