@@ -75,7 +75,7 @@ orchestrate-pnda-install_hdp_hadoop_additional_roles:
 
 orchestrate-pnda-install_hdp_hadoop_httpfs:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:MGR*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR*'
     - tgt_type: compound
     - sls: hdp.httpfs
     - timeout: 120
