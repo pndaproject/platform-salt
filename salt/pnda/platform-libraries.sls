@@ -8,6 +8,8 @@
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
+{% set hadoop_distro = pillar['hadoop.distro'] %}
+
 {% if pillar['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% else %}
@@ -62,3 +64,4 @@ platform-libraries-copy-conf-file:
       cm_ip: {{ cm_ip }}
       cm_user: {{ cm_username }}
       cm_pass: {{ cm_password }}
+      hadoop_distro: {{ hadoop_distro }}
