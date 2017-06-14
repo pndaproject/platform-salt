@@ -12,12 +12,8 @@
     "cm_user":"{{ cm_username }}",
     "cm_pass":"{{ cm_password }}",
     "datasets_table":"platform_datasets",
-    "spark_streaming_dirs_to_clean": [
-        "/user/hdfs/.sparkStaging/",
-        "/tmp/logs/hdfs/logs/",
-        "/user/spark/applicationHistory/"
-    ],
-    "general_dirs_to_clean":["/user/history/done/"],
+    "spark_streaming_dirs_to_clean": [{{ streaming_dirs_to_clean }}],
+    "general_dirs_to_clean": [{{ general_dirs_to_clean }}],
     "old_dirs_to_clean": [
         {"name": "{{ gobblin_work_dir }}/metrics", "age_seconds": 172800},
         {"name": "{{ gobblin_work_dir }}/state-store/PullFromKafkaMR", "age_seconds": 172800}
