@@ -51,7 +51,7 @@ ntp:
   package-name: ntp
   version: "4.2.6p5-25.el7_3.1"
 opentsdb:
-  package-source: 'opentsdb-2.2.0.noarch.rpm'
+  package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
 python-pip:
   package-name: python2-pip
