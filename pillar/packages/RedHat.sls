@@ -64,7 +64,7 @@ python3-pip:
   version: "8.1.2-5.el7"
 python3-dev:
   package-name: python34-devel
-  version: "3.4.5-3.el7"
+  version: "3.4.5-4.el7"
 python-mysqldb:
   package-name: MySQL-python
   version: "1.2.5-1.el7"
