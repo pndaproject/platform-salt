@@ -4,7 +4,7 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
+{% set logstash_version = pillar['logstash']['version'] %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
 {% set logstash_url = mirror_location + logstash_package %}
 {% set plugin_pack_url = mirror_location + 'logstash_plugins.tar.gz' %}
@@ -24,7 +24,7 @@ logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
     - source: {{ logstash_url }}
-    - source_hash: {{ logstash_url }}.sha1.txt
+    - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
@@ -38,7 +38,7 @@ logshipper-link_release:
 {% if grains['os'] == 'RedHat' %}
 logshipper-journald-plugin:
   cmd.run:
-    - name: curl {{ plugin_pack_url }} > {{ install_dir }}/logstash/logstash_plugins.tar.gz; cd {{ install_dir }}/logstash; tar zxf logstash_plugins.tar.gz
+    - name: curl {{ plugin_pack_url }} > {{ install_dir }}/logstash/logstash_plugins.tar.gz; cd {{ install_dir }}/logstash; bin/logstash-plugin unpack logstash_plugins.tar.gz; bin/logstash-plugin install --local logstash-input-journald
 {% endif %}
 
 logshipper-copy_configuration:

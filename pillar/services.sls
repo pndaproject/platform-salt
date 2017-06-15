@@ -3,8 +3,7 @@ mine_functions:
   grains.items: []
 
 logstash:
-  version: 1.4.2
-  directory: /opt/pnda
+  version: 5.0.2
 
 kibana:
   version: 4.1.6-linux-x64
@@ -54,7 +53,7 @@ kafkamanager:
 
 jupyterproxy:
   release_version: 1.3.1
-  
+
 gobblin:
   release_version: develop
 
