@@ -1,6 +1,3 @@
-{% set settings = salt['pillar.get']('opentsdb', {}) -%}
-{% set opentsdb_version = settings.get('version', '2.2.0') %}
-
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
