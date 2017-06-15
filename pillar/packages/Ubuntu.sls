@@ -48,7 +48,7 @@ ntp:
   package-name: ntp
   version: "1:4.2.6.p5+dfsg-3ubuntu2.14.04.10"
 opentsdb:
-  package-source: 'opentsdb-2.2.0_all.deb'
+  package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242
 python-mysqldb:
   package-name: python-mysqldb
