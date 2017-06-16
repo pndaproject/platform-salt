@@ -6,6 +6,12 @@
 include:
   - opentsdb
 
+pnda_opentsdb-pnda-opentsdb-cmd_perms:
+  file.managed:
+    - name: /usr/share/opentsdb/bin/tsdb
+    - mode: 755
+    - replace: False
+
 pnda_opentsdb-pnda-opentsdb-configuration:
   file.replace:
     - name: /etc/opentsdb/opentsdb.conf
