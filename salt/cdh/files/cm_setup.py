@@ -231,7 +231,7 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
     # a few seconds
 
     time.sleep(5)
-
+    parcel = None
     for _ in xrange(120):
         try:
             parcel = cluster.get_parcel(product, parcel_version)
@@ -239,6 +239,9 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
         except Exception:
             logging.info("failed to get_parcel %s", parcel_version)
             time.sleep(5)
+
+    if parcel is None:
+        raise Exception("Failed to download parcel %s:%s from %s" % (product, parcel_version, parcel_repo))
 
     logging.info("Got %s Parcel %s : Current State %s", product, parcel_version, parcel.stage)
 
