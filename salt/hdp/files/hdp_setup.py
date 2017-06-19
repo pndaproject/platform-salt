@@ -10,8 +10,11 @@ Created:    15/05/2017
 
 import logging
 import time
-
+import json
 import requests
+
+# Import Flavor configuration file
+import cfg_flavor as _CFG
 
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 
@@ -45,8 +48,8 @@ def setup_hadoop(
     for _ in xrange(120):
         try:
             logging.info("Checking API availability....")
-            response = requests.get("%s/hosts" % ambari_api, timeout=5, auth=auth, headers=headers)
-            logging.debug("%s", response.text)
+            api_response = requests.get("%s/hosts" % ambari_api, timeout=5, auth=auth, headers=headers)
+            logging.debug("%s", api_response.text)
             api_up = True
             break
         except Exception:
@@ -76,308 +79,34 @@ def setup_hadoop(
 
     for repo_request in repo_requests:
         logging.debug("Registering repo: %s", repo_request[0])
-        response = requests.put(repo_request[0], repo_request[1], auth=auth, headers=headers)
-        if response.status_code != 200:
-            exit_setup(response.text)
+        repo_response = requests.put(repo_request[0], repo_request[1], auth=auth, headers=headers)
+        if repo_response.status_code != 200:
+            exit_setup(repo_response.text)
         logging.debug("Registered repo: %s", repo_request[0])
 
     logging.info("Creating blueprint")
-    blueprint = '''{
-	                "configurations": [
-                        {
-                            "hive-env" : {
-                                "properties" : {
-                                "hive_ambari_database" : "MySQL",
-                                "hive_ambari_host" : "%(s)s-hadoop-mgr-1",
-                                "hive_database" : "MySQL Database",
-                                "hive_database_name" : "hive",
-                                "hive_database_type" : "mysql",
-                                "hive_existing_mssql_server_2_host" : "%(s)s-hadoop-mgr-1",
-                                "hive_existing_mssql_server_host" : "%(s)s-hadoop-mgr-1",
-                                "hive_existing_mysql_host" : "%(s)s-hadoop-mgr-1",
-                                "hive_hostname" : "%(s)s-hadoop-mgr-1",
-                                "hive_user" : "hive",
-                                "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
-                                "javax.jdo.option.ConnectionPassword" : "hive",
-                                "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(s)s-hadoop-mgr-1/hive",
-                                "javax.jdo.option.ConnectionUserName" : "hive"
-                                }
-                            }
-                        },
-                        {
-                            "hive-site" : {
-                                "properties" : {
-                                "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
-                                "javax.jdo.option.ConnectionPassword" : "hive",
-                                "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(s)s-hadoop-mgr-1/hive?createDatabaseIfNotExist=true",
-                                "javax.jdo.option.ConnectionUserName" : "hive"
-                                }
-                            }
-                        },
-                        {
-                            "hbase-site" : {
-                                "properties" : {
-                                 "zookeeper.session.timeout" : "300000"
-                                }
-                            }
-                        },
-                        {
-                            "hadoop-env" : {
-                                "properties" : {
-                                "dtnode_heapsize" : "2048m",
-                                "hadoop_heapsize" : "2048",
-                                "namenode_heapsize": "2048m",
-                                "namenode_opt_maxnewsize": "361m",
-                                "namenode_opt_newsize": "361m"
-                                }
-                            }
-                        },
-                        {
-                            "core-site" : {
-                                "properties_attributes" : {
-                                "final" : {
-                                    "fs.defaultFS" : "true"
-                                }
-                                },
-                                "properties" : {
-                                "fs.defaultFS" : "hdfs://%(s)s-hadoop-mgr-1:8020",
-                                "fs.trash.interval" : "360",
-                                "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
-                                "hadoop.http.authentication.simple.anonymous.allowed" : "true",
-                                "hadoop.proxyuser.falcon.groups" : "users",
-                                "hadoop.proxyuser.falcon.hosts" : "*",
-                                "hadoop.proxyuser.hcat.groups" : "users",
-                                "hadoop.proxyuser.hcat.hosts" : "%(s)s-hadoop-mgr-1",
-                                "hadoop.proxyuser.hdfs.groups" : "*",
-                                "hadoop.proxyuser.hdfs.hosts" : "*",
-                                "hadoop.proxyuser.hive.groups" : "*",
-                                "hadoop.proxyuser.hive.hosts" : "*",
-                                "hadoop.proxyuser.ambari.groups" : "*",
-                                "hadoop.proxyuser.ambari.hosts" : "*",
-                                "hadoop.proxyuser.httpfs.groups" : "*",
-                                "hadoop.proxyuser.httpfs.hosts" : "*",
-                                "hadoop.proxyuser.root.groups" : "*",
-                                "hadoop.proxyuser.root.hosts" : "*",
-                                "hadoop.proxyuser.oozie.groups" : "*",
-                                "hadoop.proxyuser.oozie.hosts" : "%(s)s-hadoop-mgr-1",
-                                "hadoop.security.auth_to_local" : "DEFAULT",
-                                "hadoop.security.authentication" : "simple",
-                                "hadoop.security.authorization" : "false",
-                                "io.compression.codecs" : "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.SnappyCodec",
-                                "io.file.buffer.size" : "131072",
-                                "io.serializations" : "org.apache.hadoop.io.serializer.WritableSerialization",
-                                "ipc.client.connect.max.retries" : "50",
-                                "ipc.client.connection.maxidletime" : "30000",
-                                "ipc.client.idlethreshold" : "8000",
-                                "ipc.server.tcpnodelay" : "true",
-                                "mapreduce.jobtracker.webinterface.trusted" : "false",
-                                "proxyuser_group" : "users"
-                                }
-                            }
-                        }
-                    ],
-                    "host_groups" : [
-                        {
-                        "name" : "master",
-                        "components" : [
-                            {
-                            "name" : "METRICS_MONITOR"
-                            },
-                            {
-                            "name" : "ZOOKEEPER_SERVER"
-                            },
-                            {
-                            "name" : "NAMENODE"
-                            },
-                            {
-                            "name" : "SECONDARY_NAMENODE"
-                            },
-                            {
-                            "name" : "HBASE_MASTER"
-                            },
-                            {
-                            "name" : "RESOURCEMANAGER"
-                            },
-                            {
-                            "name" : "HISTORYSERVER"
-                            },
-                            {
-                            "name" : "SPARK_JOBHISTORYSERVER"
-                            },
-                            {
-                            "name" : "APP_TIMELINE_SERVER"
-                            },
-                            {
-                            "name" : "HIVE_SERVER"
-                            },
-                            {
-                            "name" : "HIVE_METASTORE"
-                            },
-                            {
-                            "name" : "WEBHCAT_SERVER"
-                            },
-                            {
-                            "name" : "FALCON_SERVER"
-                            },
-                            {
-                            "name" : "OOZIE_SERVER"
-                            },
-                            {
-                            "name" : "HDFS_CLIENT"
-                            },
-                            {
-                            "name" : "YARN_CLIENT"
-                            },
-                            {
-                            "name" : "MAPREDUCE2_CLIENT"
-                            },
-                            {
-                            "name" : "ZOOKEEPER_CLIENT"
-                            },
-                            {
-                            "name" : "PIG"
-                            },
-                            {
-                            "name" : "TEZ_CLIENT"
-                            },
-                            {
-                            "name" : "OOZIE_CLIENT"
-                            }
-                        ],
-                        "cardinality" : "1"
-                        },
-                        {
-                        "name" : "slaves",
-                        "components" : [
-                            {
-                            "name" : "METRICS_MONITOR"
-                            },
-                            {
-                            "name" : "DATANODE"
-                            },
-                            {
-                            "name" : "NODEMANAGER"
-                            },
-                            {
-                            "name" : "HBASE_REGIONSERVER"
-                            },
-                            {
-                            "name" : "HDFS_CLIENT"
-                            },
-                            {
-                            "name" : "YARN_CLIENT"
-                            },
-                            {
-                            "name" : "MAPREDUCE2_CLIENT"
-                            },
-                            {
-                            "name" : "ZOOKEEPER_CLIENT"
-                            }
-                        ],
-                        "cardinality" : "1+"
-                        },
-                        {
-                        "name" : "edge",
-                        "components" : [
-                            {
-                            "name" : "METRICS_MONITOR"
-                            },
-                            {
-                            "name" : "METRICS_COLLECTOR"
-                            },
-                            {
-                            "name" : "ZOOKEEPER_CLIENT"
-                            },
-                            {
-                            "name" : "PIG"
-                            },
-                            {
-                            "name" : "OOZIE_CLIENT"
-                            },
-                            {
-                            "name" : "HBASE_CLIENT"
-                            },
-                            {
-                            "name" : "HCAT"
-                            },
-                            {
-                            "name" : "KNOX_GATEWAY"
-                            },
-                            {
-                            "name" : "FALCON_CLIENT"
-                            },
-                            {
-                            "name" : "TEZ_CLIENT"
-                            },
-                            {
-                            "name" : "SPARK_CLIENT"
-                            },
-                            {
-                            "name" : "SLIDER"
-                            },
-                            {
-                            "name" : "SQOOP"
-                            },
-                            {
-                            "name" : "HDFS_CLIENT"
-                            },
-                            {
-                            "name" : "HIVE_CLIENT"
-                            },
-                            {
-                            "name" : "YARN_CLIENT"
-                            },
-                            {
-                            "name" : "MAPREDUCE2_CLIENT"
-                            }
-                        ],
-                        "cardinality" : "1+"
-                        }
-                    ],
-                    "Blueprints" : {
-                        "blueprint_name" : "hdp-sample-blueprint",
-                        "stack_name" : "HDP",
-                        "stack_version" : "2.6"
-                    }
-                }''' % {'s': cluster_name}
-    response = requests.post('%s/blueprints/hdp-sample-blueprint' % ambari_api, blueprint, auth=auth, headers=headers)
-    logging.info('Response to blueprint creation %s: %s', '/blueprints/hdp-sample-blueprint', response.status_code)
-    logging.info(response.text)
-    cluster_instance = '''{
-                            "blueprint" : "hdp-sample-blueprint",
-                            "default_password" : "%s",
-                            "host_groups" :[
-                                {
-                                  "name" : "master",
-                                  "hosts" : [
-                                    {
-                                    "fqdn" : "%s-hadoop-mgr-1"
-                                    }
-                                ]
-                                },
-                                {
-                                  "name" : "slaves",
-                                  "hosts" : [
-                                    {
-                                    "fqdn" : "%s-hadoop-dn-0"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "name" : "edge",
-                                  "hosts" : [
-                                    {
-                                    "fqdn" : "%s-hadoop-edge"
-                                    }
-                                ]
-                                }
-                            ]
-                        }''' % (ambari_password, cluster_name, cluster_name, cluster_name)
+    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
+    logging.debug('%s', json.dumps(blueprint))
+    blueprint_post_uri = '%s/blueprints/pnda-blueprint' % ambari_api
+    blueprint_response = requests.post(blueprint_post_uri, json.dumps(blueprint), auth=auth, headers=headers)
+    logging.info('Response to blueprint creation %s: %s', blueprint_post_uri, blueprint_response.status_code)
+    logging.info(blueprint_response.text)
 
-    response = requests.post('%s/clusters/%s' % (ambari_api, cluster_name), cluster_instance, auth=auth, headers=headers)
-    logging.info('Response to cluster creation %s: %s', '/clusters/%s' % cluster_name, response.status_code)
-    logging.info(response.text)
-    status_tracking_uri = response.json()['href']
+    host_group_names = [item['name'] for item in blueprint['host_groups']]
+    logging.info('Detected host groups %s in blueprint', json.dumps(host_group_names))
+
+    cluster_instance_def = {
+        "blueprint" : "pnda-blueprint",
+        "default_password" : ambari_password,
+        "host_groups" :[{"name" : host_group, "hosts" : [{"fqdn" : node['host_name']} for node in nodes if node['type'] == host_group]} for host_group in host_group_names]
+        }
+    logging.debug('%s', json.dumps(cluster_instance_def))
+
+    blueprint_instance_post_uri = '%s/clusters/%s' % (ambari_api, cluster_name)
+    cluster_response = requests.post(blueprint_instance_post_uri, json.dumps(cluster_instance_def), auth=auth, headers=headers)
+    logging.info(cluster_response.text)
+    logging.info('Response to cluster creation %s: %s', blueprint_instance_post_uri, cluster_response.status_code)
+    status_tracking_uri = cluster_response.json()['href']
 
     def wait_on_cmd(tracking_uri, msg):
         logging.info('Waiting for %s...', msg)
@@ -392,47 +121,46 @@ def setup_hadoop(
         return cmd_status
 
     def stop_all_services():
-        stop_command = '''{
-                                "RequestInfo": {
-                                    "context": "_PARSE_.STOP.ALL_SERVICES",
-                                    "operation_level": {
-                                        "level": "CLUSTER",
-                                        "cluster_name": "%s"
-                                    }
-                                },
-                                "Body": {
-                                    "ServiceInfo": {
-                                        "state": "INSTALLED"
-                                    }
-                                }
-                        }''' % cluster_name
-
-        response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), stop_command, auth=auth, headers=headers)
-        logging.info('Response to stop command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
-        logging.info(response.text)
-        if response.status_code == 202:
-            wait_on_cmd(response.json()['href'], 'services to be stopped by Ambari')
+        stop_command = {
+            "RequestInfo": {
+                "context": "_PARSE_.STOP.ALL_SERVICES",
+                "operation_level": {
+                    "level": "CLUSTER",
+                    "cluster_name": cluster_name
+                }
+            },
+            "Body": {
+                "ServiceInfo": {
+                    "state": "INSTALLED"
+                }
+            }
+        }
+        stop_response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), json.dumps(stop_command), auth=auth, headers=headers)
+        logging.info('Response to stop command %s: %s', '/clusters/%s/services' % cluster_name, stop_response.status_code)
+        logging.info(stop_response.text)
+        if stop_response.status_code == 202:
+            wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari')
 
     def start_all_services():
-        start_command = '''{
-                                "RequestInfo": {
-                                    "context": "_PARSE_.START.ALL_SERVICES",
-                                    "operation_level": {
-                                        "level": "CLUSTER",
-                                        "cluster_name": "%s"
-                                    }
-                                },
-                                "Body": {
-                                    "ServiceInfo": {
-                                        "state": "STARTED"
-                                    }
-                                }
-                        }''' % cluster_name
-        response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), start_command, auth=auth, headers=headers)
-        logging.info('Response to start command %s: %s', '/clusters/%s/services' % cluster_name, response.status_code)
-        logging.info(response.text)
-        if response.status_code == 202:
-            wait_on_cmd(response.json()['href'], 'services to be started by Ambari')
+        start_command = {
+            "RequestInfo": {
+                "context": "_PARSE_.START.ALL_SERVICES",
+                "operation_level": {
+                    "level": "CLUSTER",
+                    "cluster_name": cluster_name
+                }
+            },
+            "Body": {
+                "ServiceInfo": {
+                    "state": "STARTED"
+                }
+            }
+        }
+        start_response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), json.dumps(start_command), auth=auth, headers=headers)
+        logging.info('Response to start command %s: %s', '/clusters/%s/services' % cluster_name, start_response.status_code)
+        logging.info(start_response.text)
+        if start_response.status_code == 202:
+            wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari')
 
     blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari")
 
