@@ -27,10 +27,7 @@ manager = ips['{{ host }}']
 
 nodes = []
 for host in ips.keys():
-    nodes.append({'type': roles[host],
-        'id': None,
-        'private_addr': ips[host],
-        'public_addr': ips[host]})
+    nodes.append({'type': roles[host], 'ip_addr': ips[host], 'host_name': host})
 
 {% set ambari_username = pillar['admin_login']['user'] %}
 {% set ambari_password = pillar['admin_login']['password'] %}

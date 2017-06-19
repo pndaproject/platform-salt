@@ -9,7 +9,6 @@ Created:    14/03/2016
 """
 import time
 import urllib2
-import string
 import logging
 import sys
 import json

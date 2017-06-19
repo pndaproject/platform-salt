@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 {% set hdp_p = salt['pillar.get']('hdp', {}) %}
@@ -36,6 +38,12 @@ hdp-create_hdp_configuration_script:
         cluster_name: {{ pnda_cluster }}
         hdp_core_stack_repo: {{ hdp_p.get('hdp_core_stack_repo', '') }}
         hdp_utils_stack_repo: {{ hdp_p.get('hdp_utils_stack_repo', '') }}
+
+hdp-copy_flavor_config:
+  file.managed:
+    - source: salt://hdp/templates/{{ flavor_cfg.template_file }}.tpl
+    - name: {{ scripts_location }}/cfg_flavor.py
+    - template: jinja
 
 hdp-execute_hdp_installation_script:
   cmd.run:
