@@ -27,7 +27,7 @@ gnuplot:
   version: "4.6.4-2"
 glibc-devel:
   package-name: libc6-dev
-  version: "2.19-0ubuntu6.11"
+  version: "2.19-0ubuntu6.13"
 grafana:
   package-source: 'grafana_4.2.0_amd64.deb'
 libmysql-java:
