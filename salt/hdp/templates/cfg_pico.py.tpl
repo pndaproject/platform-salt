@@ -57,6 +57,14 @@ BLUEPRINT = '''{
             }
         },
         {
+            "hdfs-site" : {
+                "properties" : {
+                    "dfs.replication" : "3",
+                    "dfs.replication.max" : "50"
+                }
+            }
+        },
+        {
             "core-site" : {
                 "properties_attributes" : {
                 "final" : {
@@ -68,8 +76,6 @@ BLUEPRINT = '''{
                 "fs.trash.interval" : "360",
                 "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
                 "hadoop.http.authentication.simple.anonymous.allowed" : "true",
-                "hadoop.proxyuser.falcon.groups" : "users",
-                "hadoop.proxyuser.falcon.hosts" : "*",
                 "hadoop.proxyuser.hcat.groups" : "users",
                 "hadoop.proxyuser.hcat.hosts" : "%(cluster_name)s-hadoop-mgr-1",
                 "hadoop.proxyuser.hdfs.groups" : "*",
@@ -139,9 +145,6 @@ BLUEPRINT = '''{
                 },
                 {
                 "name" : "WEBHCAT_SERVER"
-                },
-                {
-                "name" : "FALCON_SERVER"
                 },
                 {
                 "name" : "OOZIE_SERVER"
@@ -223,12 +226,6 @@ BLUEPRINT = '''{
                 },
                 {
                 "name" : "HCAT"
-                },
-                {
-                "name" : "KNOX_GATEWAY"
-                },
-                {
-                "name" : "FALCON_CLIENT"
                 },
                 {
                 "name" : "TEZ_CLIENT"

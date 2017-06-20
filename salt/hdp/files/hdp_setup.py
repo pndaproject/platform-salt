@@ -86,6 +86,14 @@ def setup_hadoop(
 
     logging.info("Creating blueprint")
     blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
+
+    logging.info("Determining HDFS replication factor")
+    hdfs_repl_factor = min(3, sum(1 for n in nodes if n["type"] == "DATANODE"))
+    logging.info("Setting HDFS replication factor to %s", hdfs_repl_factor)
+    for config in blueprint['configurations']:
+        if 'hdfs-site' in config:
+            config['hdfs-site']['properties']['dfs.replication'] = hdfs_repl_factor
+
     logging.debug('%s', json.dumps(blueprint))
     blueprint_post_uri = '%s/blueprints/pnda-blueprint' % ambari_api
     blueprint_response = requests.post(blueprint_post_uri, json.dumps(blueprint), auth=auth, headers=headers)
