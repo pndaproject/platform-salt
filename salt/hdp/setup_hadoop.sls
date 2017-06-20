@@ -4,6 +4,15 @@
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 {% set hdp_p = salt['pillar.get']('hdp', {}) %}
 
+{% set keystone_user = salt['pillar.get']('keystone.user', "") %}
+{% set keystone_password = salt['pillar.get']('keystone.password', "") %}
+{% set keystone_tenant = salt['pillar.get']('keystone.tenant', "") %}
+{% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
+{% set region = salt['pillar.get']('keystone.region_name', "") %}
+{% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
+{% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
+{% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
+
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
@@ -44,6 +53,15 @@ hdp-copy_flavor_config:
     - source: salt://hdp/templates/{{ flavor_cfg.template_file }}.tpl
     - name: {{ scripts_location }}/cfg_flavor.py
     - template: jinja
+    - defaults:
+      keystone_user: {{ keystone_user }}
+      keystone_tenant: {{ keystone_tenant }}
+      keystone_auth_url: {{ keystone_auth_url }}
+      keystone_password: {{ keystone_password }}
+      region: {{ region }}
+      mysql_host: {{ mysql_host }}
+      aws_key: {{ aws_key }}
+      aws_secret_key: {{ aws_secret_key }}
 
 hdp-execute_hdp_installation_script:
   cmd.run:
