@@ -4,7 +4,7 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set logstash_version = salt['pillar.get']('logstash:release_version', '1.5.4') %}
+{% set logstash_version = pillar['logstash']['version'] %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
 {% set logstash_url = mirror_location + logstash_package %}
 
@@ -30,7 +30,7 @@ logserver-dl-and-extract:
     - source_hash: {{ logstash_url }}.sha1.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/logstash-1.5.4
+    - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logserver-link_release:
   cmd.run:

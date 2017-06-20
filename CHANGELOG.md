@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2984: Upgrade JDK to 8u131
 - PNDA-2881: Update Kafka Manager version to 1.3.3.6
 - PNDA-2839: Update Grafana version to 4.2.0. Warning: the default pnda password has changed.
+- PNDA-2841: Update Logstash version to 5.0.2 for PNDA logshipper/logserver
 - PNDA-2838: Update OpenTSDB to version 2.3.0
 
 ### Fixed
