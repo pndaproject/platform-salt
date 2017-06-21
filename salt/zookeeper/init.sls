@@ -59,7 +59,7 @@ zookeeper-myid:
           ip: {{ node.ip }}
           fqdn: {{ node.fqdn }}
       {%- endfor %}
-    - mode: 644
+    - mode: 755
     - require:
       - file: zookeeper-data-dir
 
