@@ -1,6 +1,6 @@
 acl:
   package-name: acl
-  version: "2.2.52-1"
+  version: "latest"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
   version: "5.9.0-1.cm590.p0.249~trusty-cm5"
@@ -12,16 +12,16 @@ cloudera-manager-server:
   version: "5.9.0-1.cm590.p0.249~trusty-cm5"
 debconf-utils:
   package-name: debconf-utils
-  version: "1.5.51ubuntu2"
+  version: "latest"
 g++:
   package-name: g++
-  version: "4:4.8.2-1ubuntu6"
+  version: "latest"
 gnuplot:
   package-name: gnuplot
-  version: "4.6.4-2"
+  version: "latest"
 glibc-devel:
   package-name: libc6-dev
-  version: "2.19-0ubuntu6.11"
+  version: "latest"
 grafana:
   package-source: 'grafana_4.2.0_amd64.deb'
 libmysql-java:
@@ -29,13 +29,13 @@ libmysql-java:
   version: "5.1.28-1"
 libssl-dev:
   package-name: libssl-dev
-  version: "1.0.1f-1ubuntu2.22"
+  version: "latest"
 libffi-dev:
   package-name: libffi-dev
-  version:  "3.1~rc1+r3.0.13-12ubuntu0.1"
+  version:  "latest"
 libsasl:
   package-name: libsasl2-dev
-  version: "2.1.25.dfsg1-17build1"
+  version: "latest"
 mysql-server:
   package-name: mysql-server-5.6
   version: "5.6.33-0ubuntu0.14.04.1"
@@ -43,10 +43,10 @@ mysql-server:
   service_name: mysql
 nginx:
   package-name: nginx
-  version: "1.4.6-1ubuntu3.7"
+  version: "latest"
 ntp:
   package-name: ntp
-  version: "1:4.2.6.p5+dfsg-3ubuntu2.14.04.10"
+  version: "latest"
 opentsdb:
   package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242
@@ -55,29 +55,29 @@ python-mysqldb:
   version: "1.2.3-2ubuntu1"
 python-pip:
   package-name: python-pip
-  version: "1.5.4-1ubuntu4"
+  version: "latest"
 python-dev:
   package-name: python-dev
-  version: "2.7.5-5ubuntu3"
+  version: "latest"
 python3-pip:
   package-name: python3-pip
-  version: "1.5.4-1ubuntu4"
+  version: "latest"
 python3-dev:
   package-name: python3-dev
-  version: "3.4.0-0ubuntu2"
+  version: "latest"
 redis-server:
   package-name: redis-server
   version: "2:2.8.4-2"
   configuration_filename: "/etc/redis/redis.conf"
 snappy:
   package-name: libsnappy-dev
-  version: "1.1.0-1ubuntu1"
+  version: "latest"
 sshfs:
   package-name: sshfs
-  version: "2.5-1ubuntu1"
+  version: "latest"
 unzip:
   package-name: unzip
-  version: "6.0-9ubuntu1.5"
+  version: "latest"
 wget:
   package-name: wget
-  version: "1.15-1ubuntu1.14.04.2"
+  version: "latest"

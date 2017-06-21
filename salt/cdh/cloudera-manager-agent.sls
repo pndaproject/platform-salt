@@ -1,10 +1,15 @@
 {%- set cm_host = salt['pnda.ip_addresses']('cloudera_manager')[0] -%}
 
-cloudera-manager-agent-install_packages:
+cloudera-manager-agent-install_daemons:
   pkg.installed:
-    - pkgs:
-      - {{ pillar['cloudera-manager-daemons']['package-name'] }}: {{ pillar['cloudera-manager-daemons']['version'] }}
-      - {{ pillar['cloudera-manager-agent']['package-name'] }}: {{ pillar['cloudera-manager-agent']['version'] }}
+    - name: {{ pillar['cloudera-manager-daemons']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-daemons']['version'] }}
+    - ignore_epoch: True
+
+cloudera-manager-agent-install_agent:
+  pkg.installed:
+    - name: {{ pillar['cloudera-manager-agent']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-agent']['version'] }}
     - ignore_epoch: True
 
 cloudera-manager-agent-configure_ini:

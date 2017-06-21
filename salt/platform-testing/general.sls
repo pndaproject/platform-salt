@@ -40,17 +40,32 @@
 include:
   - python-pip
 
-platform-testing-general-install_dev_deps:
-  pkg.installed:
-    - pkgs:
 {% if grains['os'] == 'RedHat' %}
-      - {{ pillar['nmap-ncat']['package-name'] }}: {{ pillar['nmap-ncat']['version'] }}
-      - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
-{% endif %}
-      - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
-      - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+platform-testing-general-install_dev_deps_nmap_ncat:
+  pkg.installed:
+    - name: {{ pillar['nmap-ncat']['package-name'] }}
+    - version: {{ pillar['nmap-ncat']['version'] }}
     - ignore_epoch: True
 
+platform-testing-general-install_dev_deps_cyrus:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-devel']['version'] }}
+    - ignore_epoch: True
+{% endif %}
+    
+platform-testing-general-install_dev_deps_sasl:
+  pkg.installed:
+    - name: {{ pillar['libsasl']['package-name'] }}
+    - version: {{ pillar['libsasl']['version'] }}
+    - ignore_epoch: True
+    
+platform-testing-general-install_dev_deps_gcc:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
+    
 platform-testing-general-dl-and-extract:
   archive.extracted:
     - name: {{ platform_testing_directory }}
