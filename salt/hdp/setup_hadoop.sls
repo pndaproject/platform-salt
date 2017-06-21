@@ -71,3 +71,8 @@ hdp-execute_hdp_installation_script:
       # watch the template setup state here
       - file: hdp-create_hdp_configuration_script
       - file: hdp-copy_script_manager_installation_script
+
+hdp-fix_oozie_sharelib:
+  cmd.run:
+    - name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/); sudo -u hdfs hadoop fs -copyFromLocal /usr/hdp/current/spark-client/lib/spark-assembly-*.jar /usr/hdp/current/spark-client/python/lib/py4j-0.9-src.zip /usr/hdp/current/spark-client/python/lib/pyspark.zip /user/oozie/share/lib/lib_${libvers##*_}/spark/ || true;
+
