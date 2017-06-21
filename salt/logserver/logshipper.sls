@@ -15,11 +15,16 @@ include:
 
 logshipper-lbc6:
   pkg.installed:
-    - pkgs:
-      - {{ pillar['glibc-devel']['package-name'] }}: {{ pillar['glibc-devel']['version'] }}
-      - {{ pillar['acl']['package-name'] }}: {{ pillar['acl']['version'] }}
+    - name: {{ pillar['glibc-devel']['package-name'] }}
+    - version: {{ pillar['glibc-devel']['version'] }}
     - ignore_epoch: True
 
+logshipper-acl:
+  pkg.installed:
+    - name: {{ pillar['acl']['package-name'] }}
+    - version: {{ pillar['acl']['version'] }}
+    - ignore_epoch: True
+    
 logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
