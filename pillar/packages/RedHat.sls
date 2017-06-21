@@ -1,9 +1,9 @@
 acl:
   package-name: acl
-  version: "2.2.51-12.el7"
+  version: "latest"
 at:
   package-name: at
-  version: "3.1.13-22.el7"
+  version: "latest"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
   version: "5.9.0-1.cm590.p0.249.el7"
@@ -15,27 +15,27 @@ cloudera-manager-server:
   version: "5.9.0-1.cm590.p0.249.el7"
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
-  version: "2.1.26-20.el7_2"
+  version: "latest"
 g++:
   package-name: gcc-c++
-  version: "4.8.5-11.el7"
+  version: "latest"
 glibc-devel:
   package-name: glibc-devel
-  version: "2.17-157.el7_3.2"
+  version: "latest"
 gnuplot:
   package-name: gnuplot
-  version: "4.6.2-3.el7"
+  version: "latest"
 grafana:
   package-source: 'grafana-4.2.0-1.x86_64.rpm'
 libssl-dev:
   package-name: openssl-devel
-  version: "1.0.1e-60.el7_3.1"
+  version: "latest"
 libffi-dev:
   package-name: libffi-devel
-  version:  "3.0.13-18.el7"
+  version:  "latest"
 libsasl:
   package-name: libgsasl-devel
-  version: "1.8.0-8.el7"
+  version: "latest"
 mysql-server:
   package-name: mysql-community-server
   version: "5.5.54-2.el7"
@@ -43,28 +43,28 @@ mysql-server:
   service_name: mysqld
 nginx:
   package-name: nginx
-  version: "1.10.2-1.el7"
+  version: "latest"
 nmap-ncat:
   package-name: nmap-ncat
-  version: "6.40-7.el7"
+  version: "latest"
 ntp:
   package-name: ntp
-  version: "4.2.6p5-25.el7_3.1"
+  version: "latest"
 opentsdb:
   package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
 python-pip:
   package-name: python2-pip
-  version: "8.1.2-5.el7"
+  version: "latest"
 python-dev:
   package-name: python-devel
-  version: "2.7.5-48.el7"
+  version: "latest"
 python3-pip:
   package-name: python34-pip
-  version: "8.1.2-5.el7"
+  version: "latest"
 python3-dev:
   package-name: python34-devel
-  version: "3.4.5-4.el7"
+  version: "latest"
 python-mysqldb:
   package-name: MySQL-python
   version: "1.2.5-1.el7"
@@ -74,13 +74,13 @@ redis-server:
   configuration_filename: "/etc/redis.conf"
 snappy:
   package-name: snappy-devel
-  version: "1.1.0-3.el7"
+  version: "latest"
 sshfs:
   package-name: fuse-sshfs
-  version: "2.5-1.el7"
+  version: "latest"
 unzip:
   package-name: unzip
-  version: "6.0-16.el7"
+  version: "latest"
 wget:
   package-name: wget
-  version: "1.14-13.el7"
+  version: "latest"

@@ -26,15 +26,25 @@ platform-testing-cdh-dl-and-extract:
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ platform_testing_directory }}/{{ platform_testing_package }}-{{ platform_testing_version }}
-
-platform-testing-cdh-install_dev_deps:
-  pkg.installed:
-    - pkgs:
+   
 {% if grains['os'] == 'RedHat' %}
-      - {{ pillar['cyrus-sasl-devel']['package-name'] }}: {{ pillar['cyrus-sasl-devel']['version'] }}
+platform-testing-cdh-install_dev_deps_cyrus:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-devel']['version'] }}
+    - ignore_epoch: True
 {% endif %}
-      - {{ pillar['libsasl']['package-name'] }}: {{ pillar['libsasl']['version'] }}
-      - {{ pillar['g++']['package-name'] }}: {{ pillar['g++']['version'] }}
+    
+platform-testing-cdh-install_dev_deps_sasl:
+  pkg.installed:
+    - name: {{ pillar['libsasl']['package-name'] }}
+    - version: {{ pillar['libsasl']['version'] }}
+    - ignore_epoch: True
+    
+platform-testing-cdh-install_dev_deps_gcc:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
     - ignore_epoch: True
 
 platform-testing-cdh-create-venv:
@@ -46,7 +56,7 @@ platform-testing-cdh-create-venv:
     - require:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-cdh-dl-and-extract
-      - pkg: platform-testing-cdh-install_dev_deps
+
 
 platform-testing-cdh-create-link:
   file.symlink:
