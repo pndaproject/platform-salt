@@ -12,11 +12,15 @@ include:
   - mysql.connector
   - mysql
 
-cloudera-manager-install_cloudera_manager:
+cloudera-manager-install_daemons:
   pkg.installed:
-    - pkgs:
-      - {{ pillar['cloudera-manager-daemons']['package-name'] }}: {{ pillar['cloudera-manager-daemons']['version'] }}
-      - {{ pillar['cloudera-manager-server']['package-name'] }}: {{ pillar['cloudera-manager-server']['version'] }}
+    - name: {{ pillar['cloudera-manager-daemons']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-daemons']['version'] }}
+
+cloudera-manager-install_server:
+  pkg.installed:
+    - name: {{ pillar['cloudera-manager-server']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-server']['version'] }}
 
 {% if grains['os'] == 'RedHat' %}
 cloudera-manager-ensure_cloudera_manager_enabled:

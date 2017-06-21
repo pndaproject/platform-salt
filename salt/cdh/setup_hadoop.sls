@@ -17,13 +17,18 @@
 include:
   - python-pip
 
-cdh-install_deps:
+cdh-install_deps_ffi:
   pkg.installed:
-    - pkgs:
-      - {{ pillar['libffi-dev']['package-name'] }}: {{ pillar['libffi-dev']['version'] }}
-      - {{ pillar['libssl-dev']['package-name'] }}: {{ pillar['libssl-dev']['version'] }}
+    - name: {{ pillar['libffi-dev']['package-name'] }}
+    - version: {{ pillar['libffi-dev']['version'] }}
     - ignore_epoch: True
 
+cdh-install_deps_ssl:
+  pkg.installed:
+    - name: {{ pillar['libssl-dev']['package-name'] }}
+    - version: {{ pillar['libssl-dev']['version'] }}
+    - ignore_epoch: True    
+    
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:
   virtualenv.managed:
