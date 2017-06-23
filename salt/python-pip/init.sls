@@ -11,7 +11,7 @@ python-pip-install_python_dev_pkg:
     - name: {{ pillar['python-dev']['package-name'] }}
     - version : {{ pillar['python-dev']['version'] }}
     - ignore_epoch: True
-    
+
 python-pip-install_python_pip:
   pip.installed:
     - pkgs:

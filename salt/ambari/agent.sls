@@ -6,13 +6,18 @@ ambari-agent-user:
     - groups:
       - root
 
+{% if grains['os'] == 'RedHat' %}
+ambari-agent-libtirpc:
+  pkg.installed:
+    - name: {{ pillar['libtirpc-devel']['package-name'] }}
+    - version: {{ pillar['libtirpc-devel']['version'] }}
+    - ignore_epoch: True
+{%- endif %}
+
 ambari-agent-pkg:
   pkg.installed:
-    - pkgs:
-      - {{ pillar['ambari-agent']['package-name'] }}: {{ pillar['ambari-agent']['version'] }}
-{% if grains['os'] == 'RedHat' %}
-      - {{ pillar['libtirpc-devel']['package-name'] }}: {{ pillar['libtirpc-devel']['version'] }}
-{%- endif %}
+    - name: {{ pillar['ambari-agent']['package-name'] }}
+    - version: {{ pillar['ambari-agent']['version'] }}
     - ignore_epoch: True
 
 ambari-agent-properties:
@@ -22,7 +27,7 @@ ambari-agent-properties:
     - template: jinja
     - permission: 0644
     - defaults:
-        ambari_server_host: {{ ambari_server_host }}      
+        ambari_server_host: {{ ambari_server_host }}
 
 ambari-agent-create_log_dir:
   file.directory:
