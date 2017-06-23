@@ -85,6 +85,13 @@ BLUEPRINT = r'''{
             }
         },
         {
+            "capacity-scheduler" : {
+                "properties" : {
+                    "yarn.scheduler.capacity.maximum-am-resource-percent" : "1.0"
+                }
+            }
+        },
+        {
             "mapred-site" : {
                 "properties" : {
                     "mapred_log_dir_prefix" : "/var/log/pnda/hadoop-mapreduce"
