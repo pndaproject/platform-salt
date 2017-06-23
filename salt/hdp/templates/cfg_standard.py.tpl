@@ -1,5 +1,5 @@
 """
-Name:       cfg_pico
+Name:       cfg_standard
 Purpose:    Configuration for this particular flavor of PNDA
 
 Author:     PNDA team
@@ -47,7 +47,7 @@ BLUEPRINT = r'''{
             "yarn-env" : {
                 "properties" : {
                     "yarn_log_dir_prefix" : "/var/log/pnda/hadoop-yarn",
-                    "resourcemanager_heapsize" : "1024"
+                    "resourcemanager_heapsize" : "4096"
                 }
             }
         },
@@ -55,27 +55,39 @@ BLUEPRINT = r'''{
             "yarn-site" : {
                 "properties" : {
                     "yarn.nodemanager.log-dirs" : "/var/log/pnda/hadoop-yarn/container",
-                    "yarn.nodemanager.resource.cpu-vcores" : "8",
-                    "yarn.nodemanager.resource.memory-mb" : "4096",
-                    "yarn.log-aggregation.retain-seconds" : "7200",
+                    "yarn.nodemanager.resource.cpu-vcores" : "7",
+                    "yarn.nodemanager.resource.memory-mb" : "14336",
+                    "yarn.log-aggregation.retain-seconds" : "265000",
                     "yarn.scheduler.minimum-allocation-vcores" : "1",
-                    "yarn.scheduler.minimum-allocation-mb" : "256",
-                    "yarn.scheduler.maximum-allocation-mb" : "4096",
-                    "yarn.scheduler.maximum-allocation-vcores" : "8"
+                    "yarn.scheduler.maximum-allocation-vcores" : "7",
+                    "hadoop.registry.rm.enabled" : "false",
+                    "hadoop.registry.zk.quorum" : "%(cluster_name)s-hadoop-mgr-1:2181,%(cluster_name)s-hadoop-mgr-2:2181,%(cluster_name)s-hadoop-mgr-4:2181",
+                    "yarn.log.server.url" : "http://%(cluster_name)s-hadoop-mgr-4:19888/jobhistory/logs",
+                    "yarn.resourcemanager.address" : "%(cluster_name)s-hadoop-mgr-1:8050",
+                    "yarn.resourcemanager.admin.address" : "%(cluster_name)s-hadoop-mgr-1:8141",
+                    "yarn.resourcemanager.cluster-id" : "yarn-cluster",
+                    "yarn.resourcemanager.ha.automatic-failover.zk-base-path" : "/yarn-leader-election",
+                    "yarn.resourcemanager.ha.enabled" : "true",
+                    "yarn.resourcemanager.ha.rm-ids" : "rm1,rm2",
+                    "yarn.resourcemanager.hostname" : "%(cluster_name)s-hadoop-mgr-1",
+                    "yarn.resourcemanager.hostname.rm1" : "%(cluster_name)s-hadoop-mgr-1",
+                    "yarn.resourcemanager.hostname.rm2" : "%(cluster_name)s-hadoop-mgr-2",
+                    "yarn.resourcemanager.recovery.enabled" : "true",
+                    "yarn.resourcemanager.resource-tracker.address" : "%(cluster_name)s-hadoop-mgr-1:8025",
+                    "yarn.resourcemanager.scheduler.address" : "%(cluster_name)s-hadoop-mgr-1:8030",
+                    "yarn.resourcemanager.store.class" : "org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore",
+                    "yarn.resourcemanager.webapp.address" : "%(cluster_name)s-hadoop-mgr-1:8088",
+                    "yarn.resourcemanager.webapp.https.address" : "%(cluster_name)s-hadoop-mgr-1:8090",
+                    "yarn.timeline-service.address" : "%(cluster_name)s-hadoop-mgr-3:10200",
+                    "yarn.timeline-service.webapp.address" : "%(cluster_name)s-hadoop-mgr-3:8188",
+                    "yarn.timeline-service.webapp.https.address" : "%(cluster_name)s-hadoop-mgr-3:8190"
                 }
             }
         },
         {
             "mapred-site" : {
                 "properties" : {
-                    "mapred_log_dir_prefix" : "/var/log/pnda/hadoop-mapreduce",
-                    "mapreduce.reduce.java.opts" : "-Xmx819m",
-                    "mapreduce.task.io.sort.mb" : "128",
-                    "mapreduce.map.memory.mb" : "384",
-                    "mapreduce.reduce.memory.mb" : "1024",
-                    "yarn.app.mapreduce.am.command-opts" : "-Xmx410m",
-                    "mapreduce.map.java.opts" : "-Xmx410m",
-                    "yarn.app.mapreduce.am.resource.mb" : "512"
+                    "mapred_log_dir_prefix" : "/var/log/pnda/hadoop-mapreduce"
                 }
             }
         },
@@ -109,7 +121,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "oozie.service.JPAService.jdbc.password" : "oozie",
                     "oozie.service.JPAService.jdbc.username" : "oozie",
-                    "oozie.service.JPAService.jdbc.url" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/oozie",
+                    "oozie.service.JPAService.jdbc.url" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-4/oozie",
                     "oozie.service.JPAService.jdbc.driver" : "com.mysql.jdbc.Driver",
                     "oozie.authentication.type" : "simple",
                     "oozie.db.schema.name" : "oozie"
@@ -120,24 +132,21 @@ BLUEPRINT = r'''{
             "hive-env" : {
                 "properties" : {
                     "hive_ambari_database" : "MySQL",
-                    "hive_ambari_host" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hive_ambari_host" : "%(cluster_name)s-hadoop-mgr-4",
                     "hive_database" : "MySQL Database",
                     "hive_database_name" : "hive",
                     "hive_database_type" : "mysql",
-                    "hive_existing_mssql_server_2_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_existing_mssql_server_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_existing_mysql_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_hostname" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hive_existing_mssql_server_2_host" : "%(cluster_name)s-hadoop-mgr-4",
+                    "hive_existing_mssql_server_host" : "%(cluster_name)s-hadoop-mgr-4",
+                    "hive_existing_mysql_host" : "%(cluster_name)s-hadoop-mgr-4",
+                    "hive_hostname" : "%(cluster_name)s-hadoop-mgr-4",
                     "hive_user" : "hive",
                     "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
                     "javax.jdo.option.ConnectionPassword" : "hive",
-                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/hive",
+                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-4/hive",
                     "javax.jdo.option.ConnectionUserName" : "hive",
                     "hive_log_dir" : "/var/log/pnda/hive",
-                    "hive.heapsize" : "512",
-                    "hcat_log_dir" : "/var/log/pnda/webhcat",
-                    "hive.metastore.heapsize" : "1024"
-                }
+                    "hcat_log_dir" : "/var/log/pnda/webhcat"                }
             }
         },
         {
@@ -145,7 +154,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
                     "javax.jdo.option.ConnectionPassword" : "hive",
-                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/hive?createDatabaseIfNotExist=true",
+                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-4/hive?createDatabaseIfNotExist=true",
                     "javax.jdo.option.ConnectionUserName" : "hive"
                 }
             }
@@ -153,25 +162,23 @@ BLUEPRINT = r'''{
         {
             "hbase-site" : {
                 "properties" : {
-                    "zookeeper.session.timeout" : "300000"
+                    "zookeeper.session.timeout" : "300000",
+                    "hbase.rootdir" : "hdfs://HDFS-HA:8020/apps/hbase/data"
                 }
             }
         },
         {
             "hbase-env" : {
                 "properties" : {
-                    "hbase_master_heapsize" : "384m",
-                    "hbase_log_dir" : "/var/log/pnda/hbase",
-                    "hbase_regionserver_heapsize" : "768m"
+                    "hbase_master_heapsize" : "8192m",
+                    "hbase_log_dir" : "/var/log/pnda/hbase"
                 }
             }
         },
         {
             "hadoop-env" : {
                 "properties" : {
-                    "dtnode_heapsize" : "1024m",
-                    "hadoop_heapsize" : "1024",
-                    "namenode_heapsize": "1024m",
+                    "namenode_heapsize": "3072m",
                     "namenode_opt_maxnewsize": "361m",
                     "namenode_opt_newsize": "361m",
                     "hdfs_log_dir_prefix" : "/var/log/pnda/hadoop"
@@ -183,7 +190,21 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "dfs.replication" : "3",
                     "dfs.replication.max" : "50",
-                    "dfs.datanode.data.dir" : "/data0/dn"
+                    "dfs.datanode.data.dir" : "/data0/dn",
+                    "dfs.client.failover.proxy.provider.HDFS-HA" : "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
+                    "dfs.ha.automatic-failover.enabled" : "true",
+                    "dfs.ha.fencing.methods" : "shell(/bin/true)",
+                    "dfs.ha.namenodes.HDFS-HA" : "nn1,nn2",
+                    "dfs.namenode.http-address" : "%(cluster_name)s-hadoop-mgr-1:50070",
+                    "dfs.namenode.http-address.HDFS-HA.nn1" : "%(cluster_name)s-hadoop-mgr-1:50070",
+                    "dfs.namenode.http-address.HDFS-HA.nn2" : "%(cluster_name)s-hadoop-mgr-2:50070",
+                    "dfs.namenode.https-address" : "%(cluster_name)s-hadoop-mgr-1:50470",
+                    "dfs.namenode.https-address.HDFS-HA.nn1" : "%(cluster_name)s-hadoop-mgr-1:50470",
+                    "dfs.namenode.https-address.HDFS-HA.nn2" : "%(cluster_name)s-hadoop-mgr-2:50470",
+                    "dfs.namenode.rpc-address.HDFS-HA.nn1" : "%(cluster_name)s-hadoop-mgr-1:8020",
+                    "dfs.namenode.rpc-address.HDFS-HA.nn2" : "%(cluster_name)s-hadoop-mgr-2:8020",
+                    "dfs.namenode.shared.edits.dir" : "qjournal://%(cluster_name)s-hadoop-mgr-1:8485;%(cluster_name)s-hadoop-mgr-2:8485;%(cluster_name)s-hadoop-mgr-4:8485/HDFS-HA",
+                    "dfs.nameservices" : "HDFS-HA"
                 }
             }
         },
@@ -195,12 +216,12 @@ BLUEPRINT = r'''{
                     }
                 },
                 "properties" : {
-                    "fs.defaultFS" : "hdfs://%(cluster_name)s-hadoop-mgr-1:8020",
-                    "fs.trash.interval" : "360",
+                    "fs.defaultFS" : "hdfs://HDFS-HA",
+                    "ha.zookeeper.quorum" : "%(cluster_name)s-hadoop-mgr-1:2181,%(cluster_name)s-hadoop-mgr-2:2181,%(cluster_name)s-hadoop-mgr-4:2181",
                     "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
                     "hadoop.http.authentication.simple.anonymous.allowed" : "true",
                     "hadoop.proxyuser.hcat.groups" : "users",
-                    "hadoop.proxyuser.hcat.hosts" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hadoop.proxyuser.hcat.hosts" : "*",
                     "hadoop.proxyuser.hdfs.groups" : "*",
                     "hadoop.proxyuser.hdfs.hosts" : "*",
                     "hadoop.proxyuser.hive.groups" : "*",
@@ -212,7 +233,7 @@ BLUEPRINT = r'''{
                     "hadoop.proxyuser.root.groups" : "*",
                     "hadoop.proxyuser.root.hosts" : "*",
                     "hadoop.proxyuser.oozie.groups" : "*",
-                    "hadoop.proxyuser.oozie.hosts" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hadoop.proxyuser.oozie.hosts" : "*",
                     "hadoop.security.auth_to_local" : "DEFAULT",
                     "hadoop.security.authentication" : "simple",
                     "hadoop.security.authorization" : "false",
@@ -249,25 +270,55 @@ BLUEPRINT = r'''{
                 "name" : "ZOOKEEPER_SERVER"
                 },
                 {
+                "name" : "RESOURCEMANAGER"
+                },
+                {
                 "name" : "NAMENODE"
                 },
                 {
-                "name" : "SECONDARY_NAMENODE"
+                "name" : "JOURNALNODE"
+                },
+                {
+                "name" : "ZKFC"
                 },
                 {
                 "name" : "HBASE_MASTER"
+                }
+            ],
+            "cardinality" : "1"
+        },
+        {
+            "name" : "MGR02",
+            "components" : [
+                {
+                "name" : "METRICS_MONITOR"
+                },
+                {
+                "name" : "ZOOKEEPER_SERVER"
                 },
                 {
                 "name" : "RESOURCEMANAGER"
                 },
                 {
-                "name" : "HISTORYSERVER"
+                "name" : "NAMENODE"
                 },
                 {
-                "name" : "SPARK_JOBHISTORYSERVER"
+                "name" : "JOURNALNODE"
                 },
                 {
-                "name" : "APP_TIMELINE_SERVER"
+                "name" : "ZKFC"
+                },
+                {
+                "name" : "HBASE_MASTER"
+                }
+            ],
+            "cardinality" : "1"
+        },
+        {
+            "name" : "MGR03",
+            "components" : [
+                {
+                "name" : "METRICS_MONITOR"
                 },
                 {
                 "name" : "HIVE_SERVER"
@@ -276,31 +327,37 @@ BLUEPRINT = r'''{
                 "name" : "HIVE_METASTORE"
                 },
                 {
+                "name" : "APP_TIMELINE_SERVER"
+                },
+                {
                 "name" : "WEBHCAT_SERVER"
+                },
+                {
+                "name" : "HBASE_CLIENT"
+                }
+            ],
+            "cardinality" : "1"
+        },
+        {
+            "name" : "MGR04",
+            "components" : [
+                {
+                "name" : "METRICS_MONITOR"
                 },
                 {
                 "name" : "OOZIE_SERVER"
                 },
                 {
-                "name" : "HDFS_CLIENT"
+                "name" : "ZOOKEEPER_SERVER"
                 },
                 {
-                "name" : "YARN_CLIENT"
+                "name" : "HISTORYSERVER"
                 },
                 {
-                "name" : "MAPREDUCE2_CLIENT"
+                "name" : "SPARK_JOBHISTORYSERVER"
                 },
                 {
-                "name" : "ZOOKEEPER_CLIENT"
-                },
-                {
-                "name" : "PIG"
-                },
-                {
-                "name" : "TEZ_CLIENT"
-                },
-                {
-                "name" : "OOZIE_CLIENT"
+                "name" : "JOURNALNODE"
                 },
                 {
                 "name" : "SPARK_CLIENT"
@@ -345,9 +402,6 @@ BLUEPRINT = r'''{
                 "name" : "METRICS_MONITOR"
                 },
                 {
-                "name" : "METRICS_COLLECTOR"
-                },
-                {
                 "name" : "ZOOKEEPER_CLIENT"
                 },
                 {
@@ -388,6 +442,30 @@ BLUEPRINT = r'''{
                 }
             ],
             "cardinality" : "1+"
+        },
+        {
+            "name" : "CM",
+            "components" : [
+                {
+                "name" : "METRICS_COLLECTOR"
+                },
+                {
+                "name" : "METRICS_MONITOR"
+                },
+                {
+                "name" : "ZOOKEEPER_CLIENT"
+                },
+                {
+                "name" : "HBASE_CLIENT"
+                },
+                {
+                "name" : "HDFS_CLIENT"
+                },
+                {
+                "name" : "SPARK_CLIENT"
+                }
+            ],
+            "cardinality" : "1"
         }
     ],
     "Blueprints" : {
