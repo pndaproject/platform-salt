@@ -2,8 +2,8 @@ import requests
 
 def get_name_service():
     """ Returns name service for HA Cluster """
-    user_name = manager_username()
-    password = manager_password()
+    user_name = hadoop_manager_username()
+    password = hadoop_manager_password()
     request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (hadoop_manager_ip(), cluster_name(), 'hdfs01')
     r = requests.get(request_url, auth=(user_name, password))
     name_service = ""
@@ -106,8 +106,8 @@ def generate_http_link(role, suffix):
         return ''
 
 def cloudera_get_hosts_by_role(service, role_type):
-    user = __salt__['pillar.get']('admin_login:user')
-    password = __salt__['pillar.get']('admin_login:password')
+    user = hadoop_manager_username()
+    password = hadoop_manager_password()
     endpoint = hadoop_manager_ip() + ':7180'
     cluster = cluster_name()
 

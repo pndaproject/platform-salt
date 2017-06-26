@@ -16,6 +16,18 @@ deployment-manager-install_dev_deps_cyrus:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
     - version: {{ pillar['cyrus-sasl-devel']['version'] }}
     - ignore_epoch: True
+
+deployment-manager-install_dev_deps_cyrus_gssapi:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-gssapi']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-gssapi']['version'] }}
+    - ignore_epoch: True
+
+deployment-manager-install_dev_deps_cyrus_plain:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-plain']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-plain']['version'] }}
+    - ignore_epoch: True
 {% endif %}
 
 deployment-manager-install_dev_deps_libffi:
