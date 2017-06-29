@@ -214,9 +214,14 @@ HDFS_CFG = {
                 "target": "MGR03"
             },
             {
-                "name": "hdfs-gw",
+                "name": "hdfs-gw1",
                 "type": "GATEWAY",
                 "target": "EDGE"
+            },
+            {
+                "name": "hdfs-gw2",
+                "type": "GATEWAY",
+                "target": "CM"
             }
         ],
     "role_cfg":
