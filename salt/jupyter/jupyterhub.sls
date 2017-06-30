@@ -48,20 +48,20 @@ jupyterhub-proxy-dl-and-extract:
     - if_missing: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
 
 jupyterhub-proxy-rebuild:
-  cmd.run: 
+  cmd.run:
     - name: npm rebuild
     - cwd: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
-      
+
 jupyterhub-install-proxy-modules:
   file.symlink:
     - target: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
-    - name: /usr/lib/node_modules/configurable-http-proxy
+    - name: {{ pnda_home_directory }}/nodejs/lib/node_modules/configurable-http-proxy
 
 jupyterhub-install-proxy-command:
   file.symlink:
-    - target: /usr/lib/node_modules/configurable-http-proxy/bin/configurable-http-proxy
-    - name: /usr/bin/configurable-http-proxy    
-    
+    - target: {{ pnda_home_directory }}/nodejs/lib/node_modules/configurable-http-proxy/bin/configurable-http-proxy
+    - name: /usr/bin/configurable-http-proxy
+
 # set up service script
 jupyterhub-copy_service:
   file.managed:
