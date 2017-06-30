@@ -2,14 +2,33 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set node_package = 'node-v6.10.2-linux-x64.tar.gz' %}
+{% set node_version = 'node-v6.10.2-linux-x64' %}
+{% set node_package = node_version + '.tar.gz' %}
 {% set node_url = mirror_location + node_package %}
+
+{% set install_dir = pillar['pnda']['homedir'] %}
 
 nodejs-dl_and_extract_node:
   archive.extracted:
-    - name: /usr/
+    - name: {{ install_dir }}
     - source: {{ node_url }}
     - source_hash: {{ node_url }}.sha1.txt
     - archive_format: tar
-    - tar_options: --strip-components=1
-    - if_missing: /usr/bin/node
+    - if_missing: {{ install_dir }}/{{ node_version }}
+
+nodejs-create_install_link:
+  file.symlink:
+    - name: {{ install_dir }}/nodejs
+    - target: {{ install_dir }}/{{ node_version }}
+
+nodejs-create_bin_link_node:
+  file.symlink:
+    - force: True
+    - name: /usr/bin/node
+    - target: {{ install_dir }}/{{ node_version }}/bin/node
+
+nodejs-create_bin_link_npm:
+  file.symlink:
+    - force: True
+    - name: /usr/bin/npm
+    - target: {{ install_dir }}/{{ node_version }}/bin/npm
