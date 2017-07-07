@@ -290,6 +290,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "HBASE_MASTER"
+                },
+                {
+                "name" : "SPARK_CLIENT"
                 }
             ],
             "cardinality" : "1"
@@ -317,6 +320,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "HBASE_MASTER"
+                },
+                {
+                "name" : "SPARK_CLIENT"
                 }
             ],
             "cardinality" : "1"
