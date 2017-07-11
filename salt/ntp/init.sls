@@ -1,4 +1,9 @@
 {% set ntp_servers = salt['pillar.get']('ntp:servers', []) %}
+{% set timezone = salt['pillar.get']('ntp:timezone', 'UTC') %}
+
+ntp-set_timezone:
+  timezone.system:
+    - name: {{ timezone }}
 
 ntp-install_ntp_package:
   pkg.installed:
