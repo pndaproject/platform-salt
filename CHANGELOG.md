@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2839: Update Grafana version to 4.2.0. Warning: the default pnda password has changed.
 - PNDA-2841: Update Logstash version to 5.0.2 for PNDA logshipper/logserver
 - PNDA-2838: Update OpenTSDB to version 2.3.0
+- PNDA-3085: Set timezone to UTC (UTC by default but can be configured with ntp:timezone pillar)
 
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
