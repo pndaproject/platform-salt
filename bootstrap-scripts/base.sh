@@ -13,9 +13,9 @@ DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y install xfsprogs=3.1.9ubuntu2 salt-minion=2015.8.11+ds-1
+apt-get -y install xfsprogs salt-minion=2015.8.11+ds-1
 elif [ "x$DISTRO" == "xrhel" ]; then
-yum -y install xfsprogs-4.5.0-9.el7_3 wget-1.14-13.el7 salt-minion-2015.8.11-1.el7
+yum -y install xfsprogs wget salt-minion-2015.8.11-1.el7
 fi
 
 # Mount the log volume, this is always xvdc
