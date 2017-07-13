@@ -13,11 +13,11 @@ DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 if [ "x$DISTRO" == "xubuntu" ]; then
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -y install unzip salt-master git
+apt-get -y install unzip salt-master=2015.8.11+ds-1 git
 fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
-yum -y install unzip salt-master git
+yum -y install unzip salt-master-2015.8.11-1.el7 git
 fi
 
 cat << EOF > /etc/salt/master
