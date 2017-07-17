@@ -107,7 +107,7 @@ logserver-start_service:
 logserver-redis-start_service:
   cmd.run:
 {% if grains['os'] == 'Ubuntu' %}
-    - name: 'service logserver stop || echo already stopped; service logserver start'
+    - name: 'service redis-server stop || echo already stopped; service redis-server start'
 {% elif grains['os'] == 'RedHat' %}
     - name: 'service redis stop || echo already stopped; service redis start'
 {% endif %}
