@@ -1,4 +1,5 @@
 {
+  "hadoop_distro": "{{hadoop_distro}}",
   "clustername": "{{clustername}}",
   "edge_node": "{{ edge_node }}",
   "user_interfaces": [

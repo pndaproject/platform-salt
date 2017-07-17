@@ -14,6 +14,7 @@
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
+{% set hadoop_distro = pillar['hadoop.distro'] %}
 
 {% set data_manager_host = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
@@ -95,6 +96,7 @@ console-frontend-create_pnda_console_config:
     - name: {{console_config_dir}}/PNDA.json
     - template: jinja
     - defaults:
+        hadoop_distro: {{ hadoop_distro }}
         clustername: {{ clustername }}
         frontend_version: {{ frontend_version }}
         data_manager_version: {{ data_manager_version }}
