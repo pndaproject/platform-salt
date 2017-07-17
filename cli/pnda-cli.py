@@ -425,8 +425,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
     bastion = NODE_CONFIG['bastion-instance']
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
-         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],
-        cluster, saltmaster_ip)
+         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
@@ -460,7 +459,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     bastion_ip = instance_map[cluster + '-' + bastion]['ip_address']
     write_ssh_config(cluster, bastion_ip,
                      PNDA_ENV['ec2_access']['OS_USER'], os.path.abspath(keyfile))
-    saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]['private_ip_address']
+    saltmaster = instance_map[cluster + '-' + NODE_CONFIG['salt-master-instance']]
     saltmaster_ip = saltmaster['private_ip_address']
 
     wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
@@ -470,7 +469,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     for _, instance in instance_map.iteritems():
         if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
              or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
-            thread = Thread(target=bootstrap, args=[instance, saltmaster, cluster, flavor, branch, None, bootstrap_errors])
+            thread = Thread(target=bootstrap, args=[instance, saltmaster_ip, cluster, flavor, branch, None, bootstrap_errors])
             bootstrap_threads.append(thread)
 
     for thread in bootstrap_threads:
@@ -489,8 +488,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, br
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
-         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)],
-        cluster, saltmaster)
+         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def destroy(cluster):
