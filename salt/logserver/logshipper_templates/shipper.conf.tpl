@@ -12,26 +12,51 @@ input {
           path => ["/var/log/upstart/kafka.log"]
           add_field => {"source" => "kafka"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }          
    }
    file {
           path => ["/var/log/upstart/gobblin.log"]
           add_field => {"source" => "gobblin"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/upstart/deployment-manager.log"]
           add_field => {"source" => "deployment-manager"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/upstart/package-repository.log"]
           add_field => {"source" => "package-repository"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }          
    }
    file {
           path => ["/var/log/upstart/jupyterhub.log"]
           add_field => {"source" => "jupyter"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
 {% endif %}
    file {
@@ -39,32 +64,62 @@ input {
                    "/var/log/pnda/kafka/controller.log"]
           add_field => {"source" => "kafka"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/zookeeper/zookeeper.log"]
           add_field => {"source" => "zookeeper"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/gobblin/*.log"]
           add_field => {"source" => "gobblin"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/salt/minion",
                    "/var/log/pnda/cm_setup.log"]
           add_field => {"source" => "provisioning"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/opentsdb/opentsdb.log"]
           add_field => {"source" => "opentsdb"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/grafana/grafana.log"]
           add_field => {"source" => "grafana"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hadoop-yarn/container/application_*/container_*/stdout",
@@ -74,28 +129,53 @@ input {
           add_field => {"source" => "yarn"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           discover_interval => "5"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hadoop/*/*.log",
                    "/var/log/pnda/hadoop/*/*.log.out"]
           add_field => {"source" => "hadoop"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hadoop-yarn/*.log.out"]
           add_field => {"source" => "hadoop-yarn"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hadoop-mapreduce/*.log",
                    "/var/log/pnda/hadoop-mapreduce/*.log.out"]
           add_field => {"source" => "hadoop-mapreduce"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hbase/*.log.out"]
           add_field => {"source" => "hbase"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/impala/*.ERROR",
@@ -104,17 +184,32 @@ input {
                    "/var/log/pnda/impala-llama/*.log"]
           add_field => {"source" => "impala"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/hue/*.log"]
           add_field => {"source" => "hue"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
    file {
           path => ["/var/log/pnda/oozie/*.log",
                    "/var/log/pnda/oozie/*.log.out"]
           add_field => {"source" => "oozie"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
 }
 
@@ -132,13 +227,18 @@ filter {
        else if [_systemd_unit] == "package-repository.service" {
            mutate {add_field => {"source" => "package-repository"}}
        }
-       else if [_systemd_unit] == "jupytehub.service" {
+       else if [_systemd_unit] == "jupyterhub.service" {
            mutate {add_field => {"source" => "jupyterhub"}}
        }
        else {
            drop { }
        }
    }
+   
+   grok {
+       match => { "path" => "/var/log/pnda/hadoop-yarn/container/%{DATA:applicationId}/%{DATA:containerId}/%{GREEDYDATA:logtype}" }
+   }
+  
 }
 
 output {
