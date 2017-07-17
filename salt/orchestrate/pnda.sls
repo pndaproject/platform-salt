@@ -140,4 +140,10 @@ cdh-data_service-create_datasets:
     - sls: data-service.create_datasets
     - timeout: 120
 
+cdh-install_test_modules:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:platform_testing_cdh'
+    - tgt_type: compound
+    - sls: platform-testing.cdh
+    - timeout: 120
 
