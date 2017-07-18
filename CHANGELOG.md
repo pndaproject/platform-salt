@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2841: Update Logstash version to 5.0.2 for PNDA logshipper/logserver
 - PNDA-2838: Update OpenTSDB to version 2.3.0
 - PNDA-3085: Set timezone to UTC (UTC by default but can be configured with ntp:timezone pillar)
+- PNDA-3114: Install CDH platform testing modules after CDH has been set up.
 
 ### Fixed
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
