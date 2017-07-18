@@ -183,3 +183,33 @@ def setup_hadoop(
     # Even if there were no errors starting the services try issuing a start just to make sure everything is running
     time.sleep(60)
     start_all_services()
+
+    cluster_id = requests.get('%s/clusters/%s' % (ambari_api, cluster_name), auth=auth, headers=headers)['Clusters']['cluster_id']
+    hfds_files_view_def = {
+        "ViewInstanceInfo" : {
+            "cluster_handle" : int(cluster_id),
+            "description" : "Files View with full access as hdfs super user",
+            "label" : "Files View (Super User)",
+            "properties" : {
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "tmp.dir": "/user/hdfs/files-view/tmp",
+                "view.conf.keyvalues": None
+            }
+        }
+    }
+    requests.post('%s/views/FILES/versions/1.0.0/instances/PNDA_FILES_SU' % (ambari_api), json.dumps(hfds_files_view_def), auth=auth, headers=headers)
+
+    oozie_workflow_view_def = {
+        "ViewInstanceInfo" : {
+            "cluster_handle" : int(cluster_id),
+            "description" : "Oozie Workflow View",
+            "label" : "Oozie Workflow View",
+            "properties" :     {
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "view.conf.keyvalues": None
+            }
+        }
+    }
+    requests.post('%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % (ambari_api), json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)

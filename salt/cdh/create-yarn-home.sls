@@ -5,6 +5,6 @@ cdh-create_hdfs_yarn_home:
 
 cdh-create_hdfs_hdfs_home:
   cmd.run:
-    - name: sudo -u hdfs hdfs dfs -mkdir /user/hdfs; sudo -u hdfs hdfs dfs -chown yarn /user/hdfs
+    - name: sudo -u hdfs hdfs dfs -mkdir /user/hdfs; sudo -u hdfs hdfs dfs -chown hdfs /user/hdfs
     - unless: sudo -u hdfs hdfs dfs -test -d /user/hdfs
 
