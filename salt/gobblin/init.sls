@@ -76,6 +76,11 @@ gobblin-install_gobblin_pnda_job_file:
     - require:
       - file: gobblin-create_gobblin_jobs_directory
 
+gobblin-create_gobblin_logs_directory:
+  file.directory:
+    - name: /var/log/pnda/gobblin
+    - makedirs: True
+
 gobblin-install_gobblin_service_script:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
