@@ -19,7 +19,7 @@ import cfg_flavor as _CFG
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
-                    level=logging.DEBUG,
+                    level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def setup_hadoop(
@@ -31,26 +31,28 @@ def setup_hadoop(
         hdp_core_stack_repo=None,
         hdp_utils_stack_repo=None):
 
-    logging.info("setup_hadoop:")
-    logging.info(ambari_host)
-    logging.info(nodes)
-    logging.info(cluster_name)
-    logging.info(ambari_username)
-    logging.info(ambari_password)
-    logging.info(hdp_core_stack_repo)
-    logging.info(hdp_utils_stack_repo)
+    logging.info("setup_hadoop: configuring hadoop services via Ambari API")
+    logging.info("Ambari host: %s", ambari_host)
+    logging.debug("Ambari username: %s", ambari_username)
+    logging.debug("Ambari password: %s", ambari_password)
+    logging.info("Cluster name: %s", cluster_name)
+    logging.info("Cluster nodes: %s", json.dumps(nodes))
+    logging.info("Ambari core repo: %s", hdp_core_stack_repo)
+    logging.info("Ambari utils repo: %s", hdp_utils_stack_repo)
 
     ambari_api = 'http://%s:8080/api/v1' % ambari_host
     headers = {'X-Requested-By': ambari_username}
     auth = (ambari_username, ambari_password)
+
     logging.info("Waiting for Ambari API to be up")
     api_up = False
     for _ in xrange(120):
         try:
-            logging.info("Checking API availability....")
+            logging.debug("Checking API availability....")
             api_response = requests.get("%s/hosts" % ambari_api, timeout=5, auth=auth, headers=headers)
             logging.debug("%s", api_response.text)
             api_up = True
+            logging.debug("API is up")
             break
         except Exception:
             logging.warning("API is not up")
@@ -84,40 +86,46 @@ def setup_hadoop(
             exit_setup(repo_response.text)
         logging.debug("Registered repo: %s", repo_request[0])
 
-    logging.info("Creating blueprint")
+    logging.info("Loading blueprint")
     blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
 
-    logging.info("Determining HDFS replication factor")
+    logging.debug("Determining HDFS replication factor")
     hdfs_repl_factor = min(3, sum(1 for n in nodes if n["type"] == "DATANODE"))
     logging.info("Setting HDFS replication factor to %s", hdfs_repl_factor)
     for config in blueprint['configurations']:
         if 'hdfs-site' in config:
             config['hdfs-site']['properties']['dfs.replication'] = hdfs_repl_factor
 
+    logging.debug("Blueprint to be used:")
     logging.debug('%s', json.dumps(blueprint))
+
+    logging.info("Creating blueprint")
     blueprint_post_uri = '%s/blueprints/pnda-blueprint' % ambari_api
     blueprint_response = requests.post(blueprint_post_uri, json.dumps(blueprint), auth=auth, headers=headers)
-    logging.info('Response to blueprint creation %s: %s', blueprint_post_uri, blueprint_response.status_code)
-    logging.info(blueprint_response.text)
+    logging.debug('Response to blueprint creation %s: %s', blueprint_post_uri, blueprint_response.status_code)
+    logging.debug(blueprint_response.text)
 
+    logging.debug("Calculating cluster role mappings")
     host_group_names = [item['name'] for item in blueprint['host_groups']]
-    logging.info('Detected host groups %s in blueprint', json.dumps(host_group_names))
+    logging.debug('Detected host groups %s in blueprint', json.dumps(host_group_names))
 
     cluster_instance_def = {
         "blueprint" : "pnda-blueprint",
         "default_password" : ambari_password,
         "host_groups" :[{"name" : host_group, "hosts" : [{"fqdn" : node['host_name']} for node in nodes if node['type'] == host_group]} for host_group in host_group_names]
         }
+    logging.debug("Cluster role mappings to be used:")
     logging.debug('%s', json.dumps(cluster_instance_def))
 
+    logging.info("Creating cluster instance")
     blueprint_instance_post_uri = '%s/clusters/%s' % (ambari_api, cluster_name)
     cluster_response = requests.post(blueprint_instance_post_uri, json.dumps(cluster_instance_def), auth=auth, headers=headers)
-    logging.info(cluster_response.text)
-    logging.info('Response to cluster creation %s: %s', blueprint_instance_post_uri, cluster_response.status_code)
+    logging.debug('Response to cluster creation %s: %s', blueprint_instance_post_uri, cluster_response.status_code)
+    logging.debug(cluster_response.text)
     status_tracking_uri = cluster_response.json()['href']
 
     def wait_on_cmd(tracking_uri, msg):
-        logging.info('Waiting for %s...', msg)
+        logging.debug('Waiting for %s...', msg)
         progress_percent = 0
         while progress_percent < 100:
             time.sleep(5)
@@ -125,10 +133,11 @@ def setup_hadoop(
             logging.debug(status_reponse.json()['Requests'])
             cmd_status = status_reponse.json()['Requests']['request_status']
             progress_percent = int(status_reponse.json()['Requests']['progress_percent'])
-            logging.info('Progress for %s: %s%% - %s', tracking_uri, progress_percent, cmd_status)
+            logging.debug('Progress for %s: %s%% - %s', tracking_uri, progress_percent, cmd_status)
         return cmd_status
 
     def stop_all_services():
+        logging.info("Stopping all services")
         stop_command = {
             "RequestInfo": {
                 "context": "_PARSE_.STOP.ALL_SERVICES",
@@ -143,13 +152,15 @@ def setup_hadoop(
                 }
             }
         }
-        stop_response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), json.dumps(stop_command), auth=auth, headers=headers)
-        logging.info('Response to stop command %s: %s', '/clusters/%s/services' % cluster_name, stop_response.status_code)
-        logging.info(stop_response.text)
+        stop_uri = '%s/clusters/%s/services' % (ambari_api, cluster_name)
+        stop_response = requests.put(stop_uri, json.dumps(stop_command), auth=auth, headers=headers)
+        logging.debug('Response to stop command %s: %s', stop_uri, stop_response.status_code)
+        logging.debug(stop_response.text)
         if stop_response.status_code == 202:
             wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari')
 
     def start_all_services():
+        logging.info("Starting all services")
         start_command = {
             "RequestInfo": {
                 "context": "_PARSE_.START.ALL_SERVICES",
@@ -164,18 +175,19 @@ def setup_hadoop(
                 }
             }
         }
-        start_response = requests.put('%s/clusters/%s/services' % (ambari_api, cluster_name), json.dumps(start_command), auth=auth, headers=headers)
-        logging.info('Response to start command %s: %s', '/clusters/%s/services' % cluster_name, start_response.status_code)
-        logging.info(start_response.text)
+        start_uri = '%s/clusters/%s/services' % (ambari_api, cluster_name)
+        start_response = requests.put(start_uri, json.dumps(start_command), auth=auth, headers=headers)
+        logging.debug('Response to start command %s: %s', start_uri, start_response.status_code)
+        logging.debug(start_response.text)
         if start_response.status_code == 202:
             wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari')
 
     blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari")
 
     if blueprint_status == 'COMPLETED':
-        logging.info('Ambari blueprint instantiation succeeded: %s', blueprint_status)
+        logging.info('Ambari blueprint instantiation succeeded')
     else:
-        logging.info('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
+        logging.warning('Ambari blueprint instantiation did not succeed, attempting to start services manually: %s', blueprint_status)
         # If there was an error starting the services try restarting them, this often succeeeds after a short wait
         stop_all_services()
         start_all_services()
@@ -184,6 +196,7 @@ def setup_hadoop(
     time.sleep(60)
     start_all_services()
 
+    logging.info("Creating Ambari HDFS files view")
     cluster_id = requests.get('%s/clusters/%s' % (ambari_api, cluster_name), auth=auth, headers=headers).json()['Clusters']['cluster_id']
     hfds_files_view_def = {
         "ViewInstanceInfo" : {
@@ -198,8 +211,12 @@ def setup_hadoop(
             }
         }
     }
-    requests.post('%s/views/FILES/versions/1.0.0/instances/PNDA_FILES_SU' % (ambari_api), json.dumps(hfds_files_view_def), auth=auth, headers=headers)
+    create_files_view_uri = '%s/views/FILES/versions/1.0.0/instances/PNDA_FILES_SU' % ambari_api
+    create_files_view_response = requests.post(create_files_view_uri, json.dumps(hfds_files_view_def), auth=auth, headers=headers)
+    logging.debug('Response to create files view command %s: %s', create_files_view_uri, create_files_view_response.status_code)
+    logging.debug(create_files_view_response.text)
 
+    logging.info("Creating Ambari Oozie workflow view")
     oozie_workflow_view_def = {
         "ViewInstanceInfo" : {
             "cluster_handle" : int(cluster_id),
@@ -212,4 +229,9 @@ def setup_hadoop(
             }
         }
     }
-    requests.post('%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % (ambari_api), json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)
+    create_wf_view_uri = '%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % ambari_api
+    create_wf_view_response = requests.post(create_wf_view_uri, json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)
+    logging.debug('Response to create workflow view command %s: %s', create_wf_view_uri, create_wf_view_response.status_code)
+    logging.debug(create_wf_view_response.text)
+
+    logging.info("HDP setup finished")
