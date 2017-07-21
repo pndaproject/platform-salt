@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
 - PNDA-3059: Use latest version of numerous base packages from distro
 - PNDA-3112: Multiline log messages from file input
+- PNDA-3129: Create log directory for gobblin which was missing and preventing log from being written.
 
 
 
