@@ -29,4 +29,5 @@ anaconda-setup:
   cmd.run:
     - cwd: /tmp
     - name: './Anaconda2-{{ anaconda_parcel_version }}-Linux-x86_64.sh -b -p /opt/pnda/anaconda'
+    - unless: test -d /opt/pnda/anaconda
 
