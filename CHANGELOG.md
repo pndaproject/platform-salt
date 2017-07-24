@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2676: Support for redhat 7 in the bootstrap scripts. To use redhat set `OS_USER` to `ec2_user` and `imageId` to a redhat 7 AMI in pnda_env.yaml.
 - PNDA-2776. Wait on connectivity to cloud instances before trying to use them.
 - PNDA-2375: Isolate PNDA from breaking dependency changes
+- PNDA-3147: Add dry-run option to CLI that can be used to dry-run the changes to the Cloud Formation stack for create and expand operations.
 
 ### Fixed
 - PNDA-2851: Check for ec2 grains before running salt commands as sometimes the ec2 grain wasn't available when running highstate, but was when checked later on.

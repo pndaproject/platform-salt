@@ -9,3 +9,5 @@ pnda_env.yaml
 pnda_env*.sh
 *.tar.gz
 .DS_Store
+cli/logs/*cloud-formation-template*.json
+cli/logs/*cloud-formation-parameters*.json
