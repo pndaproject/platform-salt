@@ -58,7 +58,7 @@ gobblin:
   release_version: develop
 
 console_frontend:
-  release_version: hdp
+  release_version: develop
 
 console_backend_data_logger:
   release_version: develop
@@ -72,23 +72,23 @@ console_backend_utils:
   release_version: develop
 
 deployment_manager:
-  release_version: hdp
+  release_version: develop
 
 package_repository:
   release_version: develop
 
 data-service:
-  release_version: hdp
+  release_version: develop
 
 hdfs_cleaner:
-  release_version: hdp
+  release_version: develop
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: hdp
+  release_version: develop
 
 platformlib:
-  release_version: hdp
+  release_version: develop
   target_directory: "/opt/pnda"
 
 jmxproxy:
