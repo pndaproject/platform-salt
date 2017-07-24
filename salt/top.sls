@@ -66,10 +66,13 @@
     - match: grain
     - snappy
 
-  'cloudera:*':
+  'hadoop:*':
     - match: grain
     - cdh.create_data_dirs
     - snappy
+{% if pillar['hadoop.distro'] == 'HDP' %}
+    - anaconda
+{% endif %}
 
   'roles:mysql_connector':
     - match: grain
