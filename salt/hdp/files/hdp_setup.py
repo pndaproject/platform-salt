@@ -53,7 +53,6 @@ def stop_all_services(cluster_name, ambari_api, auth, headers):
     }
     stop_uri = '%s/clusters/%s/services' % (ambari_api, cluster_name)
     stop_response = requests.put(stop_uri, json.dumps(stop_command), auth=auth, headers=headers)
-    logging.debug('Response to stop command %s: %s', stop_uri, stop_response.status_code)
     logging.debug(stop_response.text)
     if stop_response.status_code == 202:
         wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari', auth, headers)
@@ -76,7 +75,6 @@ def start_all_services(cluster_name, ambari_api, auth, headers):
     }
     start_uri = '%s/clusters/%s/services' % (ambari_api, cluster_name)
     start_response = requests.put(start_uri, json.dumps(start_command), auth=auth, headers=headers)
-    logging.debug('Response to start command %s: %s', start_uri, start_response.status_code)
     logging.debug(start_response.text)
     if start_response.status_code == 202:
         wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari', auth, headers)
@@ -89,7 +87,7 @@ def get_new_nodes(all_nodes, cluster_name, ambari_api, auth, headers):
     logging.info("Checking for new nodes")
 
     existing_hosts_response = requests.get('%s/clusters/%s/services/HDFS/components/DATANODE?fields=host_components' % (ambari_api, cluster_name), auth=auth, headers=headers)
-    if existing_hosts_response == 200:
+    if existing_hosts_response.status_code == 200:
         existing_hosts = [host['HostRoles']['host_name'] for host in existing_hosts_response.json()['host_components']]
     else:
         existing_hosts = []
@@ -98,6 +96,14 @@ def get_new_nodes(all_nodes, cluster_name, ambari_api, auth, headers):
     new_nodes = [node for node in all_nodes if node['host_name'] not in existing_hosts and node['type'] == 'DATANODE']
     logging.info("New nodes are: %s", json.dumps(new_nodes))
     return new_nodes
+
+def set_hdf_repl_factor(blueprint, nodes):
+    logging.debug("Determining HDFS replication factor")
+    hdfs_repl_factor = min(3, sum(1 for n in nodes if n["type"] == "DATANODE"))
+    logging.info("Setting HDFS replication factor to %s", hdfs_repl_factor)
+    for config in blueprint['configurations']:
+        if 'hdfs-site' in config:
+            config['hdfs-site']['properties']['dfs.replication'] = hdfs_repl_factor
 
 def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers):
     logging.info("Creating new cluster")
@@ -124,13 +130,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
 
     logging.info("Loading blueprint")
     blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
-
-    logging.debug("Determining HDFS replication factor")
-    hdfs_repl_factor = min(3, sum(1 for n in nodes if n["type"] == "DATANODE"))
-    logging.info("Setting HDFS replication factor to %s", hdfs_repl_factor)
-    for config in blueprint['configurations']:
-        if 'hdfs-site' in config:
-            config['hdfs-site']['properties']['dfs.replication'] = hdfs_repl_factor
+    set_hdf_repl_factor(blueprint, nodes)
 
     logging.debug("Blueprint to be used:")
     logging.debug('%s', json.dumps(blueprint))
@@ -138,7 +138,6 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     logging.info("Creating blueprint")
     blueprint_post_uri = '%s/blueprints/%s' % (ambari_api, PNDA_BLUEPRINT_NAME)
     blueprint_response = requests.post(blueprint_post_uri, json.dumps(blueprint), auth=auth, headers=headers)
-    logging.debug('Response to blueprint creation %s: %s', blueprint_post_uri, blueprint_response.status_code)
     logging.debug(blueprint_response.text)
 
     logging.debug("Calculating cluster role mappings")
@@ -156,7 +155,6 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     logging.info("Creating cluster instance")
     blueprint_instance_post_uri = '%s/clusters/%s' % (ambari_api, cluster_name)
     cluster_response = requests.post(blueprint_instance_post_uri, json.dumps(cluster_instance_def), auth=auth, headers=headers)
-    logging.debug('Response to cluster creation %s: %s', blueprint_instance_post_uri, cluster_response.status_code)
     logging.debug(cluster_response.text)
     status_tracking_uri = cluster_response.json()['href']
 
@@ -191,7 +189,6 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     }
     create_files_view_uri = '%s/views/FILES/versions/1.0.0/instances/PNDA_FILES_SU' % ambari_api
     create_files_view_response = requests.post(create_files_view_uri, json.dumps(hfds_files_view_def), auth=auth, headers=headers)
-    logging.debug('Response to create files view command %s: %s', create_files_view_uri, create_files_view_response.status_code)
     logging.debug(create_files_view_response.text)
 
     logging.info("Creating Ambari Oozie workflow view")
@@ -209,18 +206,66 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     }
     create_wf_view_uri = '%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % ambari_api
     create_wf_view_response = requests.post(create_wf_view_uri, json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)
-    logging.debug('Response to create workflow view command %s: %s', create_wf_view_uri, create_wf_view_response.status_code)
     logging.debug(create_wf_view_response.text)
 
-def update_cluster_config():
+def update_cluster_config(nodes, cluster_name, ambari_api, auth, headers):
     logging.info("Updating cluster configuration")
+    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
+    set_hdf_repl_factor(blueprint, nodes)
+    blueprint_config = {}
+    for requested_config in blueprint['configurations']:
+        requested_config_type = list(requested_config)[0]
+        logging.debug('Caching blueprint config for %s', requested_config_type)
+        blueprint_config[requested_config_type] = requested_config[requested_config_type]['properties']
+
+    configurations_response = requests.get('%s/clusters/%s?fields=Clusters/desired_configs' % (ambari_api, cluster_name), auth=auth, headers=headers)
+    desired_configs = configurations_response.json()['Clusters']['desired_configs']
+    for config_type in desired_configs:
+        logging.debug('Considering updated config for %s', config_type)
+        if config_type not in blueprint_config:
+            continue
+
+        config_tag = desired_configs[config_type]['tag']
+        logging.debug('Retrieving existing config for %s@%s', config_type, config_tag)
+        configuration_type_response = requests.get('%s/clusters/%s/configurations?type=%s&tag=%s' % (ambari_api, cluster_name, config_type, config_tag), auth=auth, headers=headers)
+        properties_set = configuration_type_response.json()['items'][0]['properties']
+
+        requested_properties = blueprint_config[config_type]
+
+        any_updates = False
+        for requested_property in requested_properties:
+
+            if requested_property not in properties_set:
+                logging.debug('%s is new addition', requested_property)
+                any_updates = True
+            elif (str(requested_properties[requested_property]) != str(properties_set[requested_property])) and 'SECRET:' not in properties_set[requested_property]:
+                logging.debug('%s is new value %s (old) != %s (new)', requested_property, requested_properties[requested_property], properties_set[requested_property])
+                any_updates = True
+
+            properties_set[requested_property] = requested_properties[requested_property]
+
+
+        if any_updates:
+            logging.info('Updating config for %s with new value', config_type)
+            update_config_command = {
+                "Clusters": {
+                    "desired_config": {
+                        "type": config_type,
+                        "tag": "version%s" % int(round(time.time() * 1000)),
+                        "properties": properties_set,
+                        "service_config_version_note":"Config generated by hdp_setup.py from salt template"
+                    }
+                }
+            }
+            update_config_response = requests.put('%s/clusters/%s' % (ambari_api, cluster_name), json.dumps(update_config_command), auth=auth, headers=headers)
+            logging.debug(update_config_response.text)
+
 
 def expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers):
     logging.info("Expanding cluster")
     blueprint_expand_post_uri = '%s/clusters/%s/hosts' % (ambari_api, cluster_name)
     expansion_def = [{"blueprint" : PNDA_BLUEPRINT_NAME, "host_group" : "DATANODE", "host_name" : node['host_name']} for node in new_nodes]
     expand_response = requests.post(blueprint_expand_post_uri, json.dumps(expansion_def), auth=auth, headers=headers)
-    logging.debug('Response to cluster expansion %s: %s', blueprint_expand_post_uri, expand_response.status_code)
     logging.debug(expand_response.text)
     expand_tracking_uri = expand_response.json()['href']
     expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", auth, headers)
@@ -269,7 +314,7 @@ def setup_hadoop(
 
     if len(new_nodes) == 0:
         # no new nodes, reapply config to existing ones
-        update_cluster_config()
+        update_cluster_config(nodes, cluster_name, ambari_api, auth, headers)
     elif len(new_nodes) == len([node for node in nodes if node['type'] == 'DATANODE']):
         # all new nodes, create new cluster
         create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers)
@@ -277,6 +322,6 @@ def setup_hadoop(
        # some new nodes, expand cluster onto them
        expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers)
        # config might also have been updated so make sure that is up to date too
-       update_cluster_config()
+       update_cluster_config(nodes, cluster_name, ambari_api, auth, headers)
 
     logging.info("HDP setup finished")
