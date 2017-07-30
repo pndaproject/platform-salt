@@ -63,6 +63,9 @@ START = datetime.datetime.now()
 THROW_BASH_ERROR = "cmd_result=${PIPESTATUS[0]} && if [ ${cmd_result} != '0' ]; then exit ${cmd_result}; fi"
 
 RUNFILE = None
+
+MILLI_TIME = lambda: int(round(time.time() * 1000))
+
 def init_runfile(cluster):
     global RUNFILE
     RUNFILE = 'cli/logs/%s.%s.run' % (cluster, int(time.time()))
@@ -91,6 +94,17 @@ def display_elasped():
     reset = '\033[0m'
     elapsed = datetime.datetime.now() - START
     CONSOLE.info("%sTotal execution time: %s%s", blue, str(elapsed), reset)
+
+def save_cf_resources(context, cluster_name, params, template):
+    params_file = 'cli/logs/%s_%s_cloud-formation-parameters.json' % (cluster_name, context)
+    CONSOLE.info('Writing Cloud Formation parameters for %s to %s', cluster_name, params_file)
+    with open(params_file, 'w') as outfile:
+        json.dump(params, outfile, sort_keys=True, indent=4)
+
+    template_file = 'cli/logs/%s_%s_cloud-formation-template.json' % (cluster_name, context)
+    CONSOLE.info('Writing Cloud Formation template for %s to %s', cluster_name, template_file)
+    with open(template_file, 'w') as outfile:
+        json.dump(json.loads(template), outfile, sort_keys=True, indent=4)
 
 def generate_instance_templates(template_data, instance_name, instance_count):
     if instance_name in template_data['Resources']:
@@ -279,6 +293,11 @@ def check_pnda_mirror():
         raise_error("Failed to connect to PNDA mirror. Verify connection "
                     "to %s, check mirror in pnda_env.yaml and try again." % mirror)
 
+def check_config(keyname, keyfile):
+    check_aws_connection()
+    check_keypair(keyname, keyfile)
+    check_pnda_mirror()
+
 def write_pnda_env_sh(cluster):
     client_only = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'PLATFORM_GIT_BRANCH']
     with open('cli/pnda_env_%s.sh' % cluster, 'w') as pnda_env_sh_file:
@@ -321,7 +340,7 @@ def wait_for_host_connectivity(hosts, cluster):
                 attempts_per_host -= 1
                 time.sleep(2)
 
-def create(template_data, cluster, flavor, keyname, no_config_check, branch):
+def create(template_data, cluster, flavor, keyname, no_config_check, dry_run, branch):
 
     init_runfile(cluster)
     bastion = NODE_CONFIG['bastion-instance']
@@ -338,9 +357,12 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
         cf_parameters.append((parameter, PNDA_ENV['cloud_formation_parameters'][parameter]))
 
     if not no_config_check:
-        check_aws_connection()
-        check_keypair(keyname, keyfile)
-        check_pnda_mirror()
+        check_config(keyname, keyfile)
+
+    save_cf_resources('create_%s' % MILLI_TIME(), cluster, cf_parameters, template_data)
+    if dry_run:
+        CONSOLE.info('Dry run mode completed')
+        sys.exit(0)
 
     CONSOLE.info('Creating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
@@ -428,13 +450,21 @@ def create(template_data, cluster, flavor, keyname, no_config_check, branch):
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
-def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, branch):
+def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, no_config_check, dry_run, branch):
     keyfile = '%s.pem' % keyname
+
+    if not no_config_check:
+        check_config(keyname, keyfile)
 
     region = PNDA_ENV['ec2_access']['AWS_REGION']
     cf_parameters = [('keyName', keyname), ('pndaCluster', cluster)]
     for parameter in PNDA_ENV['cloud_formation_parameters']:
         cf_parameters.append((parameter, PNDA_ENV['cloud_formation_parameters'][parameter]))
+
+    save_cf_resources('expand_%s' % MILLI_TIME(), cluster, cf_parameters, template_data)
+    if dry_run:
+        CONSOLE.info('Dry run mode completed')
+        sys.exit(0)
 
     CONSOLE.info('Updating Cloud Formation stack')
     conn = boto.cloudformation.connect_to_region(region)
@@ -595,6 +625,10 @@ def get_args():
     parser.add_argument('-s', '--keyname', help='Keypair name')
     parser.add_argument('-x', '--no-config-check', action='store_true', help='Skip config verifiction checks')
     parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides value in pnda_env.yaml')
+    parser.add_argument('-d', '--dry-run', action='store_true',
+                        help='Output the final Cloud Formation template but do not apply it. ' +
+                             'Useful for checking against the existing Cloud formation template to' +
+                             'gain confidence before running the expand operation.')
 
     args = parser.parse_args()
     return args
@@ -610,6 +644,7 @@ def main():
     flavor = args.flavour
     keyname = args.keyname
     no_config_check = args.no_config_check
+    dry_run = args.dry_run
 
     if not os.path.basename(os.getcwd()) == "cli":
         print 'Please run from inside the /cli directory'
@@ -720,7 +755,7 @@ def main():
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
                                                    es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
                                                    es_multi_nodes, logstash_nodes)
-            expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, branch)
+            expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, no_config_check, dry_run, branch)
             sys.exit(0)
         else:
             print 'expand command must specify pnda_cluster, e.g.\npnda-cli.py expand -e squirrel-land -f standard -s keyname -n 5'
@@ -810,7 +845,7 @@ def main():
                                            es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
                                            es_multi_nodes, logstash_nodes)
 
-    console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, branch)
+    console_dns = create(template_data, pnda_cluster, flavor, keyname, no_config_check, dry_run, branch)
     CONSOLE.info('Use the PNDA console to get started: http://%s', console_dns)
     CONSOLE.info(' Access hints:')
     CONSOLE.info('  - The script ./socks_proxy-%s opens an SSH tunnel to the PNDA cluster listening on a port bound to localhost', pnda_cluster)
