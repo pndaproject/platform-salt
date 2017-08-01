@@ -55,7 +55,7 @@ jupyterproxy:
   release_version: 1.3.1
 
 gobblin:
-  release_version: RELEASE-0.1.4
+  release_version: RELEASE-0.1.5
 
 console_frontend:
   release_version: RELEASE-0.2.0
