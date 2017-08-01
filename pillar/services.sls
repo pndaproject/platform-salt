@@ -85,7 +85,7 @@ hdfs_cleaner:
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: RELEASE-0.3.1
+  release_version: RELEASE-0.3.3
 
 platformlib:
   release_version: RELEASE_0.1.3
