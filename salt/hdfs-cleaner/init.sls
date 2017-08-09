@@ -7,6 +7,7 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
+{% set hadoop_distro = pillar['hadoop.distro'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
@@ -14,6 +15,14 @@
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
+
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/app-logs/hdfs/logs/", "/app-logs/pnda/logs/", "/spark-history/"' %}
+{% set general_dirs_to_clean = '"/mr-history/done/"' %}
+{% else %}
+{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/tmp/logs/hdfs/logs/", "/user/spark/applicationHistory/"' %}
+{% set general_dirs_to_clean = '"/user/history/done/"' %}
+{% endif %}
 
 include:
   - python-pip
@@ -50,11 +59,14 @@ hdfs-cleaner-copy_config:
     - source: salt://hdfs-cleaner/templates/properties.json.tpl
     - template: jinja
     - defaults:
+        hadoop_distro: {{ hadoop_distro }}
         container: {{ archive_container }}
         repo_path: {{ pnda_cluster }}
         archive_type: '{{ archive_type }}'
         archive_service: '{{ archive_service }}'
         gobblin_work_dir: {{ gobblin_work_dir }}
+        streaming_dirs_to_clean: '{{ streaming_dirs_to_clean }}'
+        general_dirs_to_clean: '{{ general_dirs_to_clean }}'
     - require:
       - file: hdfs-cleaner-create_link
 

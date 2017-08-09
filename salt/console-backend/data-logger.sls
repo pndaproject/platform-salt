@@ -28,7 +28,7 @@ console-backend-dl-and-extract:
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/console-backend-data-logger-{{ backend_app_version }}
-    
+
 console-backend-symlink_data_logger_dir:
   file.symlink:
     - name: {{ app_dir }}
@@ -52,7 +52,7 @@ console-backend-install_backend_data_logger_app_dependencies:
     - require:
       - archive: nodejs-dl_and_extract_node
       - cmd: console-backend-install_utils_dependencies
-      
+
 # Create service script from template
 console-backend-copy_data_logger_service:
   file.managed:
