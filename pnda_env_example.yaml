@@ -94,6 +94,13 @@ mirrors:
   # For offline tests: remove yum repo if YUM_OFFLINE is not empty
   # YUM_OFFLINE: ''
 
+hadoop:
+  # Hadoop distribution to install
+  # Valid values are:
+  # - HDP
+  # - CDH
+  HADOOP_DISTRO: CDH
+
 elk-cluster:
   # number of master nodes
   MASTER_NODES: 0

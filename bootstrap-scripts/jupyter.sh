@@ -11,12 +11,12 @@
 
 set -e
 
-# The cloudera:role grain is used by the cm_setup.py (in platform-salt) script to
-# place specific cloudera roles on this instance.
-# The mapping of cloudera roles to cloudera:role grains is
+# The hadoop:role grain is used by the cm_setup.py (in platform-salt) script to
+# place specific hadoop roles on this instance.
+# The mapping of hadoop roles to hadoop:role grains is
 # defined in the cfg_<flavor>.py.tpl files (in platform-salt)
 cat >> /etc/salt/grains <<EOF
-cloudera:
+hadoop:
   role: EDGE
 roles:
   - jupyter

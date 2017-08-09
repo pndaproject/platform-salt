@@ -6,7 +6,7 @@
       "Type" : "String",
       "Default" : "t2.medium",
       "Description" : "Instance type for the access bastion"
-    },    
+    },
     "instancetypeLogserver" : {
       "Type" : "String",
       "Default" : "m4.large",
@@ -70,34 +70,34 @@
     "instancetypeESMaster" : {
       "Type" : "String",
       "Default" : "t2.medium",
-      "Description" : "Instance type for ELK ES cluster master node"  
+      "Description" : "Instance type for ELK ES cluster master node"
     },
     "instancetypeESIngest" : {
       "Type" : "String",
       "Default" : "c4.xlarge",
-      "Description" : "Instance type for ELK ES cluster ingest node"  
+      "Description" : "Instance type for ELK ES cluster ingest node"
     },
     "instancetypeESData" : {
       "Type" : "String",
       "Default" : "m4.xlarge",
-      "Description" : "Instance type for ELK ES cluster data node"  
+      "Description" : "Instance type for ELK ES cluster data node"
     },
     "instancetypeESCoordinator" : {
       "Type" : "String",
       "Default" : "m4.2xlarge",
-      "Description" : "Instance type for ELK ES cluster coordinator node"  
+      "Description" : "Instance type for ELK ES cluster coordinator node"
     },
     "instancetypeESMulti" : {
       "Type" : "String",
       "Default" : "m4.2xlarge",
-      "Description" : "Instance type for ELK ES cluster multi-role node"  
+      "Description" : "Instance type for ELK ES cluster multi-role node"
     },
     "instancetypeLogstash" : {
       "Type" : "String",
       "Default" : "m4.xlarge",
       "Description" : "Instance type for ELK Logstash node"
     }
-  },  
+  },
   "Resources": {
 
     "instanceBastion": {
@@ -131,7 +131,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          }       
+          }
         ],
         "NetworkInterfaces": [
           {
@@ -152,7 +152,7 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeLogserver" },
-        "SubnetId": { "Ref" : "PrivateSubnet" },        
+        "SubnetId": { "Ref" : "PrivateSubnet" },
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
@@ -181,7 +181,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : "250" }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -193,7 +193,7 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeDbZookeeper" },
-        "SubnetId": { "Ref" : "PrivateSubnet" },        
+        "SubnetId": { "Ref" : "PrivateSubnet" },
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
@@ -223,8 +223,8 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }         
-        ],       
+          }
+        ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
     },
@@ -264,7 +264,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          },                  
+          },
           {
               "DeviceName"  : "/dev/sdd",
               "VirtualName" : "ephemeral0"
@@ -272,7 +272,7 @@
           {
               "DeviceName"  : "/dev/sde",
               "VirtualName" : "ephemeral1"
-          }          
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -309,7 +309,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          }          
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -346,7 +346,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          }         
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -365,7 +365,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-dn-$node_idx$" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-dn-$node_idx$" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -373,7 +373,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-dn"
+            "Value": "hadoop-dn"
           },
           {
             "Key": "node_idx",
@@ -388,7 +388,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          },                   
+          },
           {
               "DeviceName"  : "/dev/sdd",
               "Ebs" : { "VolumeSize" : "1024" }
@@ -433,7 +433,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }          
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -451,7 +451,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-edge" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-edge" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -459,7 +459,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-edge"
+            "Value": "hadoop-edge"
           },
           {
             "Key": "node_idx",
@@ -492,7 +492,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-cm" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-cm" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -500,7 +500,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-cm"
+            "Value": "hadoop-cm"
           },
           {
             "Key": "node_idx",
@@ -515,7 +515,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }          
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -552,7 +552,7 @@
           {
               "DeviceName" : "/dev/sda1",
               "Ebs" : { "VolumeSize" : "50" }
-          }          
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -570,7 +570,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-1" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-mgr-1" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -578,7 +578,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-mgr-1"
+            "Value": "hadoop-mgr-1"
           },
           {
             "Key": "node_idx",
@@ -611,7 +611,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-2" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-mgr-2" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -619,7 +619,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-mgr-2"
+            "Value": "hadoop-mgr-2"
           },
           {
             "Key": "node_idx",
@@ -652,7 +652,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-3" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-mgr-3" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -660,7 +660,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-mgr-3"
+            "Value": "hadoop-mgr-3"
           },
           {
             "Key": "node_idx",
@@ -693,7 +693,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "cdh-mgr-4" ] ]}
+            "Value": {"Fn::Join" : [ "-", [ {"Ref": "pndaCluster"}, "hadoop-mgr-4" ] ]}
           },
           {
             "Key": "pnda_cluster",
@@ -701,7 +701,7 @@
           },
           {
             "Key": "node_type",
-            "Value": "cdh-mgr-4"
+            "Value": "hadoop-mgr-4"
           },
           {
             "Key": "node_idx",
@@ -757,7 +757,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -798,7 +798,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -839,7 +839,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -880,7 +880,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }
@@ -921,7 +921,7 @@
           {
               "DeviceName" : "/dev/sdc",
               "Ebs" : { "VolumeSize" : {"Ref": "logVolumeSizeGb"} }
-          }        
+          }
         ],
         "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
       }

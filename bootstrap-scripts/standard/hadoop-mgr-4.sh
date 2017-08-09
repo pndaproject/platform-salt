@@ -1,6 +1,6 @@
 #!/bin/bash -v
 
-# This script runs on instances with a node_type tag of "cdh-mgr-2"
+# This script runs on instances with a node_type tag of "hadoop-mgr-4"
 # It sets the roles that determine what software is installed
 # on this instance by platform-salt scripts and the minion
 # id and hostname
@@ -12,18 +12,19 @@
 set -e
 
 cat >> /etc/salt/grains <<EOF
-cloudera:
-  role: MGR02
+hadoop:
+  role: MGR04
 roles:
-  - cloudera_namenode
+  - oozie_database
   - mysql_connector
+  - hue
 EOF
 
 cat >> /etc/salt/minion <<EOF
-id: $PNDA_CLUSTER-cdh-mgr-2
+id: $PNDA_CLUSTER-hadoop-mgr-4
 EOF
 
-echo $PNDA_CLUSTER-cdh-mgr-2 > /etc/hostname
-hostname $PNDA_CLUSTER-cdh-mgr-2
+echo $PNDA_CLUSTER-hadoop-mgr-4 > /etc/hostname
+hostname $PNDA_CLUSTER-hadoop-mgr-4
 
 service salt-minion restart

@@ -165,7 +165,7 @@ def get_instance_map(cluster):
 
 def get_current_node_counts(cluster):
     CONSOLE.debug('Counting existing instances')
-    node_counts = {'zk':0, 'kafka':0, 'cdh-dn':0, 'opentsdb':0}
+    node_counts = {'zk':0, 'kafka':0, 'hadoop-dn':0, 'opentsdb':0}
     for _, instance in get_instance_map(cluster).iteritems():
         if instance['node_type'] in node_counts:
             current_count = node_counts[instance['node_type']]
@@ -497,7 +497,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, no
     bootstrap_threads = []
     bootstrap_errors = Queue.Queue()
     for _, instance in instance_map.iteritems():
-        if ((instance['node_type'] == 'cdh-dn' and int(instance['node_idx']) >= old_datanodes
+        if ((instance['node_type'] == 'hadoop-dn' and int(instance['node_idx']) >= old_datanodes
              or instance['node_type'] == 'kafka' and int(instance['node_idx']) >= old_kafka)):
             thread = Thread(target=bootstrap, args=[instance, saltmaster_ip, cluster, flavor, branch, None, bootstrap_errors])
             bootstrap_threads.append(thread)
@@ -730,7 +730,7 @@ def main():
             node_counts = get_current_node_counts(pnda_cluster)
 
             if datanodes is None:
-                datanodes = node_counts['cdh-dn']
+                datanodes = node_counts['hadoop-dn']
             if kafkanodes is None:
                 kafkanodes = node_counts['kafka']
 
@@ -741,11 +741,11 @@ def main():
                 print "Consider choice of kafkanodes again, limits are: %s" % get_validation("kafka-nodes")
                 sys.exit(1)
 
-            if datanodes < node_counts['cdh-dn']:
-                print "You cannot shrink the cluster using this CLI, existing number of datanodes is: %s" % node_counts['cdh-dn']
+            if datanodes < node_counts['hadoop-dn']:
+                print "You cannot shrink the cluster using this CLI, existing number of datanodes is: %s" % node_counts['hadoop-dn']
                 sys.exit(1)
-            elif datanodes > node_counts['cdh-dn']:
-                print "Increasing the number of datanodes from %s to %s" % (node_counts['cdh-dn'], datanodes)
+            elif datanodes > node_counts['hadoop-dn']:
+                print "Increasing the number of datanodes from %s to %s" % (node_counts['hadoop-dn'], datanodes)
             if kafkanodes < node_counts['kafka']:
                 print "You cannot shrink the cluster using this CLI, existing number of kafkanodes is: %s" % node_counts['kafka']
                 sys.exit(1)
@@ -755,7 +755,7 @@ def main():
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
                                                    es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
                                                    es_multi_nodes, logstash_nodes)
-            expand(template_data, pnda_cluster, flavor, node_counts['cdh-dn'], node_counts['kafka'], keyname, no_config_check, dry_run, branch)
+            expand(template_data, pnda_cluster, flavor, node_counts['hadoop-dn'], node_counts['kafka'], keyname, no_config_check, dry_run, branch)
             sys.exit(0)
         else:
             print 'expand command must specify pnda_cluster, e.g.\npnda-cli.py expand -e squirrel-land -f standard -s keyname -n 5'
