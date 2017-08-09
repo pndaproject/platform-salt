@@ -15,6 +15,9 @@
         "cdh.setup_hadoop": {
             "template_file": "cfg_pico.py"
         },
+        "hdp.setup_hadoop": {
+            "template_file": "cfg_pico.py"
+        },
         "curator": {
             "days_to_keep": 1
         }
