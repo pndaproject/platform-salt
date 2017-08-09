@@ -55,27 +55,27 @@ jupyterproxy:
   release_version: 1.3.1
 
 gobblin:
-  release_version: RELEASE-0.1.5
+  release_version: 0.1.5
 
 console_frontend:
-  release_version: RELEASE-0.2.0
+  release_version: 0.2.0
 
 console_backend_data_logger:
-  release_version: RELEASE-0.4.0
+  release_version: 0.4.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: RELEASE-0.4.0
+  release_version: 0.4.0
   bind_port: 3123
 
 console_backend_utils:
-  release_version: RELEASE-0.4.0
+  release_version: 0.4.0
 
 deployment_manager:
-  release_version: RELEASE-0.4.0
+  release_version: 0.4.0
 
 package_repository:
-  release_version: RELEASE-0.3.1
+  release_version: 0.3.1
 
 data-service:
   release_version: 0.2.0
@@ -85,7 +85,7 @@ hdfs_cleaner:
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: RELEASE-0.3.3
+  release_version: 0.3.3
 
 platformlib:
   release_version: RELEASE_0.1.3
