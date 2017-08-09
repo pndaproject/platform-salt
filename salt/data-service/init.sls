@@ -6,6 +6,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip
@@ -23,6 +24,8 @@ data-service-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: salt://data-service/files/requirements.txt
+    - python: python2
+    - index_url: {{ pip_index_url }}
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip
@@ -45,18 +48,26 @@ data-service-copy_config:
     - require:
       - archive: data-service-dl-and-extract
 
-data-service-copy_upstart:
+data-service-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/dataservice.conf
     - source: salt://data-service/templates/data-service.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/dataservice.service
+    - source: salt://data-service/templates/data-service.service.tpl
+{%- endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
-dataservice:
-  service.running:
-    - enable: True
-    - watch:
-      - file: data-service-copy_upstart
-      - file: data-service-create_link
+{% if grains['os'] == 'RedHat' %}
+data-service-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable dataservice
+{%- endif %}
+
+data-service-start_service:
+  cmd.run:
+    - name: 'service dataservice stop || echo already stopped; service dataservice start'
 

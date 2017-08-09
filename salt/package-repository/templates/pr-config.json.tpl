@@ -9,7 +9,8 @@
             "account":"{{ salt['pillar.get']('keystone.tenant', '') }}",
             "user": "{{ salt['pillar.get']('keystone.user', '') }}",
             "key": "{{ salt['pillar.get']('keystone.password', '') }}",
-            "auth_url": "{{ salt['pillar.get']('keystone.auth_url', '') }}"
+            "auth_url": "{{ salt['pillar.get']('keystone.auth_url', '') }}",
+            "auth_version": "{{ salt['pillar.get']('keystone.auth_version', '2') }}"
         },
         "container": {
             "container": "{{ salt['pillar.get']('pnda.apps_container', 'apps') }}",

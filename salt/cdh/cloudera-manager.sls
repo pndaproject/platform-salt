@@ -10,21 +10,23 @@
 include:
   - java
   - mysql.connector
+  - mysql
 
-cloudera-manager-add_cloudera_manager_repository:
-  pkgrepo.managed:
-    - humanname: Cloudera Manager
-    - name: deb [arch=amd64] https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm{{cm_ver}} contrib
-    - dist: trusty-cm{{cm_ver}}
-    - key_url: https://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm/archive.key
-    - refresh: True
-    - file: /etc/apt/sources.list.d/cloudera.list
-
-cloudera-manager-install_cloudera_manager:
+cloudera-manager-install_daemons:
   pkg.installed:
-    - pkgs:
-      - cloudera-manager-daemons
-      - cloudera-manager-server
+    - name: {{ pillar['cloudera-manager-daemons']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-daemons']['version'] }}
+
+cloudera-manager-install_server:
+  pkg.installed:
+    - name: {{ pillar['cloudera-manager-server']['package-name'] }}
+    - version: {{ pillar['cloudera-manager-server']['version'] }}
+
+{% if grains['os'] == 'RedHat' %}
+cloudera-manager-ensure_cloudera_manager_enabled:
+  cmd.run:
+    - name: /bin/systemctl enable cloudera-scm-server
+{% endif %}
 
 cloudera-manager-create_ext_db:
   cmd.run:
@@ -34,3 +36,5 @@ cloudera-manager-create_ext_db:
 cloudera-manager-ensure_cloudera_manager_started:
   service.running:
     - name: cloudera-scm-server
+    - enable: True
+    - reload: True

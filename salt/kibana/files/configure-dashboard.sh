@@ -1,3 +1,16 @@
+es_result=1
+num_tries=30
+while [ $es_result -ne 0 ] && [ $num_tries -gt 0 ]
+do
+  echo "Checking es connectivity ($num_tries remaining)..."
+  curl -f 'localhost:9200'
+  es_result=$?
+  if [ $es_result -ne 0 ]; then
+    sleep 5
+    num_tries=$(($num_tries-1))
+  fi
+done
+
 set -e
 curl -XPUT 'localhost:9200/.kibana/config/4.1.6' -d '{"buildNum":7629,"defaultIndex":"logstash-*"}'
 

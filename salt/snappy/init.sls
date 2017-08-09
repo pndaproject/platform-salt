@@ -1,4 +1,5 @@
 snappy-install-snappy:
   pkg.installed:
-    - name: python-snappy
-    - reload_modules: True
+    - name: {{ pillar['snappy']['package-name'] }}
+    - version: {{ pillar['snappy']['version'] }}
+    - ignore_epoch: True

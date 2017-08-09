@@ -13,6 +13,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip
@@ -30,6 +31,8 @@ hdfs-cleaner-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: salt://hdfs-cleaner/files/requirements.txt
+    - python: python2
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
       - archive: hdfs-cleaner-dl-and-extract
@@ -55,18 +58,33 @@ hdfs-cleaner-copy_config:
     - require:
       - file: hdfs-cleaner-create_link
 
-hdfs-cleaner-copy_upstart:
+hdfs-cleaner-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/hdfs-cleaner.conf
     - source: salt://hdfs-cleaner/templates/hdfs-cleaner.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/hdfs-cleaner.service
+    - source: salt://hdfs-cleaner/templates/hdfs-cleaner.service.tpl
+{%- endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
+{% if grains['os'] == 'RedHat' %}
+hdfs-cleaner-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{%- endif %}
+
 hdfs-cleaner-add_crontab_entry:
   cron.present:
     - identifier: HDFS-CLEANER
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start hdfs-cleaner
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start hdfs-cleaner
+{%- endif %}
     - user: root
     - hour: '*/4'
     - minute: 0

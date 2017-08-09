@@ -10,7 +10,10 @@ include:
   - sun-java
 
 unzip:
-  pkg.installed
+  pkg.installed:
+    - name: {{ pillar['unzip']['package-name'] }}
+    - version: {{ pillar['unzip']['version'] }}
+    - ignore_epoch: True
 
 download-jce-zip:
   cmd.run:

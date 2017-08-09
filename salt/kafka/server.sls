@@ -1,5 +1,7 @@
 {%- from 'kafka/settings.sls' import kafka, config with context %}
 
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
 {%- set kafka_zookeepers = [] -%}
@@ -33,8 +35,10 @@ kafka-server-conf:
     - template: jinja
     - context:
       zk_hosts: {{ kafka_zookeepers|join(',') }}
+      kafka_log_retention_bytes: {{ flavor_cfg.kafka_log_retention_bytes }}
 
-kafka-copy_kafka_upstart:
+{% if grains['os'] == 'Ubuntu' %}
+kafka-copy_kafka_service:
   file.managed:
     - source: salt://kafka/templates/kafka.init.conf.tpl
     - name: /etc/init/kafka.conf
@@ -44,6 +48,38 @@ kafka-copy_kafka_upstart:
       workdir: {{ kafka.prefix }}
       mem_xmx: {{ mem_xmx }}
       mem_xms: {{ mem_xmx }}
+{% elif grains['os'] == 'RedHat' %}
+kafka-copy_script:
+  file.managed:
+    - source: salt://kafka/templates/kafka-start.sh.tpl
+    - name: {{ kafka.prefix }}/kafka-start-script.sh
+    - mode: 755
+    - template: jinja
+    - context:
+      workdir: {{ kafka.prefix }}
+kafka-copy_env:
+  file.managed:
+    - source: salt://kafka/templates/kafka-env.tpl
+    - name: /etc/default/kafka-env
+    - mode: 644
+    - template: jinja
+    - context:
+      mem_xmx: {{ mem_xmx }}
+      mem_xms: {{ mem_xmx }}
+
+kafka-copy_kafka_systemd:
+  file.managed:
+    - source: salt://kafka/templates/kafka.service.tpl
+    - name: /usr/lib/systemd/system/kafka.service
+    - mode: 644
+    - template: jinja
+    - context:
+      workdir: {{ kafka.prefix }}
+
+kafka-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable kafka
+{% endif %}
 
 kafka-logs-configuration-dirs:
   file.directory:
@@ -63,10 +99,6 @@ kafka-logs-configuration:
     - pattern: '(\${kafka.logs.dir})'
     - repl: '/var/log/pnda/kafka'
 
-kafka-service:
-  service.running:
-    - name: kafka
-    - enable: true
-    - watch:
-      - file: kafka-server-conf
-      - file: kafka-copy_kafka_upstart
+kafka-start_service:
+  cmd.run:
+    - name: 'service kafka stop || echo already stopped; service kafka start'

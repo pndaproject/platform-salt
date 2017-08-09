@@ -21,6 +21,14 @@ expr_form='compound') %}
   {% do es_master_hostnames.append(grains['fqdn']) %}
 {% endfor %}
 
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set elasticsearch_version = pillar['elasticsearch-cluster']['version'] %}
+{% set elasticsearch_package = 'elasticsearch-' + elasticsearch_version + '.tar.gz' %}
+{% set elasticsearch_url = mirror_location + elasticsearch_package %}
+
 elasticsearch-elasticsearch:
   group.present:
     - name: elasticsearch
@@ -33,9 +41,6 @@ elasticsearch-elasticsearch:
 elasticsearch-create_elasticsearch_dir:
   file.directory:
     - name: {{elasticsearch_directory}}
-    - user: root
-    - group: root
-    - dir_mode: 777
     - makedirs: True
 
 elasticsearch-create_elasticsearch_datadir:
@@ -57,8 +62,8 @@ elasticsearch-create_elasticsearch_logdir:
 elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{elasticsearch_directory}}
-    - source: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version }}.tar.gz.sha1
+    - source: {{ elasticsearch_url }}
+    - source_hash: {{ elasticsearch_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
@@ -89,7 +94,7 @@ elasticsearch-create_elasticsearch_workdir:
 
 elasticsearch-copy_configuration_elasticsearch:
   file.managed:
-    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.yml.tpl
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.yml.tpl
     - user: elasticsearch
     - group: elasticsearch
     - name: {{elasticsearch_confdir}}/elasticsearch.yml
@@ -102,9 +107,15 @@ elasticsearch-copy_configuration_elasticsearch:
       master_name: {{master_name}}
       list_of_masters: {{ es_master_hostnames }}
 
+{% if grains['os'] == 'Ubuntu' %}
 /etc/init/elasticsearch.conf:
   file.managed:
-    - source: salt://elasticsearch-cluster/files/templates/elasticsearch.init.conf.tpl
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.init.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+/usr/lib/systemd/system/elasticsearch.service:
+  file.managed:
+    - source: salt://elasticsearch-cluster/templates/elasticsearch.service.tpl
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -116,12 +127,15 @@ elasticsearch-copy_configuration_elasticsearch:
       workdir: {{elasticsearch_workdir }}
       defaultconfig: {{elasticsearch_confdir}}/elasticsearch.yml
 
-elasticsearch-service:
-  service.running:
-    - name: elasticsearch
-    - enable: true
-    - watch:
-      - file: /etc/init/elasticsearch.conf
+{% if grains['os'] == 'RedHat' %}
+elasticsearch-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable elasticsearch
+{%- endif %}
+
+elasticsearch-start_service:
+  cmd.run:
+    - name: 'service elasticsearch stop || echo already stopped; service elasticsearch start'
 
 elastic-ulimit:
   cmd.run:

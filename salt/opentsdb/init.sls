@@ -1,9 +1,6 @@
-{% set settings = salt['pillar.get']('opentsdb', {}) -%}
-{% set opentsdb_version = settings.get('version', '2.2.0') %}
-{% set opentsdb_hash = settings.get('release_hash', 'sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60') %}
-
-{% set opentsdb_deb_package = 'opentsdb-' + opentsdb_version + '_all.deb' %}
-{% set opentsdb_deb_location = 'https://github.com/OpenTSDB/opentsdb/releases/download/v' + opentsdb_version + '/' + opentsdb_deb_package %}
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
 
 include:
   - gnuplot
@@ -12,14 +9,27 @@ include:
 opentsdb-server:
   pkg.installed:
     - sources:
-      - opentsdb: {{ opentsdb_deb_location }}
+      - opentsdb: {{ mirror_location+pillar['opentsdb']['package-source'] }}
 
-opentsdb-service_start:
-  service.running:
-    - name: opentsdb
-    - enable: True
-    - reload: True
-    - watch:
-      - file: /etc/opentsdb/opentsdb.conf
-      - file: /etc/default/opentsdb
-      - pkg: opentsdb-server
+{% if grains['os'] == 'Ubuntu' %}
+opentsdb-copy_defaults:
+  file.managed:
+    - name: /etc/default/opentsdb
+    - source: salt://opentsdb/files/opentsdb.default
+{% elif grains['os'] == 'RedHat' %}
+opentsdb-copy_service:
+  file.managed:
+    - name: /usr/lib/systemd/system/opentsdb.service
+    - source: salt://opentsdb/templates/opentsdb.service.tpl
+    - template: jinja
+{%- endif %}
+
+{% if grains['os'] == 'RedHat' %}
+opentsdb-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable opentsdb
+{%- endif %}
+
+opentsdb-start_service:
+  cmd.run:
+    - name: 'service opentsdb stop || echo already stopped; service opentsdb start'

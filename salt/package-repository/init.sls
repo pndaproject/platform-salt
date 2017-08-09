@@ -6,9 +6,16 @@
 {% set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') %}
 
 {% set virtual_env_dir = install_dir + "/" + package_repository_directory_name + "/venv" %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip
+
+package-repository-install_dev_deps:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True 
 
 package-repository-dl-and-extract:
   archive.extracted:
@@ -23,6 +30,8 @@ package-repository-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ package_repository_directory_name }}/requirements.txt
+    - python: python2
+    - index_url: {{ pip_index_url }}
     - reload_modules: True
     - require:
       - pip: python-pip-install_python_pip
@@ -41,19 +50,18 @@ package-repository-copy_configuration:
     - require:
       - archive: package-repository-dl-and-extract
 
-package-repository-copy_upstart:
+package-repository-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/package-repository.conf
     - source: salt://package-repository/templates/package-repository.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/package-repository.service
+    - source: salt://package-repository/templates/package-repository.service.tpl
+{% endif %}    
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-
-package-repository-stop_package_repository:
-  cmd.run:
-    - name: 'initctl stop package-repository || echo app already stopped'
-    - user: root
-    - group: root
 
 {% if package_repository_fs_type == 'sshfs' %}
 {% include "package-repository/sshfs.sls" %}
@@ -67,8 +75,12 @@ package-repository-create_fs_location_path:
 
 {% endif %}
 
-package-repository-start_package_repository:
+{% if grains['os'] == 'RedHat' %}
+package-repository-systemctl_reload:
   cmd.run:
-    - name: 'initctl start package-repository'
-    - user: root
-    - group: root
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable package-repository
+{%- endif %}
+
+package-repository-start_service:
+  cmd.run:
+    - name: 'service package-repository stop || echo already stopped; service package-repository start'

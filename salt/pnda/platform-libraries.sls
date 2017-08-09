@@ -6,6 +6,20 @@
 {% set cm_password = pillar['admin_login']['password'] %}
 {% set cm_ip = salt['pnda.ip_addresses']('cloudera_manager')[0] %}
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
+
+include:
+  - python-pip
+
+platform-libraries-install_cm_api:
+  pip.installed:
+    - pkgs:
+      - cm-api == 14.0.0
+    - upgrade: True
+    - reload_modules: True
+    - index_url: {{ pip_index_url }}
+    - require:
+      - pip: python-pip-install_python_pip
 
 platform-libraries-create_target_dir:
   file.directory:

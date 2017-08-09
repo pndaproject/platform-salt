@@ -1,6 +1,13 @@
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
-{% set zookeeper_version = settings.get('version', '3.4.6') %}
-{% set zookeeper_url  = 'http://www.apache.org/dist/zookeeper/zookeeper-' + zookeeper_version + '/zookeeper-' + zookeeper_version + '.tar.gz' %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set zookeeper_version = pillar['zookeeper']['version'] %}
+{% set zookeeper_package = 'zookeeper-' + zookeeper_version + '.tar.gz' %}
+{% set zookeeper_url = mirror_location + zookeeper_package %}
+
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set zookeeper_data_dir = '/var/lib/zookeeper' %}
 
@@ -29,12 +36,12 @@ zookeeper-data-dir:
 
 zookeeper-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ install_dir }}
     - source: {{ zookeeper_url }}
     - source_hash: {{ zookeeper_url }}.sha1
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }} 
+    - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
 
 {% set nodes = [] %}
 {% include "zookeeper/nodes.sls" %}
@@ -52,7 +59,7 @@ zookeeper-myid:
           ip: {{ node.ip }}
           fqdn: {{ node.fqdn }}
       {%- endfor %}
-    - mode: 644
+    - mode: 755
     - require:
       - file: zookeeper-data-dir
 
@@ -88,7 +95,8 @@ zookeeper-link:
     - require:
       - archive: zookeeper-dl-and-extract
 
-zookeeper-upstart:
+{% if grains['os'] == 'Ubuntu' %}
+zookeeper-service:
   file.managed:
     - name: /etc/init/zookeeper.conf
     - source: salt://zookeeper/files/templates/zookeeper.init.conf.tpl
@@ -98,14 +106,47 @@ zookeeper-upstart:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
+{% elif grains['os'] == 'RedHat' %}
+zookeeper-service_startpre:
+    file.managed:
+      - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-startpre.sh
+      - source: salt://zookeeper/files/templates/zookeeper-service-startpre.sh.tpl
+      - template: jinja
+      - context:
+        conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+      - mode: 755
+      - require:
+        - file: zookeeper-data-dir
+
+zookeper-service_start:
+    file.managed:
+      - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-start.sh
+      - source: salt://zookeeper/files/templates/zookeeper-service-start.sh.tpl
+      - template: jinja
+      - context:
+        conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+      - mode: 755
+      - require:
+        - file: zookeeper-data-dir
+
+zookeeper-systemd:
+  file.managed:
+    - name: /usr/lib/systemd/system/zookeeper.service
+    - source: salt://zookeeper/files/templates/zookeeper.service.tpl
+    - template: jinja
+    - context:
+      conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
+    - mode: 644
+    - require:
+      - file: zookeeper-data-dir
+{% endif %}
+
+{% if grains['os'] == 'RedHat' %}
+zookeeper-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable zookeeper
+{%- endif %}
 
 zookeeper-ensure-service-running:
-  service.running:
-    - name: zookeeper
-    - watch:
-      - archive: zookeeper-dl-and-extract
-      - file: zookeeper-environment
-      - file: zookeeper-configuration
-      - file: zookeeper-myid
-      - file: zookeeper-upstart
-      - file: zookeeper-link
+  cmd.run:
+    - name: 'service zookeeper stop || echo already stopped; service zookeeper start'

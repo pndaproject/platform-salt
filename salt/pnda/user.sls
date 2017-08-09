@@ -3,14 +3,27 @@
 {% set pnda_group = pillar['pnda']['group'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
+{% if grains['os'] == 'RedHat' %}
+permissive:
+    selinux.mode
+{% endif %}
+
 pnda-create_pnda_user:
   user.present:
     - name: {{ pnda_user }}
     - password: {{ pnda_password }}
     - home: {{ pnda_home_directory }}
+    - createhome: True
 
 pnda-create_pnda_group:
   group.present:
     - name: {{ pnda_group }}
     - addusers:
       - {{ pnda_user }}
+
+pnda-set_home_dir_perms:
+  file.directory:
+    - name: {{ pnda_home_directory }}
+    - mode: 755
+    - recurse:
+      - mode

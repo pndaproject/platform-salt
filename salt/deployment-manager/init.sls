@@ -5,16 +5,31 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 {% set virtual_env_dir = install_dir + "/" + deployment_manager_directory_name + "/venv" %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
   - python-pip
 
-deployment-manager-install_dev_deps:
+{% if grains['os'] == 'RedHat' %}
+deployment-manager-install_dev_deps_cyrus:
   pkg.installed:
-    - pkgs:
-      - libsasl2-dev
-      - g++
+    - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-devel']['version'] }}
+    - ignore_epoch: True
+{% endif %}
 
+deployment-manager-install_dev_deps_sasl:
+  pkg.installed:
+    - name: {{ pillar['libsasl']['package-name'] }}
+    - version: {{ pillar['libsasl']['version'] }}
+    - ignore_epoch: True    
+
+deployment-manager-install_dev_deps_gcc:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True    
+    
 deployment-manager-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
@@ -28,6 +43,8 @@ deployment-manager-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
     - requirements: {{ install_dir }}/{{ deployment_manager_directory_name }}/requirements.txt
+    - python: python2
+    - index_url: {{ pip_index_url }}
     - reload_modules: True
     - require:
       - archive: deployment-manager-dl-and-extract
@@ -60,22 +77,25 @@ deployment-manager-push_key:
     - require:
       - cmd: deployment-manager-gen_key
 
-deployment-manager-copy_upstart:
+deployment-manager-copy_service:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/deployment-manager.conf
     - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/deployment-manager.service
+    - source: salt://deployment-manager/templates/deployment-manager.service.tpl
+{% endif %}    
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
-deployment-manager-stop_deployment_manager:
+{% if grains['os'] == 'RedHat' %}
+deployment-manager-systemctl_reload:
   cmd.run:
-    - name: 'initctl stop deployment-manager || echo app already stopped'
-    - user: root
-    - group: root
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager
+{%- endif %}
 
-deployment-manager-start_deployment_manager:
+deployment-manager-start_service:
   cmd.run:
-    - name: 'initctl start deployment-manager'
-    - user: root
-    - group: root
+    - name: 'service deployment-manager stop || echo already stopped; service deployment-manager start'

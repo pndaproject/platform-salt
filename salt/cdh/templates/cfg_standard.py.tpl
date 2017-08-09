@@ -214,9 +214,14 @@ HDFS_CFG = {
                 "target": "MGR03"
             },
             {
-                "name": "hdfs-gw",
+                "name": "hdfs-gw1",
                 "type": "GATEWAY",
                 "target": "EDGE"
+            },
+            {
+                "name": "hdfs-gw2",
+                "type": "GATEWAY",
+                "target": "CM"
             }
         ],
     "role_cfg":
@@ -443,7 +448,8 @@ SPARK_CFG = {
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR03'},
-        {'name': 'spark_gw', 'type': 'GATEWAY', 'target': 'EDGE'}
+        {'name': 'spark_gw1', 'type': 'GATEWAY', 'target': 'EDGE'},
+        {'name': 'spark_gw2', 'type': 'GATEWAY', 'target': 'DATANODE'}
     ],
     'role_cfg': [
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},

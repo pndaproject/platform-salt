@@ -3,8 +3,7 @@ mine_functions:
   grains.items: []
 
 logstash:
-  version: 1.4.2
-  directory: /opt/pnda
+  version: 5.0.2
 
 kibana:
   version: 4.1.6-linux-x64
@@ -49,37 +48,34 @@ admin_login:
 
 kafkamanager:
   release_directory: /opt/pnda
-  release_version: 1.3.1.6
+  release_version: 1.3.3.6
   bind_port: 10900
 
-opentsdb:
-  version: 2.2.0
-  release_hash: sha256=e82738703efa50cfdd42dd7741e3d5b78fc2bf8cd12352253fc1489d1dea1f60
-  bind_port: 4242
-
-grafana:
-  version: 3.1.1-1470047149
-  release_hash: sha256=4d3153966afed9b874a6fa6182914d9bd2e69698bbc7c13248d1b7ef09d3d328
+jupyterproxy:
+  release_version: 1.3.1
 
 gobblin:
-  release_version: 0.1.3
+  release_version: 0.1.5
 
 console_frontend:
-  release_version: 0.1.4
+  release_version: 0.2.0
 
 console_backend_data_logger:
-  release_version: 0.3.0
+  release_version: 0.4.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 0.3.0
+  release_version: 0.4.0
   bind_port: 3123
 
+console_backend_utils:
+  release_version: 0.4.0
+
 deployment_manager:
-  release_version: 0.3.0
+  release_version: 0.4.0
 
 package_repository:
-  release_version: 0.3.0
+  release_version: 0.3.1
 
 data-service:
   release_version: 0.2.0
@@ -89,10 +85,10 @@ hdfs_cleaner:
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 0.3.0
+  release_version: 0.3.3
 
 platformlib:
-  release_version: 0.1.2
+  release_version: RELEASE_0.1.3
   target_directory: "/opt/pnda"
 
 jmxproxy:
@@ -102,3 +98,8 @@ jmxproxy:
 anaconda:
   parcel_version: "4.0.0"
   parcel_repo: "https://repo.continuum.io/pkgs/misc/parcels/"
+
+java:
+  version: "jdk-8u131-linux-x64"
+  version_name: "jdk1.8.0_131"
+  source_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"

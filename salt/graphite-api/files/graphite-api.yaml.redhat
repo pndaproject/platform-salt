@@ -1,0 +1,10 @@
+search_index: /var/lib/graphite-api/index
+finders:
+  - graphite_api.finders.whisper.WhisperFinder
+functions:
+  - graphite_api.functions.SeriesFunctions
+  - graphite_api.functions.PieFunctions
+whisper:
+  directories:
+    - /var/lib/carbon/whisper
+time_zone: UTC

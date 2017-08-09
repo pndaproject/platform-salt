@@ -1,8 +1,15 @@
 {% set ntp_servers = salt['pillar.get']('ntp:servers', []) %}
+{% set timezone = salt['pillar.get']('ntp:timezone', 'UTC') %}
+
+ntp-set_timezone:
+  timezone.system:
+    - name: {{ timezone }}
 
 ntp-install_ntp_package:
   pkg.installed:
-    - name: ntp
+    - name: {{ pillar['ntp']['package-name'] }}
+    - version: {{ pillar['ntp']['version'] }}
+    - ignore_epoch: True
 
 ntp-install_conf:
   file.managed:
@@ -12,9 +19,10 @@ ntp-install_conf:
     - context:
       ntp_servers: {{ ntp_servers }}
 
-ntp-service-running:
-  service.running:
-    - name: ntp
-    - enable: true
-    - watch:
-      - file: ntp-install_conf
+ntp-start_service:
+  cmd.run:
+    {% if grains['os'] == 'RedHat' %}
+    - name: 'service ntpd stop || echo already stopped; service ntpd start'
+    {% elif grains['os'] == 'Ubuntu' %}
+    - name: 'service ntp stop || echo already stopped; service ntp start'
+    {% endif %}

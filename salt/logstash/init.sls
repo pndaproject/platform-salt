@@ -13,6 +13,14 @@
   {% do es_ingest_hostnames.append(grains['fqdn']) %}
 {% endfor %}
 
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set logstash_version = pillar['logstash-cluster']['version'] %}
+{% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
+{% set logstash_url = mirror_location + logstash_package %}
+
 logstash-logstash:
   group.present:
     - name: logstash
@@ -25,9 +33,6 @@ logstash-logstash:
 logstash-create_logstash_dir:
   file.directory:
     - name: {{logstash_directory}}
-    - user: root
-    - group: root
-    - dir_mode: 777
     - makedirs: True
 
 logstash-create_logstash_logdir:
@@ -57,8 +62,8 @@ logstash-create_logstash_inputdir:
 logstash-dl_and_extract_logstash:
   archive.extracted:
     - name: {{logstash_directory}}
-    - source: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz
-    - source_hash: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version }}.tar.gz.sha1
+    - source: {{ logstash_url }}
+    - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{logstash_directory}}/logstash-{{ logstash_version }}
@@ -73,7 +78,7 @@ logstash-create_logstash_confdir:
 
 logstash-copy_configuration_logstash:
   file.managed:
-    - source: salt://logstash/files/templates/logstash.conf.tpl
+    - source: salt://logstash/templates/logstash.conf.tpl
     - user: logstash
     - group: logstash
     - name: {{logstash_confdir}}/logstash.conf
@@ -82,9 +87,15 @@ logstash-copy_configuration_logstash:
       list_of_ingest: {{ es_ingest_hostnames }}
       input_dir: {{logstash_inputdir}}/*
 
+{% if grains['os'] == 'Ubuntu' %}
 /etc/init/logstash.conf:
   file.managed:
-    - source: salt://logstash/files/templates/logstash.init.conf.tpl
+    - source: salt://logstash/templates/logstash.init.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+/usr/lib/systemd/system/logstash.service:
+  file.managed:
+    - source: salt://logstash/templates/logstash.service.tpl  
+{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -93,10 +104,13 @@ logstash-copy_configuration_logstash:
       confpath: {{logstash_confdir }}/logstash.conf
       datadir: {{logstash_datadir}}
 
-logstash-service:
-  service.running:
-    - name: logstash
-    - enable: true
-    - watch:
-      - file: /etc/init/logstash.conf
+{% if grains['os'] == 'RedHat' %}
+logstash-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable logstash
+{%- endif %}
+
+logstash-start_service:
+  cmd.run:
+    - name: 'service logstash stop || echo already stopped; service logstash start'
 

@@ -103,11 +103,11 @@ num.partitions={{ c.num_partitions }}
 # from the end of the log.
 
 # The minimum age of a log file to be eligible for deletion
-log.retention.hours=24
+#log.retention.hours=24
 
 # A size-based retention policy for logs. Segments are pruned from the log as long as the remaining
 # segments don't drop below log.retention.bytes.
-#log.retention.bytes=1073741824
+log.retention.bytes={{ kafka_log_retention_bytes }}
 
 # The maximum size of a log segment file. When this size is reached a new log segment will be created.
 log.segment.bytes=1073741824

@@ -49,7 +49,6 @@
   'roles:console_backend_data_logger':
     - match: grain
     - console-backend.data-logger
-    - console-backend.data-manager
 
   'roles:console_backend_data_manager':
     - match: grain
@@ -57,7 +56,7 @@
 
   'roles:graphite':
     - match: grain
-    - graphite
+    - graphite-api
 
   'roles:grafana':
     - match: grain
@@ -72,19 +71,10 @@
     - cdh.create_data_dirs
     - snappy
 
-  'roles:cloudera_manager':
-    - match: grain
-    - cdh.cloudera-keys
-    - cdh.cloudera-manager
-
-  'roles:platform_testing_cdh':
-    - match: grain
-    - platform-testing.cdh
-
   'roles:mysql_connector':
     - match: grain
     - mysql.connector
-    
+
   'roles:oozie_database':
     - match: grain
     - cdh.oozie_mysql

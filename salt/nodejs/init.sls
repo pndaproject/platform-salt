@@ -1,19 +1,34 @@
-# Specify version 6 of nodejs, latest LTS
-nodejs-v6-setup:
-  cmd.run:
-    - name: curl -sL 'https://deb.nodesource.com/setup_6.x' | sudo -E bash -
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
 
-# Install nodejs, npm
-nodejs-install_useful_packages:
-  pkg.installed:
-    - pkgs:
-      - nodejs
-    - require:
-      - cmd: nodejs-v6-setup
+{% set node_version = 'node-v6.10.2-linux-x64' %}
+{% set node_package = node_version + '.tar.gz' %}
+{% set node_url = mirror_location + node_package %}
 
-# update the npm version
-nodejs-update_npm:
-  npm.installed:
-    - name: npm
-    - require:
-      - cmd: nodejs-v6-setup
+{% set install_dir = pillar['pnda']['homedir'] %}
+
+nodejs-dl_and_extract_node:
+  archive.extracted:
+    - name: {{ install_dir }}
+    - source: {{ node_url }}
+    - source_hash: {{ node_url }}.sha1.txt
+    - archive_format: tar
+    - if_missing: {{ install_dir }}/{{ node_version }}
+
+nodejs-create_install_link:
+  file.symlink:
+    - name: {{ install_dir }}/nodejs
+    - target: {{ install_dir }}/{{ node_version }}
+
+nodejs-create_bin_link_node:
+  file.symlink:
+    - force: True
+    - name: /usr/bin/node
+    - target: {{ install_dir }}/{{ node_version }}/bin/node
+
+nodejs-create_bin_link_npm:
+  file.symlink:
+    - force: True
+    - name: /usr/bin/npm
+    - target: {{ install_dir }}/{{ node_version }}/bin/npm

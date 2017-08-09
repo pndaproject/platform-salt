@@ -12,8 +12,10 @@ import urllib2
 import string
 import logging
 import sys
+import json
+import os.path
 
-import spur
+from pywebhdfs.webhdfs import PyWebHdfsClient
 from cm_api.endpoints.services import ApiServiceSetupInfo
 from cm_api.api_client import ApiResource
 from cm_api.endpoints import users
@@ -24,7 +26,8 @@ import cfg_flavor as _CFG
 DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.9.0/'
 DEFAULT_PARCEL_VERSION = '5.9.0-1.cdh5.9.0.p0.23'
 
-DEFAULT_LOG_FILE = '/tmp/cm_setup.log'
+DEFAULT_LOG_FILE = '/var/log/pnda/cm_setup.log'
+SETUP_SUCCESS = os.path.expanduser('~/.CM_SETUP_SUCCESS')
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.INFO,
@@ -58,7 +61,7 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
             # change name of proxy if necessary
             proxy = urllib2.ProxyHandler({'http': 'proxy'})
 
-            api = ApiResource(cm_api, username=cm_username, password=cm_password)
+            api = ApiResource(cm_api, username=cm_username, password=cm_password, version=14)
 
             if use_proxy:
             # pylint: disable=W0212
@@ -74,36 +77,49 @@ def connect(cm_api, cm_username, cm_password, use_proxy=False):
     logging.error("CM did not come UP")
     sys.exit(-1)
 
-def create_hosts(api, cloudera_manager, user, nodes, key_name):
+def create_hosts(api, cloudera_manager, nodes):
 
-    key = file(key_name, 'rb')
-    key_string = key.read()
+    host_heartbeat_retries = 36
+    host_heartbeat_sleep = 5
+    for retry_attempt in xrange(host_heartbeat_retries):
+        logging.info("Waiting for all hosts to heartbeat....")
+        hosts_known = [h.ipAddress for h in api.get_all_hosts()]
+        if len(hosts_known) == len(nodes):
+            break
+
+        if retry_attempt < (host_heartbeat_retries - 1):
+            logging.info("%s/%s hosts are heartbeating", len(hosts_known), len(nodes))
+            time.sleep(host_heartbeat_sleep)
+        else:
+            logging.error("Only %s/%s hosts are heartbeating after %s seconds", len(hosts_known), len(nodes), host_heartbeat_retries * host_heartbeat_sleep)
+            sys.exit(-1)
+
     new_nodes = []
-    hosts_toinstall = []
-    hosts_current = [h.ipAddress for h in api.get_all_hosts()]
+    hosts_current = []
+
+    cluster_name = None
+    for cluster_detail in api.get_all_clusters():
+        cluster_name = cluster_detail.name
+        break
+
+    if cluster_name is not None:
+        cluster = api.get_cluster(cluster_name)
+        for service in cluster.get_all_services():
+            for role in service.get_all_roles():
+                hosts_current.append(api.get_host(role.hostRef.hostId).ipAddress)
+
+    try:
+        cms = cloudera_manager.get_service()
+        for role in cms.get_all_roles():
+            hosts_current.append(api.get_host(role.hostRef.hostId).ipAddress)
+    except:
+        logging.info('No CMS to check current roles for')
+
     for host in nodes:
         if host['private_addr'] not in hosts_current:
-            hosts_toinstall.append(host['private_addr'])
             new_nodes.append(host)
 
-    logging.info(hosts_toinstall)
-
-    if len(hosts_toinstall) > 0:
-
-        for attempt in xrange(1, 4):
-            logging.info('Host install attempt %d', attempt)
-            success, msgs = wait_on_command(cloudera_manager.host_install(user,
-                                                                          hosts_toinstall,
-                                                                          private_key=key_string,
-                                                                          java_install_strategy="NONE",
-                                                                          parallel_install_count=4))
-            if success:
-                break
-            else:
-                logging.warn('create_hosts: ' + ' '.join(msgs))
-                if attempt == 3:
-                    logging.error('Giving up on create_hosts: ' + ' '.join(msgs))
-                    sys.exit(-1)
+    logging.info(new_nodes)
 
     return new_nodes
 
@@ -215,7 +231,7 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
     # a few seconds
 
     time.sleep(5)
-
+    parcel = None
     for _ in xrange(120):
         try:
             parcel = cluster.get_parcel(product, parcel_version)
@@ -223,6 +239,9 @@ def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_versi
         except Exception:
             logging.info("failed to get_parcel %s", parcel_version)
             time.sleep(5)
+
+    if parcel is None:
+        raise Exception("Failed to download parcel %s:%s from %s" % (product, parcel_version, parcel_repo))
 
     logging.info("Got %s Parcel %s : Current State %s", product, parcel_version, parcel.stage)
 
@@ -302,48 +321,9 @@ def generic_create_service(cluster, cfg, nodes):
 
     return service
 
-
-def create_mysql_connector_symlink(user, key, ip_addr, target_dir):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                [
-                    "bash",
-                    "-c",
-                    ("TARGET_DIR=%s;"
-                     "MYSQL_JAVA_CONNECTOR=/usr/share/java/mysql-connector-java.jar;"
-                     "[ -f $MYSQL_JAVA_CONNECTOR ]&& sudo ln -s $MYSQL_JAVA_CONNECTOR $TARGET_DIR/mysql-connector-java.jar"
-                     " || echo \"ERROR - Unable to create symbolic link for 'mysql-connector-java.jar'. Oozie service might not work properly.\"") %
-                    (target_dir)]]}
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating mysql symlink", exc_info=True)
-        raise
-
 def create_hdfs_dirs(yarn):
     wait_on_success(yarn.create_yarn_job_history_dir())
     wait_on_success(yarn.create_yarn_node_manager_remote_app_log_dir())
-
-def create_hive_tmp(user, key, ip_addr):
-    # fire and forget
-    try:
-        config = {
-            'host': ip_addr,
-            'ssh_username': user,
-            'ssh_pem_file': key,
-            'ssh_commands': [
-                ["bash", "-c", "sudo mkdir -p /data0/tmp"],
-                ["bash", "-c", "sudo chmod 777 /data0/tmp"]
-            ]
-        }
-        setup_remotehost(config)
-    except Exception:
-        logging.error("Error while creating hive temporary directory", exc_info=True)
-        raise
 
 def assign_roles(service, roles, nodes):
 
@@ -505,119 +485,189 @@ def insert_hdfs_replication_factor(nodes):
     logging.info("Replication factor for HDFS is %s", hdfs_repl_factor)
     _CFG.HDFS_CFG["config"]["dfs_replication"] = hdfs_repl_factor
 
-def create_services(user, key, cluster, nodes, ha_enabled):
+def save_progress(setup_progress, key):
+    setup_progress[key] = True
+    with open(SETUP_SUCCESS, 'w') as file:
+        file.write(json.dumps(setup_progress, sort_keys=True))
+
+def check_progress(setup_progress, key):
+    return key in setup_progress
+
+def load_progress():
+    try:
+        with open(SETUP_SUCCESS, 'r') as progress_file:
+            setup_progress = json.load(progress_file)
+        return setup_progress
+    except:
+        return {}
+
+def create_services(cluster, nodes, ha_enabled):
 
     try:
         # note: the order of creation, configuration & activation here is critical
         # Ensure that any modifications to the _CFG is also made in configure_services
         insert_hdfs_replication_factor(nodes)
+        setup_progress = load_progress()
 
-        logging.info("Creating HDFS")
-        hdfs = generic_create_service(cluster, _CFG.HDFS_CFG, nodes)
+        if not check_progress(setup_progress, "01_HDFS_CREATE"):
+            logging.info("Creating HDFS")
+            hdfs = generic_create_service(cluster, _CFG.HDFS_CFG, nodes)
+            save_progress(setup_progress, "01_HDFS_CREATE")
+        else:
+            hdfs = cluster.get_service(_CFG.HDFS_CFG['name'])
 
-        logging.info("Formatting HDFS name node")
-        nn_role = get_role_name(hdfs, "NAMENODE")
-        cmds = hdfs.format_hdfs(nn_role)
-        for cmd in cmds:
-            wait_on_success(cmd)
+        if not check_progress(setup_progress, "02_HDFS_FORMAT_NAMENODE"):
+            logging.info("Formatting HDFS name node")
+            nn_role = get_role_name(hdfs, "NAMENODE")
+            cmds = hdfs.format_hdfs(nn_role)
+            for cmd in cmds:
+                wait_on_success(cmd)
+            save_progress(setup_progress, "02_HDFS_FORMAT_NAMENODE")
 
-        logging.info("Creating Zookeeper")
-        zoo_k = generic_create_service(cluster, _CFG.ZK_CFG, nodes)
+        if not check_progress(setup_progress, "03_ZK_CREATE"):
+            logging.info("Creating Zookeeper")
+            zoo_k = generic_create_service(cluster, _CFG.ZK_CFG, nodes)
+            save_progress(setup_progress, "03_ZK_CREATE")
+        else:
+            zoo_k = cluster.get_service(_CFG.ZK_CFG['name'])
 
-        logging.info("Creating HBase")
-        hbase = generic_create_service(cluster, _CFG.HBASE_CFG, nodes)
+        if not check_progress(setup_progress, "04_HBASE_CREATE"):
+            logging.info("Creating HBase")
+            hbase = generic_create_service(cluster, _CFG.HBASE_CFG, nodes)
+            save_progress(setup_progress, "04_HBASE_CREATE")
+        else:
+            hbase = cluster.get_service(_CFG.HBASE_CFG['name'])
 
-        logging.info("Creating YARN")
-        mapred = generic_create_service(cluster, _CFG.MAPRED_CFG, nodes)
+        if not check_progress(setup_progress, "05_YARN_CREATE"):
+            logging.info("Creating YARN")
+            mapred = generic_create_service(cluster, _CFG.MAPRED_CFG, nodes)
+            save_progress(setup_progress, "05_YARN_CREATE")
+        else:
+            mapred = cluster.get_service(_CFG.MAPRED_CFG['name'])
 
-        logging.info("Creating Hive")
-        hive = generic_create_service(cluster, _CFG.HIVE_CFG, nodes)
+        if not check_progress(setup_progress, "06_HIVE_CREATE"):
+            logging.info("Creating Hive")
+            hive = generic_create_service(cluster, _CFG.HIVE_CFG, nodes)
+            save_progress(setup_progress, "06_HIVE_CREATE")
+        else:
+            hive = cluster.get_service(_CFG.HIVE_CFG['name'])
         hive_detail = get_role_vm(nodes, hive, get_role_name(hive, "HIVEMETASTORE"))
 
-        logging.info("Creating Oozie")
-        oozie = generic_create_service(cluster, _CFG.OOZIE_CFG, nodes)
+        if not check_progress(setup_progress, "07_OOZIE_CREATE"):
+            logging.info("Creating Oozie")
+            oozie = generic_create_service(cluster, _CFG.OOZIE_CFG, nodes)
+            save_progress(setup_progress, "07_OOZIE_CREATE")
+        else:
+            oozie = cluster.get_service(_CFG.OOZIE_CFG['name'])
         oozie_detail = get_role_vm(nodes, oozie, get_role_name(oozie, "OOZIE_SERVER"))
 
-        logging.info("Creating Hue")
-        insert_hue_dependencies(nodes, _CFG.HUE_CFG['config'], hdfs, hbase)
-        hue = generic_create_service(cluster, _CFG.HUE_CFG, nodes)
+        if not check_progress(setup_progress, "08_HUE_CREATE"):
+            logging.info("Creating Hue")
+            insert_hue_dependencies(nodes, _CFG.HUE_CFG['config'], hdfs, hbase)
+            hue = generic_create_service(cluster, _CFG.HUE_CFG, nodes)
+            save_progress(setup_progress, "08_HUE_CREATE")
+        else:
+            hue = cluster.get_service(_CFG.HUE_CFG['name'])
 
-        logging.info("Creating Spark")
-        spark = generic_create_service(cluster, _CFG.SPARK_CFG, nodes)
+        if not check_progress(setup_progress, "09_SPARK_CREATE"):
+            logging.info("Creating Spark")
+            spark = generic_create_service(cluster, _CFG.SPARK_CFG, nodes)
+            save_progress(setup_progress, "09_SPARK_CREATE")
+        else:
+            spark = cluster.get_service(_CFG.SPARK_CFG['name'])
 
-        logging.info("Creating Impala")
-        impala = generic_create_service(cluster, _CFG.IMPALA_CFG, nodes)
+        if not check_progress(setup_progress, "10_IMPALA_CREATE"):
+            logging.info("Creating Impala")
+            impala = generic_create_service(cluster, _CFG.IMPALA_CFG, nodes)
+            save_progress(setup_progress, "10_IMPALA_CREATE")
+        else:
+            impala = cluster.get_service(_CFG.IMPALA_CFG['name'])
 
-        # The mysql-server is installed on node-1 (i.e. NAMENODE) and is used for oozie, hive and hue databases.
-        # This must be done prior to oozie db creation.
-        logging.info("Oozie configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/oozie/ directory.")
-        create_mysql_connector_symlink(user, key, oozie_detail['public_addr'], '/var/lib/oozie')
+        if not check_progress(setup_progress, "12_OOZIE_MYSQL_DB"):
+            logging.info("Create Oozie db")
+            wait_on_success(oozie.create_oozie_db())
+            save_progress(setup_progress, "12_OOZIE_MYSQL_DB")
 
-        logging.info("Create Oozie db")
-        wait_on_success(oozie.create_oozie_db())
-
-        logging.info("Hive configured to use MySQL database for logging jobs. Creating mysql-connector-java.jar symlink in /var/lib/hive/ directory.")
-        create_mysql_connector_symlink(user, key, hive_detail['public_addr'], '/var/lib/hive')
-
-        # This must be done prior to hive metastore db creation.
-        logging.info("Creating /tmp for Hive")
-        create_hive_tmp(user, key, hive_detail['public_addr'])
-
-        logging.info("Creating Hive metastore database tables")
-        wait_on_success(hive.create_hive_metastore_tables())
+        if not check_progress(setup_progress, "15_HIVE_MYSQL_DB"):
+            logging.info("Creating Hive metastore database tables")
+            wait_on_success(hive.create_hive_metastore_tables())
+            save_progress(setup_progress, "15_HIVE_MYSQL_DB")
 
         logging.info("Starting HDFS")
-        wait_on_success(hdfs.start())
+        ensure_started(hdfs)
 
         logging.info("Starting Zookeeper")
-        wait_on_success(zoo_k.start())
+        ensure_started(zoo_k)
 
-        logging.info("Create HBase root")
-        wait_on_success(hbase.create_hbase_root())
+        if not check_progress(setup_progress, "16_HBASE_ROOT"):
+            logging.info("Create HBase root")
+            wait_on_success(hbase.create_hbase_root())
+            save_progress(setup_progress, "16_HBASE_ROOT")
 
-        logging.info("Install Oozie sharelib")
-        wait_on_success(oozie.install_oozie_sharelib())
+        if not check_progress(setup_progress, "17_OOZIE_SHARELIB"):
+            logging.info("Install Oozie sharelib")
+            wait_on_success(oozie.install_oozie_sharelib())
+            save_progress(setup_progress, "17_OOZIE_SHARELIB")
 
-        logging.info("Deploying client config")
-        wait_on_success(cluster.deploy_client_config())
+        if not check_progress(setup_progress, "18_CLIENT_CONFIG"):
+            logging.info("Deploying client config")
+            wait_on_success(cluster.deploy_client_config())
+            save_progress(setup_progress, "18_CLIENT_CONFIG")
 
-        logging.info("Creating directories for YARN")
-        create_hdfs_dirs(mapred)
+        if not check_progress(setup_progress, "19_YARN_CREATE_DIRS"):
+            logging.info("Creating directories for YARN")
+            create_hdfs_dirs(mapred)
+            save_progress(setup_progress, "19_YARN_CREATE_DIRS")
 
         logging.info("Starting YARN")
-        wait_on_success(mapred.start())
+        ensure_started(mapred)
 
         logging.info("Starting HBase")
-        wait_on_success(hbase.start())
+        ensure_started(hbase)
 
-        if ha_enabled:
-            logging.info("Enable HA for services")
-            enable_hdfs_ha(nodes, hdfs, _CFG.ZK_CFG['name'])
+        if not check_progress(setup_progress, "20_ENABLE_HA"):
+            if ha_enabled:
+                logging.info("Enable HA for services")
+                enable_hdfs_ha(nodes, hdfs, _CFG.ZK_CFG['name'])
+            save_progress(setup_progress, "20_ENABLE_HA")
 
-        logging.info("Creating Hive Warehouse directory")
-        wait_on_success(hive.create_hive_warehouse())
+        if not check_progress(setup_progress, "21_HIVE_CREATE_DIRS"):
+            logging.info("Creating Hive Warehouse directory")
+            wait_on_success(hive.create_hive_warehouse())
+            save_progress(setup_progress, "21_HIVE_CREATE_DIRS")
 
         logging.info("Starting Hive")
-        wait_on_success(hive.start())
+        ensure_started(hive)
 
         logging.info("Starting Oozie")
-        wait_on_success(oozie.start())
+        ensure_started(oozie)
 
         logging.info("Starting Hue")
-        wait_on_success(hue.start())
+        ensure_started(hue)
 
-        logging.info("Starting Spark")
-        wait_on_success(spark.service_command_by_name('CreateSparkUserDirCommand'))
-        wait_on_success(spark.service_command_by_name('CreateSparkHistoryDirCommand'))
-        wait_on_success(spark.start())
+        if not check_progress(setup_progress, "22_SPARK_USER_DIR"):
+            logging.info("Starting Spark")
+            wait_on_success(spark.service_command_by_name('CreateSparkUserDirCommand'))
+            save_progress(setup_progress, "22_SPARK_USER_DIR")
 
-        logging.info("Starting Impala")
-        wait_on_success(impala.create_impala_user_dir())
+        if not check_progress(setup_progress, "23_SPARK_HISTORY_DIR"):
+            wait_on_success(spark.service_command_by_name('CreateSparkHistoryDirCommand'))
+            save_progress(setup_progress, "23_SPARK_HISTORY_DIR")
 
-        wait_on_success(impala.create_impala_catalog_database_tables())
-        wait_on_success(impala.start())
+        ensure_started(spark)
 
+        if not check_progress(setup_progress, "24_IMPALA_USER_DIR"):
+            logging.info("Starting Impala")
+            wait_on_success(impala.create_impala_user_dir())
+            save_progress(setup_progress, "24_IMPALA_USER_DIR")
 
+        if not check_progress(setup_progress, "25_IMPALA_CAT_TABLE"):
+            wait_on_success(impala.create_impala_catalog_database_tables())
+            save_progress(setup_progress, "25_IMPALA_CAT_TABLE")
+
+        ensure_started(impala)
+
+        save_progress(setup_progress, "99_COMPLETE")
     except Exception:
         logging.error("Error while creating services", exc_info=True)
         raise
@@ -634,11 +684,13 @@ def create_services(user, key, cluster, nodes, ha_enabled):
         'impala': impala}
 
 
+def ensure_started(service):
+    if service.serviceState != "STARTED":
+        wait_on_success(service.start())
+
 def setup_hadoop(
         cm_api,
-        user,
         nodes,
-        key_name,
         cluster_name,
         cm_username='admin',
         cm_password='admin',
@@ -671,13 +723,14 @@ def setup_hadoop(
     logging.info("Waiting for CM API to become contactable")
     pause_until_api_up(api)
 
-    # There are several ways to add hosts to a cluster, this is the only one that
-    # works reliably - introduce hosts & let CM handle installation of agents
     logging.info("Installing hosts")
-    new_nodes = create_hosts(api, cloudera_manager, user, nodes, key_name)
+    new_nodes = create_hosts(api, cloudera_manager, nodes)
     assign_host_ids(api, nodes)
-
-    if len(new_nodes) == 0:
+    setup_progress = load_progress()
+    if not check_progress(setup_progress, "99_COMPLETE"):
+        # setup hasn't completed, force it to run again
+        cluster_action = 'create_new'
+    elif len(new_nodes) == 0:
         # no new nodes, reapply config to existing ones
         cluster_action = 'reapply_config'
     elif len(new_nodes) == len(nodes):
@@ -690,10 +743,18 @@ def setup_hadoop(
     if cluster_action == 'create_new':
         # CMS creation is handled slightly differently from other services and must
         # be done prior to cluster creation
-        logging.info("Creating CMS")
-        cms = create_cms(cloudera_manager, nodes)
-        logging.info("Creating cluster")
-        cluster = create_cluster(api, cluster_name)
+        if not check_progress(setup_progress, "001_CMS_CREATE"):
+            logging.info("Creating CMS")
+            cms = create_cms(cloudera_manager, nodes)
+            save_progress(setup_progress, "001_CMS_CREATE")
+        else:
+            cms = cloudera_manager.get_service()
+        if not check_progress(setup_progress, "002_CLUSTER_CREATE"):
+            logging.info("Creating cluster")
+            cluster = create_cluster(api, cluster_name)
+            save_progress(setup_progress, "002_CLUSTER_CREATE")
+        else:
+            cluster = api.get_cluster(cluster_name)
     elif cluster_action == 'expand':
         logging.info("Expanding cluster")
         cluster = api.get_cluster(cluster_name)
@@ -717,15 +778,18 @@ def setup_hadoop(
         # Some services are sensitive to perceived health so CMS needs to be started
         # before everything else
         logging.info("Starting CMS")
-        wait_on_success(cms.start())
+        ensure_started(cms)
 
         logging.info("Creating, configuring and starting Hadoop services")
-        services = create_services(user, key_name, cluster, nodes, ha_enabled)
+        services = create_services(cluster, nodes, ha_enabled)
         # there isn't much space for parcels but we know we are not going to
         # install any so it's safe to disable this warning
         cloudera_manager.update_all_hosts_config(_CFG.CM_CFG['hosts_config'])
-        # Install system shared libs into defined deployment path
-        setup_sharedlib(nodes, user, key_name, services['hdfs'], cm_api)
+        # Install commonly used libraries into defined deployment path
+        # Get the namenode private ip address
+        nn_role = get_role_name(services['hdfs'], "HTTPFS")
+        nnode_detail = get_role_vm(nodes, services['hdfs'], nn_role)
+        setup_common_oozie_libs(nnode_detail['private_addr'])
 
         # For CORONA-3045 sometimes CMS can't find an active namenode until
         # after a restart even though everything is actually fine
@@ -738,31 +802,29 @@ def setup_hadoop(
         logging.info("Re-applying hadoop config to all nodes")
         configure_services(cloudera_manager, cluster, nodes)
 
-def setup_sharedlib(nodes, user, key_name, hdfs, cm_api):
-    # Get the namenode private ip address
-    nn_role = get_role_name(hdfs, "HTTPFS")
-    nnode_detail = get_role_vm(nodes, hdfs, nn_role)
-    cmd_config = {
-        'host': cm_api,
-        'ssh_username': user,
-        'ssh_pem_file': key_name,
-        'ssh_commands': [
-            ['/tmp/pnda-install/cdh.setup_hadoop/venv/bin/python', '/tmp/pnda-install/cdh.setup_hadoop/install_sharedlib.py', '-n', nnode_detail['private_addr']]
-        ]
-    }
-    setup_remotehost(cmd_config)
+def setup_common_oozie_libs(name_node):
+    webhdfs_port = '14000'
+    webhdfs_user = 'hdfs'
+    platform_dir = 'user/deployment/platform'
+    lib_path_list = ['/opt/cloudera/parcels/CDH/lib/hbase/hbase-client.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-common.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-protocol.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-server.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/lib/htrace-core.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-hadoop-compat.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-it.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/hbase-prefix-tree.jar',
+                     '/opt/cloudera/parcels/CDH/lib/hbase/lib/zookeeper.jar',
+                     '/opt/cloudera/parcels/CDH/lib/pig/piggybank.jar']
 
+    # Setup a connection with hdfs using namenode.
+    hdfs_client = PyWebHdfsClient(host=name_node, port=webhdfs_port, user_name=webhdfs_user, timeout=None)
+    # Create directory on hadoop file system (HDFS).
+    hdfs_client.make_dir(platform_dir)
+    # Creates a new file on HDFS and write contents from local FS.
+    for path in lib_path_list:
+        platform_file = '%s/%s' % (platform_dir, os.path.basename(path))
+        logging.info('Copying source file: %s to HDFS path %s', path, platform_file)
+        with open(path) as file_data:
+            hdfs_client.create_file(platform_file, file_data, overwrite=True)
 
-def setup_remotehost(config):
-    shell = spur.SshShell(hostname=config['host'],
-                          username=config['ssh_username'],
-                          private_key_file=config['ssh_pem_file'],
-                          missing_host_key=spur.ssh.MissingHostKey.accept)
-    with shell:
-        for ssh_command in config['ssh_commands']:
-            logging.info('Host - %s: Command - %s', config['host'], ssh_command)
-            try:
-                result = shell.run(ssh_command)
-                logging.debug(string.join(ssh_command, " ") + " - output: " + result.output)
-            except spur.results.RunProcessError as exception:
-                logging.error(string.join(ssh_command, " ") + " - error: " + exception.stderr_output)

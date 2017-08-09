@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e
 
-while ! nc -z localhost 3000; do
-  sleep 1
-done
-sleep 1
+while true==true; do (echo > /dev/tcp/localhost/3000)>/dev/null 2>&1 && break || sleep 1;done
 
 # Exit if the pnda user already exists
 curl --fail -s -H "Content-Type: application/json" -X GET http://{{ pnda_user }}:{{ pnda_password }}@localhost:3000/api/users && echo "{{ pnda_user }} user already exists" && exit 0

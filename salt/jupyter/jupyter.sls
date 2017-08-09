@@ -1,8 +1,8 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
+{% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
-{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
 
 include:
   - python-pip
@@ -14,6 +14,7 @@ jupyter-create-venv:
     - name: {{ virtual_env_dir }}
     - python: python3
     - requirements: salt://jupyter/files/requirements-jupyter.txt
+    - index_url: {{ pip_index_url }}
     - require:
       - pip: python-pip-install_python_pip
 
@@ -53,5 +54,5 @@ jupyter-copy_pyspark_kernel:
 jupyter-copy_data_generator_script:
   file.managed:
     - source: salt://jupyter/files/data_generator.py
-    - name: /home/{{ os_user }}/data_generator.py
+    - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555

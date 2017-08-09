@@ -4,8 +4,19 @@
 #}
 {%- from 'java/settings.sls' import java with context %}
 
-# require a source_url - there is no default download location for a jdk
-{%- if java.source_url is defined %}
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set java_version = pillar['java']['version'] %}
+{% set java_package = java_version + '.tar.gz' %}
+{% set java_location = mirror_location + java_package %}
+
+java-install_dependencies:
+  pkg.installed:
+    - name: {{ pillar['wget']['package-name'] }}
+    - version: {{ pillar['wget']['version'] }}
+    - ignore_epoch: True
 
 {{ java.prefix }}:
   file.directory:
@@ -23,7 +34,7 @@
 
 unpack-jdk-tarball:
   cmd.run:
-    - name: curl {{ java.dl_opts }} '{{ java.source_url }}' | tar xz --no-same-owner
+    - name: wget '{{ java_location }}' -O - | tar zx
     - cwd: {{ java.prefix }}
     - unless: test -d {{ java.java_real_home }}
     - require:
@@ -83,5 +94,3 @@ java-jar_alternatives-force-alternative:
     - path: {{ java.java_real_home }}/bin/jar
     - require:
       - alternatives: java-jar_alternatives
-
-{%- endif %}

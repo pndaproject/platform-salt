@@ -76,10 +76,20 @@ gobblin-install_gobblin_pnda_job_file:
     - require:
       - file: gobblin-create_gobblin_jobs_directory
 
-gobblin-install_gobblin_upstart_script:
+gobblin-create_gobblin_logs_directory:
+  file.directory:
+    - name: /var/log/pnda/gobblin
+    - makedirs: True
+
+gobblin-install_gobblin_service_script:
   file.managed:
+{% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/gobblin.conf
     - source: salt://gobblin/templates/gobblin.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/gobblin.service
+    - source: salt://gobblin/templates/gobblin.service.tpl
+{%- endif %}
     - template: jinja
     - context:
       gobblin_directory_name: {{ gobblin_link_dir }}/gobblin-dist
@@ -87,11 +97,21 @@ gobblin-install_gobblin_upstart_script:
       gobblin_work_dir: {{ gobblin_hdfs_work_dir }}
       gobblin_job_file: {{ gobblin_link_dir }}/configs/mr.pull
 
+{% if grains['os'] == 'RedHat' %}
+gobblin-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload
+{%- endif %}
+
 gobblin-add_gobblin_crontab_entry:
   cron.present:
     - identifier: GOBBLIN
+{% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start gobblin
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start gobblin
+{%- endif %}
     - user: root
     - minute: 0,30
     - require:
-      - file: gobblin-install_gobblin_upstart_script
+      - file: gobblin-install_gobblin_service_script

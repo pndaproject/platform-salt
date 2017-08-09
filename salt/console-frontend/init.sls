@@ -1,12 +1,16 @@
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set console_frontend_version = pillar['console_frontend']['release_version'] %}
 {% set console_frontend_package = 'console-frontend-' + console_frontend_version + '.tar.gz' %}
+{% if grains['os'] == 'Ubuntu' %}
 {% set nginx_config_location = '/etc/nginx/sites-enabled' %}
+{% elif grains['os'] == 'RedHat' %}
+{% set nginx_config_location = '/etc/nginx/conf.d' %}
+{% endif %}
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set console_dir = install_dir + '/console-frontend' %}
 {% set console_config_dir = console_dir + '/conf' %}
 {% set console_demo_dir = console_dir + '/js/demo' %}
-{% set nginx_port = '80' %}
+{% set nginx_port = salt['pillar.get']('console_frontend:bind_port', '80') %}
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
@@ -17,7 +21,7 @@
 
 # edge node IP
 {% set edge_nodes = salt['pnda.ip_addresses']('cloudera_edge') %}
-{%- if edge_nodes is not none and edge_nodes|length > 0 -%}   
+{%- if edge_nodes is not none and edge_nodes|length > 0 -%}
     {%- set edge_node_ip = edge_nodes[0] -%}
 {%- else -%}
     {%- set edge_node_ip = '' -%}
@@ -39,11 +43,17 @@ include:
 
 console-frontend-dl-and-extract:
   archive.extracted:
-    - name: {{ install_dir }} 
+    - name: {{ console_dir }}-{{ console_frontend_version }}
     - source: {{ packages_server }}/{{ console_frontend_package }}
     - source_hash: {{ packages_server }}/{{ console_frontend_package }}.sha512.txt
+    - user: root
+{% if grains['os'] == 'Ubuntu' %}
+    - group: www-data
+{% elif grains['os'] == 'RedHat' %}
+    - group: nginx
+{% endif %}
     - archive_format: tar
-    - tar_options: v
+    - tar_options: --strip-components=1
     - if_missing: {{ console_dir }}-{{ console_frontend_version }}
 
 console-frontend-create_directory_link:
@@ -53,10 +63,11 @@ console-frontend-create_directory_link:
 
 # Install npm dependencies
 console-frontend-install_app_dependencies:
-  npm.bootstrap:
-    - name: {{ console_dir }}
+  cmd.run:
+    - cwd: {{ console_dir }}
+    - name: npm rebuild
     - require:
-      - npm: nodejs-update_npm
+      - archive: nodejs-dl_and_extract_node
 
 # Create the config directory if it doesn't exist
 console-frontend-create_config_directory:
@@ -109,10 +120,13 @@ console-frontend-remove_nginx_default_config:
   file.absent:
     - name: {{nginx_config_location}}/default
 
-# Reload nginx configuration
-console-frontend-reload_nginx_config:
-  service.running:
-    - name: nginx
-    - reload: True
-    - watch:
-      - file: console-frontend-create_pnda_nginx_config
+{% if grains['os'] == 'RedHat' %}
+console-frontend-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable nginx
+{%- endif %}
+
+console-frontend-start_service:
+  cmd.run:
+    - name: 'service nginx stop || echo already stopped; service nginx start'
+
