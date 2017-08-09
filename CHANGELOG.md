@@ -1,24 +1,33 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.0.0] 2017-05-23
 ### Added
-- PNDA-2456: Initial work to support for Redhat 7. Salt highstate and orchestrate run on a Redhat7 HEAT cluster with no errors but requires further testing and work.
+- PNDA-2375: Isolate PNDA from breaking dependency changes
+- PNDA-2456: Support for Redhat 7
 - PNDA-2480: Added a per flavor pillar setting for kafka log retention (log.retention.bytes) set to 300MB (pico) 1GB (standard) to stop disks filling up on pico clusters.
 - PNDA-2682: review console backend deployment
-- PNDA-2375: Isolate PNDA from breaking dependency changes
-
+- Add a simple jupyter notebook
+- Allow salt mine for all interfaces
 ### Changed
+- PNDA-2446: Download java with wget
 - PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
-- PNDA-2672: Explicitly set CM API version number
-- PNDA-2596: Stop ingesting internal PNDA testbot topic
 - PNDA-2577: Use spur 0.3.20 for cm_setup.py
+- PNDA-2596: Stop ingesting internal PNDA testbot topic
+- PNDA-2672: Explicitly set CM API version number
+- PNDA-2679: Set virtual env for impala-wrapper
+- PNDA-2691: Install nodejs/npm from deb/rhel packages
+- PNDA-2717: Remove pypi default URL
+- PNDA-2721: Add spark gateway roles to datanodes
 - PNDA-2756: Move Cloudera Manager installation in orchestrate stage instead of highstate stage
-- PNDA-2808: Install PNDA platform-libraries on all CDH nodes instead of just the jupyter node.
+- PNDA-2758: Add a wait on elasticsearch running for kibana-dashboard
 - PNDA-2787: Write cm_setup.log to /var/log/pnda instead of /tmp
+- PNDA-2808: Install PNDA platform-libraries on all CDH nodes instead of just the jupyter node.
 - PNDA-2810: Update boto library to 2.46.1 required to work with certain AWS regions (e.g. London)
+- PNDA-2817: Remove cloudera-keys sls
+- PNDA-2820: Refactoring of the installation of graphite-api
 - PNDA-2883: add `auth_version` to `pr-config.json` to set the swift keystone auth version associated with `auth_url`
-- Use redis 3.2.3 on redhat
+- PNDA-2885: Add gcc dependency for package-repository
 - PNDA-2903: Install node.js from tar.gz instead of deb package
 - PNDA-2966: Replace separate `install_sharedlib.py` with function in `cm_setup.py`
 - PNDA-2964: Stop using ec2 grains during deployment as it's not needed anymore
@@ -29,14 +38,20 @@ All notable changes to this project will be documented in this file.
 - PNDA-2838: Update OpenTSDB to version 2.3.0
 - PNDA-3085: Set timezone to UTC (UTC by default but can be configured with ntp:timezone pillar)
 - PNDA-3114: Install CDH platform testing modules after CDH has been set up.
+- Update versions of cloudera manager and redis
+- Add a flavor parameter to change kafka/zookeeper listening interface
+- Install cloudera manager agents manually
+- Explicitly set API version for CM
 
 ### Fixed
+- PNDA-2710: Remove online URL for logstash
+- PNDA-2781 Fixes for redhat mirror usage
 - PNDA-2874: Install correct snappy compression libraries, so avro files can be viewed in HUE again
 - PNDA-3059: Use latest version of numerous base packages from distro
 - PNDA-3112: Multiline log messages from file input
 - PNDA-3129: Create log directory for gobblin which was missing and preventing log from being written.
-
-
+- Update console-frontend owner to allow nginx to read files
+- Update Elasticsearch/Kibana extraction to fix permission issues
 
 ## [1.3.0] 2017-01-20
 ### Added
