@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
 
+### Fixed
+- PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
+
 ## [2.0.0] 2017-05-23
 ### Added
 - PNDA-2375: Isolate PNDA from breaking dependency changes
