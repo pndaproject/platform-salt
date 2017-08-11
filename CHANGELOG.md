@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 ### Added
 - PNDA-2955: Add pnda_env.yaml setting for choosing hadoop distro to install
+- PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
