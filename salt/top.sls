@@ -72,6 +72,8 @@
     - snappy
 {% if pillar['hadoop.distro'] == 'HDP' %}
     - anaconda
+{% else %}
+    - cdh.anaconda
 {% endif %}
 
   'roles:mysql_connector':
