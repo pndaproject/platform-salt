@@ -16,6 +16,8 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get -y install xfsprogs salt-minion=2015.8.11+ds-1
 elif [ "x$DISTRO" == "xrhel" ]; then
 yum -y install xfsprogs wget salt-minion-2015.8.11-1.el7
+#Enable init mode , RHEL not enabled salt-minion by default
+systemctl enable salt-minion.service
 fi
 
 # Mount the log volume, this is always xvdc
