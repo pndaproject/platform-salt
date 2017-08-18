@@ -17,6 +17,7 @@
   'roles:kafka':
     - match: grain
     - kafka.server
+    - kafka-tool
 
   'roles:kafka_manager':
     - match: grain
