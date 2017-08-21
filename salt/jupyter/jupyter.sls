@@ -14,6 +14,18 @@
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
 {% endif %}
 
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set scala_installation_path = pnda_home_directory + '/scala' %}
+
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set scala_package = mirror_location + 'scala-2.11.2.tgz' %}
+{% set jupyter_scala_package = mirror_location + 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
+{% set toree_package = mirror_location + 'toree-0.2.0.dev1.tar.gz' %}
+{% set jupyter_scala_tarball = 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
+{% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
+
 include:
   - python-pip
   - python-pip.pip3
@@ -70,3 +82,47 @@ jupyter-copy_data_generator_script:
     - source: salt://jupyter/files/data_generator.py
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
+
+scala-installation-dir:
+  file.directory:
+    - name: {{ scala_installation_path }}
+    - mode: 755
+    - makedirs: True
+
+install-scala:
+  cmd.run:
+    - cwd: {{ scala_installation_path }}
+    - name: wget '{{ scala_package }}'  -O - |  tar zx
+
+jupyter-scala_kernel_config:
+    cmd.run:
+      - cwd: {{ scala_installation_path }}
+      - name: wget '{{ jupyter_scala_package }}' && tar -xvf {{ jupyter_scala_tarball }}
+      - unless: test -d {{ scala_installation_path }}/{{ jupyter_scala_dir}}
+
+jupyter-create_scala_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/scala
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+jupyter-copy_scala_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/scala_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/scala/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_scala_kernel_dir
+    - defaults:
+        jupyter_scala_dir: {{ jupyter_scala_dir }}
+        scala_installation_path: {{ scala_installation_path }}
+
+jupyter-install_apache_toree:
+ cmd.run:
+    - name: {{ virtual_env_dir }}/bin/pip install {{ toree_package }}
+
+jupyter-apache_toree_kernel_config:
+ cmd.run:
+    - name: {{ virtual_env_dir }}/bin/jupyter toree install --interpreters=Scala --spark_home={{ spark_home }} --user --kernel_name=apache_toree --interpreters=Scala
