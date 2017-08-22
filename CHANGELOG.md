@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
 
 ### Fixed
+- PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
 
 ## [2.0.0] 2017-05-23
