@@ -123,6 +123,8 @@ jupyter-install_apache_toree:
  cmd.run:
     - name: {{ virtual_env_dir }}/bin/pip install {{ toree_package }}
 
-jupyter-apache_toree_kernel_config:
+jupyter-toree_kernel_config:
  cmd.run:
-    - name: {{ virtual_env_dir }}/bin/jupyter toree install --interpreters=Scala --spark_home={{ spark_home }} --user --kernel_name=apache_toree --interpreters=Scala
+    - name: {{ virtual_env_dir }}/bin/jupyter toree install --spark_home={{ spark_home }} --kernel_name=apache_toree --interpreters=Scala
+
+
