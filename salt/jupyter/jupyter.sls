@@ -143,12 +143,15 @@ install-livy:
     - group: root
     - mode: 755
     - makedirs: True
+
+start-livy-server:
   cmd.run:
     - cwd: {{ livy_install_dir }}
     - name: {{ livy_package_name }}/bin/livy-server
 
-spark-enable_widget_spark_extensions:
+jupyter-extension_jupyter_spark:
   cmd.run:
-    - name: {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system
-    - name: {{ python_lib_dir }}/jupyter-kernelspec install sparkmagic/kernels/sparkkernel
-    - name: {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
+    - name: |
+        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
+        {{ python_lib_dir }}/jupyter-kernelspec install sparkmagic/kernels/sparkkernel &&
+        {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
