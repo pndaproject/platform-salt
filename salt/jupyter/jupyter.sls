@@ -27,6 +27,7 @@
 {% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
 
 {% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip' %}
+{% set livy_package_ext_dir = 'livy-0.4.0-incubating-bin' %}
 {% set livy_package = mirror_location + livy_package_name %}
 {% set python_lib_dir = salt['cmd.run']('python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
 
@@ -138,7 +139,7 @@ install-livy:
     - cwd: {{ livy_install_dir }}
     - name: wget '{{ livy_package }}' && unzip {{ livy_package_name }}
   file.directory:
-    - name: {{ livy_install_dir }}/{{ livy_package_name }}/logs
+    - name: {{ livy_install_dir }}/{{ livy_package_ext_dir }}/logs
     - user: root
     - group: root
     - mode: 755
@@ -147,7 +148,7 @@ install-livy:
 start-livy-server:
   cmd.run:
     - cwd: {{ livy_install_dir }}
-    - name: {{ livy_package_name }}/bin/livy-server
+    - name: {{ livy_package_ext_dir }}/bin/livy-server
 
 jupyter-scala_extension_spark:
   cmd.run:
