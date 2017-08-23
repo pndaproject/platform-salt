@@ -155,3 +155,18 @@ jupyter-scala_extension_spark:
         {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
         {{ python_lib_dir }}/jupyter-kernelspec install sparkmagic/kernels/sparkkernel &&
         {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
+
+jupyter-create_spark_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/spark
+    - makedirs: True
+
+jupyter-copy_scala_spark_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/scala_spark_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/spark/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_spark_kernel_dir
+    - defaults:
+        virtual_env_dir: {{ virtual_env_dir }}
