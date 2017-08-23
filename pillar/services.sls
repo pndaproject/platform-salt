@@ -42,8 +42,8 @@ kafka:
     log_dirs:
       - '/var/kafka-logs'
 
-kafkat:
-  version: 0.3.0
+kafkatool:
+  release_version: 0.3.0
   log_dir: '/var/kafkat-logs'
   config_dir: '/etc'
   release_dir: '/opt/pnda'

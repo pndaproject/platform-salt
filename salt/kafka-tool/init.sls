@@ -2,14 +2,14 @@
 
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set packages_server = pillar['packages_server']['base_uri'] %}
-{% set release_directory = salt['pillar.get']('kafkat:release_dir', '/opt/pnda') %}
-{% set release_filename = 'kafkat.tar.gz' %}
-{% set release_version = salt['pillar.get']('kafkat:version', '0.3.0')  %}
+{% set release_directory = salt['pillar.get']('kafkatool:release_dir', '/opt/pnda') %}
+{% set release_version = salt['pillar.get']('kafkatool:version', '0.3.0')  %}
+{% set release_filename = 'kafka-tool-' + release_version + '.tar.gz' %}
 
 {% set p  = salt['pillar.get']('kafka', {}) %}
 {% set local_kafka_path = p.get('prefix', '/opt/pnda/kafka') %}
-{% set p1  = salt['pillar.get']('kafkat', {}) %}
-{% set local_kafkat_log_path = p1.get('log_dir', '/var/log/pnda/kafkat') %}
+{% set p1  = salt['pillar.get']('kafkatool', {}) %}
+{% set local_kafkat_log_path = p1.get('log_dir', '/var/log/pnda/kafkatool') %}
 
 {%- set zk_ips = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
@@ -54,7 +54,7 @@ install build-essential:
 # gem install kafakt-0.3.0
 install-gem-kafkat:
   cmd.run:
-    - name: gem install {{ release_directory }}/kafkat/kafkat-{{ release_version }}.gem
+    - name: gem install {{ release_directory }}/kafkatool/kafkat-{{ release_version }}.gem
     - cwd: /
 
 
