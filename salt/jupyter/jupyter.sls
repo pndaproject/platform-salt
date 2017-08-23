@@ -26,7 +26,7 @@
 {% set jupyter_scala_tarball = 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
 {% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
 
-{% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip'
+{% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip' %}
 {% set livy_package = mirror_location + livy_package_name %}
 {% set python_lib_dir = salt['cmd.run']('python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
 
