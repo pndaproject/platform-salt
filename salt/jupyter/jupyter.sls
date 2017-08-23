@@ -149,7 +149,7 @@ start-livy-server:
     - cwd: {{ livy_install_dir }}
     - name: {{ livy_package_name }}/bin/livy-server
 
-jupyter-extension_jupyter_spark:
+jupyter-scala_extension_spark:
   cmd.run:
     - name: |
         {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
