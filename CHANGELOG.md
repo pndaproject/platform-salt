@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- PNDA-3127: Post ingress aggregation for Kafka datasets.
 - PNDA-3562: enable PAM authentication on PNDA console frontend
 - PNDA-3580: Add spark cli that implements a user/group placement policy.
 - PNDA-2832: Jupyter %sql magic support.
