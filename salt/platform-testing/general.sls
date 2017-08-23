@@ -11,6 +11,7 @@
 {% set console_port = '3001' %}
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
+{% set opentsdb_port = '4242' %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
@@ -22,6 +23,11 @@
 {%- set kafka_zookeepers = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
 {%- do kafka_zookeepers.append(ip + ':' + zookeeper_port) -%}
+{%- endfor -%}
+
+{%- set opentsdb_hosts = [] -%}
+{%- for ip in salt['pnda.opentsdb_ips']() -%}
+{%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
@@ -159,6 +165,38 @@ platform-testing-general-crontab-zookeeper:
     - name: /sbin/start platform-testing-general-zookeeper
 {% elif grains['os'] == 'RedHat' %}
     - name: /bin/systemctl start platform-testing-general-zookeeper
+{% endif %}
+
+platform-testing-general-opentsdb-service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - source: salt://platform-testing/templates/platform-testing-general-opentsdb.conf.tpl
+    - name: /etc/init/platform-testing-general-opentsdb.conf
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/platform-testing-general-opentsdb.service
+    - source: salt://platform-testing/templates/platform-testing-general-opentsdb.service.tpl
+{% endif %}
+    - mode: 644
+    - template: jinja
+    - context:
+      platform_testing_directory: {{ platform_testing_directory }}
+      platform_testing_package: {{ platform_testing_package }}
+      console_hosts: {{ console_hosts }}
+      opentsdb_hosts: {{ opentsdb_hosts }}
+
+platform-testing-general-crontab-opentsdb:
+  cron.present:
+    - identifier: PLATFORM-TESTING-OPENTSDB
+    - user: root
+{% if opentsdb_hosts|length > 10 %}
+    - minute: '*/2'
+{% else %}
+    - minute: '*'
+{% endif %}
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /sbin/start platform-testing-general-opentsdb
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-general-opentsdb
 {% endif %}
 
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}
