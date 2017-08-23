@@ -15,16 +15,20 @@
 {% endif %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
-{% set scala_installation_path = pnda_home_directory + '/scala' %}
+{% set scala_install_dir = pnda_home_directory + '/scala' %}
+{% set livy_install_dir = pnda_home_directory + '/livy' %}
 
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
 {% set scala_package = mirror_location + 'scala-2.11.2.tgz' %}
 {% set jupyter_scala_package = mirror_location + 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
-{% set toree_package = mirror_location + 'toree-0.2.0.dev1.tar.gz' %}
 {% set jupyter_scala_tarball = 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
 {% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
+
+{% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip'
+{% set livy_package = mirror_location + livy_package_name %}
+{% set python_lib_dir = salt['cmd.run']('python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
 
 include:
   - python-pip
@@ -83,22 +87,23 @@ jupyter-copy_data_generator_script:
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
 
+# Add scala to the supported kernels
 scala-installation-dir:
   file.directory:
-    - name: {{ scala_installation_path }}
+    - name: {{ scala_install_dir }}
     - mode: 755
     - makedirs: True
 
 install-scala:
   cmd.run:
-    - cwd: {{ scala_installation_path }}
+    - cwd: {{ scala_install_dir }}
     - name: wget '{{ scala_package }}'  -O - |  tar zx
 
 jupyter-scala_kernel_config:
     cmd.run:
-      - cwd: {{ scala_installation_path }}
+      - cwd: {{ scala_install_dir }}
       - name: wget '{{ jupyter_scala_package }}' && tar -xvf {{ jupyter_scala_tarball }}
-      - unless: test -d {{ scala_installation_path }}/{{ jupyter_scala_dir}}
+      - unless: test -d {{ scala_install_dir }}/{{ jupyter_scala_dir}}
 
 jupyter-create_scala_kernel_dir:
   file.directory:
@@ -117,14 +122,33 @@ jupyter-copy_scala_kernel:
       - file: jupyter-create_scala_kernel_dir
     - defaults:
         jupyter_scala_dir: {{ jupyter_scala_dir }}
-        scala_installation_path: {{ scala_installation_path }}
+        scala_install_dir: {{ scala_install_dir }}
 
-jupyter-install_apache_toree:
- cmd.run:
-    - name: {{ virtual_env_dir }}/bin/pip install {{ toree_package }}
+# Add sparkmagic to the supported kernel
+jupyter-create_livy_server_dir:
+  file.directory:
+    - name: {{ livy_install_dir }}
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
 
-jupyter-toree_kernel_config:
- cmd.run:
-    - name: {{ virtual_env_dir }}/bin/jupyter toree install --spark_home={{ spark_home }} --kernel_name=apache_toree --interpreters=Scala
+install-livy:
+  cmd.run:
+    - cwd: {{ livy_install_dir }}
+    - name: wget '{{ livy_package }}' |  && unzip livy_package_name }}
+  file.directory:
+    - name: {{ livy_install_dir }}/{{ livy_package_name }}/logs
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+  cmd.run:
+    - cwd: {{ livy_install_dir }}
+    - name: {{ livy_package_name }}/bin/livy-server
 
-
+spark-enable_widget_spark_extensions:
+  cmd.run:
+    - name: {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system
+    - name: {{ python_lib_dir }}/jupyter-kernelspec install sparkmagic/kernels/sparkkernel
+    - name: {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
