@@ -97,7 +97,7 @@ scala-installation-dir:
 install-scala:
   cmd.run:
     - cwd: {{ scala_install_dir }}
-    - name: wget '{{ scala_package }}'  -O - |  tar zx
+    - name: wget '{{ scala_package }}'  -O - | tar zx
 
 jupyter-scala_kernel_config:
     cmd.run:
