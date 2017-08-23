@@ -136,7 +136,7 @@ jupyter-create_livy_server_dir:
 install-livy:
   cmd.run:
     - cwd: {{ livy_install_dir }}
-    - name: wget '{{ livy_package }}' |  && unzip livy_package_name }}
+    - name: wget '{{ livy_package }}' && unzip {{ livy_package_name }}
   file.directory:
     - name: {{ livy_install_dir }}/{{ livy_package_name }}/logs
     - user: root
