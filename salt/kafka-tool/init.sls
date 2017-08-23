@@ -24,7 +24,12 @@ kafkat-dl-and-extract:
     - source_hash: {{ packages_server }}/{{ release_filename }}.sha512.txt
     - archive_format: tar
     - tar_options: v
-    - if_missing: {{ install_dir }}/kafkat
+    - if_missing: {{ release_directory }}/kafka-tool-{{ release_version }}
+
+kafka-tool-create_link:
+  file.symlink:
+    - name: {{ release_directory }}/kafka-tool
+    - target: {{ release_directory }}/kafka-tool-{{ release_version }}
 
 install ruby:
   pkg.installed:
@@ -54,7 +59,7 @@ install build-essential:
 # gem install kafakt-0.3.0
 install-gem-kafkat:
   cmd.run:
-    - name: gem install {{ release_directory }}/kafkatool/kafkat-{{ release_version }}.gem
+    - name: gem install {{ release_directory }}/kafka-tool/kafkat-{{ release_version }}.gem
     - cwd: /
 
 
