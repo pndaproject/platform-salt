@@ -37,10 +37,12 @@ deployment-manager-install_dev_deps_libffi:
     - ignore_epoch: True
 
 deployment-manager-install_dev_krb:
+{% if grains['os'] == 'Ubuntu' %}
   pkg.installed:
     - name: {{ pillar['libkrb5-dev']['package-name'] }}
     - version: {{ pillar['libkrb5-dev']['version'] }}
     - ignore_epoch: True
+{%- endif %}
 
 deployment-manager-install_dev_deps_libssl:
   pkg.installed:
