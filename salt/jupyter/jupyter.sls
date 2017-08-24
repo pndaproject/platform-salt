@@ -111,6 +111,7 @@ jupyter-create_scala_kernel_dir:
     - group: root
     - mode: 755
     - makedirs: True
+
 jupyter-copy_scala_kernel:
   file.managed:
     - source: salt://jupyter/templates/scala_kernel.json.tpl
@@ -121,6 +122,7 @@ jupyter-copy_scala_kernel:
     - defaults:
         jupyter_scala_dir: {{ jupyter_scala_dir }}
         scala_install_dir: {{ scala_install_dir }}
+
 # Add sparkmagic to the supported kernel
 jupyter-create_livy_server_dir:
   file.directory:
@@ -129,6 +131,7 @@ jupyter-create_livy_server_dir:
     - group: root
     - mode: 755
     - makedirs: True
+
 install-livy:
   cmd.run:
     - cwd: {{ livy_install_dir }}
@@ -139,6 +142,17 @@ install-livy:
     - group: root
     - mode: 755
     - makedirs: True
+
+create-livy_configuration:
+  file.managed:
+    - source : {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf.template
+    - name : {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf
+
+update-livy_configuration:
+  file.append:
+    - name: {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf
+    - text: livy.spark.master = yarn-client
+
 livy-server-copy_service:
   file.managed:
     - name: /etc/init/livy_server.conf
@@ -148,16 +162,19 @@ livy-server-copy_service:
         install_dir: {{ livy_install_dir }}/{{ livy_package_ext_dir }}
         spark_home: {{ spark_home }}
         hadoop_conf_dir: {{ hadoop_conf_dir }}
+
 jupyter-scala_extension_spark:
   cmd.run:
     - name: |
         {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
         {{ virtual_env_dir }}/bin/jupyter-kernelspec install {{ python_lib_dir }}/sparkmagic/kernels/sparkkernel &&
         {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
+
 jupyter-create_spark_kernel_dir:
   file.directory:
     - name: {{ jupyter_kernels_dir }}/spark
     - makedirs: True
+
 jupyter-copy_scala_spark_kernel:
   file.managed:
     - source: salt://jupyter/templates/scala_spark_kernel.json.tpl

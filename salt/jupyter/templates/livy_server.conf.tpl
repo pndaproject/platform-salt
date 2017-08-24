@@ -9,5 +9,4 @@ env SPARK_HOME={{ spark_home }}
 env HADOOP_CONF_DIR={{ hadoop_conf_dir }}
 
 chdir {{ install_dir }}/bin
-echo exec ${programDir}/livy-server
 exec ${programDir}/livy-server
