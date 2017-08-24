@@ -145,11 +145,6 @@ install-livy:
     - mode: 755
     - makedirs: True
 
-start-livy-server:
-  cmd.run:
-    - cwd: {{ livy_install_dir }}
-    - name: {{ livy_package_ext_dir }}/bin/livy-server
-
 jupyter-scala_extension_spark:
   cmd.run:
     - name: |
