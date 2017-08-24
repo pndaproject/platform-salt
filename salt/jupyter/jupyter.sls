@@ -22,7 +22,7 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set scala_package = mirror_location + 'scala-2.11.2.tgz' %}
+{% set scala_package = mirror_location + 'scala-2.11.11.tgz' %}
 {% set jupyter_scala_package = mirror_location + 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
 {% set jupyter_scala_tarball = 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
 {% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
@@ -152,16 +152,6 @@ update-livy_configuration:
   file.append:
     - name: {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf
     - text: livy.spark.master = yarn-client
-
-livy-server-copy_service:
-  file.managed:
-    - name: /etc/init/livy_server.conf
-    - source: salt://jupyter/templates/livy_server.conf.tpl
-    - template: jinja
-    - defaults:
-        install_dir: {{ livy_install_dir }}/{{ livy_package_ext_dir }}
-        spark_home: {{ spark_home }}
-        hadoop_conf_dir: {{ hadoop_conf_dir }}
 
 jupyter-scala_extension_spark:
   cmd.run:
