@@ -23,13 +23,13 @@ cdh-install_deps_ffi:
     - version: {{ pillar['libffi-dev']['version'] }}
     - ignore_epoch: True
 
-cdh-install_deps_krb:
 {% if grains['os'] == 'Ubuntu' %}
+cdh-install_deps_krb:
   pkg.installed:
     - name: {{ pillar['libkrb5-dev']['package-name'] }}
     - version: {{ pillar['libkrb5-dev']['version'] }}
     - ignore_epoch: True
-{%- endif %}
+{% endif %}
 
 cdh-install_deps_ssl:
   pkg.installed:
