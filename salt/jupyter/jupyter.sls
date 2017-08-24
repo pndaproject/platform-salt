@@ -1,5 +1,6 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
+{% set python_lib_dir = salt['cmd.run'](pnda_home_directory + '/jupyter/bin/python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
@@ -13,6 +14,22 @@
 {% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
 {% endif %}
+
+{% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
+{% set scala_install_dir = pnda_home_directory + '/scala' %}
+{% set livy_install_dir = pnda_home_directory + '/livy' %}
+
+{% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
+{% set mirror_location = pnda_mirror + misc_packages_path %}
+
+{% set scala_package = mirror_location + 'scala-2.11.11.tgz' %}
+{% set jupyter_scala_package = mirror_location + 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
+{% set jupyter_scala_tarball = 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT.tar.xz' %}
+{% set jupyter_scala_dir= 'jupyter-scala_2.11.6-0.2.0-SNAPSHOT' %}
+
+{% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip' %}
+{% set livy_package_ext_dir = 'livy-0.4.0-incubating-bin' %}
+{% set livy_package = mirror_location + livy_package_name %}
 
 include:
   - python-pip
@@ -70,3 +87,90 @@ jupyter-copy_data_generator_script:
     - source: salt://jupyter/files/data_generator.py
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
+
+# Add scala to the supported kernels
+scala-installation-dir:
+  file.directory:
+    - name: {{ scala_install_dir }}
+    - mode: 755
+    - makedirs: True
+
+install-scala:
+  cmd.run:
+    - cwd: {{ scala_install_dir }}
+    - name: wget '{{ scala_package }}'  -O - | tar zx
+jupyter-scala_kernel_config:
+    cmd.run:
+      - cwd: {{ scala_install_dir }}
+      - name: wget '{{ jupyter_scala_package }}' && tar -xvf {{ jupyter_scala_tarball }}
+      - unless: test -d {{ scala_install_dir }}/{{ jupyter_scala_dir}}
+jupyter-create_scala_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/scala
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+jupyter-copy_scala_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/scala_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/scala/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_scala_kernel_dir
+    - defaults:
+        jupyter_scala_dir: {{ jupyter_scala_dir }}
+        scala_install_dir: {{ scala_install_dir }}
+
+# Add sparkmagic to the supported kernel
+jupyter-create_livy_server_dir:
+  file.directory:
+    - name: {{ livy_install_dir }}
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+install-livy:
+  cmd.run:
+    - cwd: {{ livy_install_dir }}
+    - name: wget '{{ livy_package }}' && unzip -o {{ livy_install_dir }}/{{ livy_package_name }}
+  file.directory:
+    - name: {{ livy_install_dir }}/{{ livy_package_ext_dir }}/logs
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+create-livy_configuration:
+  file.managed:
+    - source : {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf.template
+    - name : {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf
+
+update-livy_configuration:
+  file.append:
+    - name: {{ livy_install_dir }}/{{ livy_package_ext_dir }}/conf/livy.conf
+    - text: livy.spark.master = yarn-client
+
+jupyter-scala_extension_spark:
+  cmd.run:
+    - name: |
+        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
+        {{ virtual_env_dir }}/bin/jupyter-kernelspec install {{ python_lib_dir }}/sparkmagic/kernels/sparkkernel &&
+        {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
+
+jupyter-create_spark_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/spark
+    - makedirs: True
+
+jupyter-copy_scala_spark_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/scala_spark_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/spark/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_spark_kernel_dir
+    - defaults:
+        virtual_env_dir: {{ virtual_env_dir }}

@@ -39,6 +39,9 @@ libssl-dev:
 libffi-dev:
   package-name: libffi-dev
   version:  ""
+libkrb5-dev:
+  package-name: libkrb5-dev
+  version:  ""
 libsasl:
   package-name: libsasl2-dev
   version: ""
