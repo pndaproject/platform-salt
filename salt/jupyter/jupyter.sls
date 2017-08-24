@@ -29,7 +29,7 @@
 {% set livy_package_name = 'livy-0.4.0-incubating-bin-RC2.zip' %}
 {% set livy_package_ext_dir = 'livy-0.4.0-incubating-bin' %}
 {% set livy_package = mirror_location + livy_package_name %}
-{% set python_lib_dir = salt['cmd.run']('python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
+{% set python_lib_dir = salt['cmd.run']('{{virtual_env_dir}}/bin/python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"') %}
 
 include:
   - python-pip
@@ -144,6 +144,11 @@ install-livy:
     - group: root
     - mode: 755
     - makedirs: True
+
+#start-livy-server:
+#  cmd.run:
+#    - cwd: {{ livy_install_dir }}
+#    - name: {{ livy_package_ext_dir }}/bin/livy-server
 
 jupyter-scala_extension_spark:
   cmd.run:
