@@ -75,9 +75,14 @@ def hadoop_manager_ip():
     else:
         return None
 
+
 def kafka_brokers_ips():
     """Returns kafka brokers ip addresses"""
     return ip_addresses('kafka')
+
+def opentsdb_ips():
+    """Returns opentsdb nodes ip addresses"""
+    return ip_addresses('opentsdb')
 
 def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
