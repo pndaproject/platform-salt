@@ -145,10 +145,15 @@ install-livy:
     - mode: 755
     - makedirs: True
 
-#start-livy-server:
-#  cmd.run:
-#    - cwd: {{ livy_install_dir }}
-#    - name: {{ livy_package_ext_dir }}/bin/livy-server
+livy-server-copy_service:
+  file.managed:
+    - name: /etc/init/hdfs-cleaner.conf
+    - source: salt://jupyter/templates/livy-server.service.tpl
+    - template: jinja
+    - defaults:
+        install_dir: {{ livy_install_dir }} + {{ livy_package_ext_dir }}
+        spark_home: {{ spark_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
 
 jupyter-scala_extension_spark:
   cmd.run:
