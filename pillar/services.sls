@@ -1,7 +1,3 @@
-mine_functions:
-  network.ip_addrs: [eth0]
-  grains.items: []
-
 logstash:
   version: 5.0.2
 
