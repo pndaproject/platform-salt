@@ -16,6 +16,7 @@ roles:
   - kafka_manager
   - platform_testing_general
   - elk
+  - kafka_tool
 EOF
 
 cat >> /etc/salt/minion <<EOF
