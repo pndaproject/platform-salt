@@ -14,6 +14,6 @@
   "SPARK_HOME": "{{ spark_home }}",
   "PYTHONPATH": "{{ spark_home }}/python:{{ spark_home }}/python/lib/py4j-0.9-src.zip",
   "PYTHONSTARTUP": "{{ spark_home }}/python/pyspark/shell.py",
-  "PYSPARK_SUBMIT_ARGS": "--master yarn-client --jars {{ spark_home }}/lib/spark-examples*.jar pyspark-shell"
+  "PYSPARK_SUBMIT_ARGS": "--master yarn-client --jars {{ spark_home }}/lib/spark-examples.jar pyspark-shell"
  }
 }
