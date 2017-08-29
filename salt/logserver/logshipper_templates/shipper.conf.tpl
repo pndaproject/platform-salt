@@ -1,6 +1,6 @@
 {%- set logdest = salt['pnda.ip_addresses']('logserver')[0] -%}
 input {
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
    journald {
           path => '/run/log/journal'
           sincedb_path => "/opt/pnda/logstash/sincedb/db2"

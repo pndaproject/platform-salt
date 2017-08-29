@@ -21,7 +21,7 @@ ntp-install_conf:
 
 ntp-start_service:
   cmd.run:
-    {% if grains['os'] == 'RedHat' %}
+    {% if grains['os'] in ('RedHat', 'CentOS') %}
     - name: 'service ntpd stop || echo already stopped; service ntpd start'
     {% elif grains['os'] == 'Ubuntu' %}
     - name: 'service ntp stop || echo already stopped; service ntp start'

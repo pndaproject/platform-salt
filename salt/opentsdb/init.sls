@@ -40,7 +40,7 @@ opentsdb-copy_defaults:
     - context:
       heap_size: {{ flavor_cfg.opentsdb_heapsize }}
     - template: jinja
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-copy_defaults:
   file.managed:
     - name: {{ opentsdb_home }}/opentsdb_env.sh
@@ -67,7 +67,7 @@ opentsdb-copy_service:
       home: {{ opentsdb_home }}
 {%- endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable opentsdb
