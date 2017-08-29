@@ -48,7 +48,7 @@ jmxproxy-service_script:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/jmxproxy.conf
     - source: salt://{{ sls }}/templates/jmxproxy.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/jmxproxy.service
     - source: salt://{{ sls }}/templates/jmxproxy.service.tpl
 {% endif %}
@@ -57,7 +57,7 @@ jmxproxy-service_script:
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 jmxproxy-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable jmxproxy

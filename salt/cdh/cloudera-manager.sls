@@ -22,7 +22,7 @@ cloudera-manager-install_server:
     - name: {{ pillar['cloudera-manager-server']['package-name'] }}
     - version: {{ pillar['cloudera-manager-server']['version'] }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 cloudera-manager-ensure_cloudera_manager_enabled:
   cmd.run:
     - name: /bin/systemctl enable cloudera-scm-server

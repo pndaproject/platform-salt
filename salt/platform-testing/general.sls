@@ -46,7 +46,7 @@
 include:
   - python-pip
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 platform-testing-general-install_dev_deps_nmap_ncat:
   pkg.installed:
     - name: {{ pillar['nmap-ncat']['package-name'] }}
@@ -109,7 +109,7 @@ platform-testing-general-kafka_service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-kafka.conf.tpl
     - name: /etc/init/platform-testing-general-kafka.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/platform-testing-general-kafka.service
     - source: salt://platform-testing/templates/platform-testing-general-kafka.service.tpl
 {% endif %}
@@ -128,7 +128,7 @@ platform-testing-general-crontab-kafka:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-kafka
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-kafka
 {% endif %}
 
@@ -145,7 +145,7 @@ platform-testing-general-zookeeper-service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.conf.tpl
     - name: /etc/init/platform-testing-general-zookeeper.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/platform-testing-general-zookeeper.service
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.service.tpl
 {% endif %}
@@ -163,7 +163,7 @@ platform-testing-general-crontab-zookeeper:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-zookeeper
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-zookeeper
 {% endif %}
 
@@ -172,7 +172,7 @@ platform-testing-general-opentsdb-service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-opentsdb.conf.tpl
     - name: /etc/init/platform-testing-general-opentsdb.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/platform-testing-general-opentsdb.service
     - source: salt://platform-testing/templates/platform-testing-general-opentsdb.service.tpl
 {% endif %}
@@ -195,7 +195,7 @@ platform-testing-general-crontab-opentsdb:
 {% endif %}
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-opentsdb
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-opentsdb
 {% endif %}
 
@@ -213,7 +213,7 @@ platform-testing-general-dm-blackbox_service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.conf.tpl
     - name: /etc/init/platform-testing-general-dm-blackbox.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.service.tpl
     - name: /usr/lib/systemd/system/platform-testing-general-dm-blackbox.service
 {%- endif %}
@@ -231,13 +231,13 @@ platform-testing-general-crontab-dm-blackbox:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-dm-blackbox
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-dm-blackbox
 {% endif %}
 
 {% endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 platform-testing-general-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload

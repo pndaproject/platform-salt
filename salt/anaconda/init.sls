@@ -4,7 +4,7 @@
 {% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
 {% set anaconda_package = 'Anaconda2-' + anaconda_parcel_version + '-Linux-x86_64.sh' %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 anaconda-deps:
   pkg.installed:
     - name: {{ pillar['bzip2']['package-name'] }}
