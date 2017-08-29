@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+## 2017-08-29
+### Added
+- PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
+
 ### Added
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
 
