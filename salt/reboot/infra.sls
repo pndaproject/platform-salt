@@ -1,4 +1,4 @@
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 reboot-install_deps:
   pkg.installed:
     - name: {{ pillar['at']['package-name'] }}

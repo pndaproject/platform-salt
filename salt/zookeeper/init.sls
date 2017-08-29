@@ -106,7 +106,7 @@ zookeeper-service:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-service_startpre:
     file.managed:
       - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-startpre.sh
@@ -141,7 +141,7 @@ zookeeper-systemd:
       - file: zookeeper-data-dir
 {% endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable zookeeper

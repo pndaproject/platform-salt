@@ -37,7 +37,7 @@ reboot-copy_service:
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 reboot-copy_systemd:
   file.managed:
     - name: /usr/lib/systemd/system/pnda-restart.service
