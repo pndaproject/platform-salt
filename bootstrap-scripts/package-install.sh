@@ -17,8 +17,6 @@ elif [ "x$DISTRO" == "xrhel" ]; then
 if [ "x$YUM_OFFLINE" == "x" ]; then
 RPM_EXTRAS=rhui-REGION-rhel-server-extras
 RPM_OPTIONAL=rhui-REGION-rhel-server-optional
-RPM_EPEL=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum install -y $RPM_EPEL
 yum-config-manager --enable $RPM_EXTRAS $RPM_OPTIONAL
 yum install -y yum-plugin-priorities yum-utils 
 PNDA_REPO=${PNDA_MIRROR/http\:\/\//}
