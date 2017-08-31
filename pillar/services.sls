@@ -37,7 +37,7 @@ zookeeper:
   version: 3.4.6
 
 kafka:
-  version: 0.10.0.1
+  version: 0.11.0.0
   config:
     log_dirs:
       - '/var/kafka-logs'
