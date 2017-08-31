@@ -44,7 +44,7 @@ grafana:
   package-source: 'grafana-4.2.0-1.x86_64.rpm'
 libssl-dev:
   package-name: openssl-devel
-  version: ""
+  version: "1.0.1e-60.el7"
 libffi-dev:
   package-name: libffi-devel
   version:  ""
