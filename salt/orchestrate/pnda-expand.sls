@@ -52,3 +52,8 @@ orchestrate-expand-install_deployment_manager_keys:
     - tgt_type: compound
     - sls: deployment-manager.keys
     - timeout: 120
+
+orchestrate-expand-pnda_kernel_reboot:
+  salt.function:
+    - tgt: '*'
+    - name: kernel_reboot.reboot

@@ -195,3 +195,7 @@ orchestrate-pnda-install_hdp_hadoop_oozie_libs:
     - timeout: 120
 {% endif %}
 
+orchestrate-pnda_kernel_reboot:
+  salt.function:
+    - tgt: '*'
+    - name: kernel_reboot.reboot
