@@ -3,7 +3,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set release_directory = salt['pillar.get']('kafkatool:release_dir', '/opt/pnda') %}
-{% set release_version = salt['pillar.get']('kafkatool:version', 'v0.2.0')  %}
+{% set release_version = salt['pillar.get']('kafkatool:release_version', 'v0.2.0')  %}
 {% set release_filename = 'kafka-tool-' + release_version + '.tar.gz' %}
 
 {% set p  = salt['pillar.get']('kafka', {}) %}
