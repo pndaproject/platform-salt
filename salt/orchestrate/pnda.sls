@@ -195,3 +195,9 @@ orchestrate-pnda-install_hdp_hadoop_oozie_libs:
     - timeout: 120
 {% endif %}
 
+orchestrate-pnda-install_remove_new_node_markers:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
+    - tgt_type: compound
+    - sls: orchestrate.remove_new_node_marker
+    - timeout: 120
