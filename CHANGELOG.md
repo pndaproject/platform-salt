@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
 - PNDA-2163: Support for OpenTSDB Platform testing
+- PNDA-2832: Added sql magic support for Jupyter notebooks
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
