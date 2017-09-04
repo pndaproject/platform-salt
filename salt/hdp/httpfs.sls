@@ -9,8 +9,7 @@ hdp-apt-debug2:
 
 hdp-httpfs_pkg:
   pkg.installed:
-    - pkgs:
-      - hadoop-httpfs
+    - name: hadoop-httpfs
     - ignore_epoch: True
 
 hdp-httpfs_create_link:
