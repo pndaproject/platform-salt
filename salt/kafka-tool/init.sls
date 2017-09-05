@@ -8,7 +8,7 @@
 
 {% set p  = salt['pillar.get']('kafka', {}) %}
 {% set local_kafka_path = p.get('prefix', '/opt/pnda/kafka') %}
-{% set local_kafkat_log_path = salt['pillar.get']('kafkatool:log_dir', '/var/log/pnda/kafkatool') %}
+{% set kafka_log_path = pillar['kafka']['config']['log_dirs'][0] %}
 
 {%- set zk_ips = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
@@ -57,7 +57,7 @@ kafka-tool-install_script:
     - template: jinja
     - context:
       kafka_path: {{ local_kafka_path }}
-      kafkat_log_path: {{ local_kafkat_log_path }}
+      kafka_log_path: {{ kafka_log_path }}
       zk_ip_list: {{ zk_ips }}
 
 kafka-tool-cfg_create_link:
