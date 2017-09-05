@@ -9,10 +9,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
+- PNDA-3216: Uprev to logstash 5.2.2
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
+- PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
 
 ## [2.0.0] 2017-05-23
 ### Added
