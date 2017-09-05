@@ -38,6 +38,37 @@ cat >> /etc/salt/minion <<EOF
 id: $PNDA_CLUSTER-kafka-$1
 EOF
 
+cat >> /etc/salt/grains <<EOF
+vlans:
+  internal: eth0
+  producer: eth1
+  interfaces: eth0
+EOF
+
+DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
+if [ "x$DISTRO" == "xubuntu" ]; then
+
+cat > /etc/network/interfaces.d/eth1.cfg <<EOF
+auto eth1
+iface eth1 inet dhcp
+EOF
+
+ifup eth1
+
+elif [ "x$DISTRO" == "xrhel" ]; then
+
+cat > /etc/sysconfig/network-scripts/ifcfg-eth1 <<EOF
+DEVICE="eth1"
+BOOTPROTO="dhcp"
+ONBOOT="yes"
+TYPE="Ethernet"
+USERCTL="yes"
+PEERDNS="yes"
+IPV6INIT="no"
+EOF
+
+fi
+
 echo $PNDA_CLUSTER-kafka-$1 > /etc/hostname
 hostname $PNDA_CLUSTER-kafka-$1
 
