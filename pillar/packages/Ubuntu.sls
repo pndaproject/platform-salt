@@ -56,6 +56,9 @@ ntp:
 opentsdb:
   package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242
+patch:
+  package-name: patch
+  version: ""
 python-mysqldb:
   package-name: python-mysqldb
   version: "1.2.3-2ubuntu1"
@@ -75,6 +78,9 @@ redis-server:
   package-name: redis-server
   version: "2:2.8.4-2"
   configuration_filename: "/etc/redis/redis.conf"
+ruby-devel:
+  package-name: ruby-dev
+  version: ""
 snappy:
   package-name: libsnappy-dev
   version: ""
