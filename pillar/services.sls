@@ -44,7 +44,6 @@ kafka:
 
 kafkatool:
   release_version: v0.2.0
-  log_dir: '/var/log/pnda/kafkatool'
   config_dir: '/etc'
   release_dir: '/opt/pnda'
 
