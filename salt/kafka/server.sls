@@ -9,6 +9,20 @@
 {%- do kafka_zookeepers.append(ip+':2181') -%}
 {%- endfor -%}
 
+{% set inter_broker_listener = salt['pillar.get']('kafka:inter_broker_listener', 'REPLICATION') %}
+{%- set internal_ip = salt['network.interface_ip'](salt['grains.get']('vlans:internal','eth0')) -%}
+{%- set producer_ip = salt['network.interface_ip'](salt['grains.get']('vlans:producer','eth0')) -%}
+{%- set client_ip = salt['network.interface_ip'](salt['grains.get']('vlans:interfaces','eth0')) -%}
+
+{%- set internal_port = salt['grains.get']('kafka:producer_port',9092) -%}
+{%- set replication_port = salt['grains.get']('kafka:producer_port',9093) -%}
+{%- set producer_port = salt['grains.get']('kafka:producer_port',9094) -%}
+{%- set client_port = salt['grains.get']('kafka:client_port',9095) -%}
+
+{% set listener_map = salt['pillar.get']('kafka:listener_map', 'PRODUCER:PLAINTEXT,CLIENT:PLAINTEXT,REPLICATION:PLAINTEXT,INTERNAL_PLAINTEXT:PLAINTEXT') %}
+{% set listeners = 'listeners=PRODUCER://'+producer_ip+':'+producer_port|string+',CLIENT://'+client_ip+':'+client_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
+{% set advertised_listeners = 'advertised.listeners=PRODUCER://'+producer_ip+':'+producer_port|string+',CLIENT://'+client_ip+':'+client_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
+
 {% set mem_xmx = (((salt['grains.get']('mem_total')/1000)+1)*0.5)|int %}
 
 include:
@@ -36,6 +50,10 @@ kafka-server-conf:
     - context:
       zk_hosts: {{ kafka_zookeepers|join(',') }}
       kafka_log_retention_bytes: {{ flavor_cfg.kafka_log_retention_bytes }}
+      listener_map: {{ listener_map }}
+      listeners: {{ listeners }}
+      advertised_listeners: {{ advertised_listeners }}
+      inter_broker_listener: {{ inter_broker_listener }}
 
 {% if grains['os'] == 'Ubuntu' %}
 kafka-copy_kafka_service:
