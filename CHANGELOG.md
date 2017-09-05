@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
 - PNDA-3216: Uprev to logstash 5.2.2
+- PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls

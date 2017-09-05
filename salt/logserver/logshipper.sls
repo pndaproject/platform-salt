@@ -24,7 +24,7 @@ logshipper-acl:
     - name: {{ pillar['acl']['package-name'] }}
     - version: {{ pillar['acl']['version'] }}
     - ignore_epoch: True
-    
+
 logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
@@ -35,10 +35,9 @@ logshipper-dl-and-extract:
     - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logshipper-link_release:
-  cmd.run:
-    - name: ln -f -s {{ install_dir }}/logstash-{{ logstash_version }} {{ install_dir }}/logstash
-    - cwd: {{ install_dir }}
-    - unless: test -L {{ install_dir }}/logstash
+  file.symlink:
+    - name: {{ install_dir }}/logstash
+    - target: {{ install_dir }}/logstash-{{ logstash_version }}
 
 {% if grains['os'] == 'RedHat' %}
 logshipper-journald-plugin:
