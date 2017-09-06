@@ -448,6 +448,10 @@ def create(template_data, cluster, flavor, keyname, no_config_check, dry_run, br
     ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
+    CONSOLE.info("Nodes may reboot due to kernel upgrade, wait for few minutes")
+    time.sleep(60)
+    wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
+    
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def expand(template_data, cluster, flavor, old_datanodes, old_kafka, include_orchestrate, keyname, no_config_check, dry_run, branch):
@@ -516,6 +520,7 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, include_orc
     time.sleep(30)
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
+
     expand_commands = ['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.sls hostsfile 2>&1)' +
                        ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
                        '(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed -C "G@pnda:is_new_node" state.highstate 2>&1)' +
@@ -526,6 +531,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, include_orc
                                ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR)
 
     ssh(expand_commands, cluster, saltmaster_ip)
+    CONSOLE.info("Nodes may reboot due to kernel upgrade, wait for few minutes")
+    time.sleep(60)
+    wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
 
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
