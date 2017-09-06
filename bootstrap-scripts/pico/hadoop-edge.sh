@@ -18,9 +18,7 @@ service salt-master restart
 # place specific hadoop roles on this instance.
 # The mapping of hadoop roles to hadoop:role grains is
 # defined in the cfg_<flavor>.py.tpl files (in platform-salt)
-cat > /etc/salt/grains <<EOF
-pnda:
-  flavor: $PNDA_FLAVOR
+cat >> /etc/salt/grains <<EOF
 hadoop:
   role: EDGE
 roles:
@@ -46,8 +44,6 @@ roles:
   - hdfs_cleaner
   - master_dataset
   - pnda_restart
-
-pnda_cluster: $PNDA_CLUSTER
 EOF
 
 cat >> /etc/salt/minion <<EOF

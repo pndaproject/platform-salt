@@ -51,6 +51,9 @@ platform_salt:
   # Beacon timeout to check system reboot 
   PLATFORM_SALT_BEACON_TIMEOUT: 30
 
+  # Beacon timeout to check system reboot 
+  PLATFORM_SALT_BEACON_TIMEOUT: 30
+
 pnda_application_repo:
   # Type of storage to use for PNDA application packages
   #   s3     - AWS S3. Also set PNDA_APPS_CONTAINER, PNDA_APPS_FOLDER, PNDA_APPS_REGION, PNDA_APPS_ACCESS_KEY_ID, PNDA_APPS_SECRET_ACCESS_KEY

@@ -3,10 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 ### Added
+- PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2955: Add pnda_env.yaml setting for choosing hadoop distro to install
+- PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
+- PNDA-3215: Remove EPEL repository
+- PNDA-3180: When expanding a cluster limit the operations to strictly required steps on specific nodes
 
 ## [1.3.0] 2017-08-01
 ### Added

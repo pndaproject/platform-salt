@@ -22,6 +22,8 @@ yum -y install unzip salt-master-2015.8.11-1.el7 git
 #Enable init mode , RHEL not enabled salt-minion by default
 systemctl enable salt-master.service
 HDP_OS=centos7
+#enable boot time startup
+systemctl enable salt-master.service
 fi
 
 cat << EOF > /etc/salt/master
@@ -52,6 +54,9 @@ reactor:
     - salt://reactor/create_bastion_host_entry.sls
   - 'salt/cloud/*/destroying':
     - salt://reactor/delete_bastion_host_entry.sls
+  - 'salt/beacon/*/kernel_reboot_required/*/reboot-required':
+    - salt://reactor/kernel_reboot_entry.sls
+
 ## end of specific PNDA saltmaster config
 file_recv: True
 
