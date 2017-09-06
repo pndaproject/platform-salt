@@ -27,16 +27,15 @@ logserver-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
     - source: {{ logstash_url }}
-    - source_hash: {{ logstash_url }}.sha1.txt
+    - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
     - tar_options: v
     - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logserver-link_release:
-  cmd.run:
-    - name: ln -f -s {{ install_dir }}/logstash-{{ logstash_version }} {{ install_dir }}/logstash
-    - cwd: {{ install_dir }}
-    - unless: test -L {{ install_dir }}/logstash
+  file.symlink:
+    - name: {{ install_dir }}/logstash
+    - target: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logserver-copy_configuration:
   file.managed:

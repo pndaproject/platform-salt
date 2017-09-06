@@ -20,7 +20,7 @@ ambari-server-properties:
     - name: /etc/ambari-server/conf/ambari.properties
     - source: salt://ambari/templates/ambari-server.properties.tpl
     - template: jinja
-    - permission: 0644
+    - mode: 0644
     - defaults:
         java_version_name: {{ pillar['java']['version_name'] }}
 
@@ -29,7 +29,7 @@ ambari-server-log4j:
     - name: /etc/ambari-server/conf/log4j.properties
     - source: salt://ambari/files/ambari-server-log4j.properties
     - template: jinja
-    - permission: 0644
+    - mode: 0644
 
 ambari-server-create_log_dir:
   file.directory:

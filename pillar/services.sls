@@ -3,7 +3,7 @@ mine_functions:
   grains.items: []
 
 logstash:
-  version: 5.0.2
+  version: 5.2.2
 
 kibana:
   version: 4.1.6-linux-x64
@@ -26,7 +26,7 @@ elasticsearch-cluster:
   workdir: /tmp/elasticsearch
 
 logstash-cluster:
-  version: 5.0.2
+  version: 5.2.2
   directory: /opt/pnda
   logdir: /var/log/logstash
   confdir: /etc/logstash
@@ -41,6 +41,11 @@ kafka:
   config:
     log_dirs:
       - '/var/kafka-logs'
+
+kafkatool:
+  release_version: v0.2.0
+  config_dir: '/etc'
+  release_dir: '/opt/pnda'
 
 admin_login:
   user: admin

@@ -3,10 +3,10 @@ acl:
   version: ""
 ambari-agent:
   package-name: ambari-agent
-  version: "2.5.0.3-7"
+  version: "2.5.1.0-159"
 ambari-server:
   package-name: ambari-server
-  version: "2.5.0.3-7"
+  version: "2.5.1.0-159"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
   version: "5.9.0-1.cm590.p0.249~trusty-cm5"
@@ -56,6 +56,9 @@ ntp:
 opentsdb:
   package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242
+patch:
+  package-name: patch
+  version: ""
 python-mysqldb:
   package-name: python-mysqldb
   version: "1.2.3-2ubuntu1"
@@ -75,6 +78,9 @@ redis-server:
   package-name: redis-server
   version: "2:2.8.4-2"
   configuration_filename: "/etc/redis/redis.conf"
+ruby-devel:
+  package-name: ruby-dev
+  version: ""
 snappy:
   package-name: libsnappy-dev
   version: ""

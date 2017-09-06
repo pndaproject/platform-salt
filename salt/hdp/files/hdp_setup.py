@@ -345,6 +345,20 @@ def expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers):
     expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", auth, headers)
     logging.info("Expansion finished, result: %s", expand_status)
 
+def wait_for_api_up(ambari_api, auth, headers):
+    check_api_response_code = 0
+    attempts = 60
+    while check_api_response_code != 200 and attempts > 0:
+        try:
+            logging.debug('Waiting for API to come up')
+            time.sleep(5)
+            attempts -= 1
+            check_api_response = requests.get('%s/users' % (ambari_api), auth=auth, headers=headers)
+            check_api_response_code = check_api_response.status_code
+        except:
+            logging.debug('API is not up yet')
+            check_api_response_code = 0
+
 def setup_hadoop(
         ambari_host,
         nodes,
@@ -372,6 +386,8 @@ def setup_hadoop(
     ambari_api = 'http://%s:8080/api/v1' % ambari_host
     headers = {'X-Requested-By': 'admin'}
     auth = ('admin', 'admin')
+
+    wait_for_api_up(ambari_api, auth, headers)
 
     get_admin_user_response = requests.get('%s/users/admin' % (ambari_api), auth=auth, headers=headers)
     if get_admin_user_response.status_code != 200 or (ambari_username == 'admin' and ambari_password == 'admin'):

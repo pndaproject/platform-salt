@@ -25,7 +25,7 @@ ambari-agent-properties:
     - name: /etc/ambari-agent/conf/ambari-agent.ini
     - source: salt://ambari/templates/ambari-agent.ini.tpl
     - template: jinja
-    - permission: 0644
+    - mode: 0644
     - defaults:
         ambari_server_host: {{ ambari_server_host }}
 

@@ -42,7 +42,7 @@ master-dataset-kitesdk_dl:
     - name: {{ kite_install_path }}{{ kite_package }}
     - mode: 0755
     - source: {{ mirror_location }}/{{ kite_package }}
-    - source_hash: {{ mirror_location }}/{{ kite_package }}.sha512.txt
+    - source_hash: {{ mirror_location }}/{{ kite_package }}.sha1
 
 master-dataset-kitesdk_path:
   cmd.run:

@@ -31,3 +31,12 @@ anaconda-setup:
     - name: './Anaconda2-{{ anaconda_parcel_version }}-Linux-x86_64.sh -b -p /opt/pnda/anaconda'
     - unless: test -d /opt/pnda/anaconda
 
+anaconda-conda_cmd_link:
+  file.managed:
+    - name: /usr/local/bin/conda
+    - source: salt://anaconda/templates/conda-cmd.tpl
+    - template: jinja
+    - mode: 0755
+    - defaults:
+        anaconda_bin_dir: /opt/pnda/anaconda/bin
+

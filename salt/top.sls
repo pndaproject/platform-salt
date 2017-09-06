@@ -18,6 +18,10 @@
     - match: grain
     - kafka.server
 
+  'roles:kafka_tool':
+    - match: grain
+    - kafka-tool
+
   'roles:kafka_manager':
     - match: grain
     - kafka-manager
@@ -72,6 +76,8 @@
     - snappy
 {% if pillar['hadoop.distro'] == 'HDP' %}
     - anaconda
+{% else %}
+    - cdh.anaconda
 {% endif %}
 
   'roles:mysql_connector':
