@@ -16,8 +16,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-3216: Uprev to logstash 5.2.2
 - PNDA-3180: Limit orchestrate commands to new nodes only
 - PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
-- PNDA-3249: Upgrade Kafka version to 0
-- PNDA-3264: Use redis 3.2.10 on redhat.11.0.0
+- PNDA-3249: Upgrade Kafka version to 0.11.0.0
+- PNDA-3264: Use redis 3.2.10 on redhat
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls

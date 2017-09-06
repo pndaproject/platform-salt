@@ -1,7 +1,3 @@
-mine_functions:
-  network.ip_addrs: []
-  grains.items: []
-
 logstash:
   version: 5.2.2
 
@@ -40,8 +36,7 @@ kafka:
   version: 0.11.0.0
   internal_port: 9092
   replication_port: 9093
-  producer_port: 9094
-  client_port: 9095
+  ingest_port: 9094
   config:
     log_dirs:
       - '/var/kafka-logs'
