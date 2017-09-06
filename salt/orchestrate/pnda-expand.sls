@@ -59,3 +59,8 @@ orchestrate-pnda-expand_remove_new_node_markers:
     - tgt_type: compound
     - sls: orchestrate.remove_new_node_marker
     - timeout: 120
+
+orchestrate-expand-pnda_kernel_reboot:
+  salt.function:
+    - tgt: '*'
+    - name: kernel_reboot.reboot
