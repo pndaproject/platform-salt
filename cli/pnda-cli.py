@@ -454,7 +454,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, dry_run, br
     
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
-def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, no_config_check, dry_run, branch):
+def expand(template_data, cluster, flavor, old_datanodes, old_kafka, include_orchestrate, keyname, no_config_check, dry_run, branch):
     keyfile = '%s.pem' % keyname
 
     if not no_config_check:
@@ -520,12 +520,21 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, keyname, no
     time.sleep(30)
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
-    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
-         '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
-         '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
+
+    expand_commands = ['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.sls hostsfile 2>&1)' +
+                       ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
+                       '(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed -C "G@pnda:is_new_node" state.highstate 2>&1)' +
+                       ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR]
+    if include_orchestrate:
+        CONSOLE.info('Including orchestrate because new Hadoop datanodes are being added')
+        expand_commands.append('(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda-expand 2>&1)' % cluster +
+                               ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR)
+
+    ssh(expand_commands, cluster, saltmaster_ip)
     CONSOLE.info("Nodes may reboot due to kernel upgrade, wait for few minutes")
     time.sleep(60)
     wait_for_host_connectivity([instance_map[h]['private_ip_address'] for h in instance_map], cluster)
+
     return instance_map[cluster + '-' + NODE_CONFIG['console-instance']]['private_ip_address']
 
 def destroy(cluster):
@@ -634,8 +643,8 @@ def get_args():
     parser.add_argument('-b', '--branch', help='Branch of platform-salt to use. Overrides value in pnda_env.yaml')
     parser.add_argument('-d', '--dry-run', action='store_true',
                         help='Output the final Cloud Formation template but do not apply it. ' +
-                             'Useful for checking against the existing Cloud formation template to' +
-                             'gain confidence before running the expand operation.')
+                        'Useful for checking against the existing Cloud formation template to' +
+                        'gain confidence before running the expand operation.')
 
     args = parser.parse_args()
     return args
@@ -732,6 +741,8 @@ def main():
     NODE_CONFIG = json.load(node_config_file)
     node_config_file.close()
 
+    include_orchestrate = False
+
     if args.command == 'expand':
         if pnda_cluster is not None:
             node_counts = get_current_node_counts(pnda_cluster)
@@ -753,6 +764,7 @@ def main():
                 sys.exit(1)
             elif datanodes > node_counts['hadoop-dn']:
                 print "Increasing the number of datanodes from %s to %s" % (node_counts['hadoop-dn'], datanodes)
+                include_orchestrate = True
             if kafkanodes < node_counts['kafka']:
                 print "You cannot shrink the cluster using this CLI, existing number of kafkanodes is: %s" % node_counts['kafka']
                 sys.exit(1)
@@ -762,7 +774,8 @@ def main():
             template_data = generate_template_file(flavor, datanodes, node_counts['opentsdb'], kafkanodes, node_counts['zk'],
                                                    es_master_nodes, es_ingest_nodes, es_data_nodes, es_coordinator_nodes,
                                                    es_multi_nodes, logstash_nodes)
-            expand(template_data, pnda_cluster, flavor, node_counts['hadoop-dn'], node_counts['kafka'], keyname, no_config_check, dry_run, branch)
+            expand(template_data, pnda_cluster, flavor, node_counts['hadoop-dn'], node_counts['kafka'],
+                   include_orchestrate, keyname, no_config_check, dry_run, branch)
             sys.exit(0)
         else:
             print 'expand command must specify pnda_cluster, e.g.\npnda-cli.py expand -e squirrel-land -f standard -s keyname -n 5'
