@@ -19,6 +19,8 @@ fi
 
 if [ "x$DISTRO" == "xrhel" ]; then
 yum -y install unzip salt-master-2015.8.11-1.el7 git
+#Enable init mode , RHEL not enabled salt-minion by default
+systemctl enable salt-master.service
 HDP_OS=centos7
 #enable boot time startup
 systemctl enable salt-master.service

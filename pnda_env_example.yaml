@@ -48,6 +48,8 @@ platform_salt:
 
   # Local path to folder containing a clone of the platform salt repository
   # PLATFORM_SALT_LOCAL: /path/to/platform-salt
+  # Beacon timeout to check system reboot 
+  PLATFORM_SALT_BEACON_TIMEOUT: 30
 
   # Beacon timeout to check system reboot 
   PLATFORM_SALT_BEACON_TIMEOUT: 30
