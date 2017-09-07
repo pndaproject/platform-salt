@@ -7,6 +7,7 @@ orchestrate-expand-create_cloudera_user:
     - tgt_type: compound
     - sls: cdh.cloudera_user
     - timeout: 120
+    - queue: True
 
 orchestrate-expand-install-agents:
   salt.state:
@@ -14,6 +15,7 @@ orchestrate-expand-install-agents:
     - tgt_type: compound
     - sls: cdh.cloudera-manager-agent
     - timeout: 120
+    - queue: True
 
 orchestrate-expand-install_hadoop:
   salt.state:
@@ -21,6 +23,7 @@ orchestrate-expand-install_hadoop:
     - tgt_type: compound
     - sls: cdh.setup_hadoop
     - timeout: 120
+    - queue: True
 {% endif %}
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
@@ -30,6 +33,7 @@ orchestrate-expand-install_ambari_agents:
     - tgt_type: compound
     - sls: ambari.agent
     - timeout: 120
+    - queue: True
 
 orchestrate-expand-install_hdp_hadoop:
   salt.state:
@@ -37,6 +41,7 @@ orchestrate-expand-install_hdp_hadoop:
     - tgt_type: compound
     - sls: hdp.setup_hadoop
     - timeout: 120
+    - queue: True
 {% endif %}
 
 orchestrate-expand-install_platform_libraries:
@@ -45,6 +50,7 @@ orchestrate-expand-install_platform_libraries:
     - tgt_type: compound
     - sls: pnda.platform-libraries
     - timeout: 120
+    - queue: True
 
 orchestrate-expand-install_deployment_manager_keys:
   salt.state:
@@ -52,6 +58,7 @@ orchestrate-expand-install_deployment_manager_keys:
     - tgt_type: compound
     - sls: deployment-manager.keys
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-expand_remove_new_node_markers:
   salt.state:
@@ -59,8 +66,12 @@ orchestrate-pnda-expand_remove_new_node_markers:
     - tgt_type: compound
     - sls: orchestrate.remove_new_node_marker
     - timeout: 120
+    - queue: True
 
 orchestrate-expand-pnda_kernel_reboot:
-  salt.function:
+  salt.state:
     - tgt: '*'
-    - name: kernel_reboot.reboot
+    - tgt_type: compound
+    - sls: reboot.kernel_reboot
+    - timeout: 120
+    - queue: True
