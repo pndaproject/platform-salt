@@ -445,7 +445,7 @@ def create(template_data, cluster, flavor, keyname, no_config_check, dry_run, br
 
     CONSOLE.info('Running salt to install software. Expect this to take 45 minutes or more, check the debug log for progress (%s).', LOG_FILE_NAME)
     bastion = NODE_CONFIG['bastion-instance']
-    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
+    ssh(['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.highstate queue=True 2>&1) | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
          '(sudo CLUSTER=%s salt-run --log-level=debug state.orchestrate orchestrate.pnda 2>&1) | tee -a pnda-salt.log; %s' % (cluster, THROW_BASH_ERROR),
          '(sudo salt "*-%s" state.sls hostsfile 2>&1) | tee -a pnda-salt.log; %s' % (bastion, THROW_BASH_ERROR)], cluster, saltmaster_ip)
     CONSOLE.info("Nodes may reboot due to kernel upgrade, wait for few minutes")
@@ -521,9 +521,9 @@ def expand(template_data, cluster, flavor, old_datanodes, old_kafka, include_orc
 
     CONSOLE.info('Running salt to install software. Expect this to take 10 - 20 minutes, check the debug log for progress. (%s)', LOG_FILE_NAME)
 
-    expand_commands = ['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.sls hostsfile 2>&1)' +
+    expand_commands = ['(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed "*" state.sls hostsfile queue=True 2>&1)' +
                        ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR,
-                       '(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed -C "G@pnda:is_new_node" state.highstate 2>&1)' +
+                       '(sudo salt -v --log-level=debug --timeout=120 --state-output=mixed -C "G@pnda:is_new_node" state.highstate queue=True 2>&1)' +
                        ' | tee -a pnda-salt.log; %s' % THROW_BASH_ERROR]
     if include_orchestrate:
         CONSOLE.info('Including orchestrate because new Hadoop datanodes are being added')
