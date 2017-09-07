@@ -2,7 +2,6 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
-## 2017-08-29
 ### Added
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
 
@@ -23,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
 - PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
+- PNDA-3111: Report failures up if opentsdb.hbase_tables fails
 
 ## [2.0.0] 2017-05-23
 ### Added
