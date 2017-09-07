@@ -111,7 +111,7 @@ elasticsearch-copy_configuration_elasticsearch:
 /etc/init/elasticsearch.conf:
   file.managed:
     - source: salt://elasticsearch-cluster/templates/elasticsearch.init.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 /usr/lib/systemd/system/elasticsearch.service:
   file.managed:
     - source: salt://elasticsearch-cluster/templates/elasticsearch.service.tpl
@@ -127,7 +127,7 @@ elasticsearch-copy_configuration_elasticsearch:
       workdir: {{elasticsearch_workdir }}
       defaultconfig: {{elasticsearch_confdir}}/elasticsearch.yml
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 elasticsearch-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable elasticsearch

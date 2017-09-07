@@ -11,7 +11,7 @@ mysql-connector-install-java-library:
     - name: {{ pillar['libmysql-java']['package-name'] }}
     - version: {{ pillar['libmysql-java']['version'] }}
     - ignore_epoch: True
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 mysql-connector-create-dir:
   file.directory:
     - name: '/usr/share/java'
