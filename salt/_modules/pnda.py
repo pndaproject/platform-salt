@@ -143,3 +143,30 @@ def get_hosts_by_role(service, role_type):
         return cloudera_get_hosts_by_role(service, role_type)
     else:
         return ambari_get_hosts_by_role(service, role_type)
+
+def cloudera_get_service_status(service):
+    user = hadoop_manager_username()
+    password = hadoop_manager_password()
+    endpoint = hadoop_manager_ip() + ':7180'
+    cluster = cluster_name()
+
+    request_url = 'http://{}/api/v14/clusters/{}/services/{}'.format(endpoint, cluster, service)
+    response = requests.get(request_url, auth=(user, password))
+    response.raise_for_status()
+    service_resp = response.json()
+
+    return service_resp['healthSummary']
+
+
+def ambari_get_service_status(service):
+    user = hadoop_manager_username()
+    password = hadoop_manager_password()
+    endpoint = hadoop_manager_ip() + ':8080'
+    cluster = cluster_name()
+
+    request_url = 'http://{}/api/v1/clusters/{}/services/{}'.format(endpoint, cluster, service)
+    response = requests.get(request_url, auth=(user, password))
+    response.raise_for_status()
+    service_resp = response.json()
+
+    return service_resp['ServiceInfo']['state']
