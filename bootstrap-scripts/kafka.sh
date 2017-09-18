@@ -17,7 +17,6 @@ set -e
 cat >> /etc/salt/grains <<EOF
 roles:
   - kafka
-  - kafka_tool
 broker_id: $1
 EOF
 
