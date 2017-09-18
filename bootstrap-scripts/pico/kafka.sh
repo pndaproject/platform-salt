@@ -25,7 +25,6 @@ cat >> /etc/salt/grains <<EOF
   - platform_testing_general
   - kafka_manager
   - elk
-  - kafka_tool
 EOF
 fi
 
