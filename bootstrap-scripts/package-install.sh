@@ -19,12 +19,15 @@ iptables -A LOGGING -d  $line -j ACCEPT
   done
 ## Log and reject all the remaining IP connections.
 iptables -A LOGGING -j LOG --log-prefix "[ipreject] " --log-level 7 -m state --state NEW
-iptables -A LOGGING -d  $PNDA_MIRROR_IP/32 -j ACCEPT #pnda mirror
+iptables -A LOGGING -d  $PNDA_MIRROR_IP/32 -j ACCEPT # PNDA mirror
 if [ "x$RD_IP" != "x" ]; then
-iptables -A LOGGING -d  $RD_IP/32 -j ACCEPT #rd mirror
+iptables -A LOGGING -d  $RD_IP/32 -j ACCEPT # PNDA client
 fi
-iptables -A LOGGING -d  10.0.0.0/16 -j ACCEPT      #local range
-iptables -A LOGGING -j DROP
+if [ "x$NTP_SERVERS" != "x" ]; then
+iptables -A LOGGING -d  $NTP_SERVERS -j ACCEPT # NTP server
+fi
+iptables -A LOGGING -d  10.0.0.0/16 -j ACCEPT      # PNDA network
+iptables -A LOGGING -j REJECT
 fi
 
 
