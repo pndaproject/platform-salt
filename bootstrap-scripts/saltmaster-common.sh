@@ -132,6 +132,14 @@ hdp:
   hdp_utils_stack_repo: '$PNDA_MIRROR/mirror_hdp/HDP-UTILS-1.1.0.21/repos/$HDP_OS/'
 EOF
 
+if [ "x$NTP_SERVERS" != "x" ] ; then
+cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
+ntp:
+  servers:
+    - "$NTP_SERVERS"
+EOF
+fi
+
 if [ "$PR_FS_TYPE" == "swift" ] ; then
 cat << EOF >> /srv/salt/platform-salt/pillar/env_parameters.sls
 package_repository:

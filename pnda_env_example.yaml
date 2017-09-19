@@ -98,6 +98,11 @@ mirrors:
   # For offline tests: remove yum repo if YUM_OFFLINE is not empty
   # YUM_OFFLINE: ''
 
+ntp:
+  # Optional ntp servers. Use this if the standard Ubuntu NTP servers on the Internet cannot be reached
+  # and a local NTP server has been configured. PNDA will not work without NTP.
+  NTP_SERVERS: ''
+
 hadoop:
   # Hadoop distribution to install
   # Valid values are:
