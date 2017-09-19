@@ -305,7 +305,7 @@ def write_pnda_env_sh(cluster):
             for setting in PNDA_ENV[section]:
                 if setting not in client_only:
                     val = '"%s"' % PNDA_ENV[section][setting] if isinstance(PNDA_ENV[section][setting], (list, tuple)) else PNDA_ENV[section][setting]
-                    pnda_env_sh_file.write('export %s=%s\n' % val)
+                    pnda_env_sh_file.write('export %s=%s\n' % (setting, val))
 
 def write_ssh_config(cluster, bastion_ip, os_user, keyfile):
     with open('cli/ssh_config-%s' % cluster, 'w') as config_file:
