@@ -125,3 +125,9 @@ elk-cluster:
 
   # number of logstash nodes
   LOGSTASH_NODES: 0
+
+connectivity:
+    # Deploy an iptables ruleset to every node preventing outbound access to all hosts except the PNDA_MIRROR, NTP_SERVER and specified CLIENT_IP. Specify YES to enable.
+    REJECT_OUTBOUND: YES
+    # If using REJECT_OUTBOUND, the IP address of the client that created PNDA
+    CLIENT_IP: 1.1.1.1
