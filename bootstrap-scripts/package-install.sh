@@ -2,7 +2,7 @@
 
 set -ex
 
-if [ "x$PRECONFIG" == "xiprejecter" ]; then
+if [ "x$REJECT_OUTBOUND" == "xYES" ]; then
 PNDA_MIRROR_IP=$(echo $PNDA_MIRROR | awk -F'[/:]' '/http:\/\//{print $4}')
 
 # Log the global scope IP connection.
@@ -20,8 +20,8 @@ iptables -A LOGGING -d  $line -j ACCEPT
 ## Log and reject all the remaining IP connections.
 iptables -A LOGGING -j LOG --log-prefix "[ipreject] " --log-level 7 -m state --state NEW
 iptables -A LOGGING -d  $PNDA_MIRROR_IP/32 -j ACCEPT # PNDA mirror
-if [ "x$RD_IP" != "x" ]; then
-iptables -A LOGGING -d  $RD_IP/32 -j ACCEPT # PNDA client
+if [ "x$CLIENT_IP" != "x" ]; then
+iptables -A LOGGING -d  $CLIENT_IP/32 -j ACCEPT # PNDA client
 fi
 if [ "x$NTP_SERVERS" != "x" ]; then
 iptables -A LOGGING -d  $NTP_SERVERS -j ACCEPT # NTP server
