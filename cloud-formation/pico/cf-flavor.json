@@ -22,7 +22,7 @@
     },
     "instancetypeEdge" : {
       "Type" : "String",
-      "Default" : "m4.xlarge",
+      "Default" : "m4.2xlarge",
       "Description" : "Instance type for cluster edge node"
     },
     "instancetypeESMulti" : {
