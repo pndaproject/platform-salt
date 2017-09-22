@@ -45,8 +45,8 @@ kafka-tool-install_build_essential:
 
 kafka-tool-install_gem_kafkat:
   cmd.run:
-    - name: gem install {{ release_directory }}/kafka-tool/kafkat-{{ release_version }}.gem
-    - cwd: /
+    - name: gem install --local kafkat-{{ release_version }}.gem
+    - cwd: {{ release_directory }}/kafka-tool/
 
 
 #Config file creation
