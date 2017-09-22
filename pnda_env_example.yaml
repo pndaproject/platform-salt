@@ -57,6 +57,7 @@ pnda_application_repo:
   # Type of storage to use for PNDA application packages
   #   s3     - AWS S3. Also set PNDA_APPS_CONTAINER, PNDA_APPS_FOLDER, PNDA_APPS_REGION, PNDA_APPS_ACCESS_KEY_ID, PNDA_APPS_SECRET_ACCESS_KEY
   #   sshfs  - standard file system. Also set PR_FS_LOCATION_PATH, PR_SSHFS_USER, PR_SSHFS_HOST, PR_SSHFS_PATH and PR_SSHFS_KEY
+  #   local  - local filesystem on the package repository service server. Also set PR_FS_LOCATION_PATH.
   PR_FS_TYPE: s3
 
   # S3 container to use for PNDA application packages 
@@ -73,8 +74,10 @@ pnda_application_repo:
   PNDA_APPS_ACCESS_KEY_ID: xxxx
   PNDA_APPS_SECRET_ACCESS_KEY: xxxx
 
-  # SSH accessed file system to use for PNDA application packages 
+  # Path on file system if PR_FS_TYPE is 'local' or 'sshfs'
   PR_FS_LOCATION_PATH: /opt/pnda/packages
+    
+  # SSH accessed file system to use for PNDA application packages 
   PR_SSHFS_USER: ubuntu
   PR_SSHFS_HOST: 127.0.0.1
   PR_SSHFS_PATH: /mnt/packages
@@ -95,8 +98,6 @@ pnda_data_archive:
 mirrors:
   # Mirror of resources required for provisioning PNDA, see PNDA guide for instructions on how to set this up
   PNDA_MIRROR: http://x.x.x.x
-  # For offline tests: remove yum repo if YUM_OFFLINE is not empty
-  # YUM_OFFLINE: ''
 
 ntp:
   # Optional ntp servers. Use this if the standard Ubuntu NTP servers on the Internet cannot be reached
@@ -127,7 +128,9 @@ elk-cluster:
   LOGSTASH_NODES: 0
 
 connectivity:
-    # Deploy an iptables ruleset to every node preventing outbound access to all hosts except the PNDA_MIRROR, NTP_SERVER and specified CLIENT_IP. Specify YES to enable.
-    REJECT_OUTBOUND: YES
-    # If using REJECT_OUTBOUND, the IP address of the client that created PNDA
-    CLIENT_IP: 1.1.1.1
+  # Deploy an iptables ruleset to every node preventing outbound access to all hosts except the PNDA_MIRROR, NTP_SERVER and specified CLIENT_IP. Specify YES to enable.
+  REJECT_OUTBOUND: YES
+  # If using REJECT_OUTBOUND, the IP address of the client that created PNDA
+  CLIENT_IP: 1.1.1.1
+  # Add online repositories for yum, apt-get, pip, etc alongside PNDA mirror
+  ADD_ONLINE_REPOS: NO
