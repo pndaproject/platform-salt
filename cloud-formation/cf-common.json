@@ -46,6 +46,11 @@
       "Type" : "String",
       "Default" : "10.0.1.0/24",
       "Description" : "CIDR specifying the address range for the private subnet"
+    },
+    "privateSubnetProducerCidr" : {
+      "Type" : "String",
+      "Default" : "10.0.2.0/24",
+      "Description" : "CIDR specifying the address range for the private subnet for producers"
     }
   },
   "Resources": {
@@ -255,6 +260,17 @@
         ]
       }
     },
+     "PrivateSubnetProducer" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Ref" : "privateSubnetProducerCidr" },
+        "Tags" : [
+          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
+          { "Key" : "Network", "Value" : "Private" }
+        ]
+      }
+    },
     "NAT" : {
       "DependsOn" : "GatewayToInternet",
       "Type" : "AWS::EC2::NatGateway",
@@ -291,6 +307,13 @@
          "Type" : "AWS::EC2::SubnetRouteTableAssociation",
          "Properties" : {
             "SubnetId" : { "Ref" : "PrivateSubnet" },
+            "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+         }
+    },
+    "PrivateSubnetProducerRouteTableAssociation" : {
+         "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties" : {
+            "SubnetId" : { "Ref" : "PrivateSubnetProducer" },
             "RouteTableId" : { "Ref" : "PrivateRouteTable" }
          }
     },

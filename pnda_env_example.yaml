@@ -134,3 +134,10 @@ connectivity:
   CLIENT_IP: 1.1.1.1
   # Add online repositories for yum, apt-get, pip, etc alongside PNDA mirror
   ADD_ONLINE_REPOS: NO
+
+mine_functions:
+  MINE_FUNCTIONS_NETWORK_IP_ADDRS_NIC: eth0
+  
+network_interfaces:
+  PNDA_INTERNAL_NETWORK: eth0
+  PNDA_INGEST_NETWORK: eth1
