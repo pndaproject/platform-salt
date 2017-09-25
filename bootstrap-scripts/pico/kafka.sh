@@ -40,25 +40,22 @@ EOF
 
 cat >> /etc/salt/grains <<EOF
 vlans:
-  internal: eth0
-  producer: eth1
-  interfaces: eth0
+  pnda: $PNDA_INTERNAL_NETWORK
+  ingest: $PNDA_INGEST_NETWORK
 EOF
 
 DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
 if [ "x$DISTRO" == "xubuntu" ]; then
 
-cat > /etc/network/interfaces.d/eth1.cfg <<EOF
-auto eth1
-iface eth1 inet dhcp
+cat > /etc/network/interfaces.d/$PNDA_INGEST_NETWORK.cfg <<EOF
+auto $PNDA_INGEST_NETWORK
+iface $PNDA_INGEST_NETWORK inet dhcp
 EOF
-
-ifup eth1
 
 elif [ "x$DISTRO" == "xrhel" ]; then
 
-cat > /etc/sysconfig/network-scripts/ifcfg-eth1 <<EOF
-DEVICE="eth1"
+cat > /etc/sysconfig/network-scripts/ifcfg-$PNDA_INGEST_NETWORK <<EOF
+DEVICE="$PNDA_INGEST_NETWORK"
 BOOTPROTO="dhcp"
 ONBOOT="yes"
 TYPE="Ethernet"
@@ -68,6 +65,8 @@ IPV6INIT="no"
 EOF
 
 fi
+
+ifup $PNDA_INGEST_NETWORK
 
 echo $PNDA_CLUSTER-kafka-$1 > /etc/hostname
 hostname $PNDA_CLUSTER-kafka-$1

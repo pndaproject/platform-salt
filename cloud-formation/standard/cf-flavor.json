@@ -235,7 +235,6 @@
         "InstanceInitiatedShutdownBehavior": "stop",
         "ImageId": { "Ref" : "imageId" },
         "InstanceType": { "Ref" : "instancetypeDbKafka" },
-        "SubnetId": { "Ref" : "PrivateSubnet" },
         "KeyName": { "Ref" : "keyName" },
         "Monitoring": "false",
         "Tags": [
@@ -274,7 +273,22 @@
               "VirtualName" : "ephemeral1"
           }
         ],
-        "SecurityGroupIds": [ {"Ref": "pndaSg"} ]
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Primary network interface",
+            "DeviceIndex": 0,
+            "SubnetId": {"Ref": "PrivateSubnet"},
+            "GroupSet": [{"Ref": "pndaSg"}]
+          },
+          {
+            "DeleteOnTermination": "true",
+            "Description": "Secondary network interface",
+            "DeviceIndex": 1,
+            "SubnetId": {"Ref": "PrivateSubnetProducer"},
+            "GroupSet": [{"Ref": "pndaSg"}]
+          }
+        ]
       }
     },
     "instanceJupyter": {

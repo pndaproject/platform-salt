@@ -21,9 +21,39 @@ roles:
 broker_id: $1
 EOF
 
+cat >> /etc/salt/grains <<EOF
+vlans:
+  pnda: $PNDA_INTERNAL_NETWORK
+  ingest: $PNDA_INGEST_NETWORK
+EOF
+
 cat >> /etc/salt/minion <<EOF
 id: $PNDA_CLUSTER-kafka-$1
 EOF
+
+DISTRO=$(cat /etc/*-release|grep ^ID\=|awk -F\= {'print $2'}|sed s/\"//g)
+if [ "x$DISTRO" == "xubuntu" ]; then
+
+cat > /etc/network/interfaces.d/$PNDA_INGEST_NETWORK.cfg <<EOF
+auto $PNDA_INGEST_NETWORK
+iface $PNDA_INGEST_NETWORK inet dhcp
+EOF
+
+elif [ "x$DISTRO" == "xrhel" ]; then
+
+cat > /etc/sysconfig/network-scripts/ifcfg-$PNDA_INGEST_NETWORK <<EOF
+DEVICE="$PNDA_INGEST_NETWORK"
+BOOTPROTO="dhcp"
+ONBOOT="yes"
+TYPE="Ethernet"
+USERCTL="yes"
+PEERDNS="yes"
+IPV6INIT="no"
+EOF
+
+fi
+
+ifup $PNDA_INGEST_NETWORK
 
 echo $PNDA_CLUSTER-kafka-$1 > /etc/hostname
 hostname $PNDA_CLUSTER-kafka-$1
