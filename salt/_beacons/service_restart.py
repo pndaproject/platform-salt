@@ -11,7 +11,6 @@ RETRY_COUNT_MAX = 3
 # retry_count will reset after RETRY_COUNT_MAX
 RETRY_COUNT_RESET = 10
 
-LOGGER = logging.getLogger(__name__)
 
 def beacon(config):# pylint: disable=W0612,W0613
     """
@@ -40,6 +39,7 @@ def beacon(config):# pylint: disable=W0612,W0613
         health_report['Host/host_state/HEALTHY']):
         ret_dict['tag'] = 'service/hadoop/status/stopped'
         servicelist['down_count'] += 1
+        ret.append(ret_dict)
     else :
         ret_dict['tag'] = 'service/hadoop/status/running'
         servicelist['up_count'] += 1
@@ -49,6 +49,21 @@ def beacon(config):# pylint: disable=W0612,W0613
     __salt__['grains.set']("serviceList", {}, True)  # pylint: disable=E0602,E0603
     __salt__['grains.set'](  # pylint: disable=E0602,E0603
         "serviceList", servicelist, True)
-
-    return [ret_dict]
-
+    ##Ambari Addon service Check
+    #get hostname
+    for host in __salt__['pnda.get_hosts_by_role']('HBASE','HBASE_MASTER'):
+        ret_dict = dict()
+        res = __salt__['network.connect'](host,'20550')['result']
+        if not res:
+           ret_dict['tag'] = 'service/hadoop/addon/status/stopped'
+           ret_dict['target'] = host
+           ret_dict['service'] = 'hbase_rest'
+           ret.append(ret_dict)
+        ret_dict = dict()
+        res = __salt__['network.connect'](host,'9090')['result']
+        if not res:
+           ret_dict['tag'] = 'service/hadoop/addon/status/stopped'
+           ret_dict['target'] = host
+           ret_dict['service'] = 'hbase_thrift'
+           ret.append(ret_dict)
+    return ret
