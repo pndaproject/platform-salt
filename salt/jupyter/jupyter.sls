@@ -1,8 +1,8 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
-
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
+{% set app_packages_home = pnda_home_directory + '/app-packages' %}
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
@@ -63,6 +63,7 @@ jupyter-copy_pyspark_kernel:
         anaconda_home: {{ anaconda_home }}
         spark_home: {{ spark_home }}
         hadoop_conf_dir: {{ hadoop_conf_dir }}
+        app_packages_home: {{ app_packages_home }}
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:
