@@ -16,13 +16,15 @@ All notable changes to this project will be documented in this file.
 - PNDA-3216: Uprev to logstash 5.2.2
 - PNDA-3180: Limit orchestrate commands to new nodes only
 - PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
- - PNDA-3264: Use redis 3.2.10 on redhat
+- PNDA-3249: Upgrade Kafka version to 0.11.0.0
+- PNDA-3264: Use redis 3.2.10 on redhat
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
 - PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
 - PNDA-3111: Report failures up if opentsdb.hbase_tables fails
+- PNDA-3309: use local gem installation for Kafka tool
 
 ## [2.0.0] 2017-05-23
 ### Added
