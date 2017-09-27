@@ -3,3 +3,6 @@ reactor-create_bastion_host_entry:
     - arg:
       - bastion.hosts
     - tgt: bastion
+    - timeout: 120
+    - queue: True
+

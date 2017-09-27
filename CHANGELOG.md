@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 ### Added
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
+- PNDA 2390: PNDA restarts any services that need restarting when rebooted
 
 ### Added
 - PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
