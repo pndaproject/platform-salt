@@ -222,6 +222,14 @@ orchestrate-pnda-install_hdp_hadoop_oozie_libs:
     - queue: True
 {% endif %}
 
+orchestrate-pnda-app-packages:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:role:EDGE or G@roles:jupyter )'
+    - tgt_type: compound
+    - sls: app-packages
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-install_remove_new_node_markers:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}}'

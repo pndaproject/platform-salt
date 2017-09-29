@@ -535,7 +535,8 @@ SPARK_CFG = {
     'service': 'SPARK_ON_YARN',
     'name': 'spark_on_yarn',
     'config': {
-        'yarn_service': MAPRED_CFG['name']
+        'yarn_service': MAPRED_CFG['name'],
+        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR01'},

@@ -13,6 +13,8 @@
 {% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
+{% set pnda_home = pillar['pnda']['homedir'] %}
+{% set app_packages_dir = pnda_home + "/apps-packages" %}
 
 include:
   - python-pip
@@ -58,6 +60,7 @@ cdh-copy_cm_config:
       mysql_host: {{ mysql_host }}
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
+      app_packages_dir: {{ app_packages_dir }}
 
 # Create a python configured scripts to call the cm_setup.setup_hadoop function with
 # the needed aguments (nodes to install cloudera to)
