@@ -93,6 +93,12 @@ deployment-manager-gen_key:
     - require:
       - archive: deployment-manager-dl-and-extract
 
+deployment-manager-chmod_key:
+  file.managed:
+    - name: {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem
+    - mode: 0600
+    - replace: False
+
 deployment-manager-push_key:
   module.run:
     - name: cp.push
