@@ -3,6 +3,7 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
 {% set app_packages_home = pnda_home_directory + '/app-packages' %}
+{% set pnda_user  = pillar['pnda']['user'] %}
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
@@ -39,6 +40,24 @@ jupyter-copy_initial_notebooks:
     - name: '{{ pnda_home_directory }}/jupyter_notebooks'
     - require:
       - file: jupyter-create_notebooks_directory
+
+jupyter-create_pam_login_script:
+  file.managed:
+    - source: salt://jupyter/templates/jupyterhub-create_notebook_dir.sh.tpl
+    - name: /root/create_notebook_dir.sh
+    - user: root
+    - group: root
+    - mode: 744
+    - template: jinja
+    - defaults:
+      example_notebooks_dir: '{{ pnda_home_directory }}/jupyter_notebooks'
+      pnda_user: {{ pnda_user }} 
+
+jupyter-create_pam_login_rule:
+  file.append:
+    - name: /etc/pam.d/login
+    - text: |
+        auth    required    pam_exec.so    debug log=/var/log/pnda/login.log /root/create_notebook_dir.sh
 
 # install jupyter kernels (python2, python3, and pyspark)
 jupyter-install_python2_kernel:
