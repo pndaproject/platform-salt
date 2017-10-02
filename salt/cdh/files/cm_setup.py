@@ -26,7 +26,7 @@ DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.9.0/'
 DEFAULT_PARCEL_VERSION = '5.9.0-1.cdh5.9.0.p0.23'
 
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
-SETUP_SUCCESS = os.path.expanduser('~/.CM_SETUP_SUCCESS')
+SETUP_SUCCESS = os.path.expanduser('/opt/pnda/.CM_SETUP_SUCCESS')
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.INFO,
