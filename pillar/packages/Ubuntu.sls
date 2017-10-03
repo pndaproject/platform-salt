@@ -9,13 +9,13 @@ ambari-server:
   version: "2.5.1.0-159"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 cloudera-manager-daemons:
   package-name: cloudera-manager-daemons
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 cloudera-manager-server:
   package-name: cloudera-manager-server
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 debconf-utils:
   package-name: debconf-utils
   version: ""

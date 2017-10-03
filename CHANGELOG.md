@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
 - PNDA-3249: Upgrade Kafka version to 0.11.0.0
 - PNDA-3264: Use redis 3.2.10 on redhat
+- PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
