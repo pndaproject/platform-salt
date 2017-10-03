@@ -2,7 +2,8 @@
 
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
-{% set cloudera_p = salt['pillar.get']('cloudera', {}) %}
+{% set cloudera_cdh_repo = pillar['cloudera']['parcel_repo'] %}
+{% set cloudera_cdh_version = pillar['cloudera']['parcel_version'] %}
 
 {% set keystone_user = salt['pillar.get']('keystone.user', "") %}
 {% set keystone_password = salt['pillar.get']('keystone.password', "") %}
@@ -29,8 +30,8 @@ cdh-install_deps_ssl:
   pkg.installed:
     - name: {{ pillar['libssl-dev']['package-name'] }}
     - version: {{ pillar['libssl-dev']['version'] }}
-    - ignore_epoch: True    
-    
+    - ignore_epoch: True
+
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:
   virtualenv.managed:
@@ -73,8 +74,8 @@ cdh-create_cloudera_configuration_script:
         ips: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
         hadoop_config: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         cluster_name: {{ pnda_cluster }}
-        parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}
-        parcel_version: {{ cloudera_p.get('parcel_version', '') }}
+        parcel_repo: {{ cloudera_cdh_repo }}
+        parcel_version: {{ cloudera_cdh_version }}
 
 cdh-execute_cloudera_installation_script:
   cmd.run:

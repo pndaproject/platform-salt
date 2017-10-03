@@ -5,12 +5,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
 - PNDA-2982: Added support for adding pyspark application dependencies
-
-### Added
 - PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
 - PNDA-2163: Support for OpenTSDB Platform testing
 - PNDA-2832: Added sql magic support for Jupyter notebooks
+- PNDA-1788: Cloudera version can be set in the salt pillar
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
