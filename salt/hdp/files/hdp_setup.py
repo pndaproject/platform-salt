@@ -20,7 +20,7 @@ DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 PNDA_BLUEPRINT_NAME = "pnda-blueprint"
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def wait_on_cmd(tracking_uri, msg, auth, headers):
