@@ -3,9 +3,9 @@
 {%- set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') -%}
 {%- set cmdb_host = salt['pnda.ip_addresses']('oozie_database')[0] -%}
 {%- set cm_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
-{%- set cmdb_user = salt['pillar.get']('cloudera:cmdb:user', 'scm') -%}
-{%- set cmdb_database = salt['pillar.get']('cloudera:cmdb:database', 'scm') -%}
-{%- set cmdb_password = salt['pillar.get']('cloudera:cmdb:password', 'scm') -%}
+{% set cmdb_user = pillar['cloudera']['cmdb']['user'] %}
+{% set cmdb_database = pillar['cloudera']['cmdb']['database'] %}
+{% set cmdb_password = pillar['cloudera']['cmdb']['password'] %}
 
 include:
   - java

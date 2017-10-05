@@ -107,3 +107,11 @@ java:
   version: "jdk-8u131-linux-x64"
   version_name: "jdk1.8.0_131"
   source_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
+
+cloudera:
+  parcel_repo: "http://archive.cloudera.com/cdh5/parcels/5.9.0/"
+  parcel_version: "5.9.0-1.cdh5.9.0.p0.23"
+  cmdb:
+    user: scm
+    password: scm
+    database: scm

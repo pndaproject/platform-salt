@@ -22,9 +22,6 @@ from cm_api.endpoints import users
 # Import Flavor configuration file
 import cfg_flavor as _CFG
 
-DEFAULT_PARCEL_REPO = 'http://archive.cloudera.com/cdh5/parcels/5.9.0/'
-DEFAULT_PARCEL_VERSION = '5.9.0-1.cdh5.9.0.p0.23'
-
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 SETUP_SUCCESS = os.path.expanduser('~/.CM_SETUP_SUCCESS')
 
@@ -211,12 +208,6 @@ def check_parcel_distribution_state(parcel):
 
 
 def install_parcel(cloudera_manager, cluster, product, parcel_repo, parcel_version):
-
-    if parcel_repo is None:
-        parcel_repo = DEFAULT_PARCEL_REPO
-    if parcel_version is None:
-        parcel_version = DEFAULT_PARCEL_VERSION
-
     # this is handled slightly differently to other config updates as we don't
     # want to lose any existing configuration
     cm_config = cloudera_manager.get_config(view='full')
