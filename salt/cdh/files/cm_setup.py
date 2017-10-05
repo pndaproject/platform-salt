@@ -23,7 +23,7 @@ from cm_api.endpoints import users
 import cfg_flavor as _CFG
 
 DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
-SETUP_SUCCESS = os.path.expanduser('~/.CM_SETUP_SUCCESS')
+SETUP_SUCCESS = os.path.expanduser('/opt/pnda/.CM_SETUP_SUCCESS')
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.INFO,
