@@ -30,13 +30,15 @@ def wait_on_cmd(tracking_uri, msg, auth, headers):
     '''
     logging.debug('Waiting for %s...', msg)
     progress_percent = 0
-    while progress_percent < 100:
+    task_count = 0
+    while progress_percent < 100 or task_count == 0:
         time.sleep(5)
         status_reponse = requests.get(tracking_uri, auth=auth, headers=headers)
         logging.debug(status_reponse.json()['Requests'])
         cmd_status = status_reponse.json()['Requests']['request_status']
+        task_count = status_reponse.json()['Requests']['task_count']
         progress_percent = int(status_reponse.json()['Requests']['progress_percent'])
-        logging.debug('Progress for %s: %s%% - %s', tracking_uri, progress_percent, cmd_status)
+        logging.debug('Progress for %s: %s%% of %s tasks - %s', tracking_uri, progress_percent, task_count, cmd_status)
     return cmd_status
 
 def stop_all_services(cluster_name, ambari_api, auth, headers):
