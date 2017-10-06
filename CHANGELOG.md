@@ -5,12 +5,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
 - PNDA-2982: Added support for adding pyspark application dependencies
-
-### Added
 - PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
 - PNDA-2163: Support for OpenTSDB Platform testing
 - PNDA-2832: Added sql magic support for Jupyter notebooks
+- PNDA-1788: Cloudera version can be set in the salt pillar
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
@@ -19,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
 - PNDA-3249: Upgrade Kafka version to 0.11.0.0
 - PNDA-3264: Use redis 3.2.10 on redhat
+- PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3111: Report failures up if opentsdb.hbase_tables fails
 - PNDA-3309: use local gem installation for Kafka tool
 - PNDA-3343: When expanding a cluster new datanodes are given a spark gateway role
+- PNDA-3309: Write `CM_SETUP_SUCCESS` into a fixed directory
 
 ## [2.0.0] 2017-05-23
 ### Added
