@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3111: Report failures up if opentsdb.hbase_tables fails
 - PNDA-3309: use local gem installation for Kafka tool
 - PNDA-3309: Write `CM_SETUP_SUCCESS` into a fixed directory
+- PNDA-3369: fix issue on offsets topic replication factor on kafka configuration zhere default value is 3
 
 ## [2.0.0] 2017-05-23
 ### Added

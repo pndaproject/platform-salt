@@ -28,6 +28,7 @@ broker.id={{ salt['grains.get']('broker_id') }}
 ############################# Topics Settings #############################
 auto.create.topics.enable=false
 delete.topic.enable=true
+offsets.topic.replication.factor={{ offsets_topic_replication_factor }}
 
 ############################# Socket Server Settings #############################
 listener.security.protocol.map={{ listener_map }}

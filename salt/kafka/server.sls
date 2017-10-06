@@ -22,6 +22,7 @@
 {% set advertised_listeners = 'INGEST://'+ingest_ip+':'+ingest_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
 
 {% set mem_xmx = (((salt['grains.get']('mem_total')/1000)+1)*0.5)|int %}
+{% set offsets_topic_replication_factor  = salt['pnda.kafka_brokers_ips']()|length -%}
 
 include:
   - kafka
@@ -52,6 +53,7 @@ kafka-server-conf:
       listeners: {{ listeners }}
       advertised_listeners: {{ advertised_listeners }}
       inter_broker_listener: {{ inter_broker_listener }}
+      offsets_topic_replication_factor: {{ offsets_topic_replication_factor }}
 
 {% if grains['os'] == 'Ubuntu' %}
 kafka-copy_kafka_service:
