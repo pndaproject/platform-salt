@@ -1,4 +1,5 @@
 import requests
+import socket
 
 def get_name_service():
     """ Returns name service for HA Cluster """
@@ -65,7 +66,8 @@ def hbase_master_host():
     if hadoop_distro() == 'CDH':
         return 'todo'
     else:
-        return ambari_request('/clusters/%s/services/HBASE/components/HBASE_MASTER' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
+        hostname= ambari_request('/clusters/%s/services/HBASE/components/HBASE_MASTER' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
+        return socket.getfqdn(hostname)
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
@@ -136,7 +138,7 @@ def cloudera_get_hosts_by_role(service, role_type):
     return hosts_ips
 
 def ambari_get_hosts_by_role(service, role_type):
-    return [host['HostRoles']['host_name'] for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
+    return [socket.getfqdn(host['HostRoles']['host_name']) for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
 
 def get_hosts_by_role(service, role_type):
     if hadoop_distro() == 'CDH':
