@@ -381,6 +381,9 @@ def expand_services(cluster, nodes):
         logging.info("Expanding Impala")
         impala = generic_expand_service(cluster, _CFG.IMPALA_CFG, nodes)
 
+        logging.info("Expanding Spark On Yarn")
+        spark = generic_expand_service(cluster, _CFG.SPARK_CFG, nodes)
+
         time.sleep(10)
         logging.info("Deploying client config")
         wait_on_success(cluster.deploy_client_config())
