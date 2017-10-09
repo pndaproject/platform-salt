@@ -1,4 +1,5 @@
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
@@ -86,6 +87,7 @@ zookeeper-environment:
     - template: jinja
     - context:
       install_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
+      heap_size: {{ flavor_cfg.zookeeper_heapsize }}
     - mode: 644
 
 zookeeper-link:

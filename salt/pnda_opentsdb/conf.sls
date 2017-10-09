@@ -50,7 +50,3 @@ pnda_opentsdb-pnda-opentsdb-hbase-zk-root:
     - repl: 'tsd.storage.hbase.zk_basedir = /hbase-unsecure'
 {% endif %}
 
-pnda_opentsdb-update-opentsdb-default-file:
-  file.managed:
-    - name: /etc/default/opentsdb
-    - contents: JAVA_HOME=/usr/lib/jvm/java-8-oracle
