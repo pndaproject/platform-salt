@@ -124,9 +124,15 @@ MAPRED_CFG = {
     "role_cfg": [
         {
             "type": "GATEWAY",
-            "config": {'mapred_reduce_tasks': 4, 
-                       'mapred_submit_replication': 1,
-                       "mapreduce_client_java_heapsize": "2147483648"
+            "config": {'mapred_reduce_tasks': 12,
+                       'mapred_submit_replication': 3,
+                       "mapreduce_client_java_heapsize": "2147483648",
+                       'mapreduce_map_memory_mb': '2048',
+                       "mapreduce_map_java_opts_max_heap": "1717986918",
+                       'mapreduce_reduce_memory_mb': '2048',
+                       'mapreduce_reduce_java_opts_max_heap': '1717986918',
+                       'yarn_app_mapreduce_am_resource_mb': '1024',
+                       'yarn_app_mapreduce_am_max_heap': '858993459'
                        }
         },
         {
@@ -137,8 +143,8 @@ MAPRED_CFG = {
                     'yarn_nodemanager_local_dirs': '/var/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'node_manager_log_dir': '/var/log/pnda/hadoop-yarn',
-                    'yarn_nodemanager_resource_cpu_vcores': '7',
-                    'yarn_nodemanager_resource_memory_mb': '14336',
+                    'yarn_nodemanager_resource_cpu_vcores': '48',
+                    'yarn_nodemanager_resource_memory_mb': '78848',
                     "node_manager_java_heapsize": "4294967296"
                 }
         },
@@ -158,7 +164,12 @@ MAPRED_CFG = {
                     'resourcemanager_config_safety_valve':
                         '<property> \r\n<name>yarn.resourcemanager.proxy-user-privileges.enabled</name>\r\n<value>true</value>\r\n</property>',
                     'resource_manager_java_heapsize': '4294967296',
-                    'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn'
+                    'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn',
+                    'yarn_scheduler_increment_allocation_mb': '1024',
+                    'yarn_scheduler_maximum_allocation_mb': '65536',
+                    'yarn_scheduler_maximum_allocation_vcores': '48',
+                    'yarn_scheduler_minimum_allocation_vcores': '1',
+                    'yarn_scheduler_minimum_allocation_mb': '1024'
                 }
         }
     ]
@@ -267,11 +278,15 @@ HDFS_CFG = {
             },
             {
                 "type": "FAILOVERCONTROLLER",
-                "config": {'failover_controller_log_dir': '/var/log/pnda/hadoop/fc'}
+                "config": {'failover_controller_log_dir': '/var/log/pnda/hadoop/fc',
+                           "failover_controller_java_heapsize": "1073741824"
+                }
             },
             {
                 "type": "GATEWAY",
-                "config": {"hdfs_client_java_heapsize": "1073741824"}
+                "config": {"hdfs_client_java_heapsize": "1073741824",
+                           "dfs_client_use_trash": "true"
+                }
             },
             {
                 "type": "HTTPFS",
@@ -483,6 +498,8 @@ SPARK_CFG = {
     'role_cfg': [
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {"history_server_max_heapsize": "4294967296"}},
         {'type': 'GATEWAY', 'config': {
-            'spark_history_enabled': 'false'}}
+            "spark_dynamic_allocation_cached_idle_timeout": "120"
+            }
+        }
     ]
 }
