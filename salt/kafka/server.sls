@@ -21,7 +21,6 @@
 {% set listeners = 'INGEST://'+ingest_ip+':'+ingest_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
 {% set advertised_listeners = 'INGEST://'+ingest_ip+':'+ingest_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
 
-{% set mem_xmx = (((salt['grains.get']('mem_total')/1000)+1)*0.5)|int %}
 {% set offsets_topic_replication_factor  = salt['pnda.kafka_brokers_ips']()|length -%}
 
 include:
@@ -64,8 +63,8 @@ kafka-copy_kafka_service:
     - template: jinja
     - context:
       workdir: {{ kafka.prefix }}
-      mem_xmx: {{ mem_xmx }}
-      mem_xms: {{ mem_xmx }}
+      mem_xmx: {{ flavor_cfg.kafka_heapsize }}
+      mem_xms: {{ flavor_cfg.kafka_heapsize }}
 {% elif grains['os'] == 'RedHat' %}
 kafka-copy_script:
   file.managed:
@@ -82,8 +81,8 @@ kafka-copy_env:
     - mode: 644
     - template: jinja
     - context:
-      mem_xmx: {{ mem_xmx }}
-      mem_xms: {{ mem_xmx }}
+      mem_xmx: {{ flavor_cfg.kafka_heapsize }}
+      mem_xms: {{ flavor_cfg.kafka_heapsize }}
 
 kafka-copy_kafka_systemd:
   file.managed:

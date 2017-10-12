@@ -3,7 +3,7 @@ Description=opentsdb
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/tsdb tsd
+ExecStart={{ home }}/start.sh
 Restart=always
 RestartSec=2
 
