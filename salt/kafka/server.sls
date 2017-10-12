@@ -66,7 +66,7 @@ kafka-copy_kafka_service:
       workdir: {{ kafka.prefix }}
       mem_xmx: {{ mem_xmx }}
       mem_xms: {{ mem_xmx }}
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 kafka-copy_script:
   file.managed:
     - source: salt://kafka/templates/kafka-start.sh.tpl

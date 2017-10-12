@@ -6,7 +6,7 @@ ambari-agent-user:
     - groups:
       - root
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-agent-libtirpc:
   pkg.installed:
     - name: {{ pillar['libtirpc-devel']['package-name'] }}
@@ -34,7 +34,7 @@ ambari-agent-create_log_dir:
     - name: /var/log/pnda/ambari/
     - makedirs: True
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-agent-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable ambari-agent

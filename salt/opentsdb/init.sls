@@ -16,7 +16,7 @@ opentsdb-copy_defaults:
   file.managed:
     - name: /etc/default/opentsdb
     - source: salt://opentsdb/files/opentsdb.default
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-copy_service:
   file.managed:
     - name: /usr/lib/systemd/system/opentsdb.service
@@ -24,7 +24,7 @@ opentsdb-copy_service:
     - template: jinja
 {%- endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable opentsdb

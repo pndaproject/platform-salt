@@ -10,7 +10,7 @@
 include:
   - python-pip
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
@@ -106,7 +106,7 @@ deployment-manager-copy_service:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/deployment-manager.conf
     - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
 {% endif %}    
@@ -114,7 +114,7 @@ deployment-manager-copy_service:
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager

@@ -52,7 +52,7 @@ mysql-update-mysql-configuration2:
     - require:
       - pkg: mysql-install-mysql-server
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 mysql-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable {{ pillar['mysql-server']['service_name'] }}
@@ -62,7 +62,7 @@ mysql-mysql-running:
   cmd.run:
     - name: 'service {{ pillar['mysql-server']['service_name'] }} stop || echo already stopped; service {{ pillar['mysql-server']['service_name'] }} start'
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 mysql_root_password:
   cmd.run:
     - name: mysqladmin --user root password '{{ mysql_root_password|replace("'", "'\"'\"'") }}'
