@@ -1,6 +1,7 @@
 {{ env }}:
 
   '*':
+    - volumes
     - tasks.system_update
     - motd
     - pnda.user
