@@ -19,7 +19,7 @@
         - device: {{ device }}
         - label_type: {{ part_type }}
         - unless:
-          - sudo parted /dev/xvdc print | grep 'Partition Table: {{ part_type }}'
+          - sudo parted {{ device }} print | grep 'Partition Table: {{ part_type }}'
 
     volumes_partition-{{ partition }}:
       module.run:
