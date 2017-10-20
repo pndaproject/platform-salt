@@ -102,7 +102,7 @@ input {
           }
    }
    file {
-          path => ["/var/log/opentsdb/opentsdb.log"]
+          path => ["/var/log/pnda/opentsdb/opentsdb.log"]
           add_field => {"source" => "opentsdb"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           codec => multiline {

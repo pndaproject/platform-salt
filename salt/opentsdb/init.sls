@@ -8,7 +8,7 @@
 include:
   - gnuplot
   - java
-    
+
 opentsdb-server:
   pkg.installed:
     - sources:
@@ -18,6 +18,19 @@ opentsdb-home:
   file.directory:
     - name: {{ opentsdb_home }}
     - makedirs: True
+
+opentsdb-logdir:
+  file.directory:
+    - name: /var/log/pnda/opentsdb
+    - makedirs: True
+
+opentsdb-log_config:
+  file.managed:
+    - name: /etc/opentsdb/logback.xml
+    - source: salt://opentsdb/templates/opentsdb_logback.xml.tpl
+    - context:
+      log_folder: /var/log/pnda/opentsdb
+    - template: jinja
 
 {% if grains['os'] == 'Ubuntu' %}
 opentsdb-copy_defaults:
@@ -50,7 +63,7 @@ opentsdb-copy_service:
     - name: /usr/lib/systemd/system/opentsdb.service
     - source: salt://opentsdb/templates/opentsdb.service.tpl
     - template: jinja
-    - context: 
+    - context:
       home: {{ opentsdb_home }}
 {%- endif %}
 
