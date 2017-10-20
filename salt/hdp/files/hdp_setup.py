@@ -23,7 +23,7 @@ logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-def wait_on_cmd(tracking_uri, msg, auth, headers):
+def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
     '''
     Wait for ambari to complete running a command. A command is complete when the
     progress_percent value reaches 100.
@@ -33,12 +33,27 @@ def wait_on_cmd(tracking_uri, msg, auth, headers):
     task_count = 0
     while progress_percent < 100 or task_count == 0:
         time.sleep(5)
-        status_reponse = requests.get(tracking_uri, auth=auth, headers=headers)
-        logging.debug(status_reponse.json()['Requests'])
-        cmd_status = status_reponse.json()['Requests']['request_status']
-        task_count = status_reponse.json()['Requests']['task_count']
-        progress_percent = int(status_reponse.json()['Requests']['progress_percent'])
+        status_reponse = requests.get('%s%s' % (tracking_uri, '?fields=tasks/Tasks/status,Requests'), auth=auth, headers=headers)
+        response_json = status_reponse.json()
+        request_info = response_json['Requests']
+        logging.debug(request_info)
+        cmd_status = request_info['request_status']
+        task_count = request_info['task_count']
+        progress_percent = int(request_info['progress_percent'])
         logging.debug('Progress for %s: %s%% of %s tasks - %s', tracking_uri, progress_percent, task_count, cmd_status)
+        # Log some info on any failed tasks:
+        if 'tasks' in response_json:
+            for task in response_json['tasks']:
+                task_info = task['Tasks']
+                logging.debug(task_info)
+                request_id = task_info['request_id']
+                task_id = task_info['id']
+                status = task_info['status']
+                if status == 'FAILED':
+                    logging.debug(task_info)
+                    logging.warn('Failed ambari task detected, fetching details')
+                    task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id), auth=auth, headers=headers)
+                    logging.info(task_status_response.json())
     return cmd_status
 
 def stop_all_services(cluster_name, ambari_api, auth, headers):
@@ -64,7 +79,7 @@ def stop_all_services(cluster_name, ambari_api, auth, headers):
     stop_response = requests.put(stop_uri, json.dumps(stop_command), auth=auth, headers=headers)
     logging.debug(stop_response.text)
     if stop_response.status_code == 202:
-        wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari', auth, headers)
+        wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari', cluster_name, ambari_api, auth, headers)
 
 def start_all_services(cluster_name, ambari_api, auth, headers):
     '''
@@ -89,7 +104,8 @@ def start_all_services(cluster_name, ambari_api, auth, headers):
     start_response = requests.put(start_uri, json.dumps(start_command), auth=auth, headers=headers)
     logging.debug(start_response.text)
     if start_response.status_code == 202:
-        wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari', auth, headers)
+        return wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari', cluster_name, ambari_api, auth, headers)
+    return 'COMPLETED'
 
 def exit_setup(error_message):
     '''
@@ -194,7 +210,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     logging.debug(cluster_response.text)
     status_tracking_uri = cluster_response.json()['href']
 
-    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari", auth, headers)
+    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari", cluster_name, ambari_api, auth, headers)
 
     ### Check everything started and retry if needed ###
     if blueprint_status == 'COMPLETED':
@@ -207,7 +223,10 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
 
     # Even if there were no errors starting the services try issuing a start just to make sure everything is running
     time.sleep(60)
-    start_all_services(cluster_name, ambari_api, auth, headers)
+    final_start_result = start_all_services(cluster_name, ambari_api, auth, headers)
+    # If this fails then abort here because something didn't come up
+    if final_start_result != 'COMPLETED':
+        exit_setup('Did not manage to start all services successfully')
 
     ### Confgure disk space thresholds ###
     logging.info('Configuring alert thresholds')
@@ -344,7 +363,7 @@ def expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers):
     expand_response = requests.post(blueprint_expand_post_uri, json.dumps(expansion_def), auth=auth, headers=headers)
     logging.debug(expand_response.text)
     expand_tracking_uri = expand_response.json()['href']
-    expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", auth, headers)
+    expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", cluster_name, ambari_api, auth, headers)
     logging.info("Expansion finished, result: %s", expand_status)
 
 def wait_for_api_up(ambari_api, auth, headers):
