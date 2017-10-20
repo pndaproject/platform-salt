@@ -1,4 +1,3 @@
-
 {% set volume_partitions_file = '/etc/pnda/disk-config/partitions' %}
 {% set volume_mappings_file = '/etc/pnda/disk-config/volume-mappings' %}
 
@@ -19,7 +18,7 @@
         - device: {{ device }}
         - label_type: {{ part_type }}
         - unless:
-          - sudo parted {{ device }} print | grep 'Partition Table: {{ part_type }}'
+          - 'grep "Partition Table: {{ part_type }}" <<< "$(parted {{ device }} print)"'
 
     volumes_partition-{{ partition }}:
       module.run:
@@ -29,7 +28,7 @@
         - start: {{ start }}
         - end: {{ end }}
         - onlyif:
-          - salt-call partition.exists {{ partition }} | grep False
+          - grep False <<< "$(salt-call partition.exists {{ partition }})"
   {% endfor %}
 {% endif %}
 
@@ -41,6 +40,10 @@
     {% set device = parts[0] %}
     {% set mountpoint = parts[1] %}
     {% set fs_type = parts[2] %}
+
+    volumes-wait-{{ device }}:
+      cmd.run:
+        - name: 'while [ ! -b {{ device }} ]; do   echo waiting for device {{ device }}; sleep 2; done'
 
     volumes-format-{{ device }}:
       blockdev.formatted:
