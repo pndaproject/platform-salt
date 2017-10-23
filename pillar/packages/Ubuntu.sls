@@ -44,9 +44,10 @@ libsasl:
   version: ""
 libxml2:
   package-name: libxml2-dev
-  version: ""
 libxslt:
   package-name: libxslt-dev
+libz:
+  package-name: zlib1g-dev 
 mysql-server:
   package-name: mysql-server-5.6
   version: "5.6.33-0ubuntu0.14.04.1"
