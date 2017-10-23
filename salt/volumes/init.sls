@@ -40,15 +40,21 @@
     {% set device = parts[0] %}
     {% set mountpoint = parts[1] %}
     {% set fs_type = parts[2] %}
+    {% if fs_type == 'xfs' %}
+      {% set mkfs_opts = '-f' %}
+    {% else %}
+      {% set mkfs_opts = '' %}
+    {% endif %}
 
     volumes-wait-{{ device }}:
       cmd.run:
         - name: 'while [ ! -b {{ device }} ]; do   echo waiting for device {{ device }}; sleep 2; done'
 
     volumes-format-{{ device }}:
-      blockdev.formatted:
-        - name: {{ device }}
-        - fs_type: {{ fs_type }}
+      cmd.run:
+        - name: mkfs -t {{ fs_type  }} {{ mkfs_opts }} {{ device }}
+        - unless:
+          - 'grep "{{ device }}" <<< "$(cat /etc/fstab)"'
 
     volumes-mount-{{ device }}:
       mount.mounted:
