@@ -33,6 +33,7 @@ jupyter-extension-packages:
     - pkgs: 
       - {{ pillar['libxml2']['package-name'] }}
       - {{ pillar['libxslt']['package-name'] }}
+      - {{ pillar['libz']['package-name'] }}
 
 jupyter-extension-create-venv:
   virtualenv.managed:

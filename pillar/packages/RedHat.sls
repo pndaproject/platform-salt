@@ -58,6 +58,8 @@ libxml2:
   package-name: libxml2-devel
 libxslt:
   package-name: libxslt-devel
+libz:
+  package-name: zlib-devel
 mysql-server:
   package-name: mysql-community-server
   version: "5.5.54-2.el7"
