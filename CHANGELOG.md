@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-3330: Add default application user configuration to the deployment manager.
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
+- PNDA 2390: PNDA restarts any services that need restarting when rebooted
 - PNDA-2982: Added support for adding pyspark application dependencies
 - PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2445: Support for Hortonworks HDP hadoop distro

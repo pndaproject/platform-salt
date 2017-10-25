@@ -245,6 +245,7 @@ def startservice(connection_object, service_name, role_name, node_name):
             cluster_name = cluster_detail.name
             break
         cluster_manager = connection_object.get_cluster(cluster_name)
+        status, message = wait_on_command([cluster_manager.start()])
         for service in cluster_manager.get_all_services():
             if service_name != service.type:
                 continue
