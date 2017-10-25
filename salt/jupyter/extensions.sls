@@ -34,6 +34,8 @@ jupyter-extension-packages:
       - {{ pillar['libxml2']['package-name'] }}
       - {{ pillar['libxslt']['package-name'] }}
       - {{ pillar['libz']['package-name'] }}
+      - {{ pillar['libzmq']['package-name'] }}
+      - {{ pillar['g++']['package-name'] }}
 
 jupyter-extension-create-venv:
   virtualenv.managed:
