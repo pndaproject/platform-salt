@@ -33,6 +33,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3309: Write `CM_SETUP_SUCCESS` into a fixed directory
 - PNDA-3369: fix issue on offsets topic replication factor on kafka configuration zhere default value is 3
 - PNDA-3238: Add jupyter extensions to the kenel virtual environment.
+- PNDA-3350: Fix dm.pem permission post deployment highstate.
 
 ## [2.0.0] 2017-05-23
 ### Added
