@@ -31,5 +31,3 @@ pnda-set_home_dir_perms:
   file.directory:
     - name: {{ pnda_home_directory }}
     - mode: 755
-    - recurse:
-      - mode
