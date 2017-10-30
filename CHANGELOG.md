@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3264: Use redis 3.2.10 on redhat
 - PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
 - PNDA-3380: Move opentsdb log to /var/log/pnda
+- PNDA-3441: Cleanup warnings from create_notebook_dir.sh script
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
@@ -34,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3369: fix issue on offsets topic replication factor on kafka configuration zhere default value is 3
 - PNDA-3238: Add jupyter extensions to the kenel virtual environment.
 - PNDA-3350: Fix dm.pem permission post deployment highstate.
+- PNDA-3432: Jupyter not launching after reboot on RHEL.
 
 ## [2.0.0] 2017-05-23
 ### Added
