@@ -5,7 +5,13 @@
 
 {% if grains['os'] == 'RedHat' %}
 permissive:
-    selinux.mode
+  selinux.mode: []
+  file.replace:
+    - name: '/etc/selinux/config'
+    - pattern: '^SELINUX=(?!\s*permissive).*'
+    - repl: 'SELINUX=permissive'
+    - append_if_not_found: True
+    - show_changes: True
 {% endif %}
 
 pnda-create_pnda_user:
