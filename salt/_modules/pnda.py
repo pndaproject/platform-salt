@@ -173,3 +173,7 @@ def ambari_get_service_status(service):
     service_resp = response.json()
 
     return service_resp['ServiceInfo']['state']
+
+def ambari_get_cluster_health_report():
+    health_report = ambari_request('/clusters/'+cluster_name())
+    return health_report['Clusters']['health_report']
