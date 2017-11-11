@@ -90,6 +90,10 @@ def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
     return ip_addresses('zookeeper')
 
+def data_service_ips():
+    """Returns data service ip addresses"""
+    return ip_addresses('data_service')
+
 def ldap_ip():
     """Returns the ip address of the LDAP server"""
     query = "G@roles:LDAP"
