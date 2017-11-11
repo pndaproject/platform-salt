@@ -80,6 +80,20 @@ gobblin-install_gobblin_pnda_job_file:
     - require:
       - file: gobblin-create_gobblin_jobs_directory
 
+gobblin-install_gobblin_pnda_test_file:
+  file.managed:
+    - name: {{ gobblin_link_dir }}/configs/mr.pull.test
+    - source: salt://gobblin/templates/mr.pull.test.tpl
+    - template: jinja
+    - context:
+      namenode: {{ namenode }}
+      kite_dataset_uri: {{ pnda_kite_dataset_uri }}
+      quarantine_kite_dataset_uri: {{ pnda_quarantine_kite_dataset_uri }}
+      kafka_brokers: {{ kafka_brokers }}
+      max_mappers: {{ flavor_cfg.max_mappers }}
+    - require:
+      - file: gobblin-create_gobblin_jobs_directory
+
 gobblin-create_gobblin_logs_directory:
   file.directory:
     - name: /var/log/pnda/gobblin
@@ -102,10 +116,37 @@ gobblin-install_gobblin_service_script:
       gobblin_job_file: {{ gobblin_link_dir }}/configs/mr.pull
       hadoop_home_bin: {{ hadoop_home_bin }}
 
+gobblin-install_test_gobblin_service_script:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /etc/init/test-gobblin.conf
+    - source: salt://gobblin/templates/test-gobblin.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/test-gobblin.service
+    - source: salt://gobblin/templates/test-gobblin.service.tpl
+{%- endif %}
+    - template: jinja
+    - context:
+      gobblin_directory_name: {{ gobblin_link_dir }}/gobblin-dist
+      gobblin_user: {{ pnda_user }}
+      gobblin_work_dir: {{ gobblin_hdfs_work_dir }}
+      gobblin_job_file: {{ gobblin_link_dir }}/configs/mr.pull.test
+      hadoop_home_bin: {{ hadoop_home_bin }}
+
 {% if grains['os'] == 'RedHat' %}
 gobblin-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload
+{%- endif %}
+
+{% if grains['os'] == 'Ubuntu' %}
+test-gobblin-systemctl_ubuntu_start:
+  cmd.run:
+    - name: /sbin/start test-gobblin
+{% elif grains['os'] == 'RedHat' %}
+test-gobblin-systemctl_redhat_start:
+  cmd.run:
+    - name: /bin/systemctl start test-gobblin
 {%- endif %}
 
 gobblin-add_gobblin_crontab_entry:

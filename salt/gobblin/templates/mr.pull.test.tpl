@@ -48,3 +48,5 @@ metrics.reporting.file.enabled=true
 # Don't ingest the avro.internal.testbot topic as it's only an internal PNDA
 # testing topic
 topic.blacklist=__consumer_offsets
+# White list topic is used to check initial creation of Master Dataset
+topic.whitelist=avro.internal.testbot

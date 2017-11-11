@@ -11,6 +11,7 @@
 {% set console_port = '3001' %}
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
+{% set data_service_port = '7000' %}
 {% set opentsdb_port = '4242' %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
@@ -28,6 +29,11 @@
 {%- set opentsdb_hosts = [] -%}
 {%- for ip in salt['pnda.opentsdb_ips']() -%}
 {%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
+{%- endfor -%}
+
+{%- set data_service_host = [] -%}
+{%- for ip in salt['pnda.data_service_ips']() -%}
+{%- do data_service_host.append("http://" + ip + ':' + data_service_port) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
@@ -121,6 +127,8 @@ platform-testing-general-kafka_service:
       console_hosts: {{ console_hosts }}
       kafka_brokers: {{ kafka_brokers }}
       kafka_zookeepers: {{ kafka_zookeepers }}
+      data_service_host: {{ data_service_host }}
+      pnda_cluster: {{ pnda_cluster }}
 
 platform-testing-general-crontab-kafka:
   cron.present:
