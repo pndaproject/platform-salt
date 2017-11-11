@@ -1,0 +1,30 @@
+ {
+  "language" : "scala",
+  "display_name" : "Scala",
+  "argv" : [
+    "java",
+    "-noverify",
+    "-jar",
+    "{{ jupyter_kernels_dir }}/jupyter_scala/launcher.jar",
+    "launch",
+    "-r",
+    "sonatype:releases",
+    "-r",
+    "sonatype:snapshots",
+    "-i",
+    "ammonite",
+    "-I",
+    "ammonite:org.jupyter-scala:ammonite-runtime_2.11.11:0.8.3-1",
+    "-I",
+    "ammonite:org.jupyter-scala:scala-api_2.11.11:0.4.2",
+    "org.jupyter-scala:scala-cli_2.11.11:0.4.2",
+    "--",
+    "--id",
+    "scala",
+    "--name",
+    "Scala",
+    "--quiet",
+    "--connection-file",
+    "{connection_file}"
+  ]
+}
