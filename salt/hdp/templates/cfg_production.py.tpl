@@ -110,8 +110,8 @@ BLUEPRINT = r'''{
             "ams-hbase-env" : {
                 "properties" : {
                     "hbase_log_dir" : "/var/log/pnda/ambari-metrics-collector",
-                    "hbase_master_heapsize": "8192",
-                    "hbase_regionserver_heapsize" : "20480"
+                    "hbase_master_heapsize": "1024",
+                    "hbase_regionserver_heapsize" : "1536"
                 }
             }
         },
@@ -140,11 +140,14 @@ BLUEPRINT = r'''{
             "yarn-site" : {
                 "properties" : {
                     "yarn.nodemanager.log-dirs" : "/var/log/pnda/hadoop-yarn/container",
-                    "yarn.nodemanager.resource.cpu-vcores" : "7",
-                    "yarn.nodemanager.resource.memory-mb" : "14336",
+                    "yarn.nodemanager.resource.cpu-vcores" : "48",
+                    "yarn.nodemanager.resource.memory-mb" : "78848",
+                    "yarn.nodemanager.vmem-check-enabled": "false",
                     "yarn.log-aggregation.retain-seconds" : "265000",
                     "yarn.scheduler.minimum-allocation-vcores" : "1",
-                    "yarn.scheduler.maximum-allocation-vcores" : "7",
+                    "yarn.scheduler.maximum-allocation-vcores" : "48",
+                    "yarn.scheduler.minimum-allocation-mb" : "1024",
+                    "yarn.scheduler.maximum-allocation-mb": "78848",
                     "hadoop.registry.rm.enabled" : "false",
                     "hadoop.registry.zk.quorum" : "%(cluster_name)s-hadoop-mgr-1:2181,%(cluster_name)s-hadoop-mgr-2:2181,%(cluster_name)s-hadoop-mgr-4:2181",
                     "yarn.log.server.url" : "http://%(cluster_name)s-hadoop-mgr-4:19888/jobhistory/logs",
