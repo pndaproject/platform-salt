@@ -111,6 +111,8 @@ java:
 cloudera:
   parcel_repo: "http://archive.cloudera.com/cdh5/parcels/5.12.1/"
   parcel_version: "5.12.1-1.cdh5.12.1.p0.3"
+
+hadoop_manager:
   cmdb:
     user: scm
     password: scm

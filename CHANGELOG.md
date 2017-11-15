@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
 - PNDA-3380: Move opentsdb log to /var/log/pnda
 - PNDA-3441: Cleanup warnings from create_notebook_dir.sh script
+- PNDA-3451: Use existing MySQL for the Ambari database
 
 ### Fixed
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
