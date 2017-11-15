@@ -10,6 +10,7 @@ from subprocess import Popen
 def reboot():
     """Issue a system reboot command (after a minute) , and retrun control to salt master """
     if not required():
+        __salt__['cmd.run']("service salt-minion restart")
         return "Kernel reboot not required"
     cmd_str = 'shutdown -r +1 "Server is going down for kernel upgrade"'
     Popen([cmd_str], shell=True, stdin=None,
@@ -20,11 +21,6 @@ def reboot():
 def required():
     """ returns system needs reboot required or not """
     kernel = __salt__['grains.item']('os')  # pylint: disable=E0602,E0603
-
-    # Disable rebooting for HDP clusters until that works reliably
-    hadoop_distro = __salt__['pillar.get']('hadoop.distro')  # pylint: disable=E0602,E0603
-    if hadoop_distro == 'HDP':
-        return False
 
     if kernel['os'] == "CentOS" or kernel['os'] == "RedHat":
         try:
