@@ -155,11 +155,11 @@ MAPRED_CFG = {
 
 SWIFT_CONFIG = """\r\n<property><name>fs.swift.impl</name><value>org.apache.hadoop.fs.swift.snative.SwiftNativeFileSystem</value></property>
                   \r\n<property><name>fs.swift.service.pnda.auth.url</name><value>{{ keystone_auth_url }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region|e }}</value></property>
                   \r\n<property><name>fs.swift.service.pnda.public</name><value>true</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password }}</value></property>"""
+                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password|e }}</value></property>"""
 
 S3_CONFIG = """\r\n<property><name>fs.s3a.access.key</name><value>{{ aws_key }}</value></property>
                \r\n<property><name>fs.s3a.secret.key</name><value>{{ aws_secret_key }}</value></property>"""

@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3238: Add jupyter extensions to the kenel virtual environment.
 - PNDA-3350: Fix dm.pem permission post deployment highstate.
 - PNDA-3432: Jupyter not launching after reboot on RHEL.
+- PNDA-3013: Fix issue on Keystone passwords with illegal XML characters (such as &) cause Hadoop setup to fail.
 
 ## [2.0.0] 2017-05-23
 ### Added
