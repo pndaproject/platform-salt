@@ -8,7 +8,7 @@
 include:
   - gnuplot
   - java
-    
+
 opentsdb-server:
   pkg.installed:
     - sources:
@@ -41,13 +41,6 @@ opentsdb-copy_defaults:
       heap_size: {{ flavor_cfg.opentsdb_heapsize }}
     - template: jinja
 {% elif grains['os'] in ('RedHat', 'CentOS') %}
-opentsdb-copy_defaults:
-  file.managed:
-    - name: /etc/default/opentsdb
-    - source: salt://opentsdb/templates/opentsdb.default.tpl
-    - context:
-      heap_size: {{ flavor_cfg.opentsdb_heapsize }}
-    - template: jinja
 opentsdb-copy_defaults:
   file.managed:
     - name: {{ opentsdb_home }}/opentsdb_env.sh
