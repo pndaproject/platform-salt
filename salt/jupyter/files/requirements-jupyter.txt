@@ -6,6 +6,7 @@ html5lib==0.9999999
 ipykernel==4.5.2
 ipython==5.1.0
 ipython-genutils==0.1.0
+ipython-sql==0.3.8
 Jinja2==2.8
 jsonschema==2.5.1
 jupyter==1.0.0
@@ -27,6 +28,7 @@ pyzmq==16.0.2
 qtconsole==4.2.1
 simplegeneric==0.8.1
 six==1.10.0
+sql-magic==0.0.3
 terminado==0.6
 testpath==0.3
 tornado==4.4.2
