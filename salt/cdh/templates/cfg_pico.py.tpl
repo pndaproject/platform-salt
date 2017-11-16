@@ -160,7 +160,7 @@ MAPRED_CFG = {
             "config":
                 {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
-                    'yarn_nodemanager_local_dirs': '/var/yarn/nm',
+                    'yarn_nodemanager_local_dirs': '/data0/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'yarn_nodemanager_resource_cpu_vcores': '8',
                     'yarn_nodemanager_resource_memory_mb': '4096',

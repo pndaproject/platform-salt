@@ -139,6 +139,7 @@ BLUEPRINT = r'''{
             "yarn-site" : {
                 "properties" : {
                     "yarn.nodemanager.log-dirs" : "/var/log/pnda/hadoop-yarn/container",
+                    "yarn.nodemanager.local-dirs" : "/data0/yarn/nm",
                     "yarn.nodemanager.resource.cpu-vcores" : "7",
                     "yarn.nodemanager.resource.memory-mb" : "14336",
                     "yarn.log-aggregation.retain-seconds" : "265000",
