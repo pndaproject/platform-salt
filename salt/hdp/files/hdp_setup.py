@@ -243,13 +243,17 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     disk_alert_def.pop('href', None)
     requests.put(disk_alert_uri, json.dumps(disk_alert_def), auth=auth, headers=headers)
 
-    ### Disable Ambari metrics restart alert ###
-    metric_restart_alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=ams_metrics_collector_autostart' %
-                                           (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
-    metric_restart_alert_def = requests.get(metric_restart_alert_uri, auth=auth, headers=headers).json()
-    metric_restart_alert_def['AlertDefinition']['enabled'] = False
-    metric_restart_alert_def.pop('href', None)
-    requests.put(metric_restart_alert_uri, json.dumps(metric_restart_alert_def), auth=auth, headers=headers)
+    ### Disable some alerts - these cause problems by often showing up on newly provisioned clusters, when everything is actually OK ###
+    ###                       an operator could consider re-enabling these after the platform is stable                              ###
+    def disable_alert(alert_name):
+        alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=%s' %
+                                            (ambari_api, cluster_name, alert_name), auth=auth, headers=headers).json()['items'][0]['href']
+        alert_def = requests.get(alert_uri, auth=auth, headers=headers).json()
+        alert_def['AlertDefinition']['enabled'] = False
+        alert_def.pop('href', None)
+        requests.put(alert_uri, json.dumps(alert_def), auth=auth, headers=headers)
+    disable_alert('ams_metrics_collector_autostart')
+    disable_alert('ambari_server_stale_alerts')
 
     ### Create Ambari views ###
     logging.info("Creating Ambari HDFS files view")
