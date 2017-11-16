@@ -1,3 +1,5 @@
+{% set hue_server = salt['pnda.get_hosts_by_role']('HUE', 'HUE_SERVER')[0] %}
+
 cdh-hue_script_copy:
   file.managed:
     - name: /tmp/hue-user-setup.sh
@@ -6,7 +8,5 @@ cdh-hue_script_copy:
     - template: jinja
 
 cdh-hue_script_run:
-  cmd.script:
-    - name: hue-user-setup
-    - source: /tmp/hue-user-setup.sh
-    - cwd: /
+  cmd.run:
+    - name: if [ "`hostname -s`" = "{{ hue_server }}" ]; then /tmp/hue-user-setup.sh; fi
