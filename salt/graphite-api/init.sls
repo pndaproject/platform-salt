@@ -41,7 +41,7 @@ graphite-api-carbon-enable-and-start:
 
 graphite-api-install-graphite:
   pkg.installed:
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
     - name: graphite-api
 {% elif grains['os'] == 'Ubuntu' %}
     - sources:
@@ -56,7 +56,7 @@ graphite-api-configure-default:
 graphite-api-configure:
   file.managed:
     - name: /etc/graphite-api.yaml
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
     - source: salt://graphite-api/files/graphite-api.yaml.redhat
 {% elif grains['os'] == 'Ubuntu' %}
     - source: salt://graphite-api/files/graphite-api.yaml.debian

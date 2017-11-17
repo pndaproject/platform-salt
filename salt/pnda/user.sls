@@ -3,7 +3,13 @@
 {% set pnda_group = pillar['pnda']['group'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+pnda-install_selinux:
+  pkg.installed:
+    - pkgs:
+      - policycoreutils-python
+      - selinux-policy-targeted
+
 permissive:
   selinux.mode: []
   file.replace:

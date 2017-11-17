@@ -88,7 +88,7 @@ ambari-server-jdbc-dl:
     - source: {{ mirror_location }}/{{ jdbc_package }}
     - source_hash: {{ mirror_location }}/{{ jdbc_package }}.sha512.txt
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-server-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable ambari-server

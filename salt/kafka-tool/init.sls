@@ -66,7 +66,7 @@ kafka-tool-cfg_create_link:
     - target: {{ release_directory }}/kafka-tool/kafkatcfg
 
 #by default kafkat is installed in /usr/local/bin, this is not in $PATH for RHEL. Create sym link in /usr/bin
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 kafka-tool-bin_create_link:
   file.symlink:
     - name: /usr/bin/kafkat

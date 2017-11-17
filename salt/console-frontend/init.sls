@@ -3,7 +3,7 @@
 {% set console_frontend_package = 'console-frontend-' + console_frontend_version + '.tar.gz' %}
 {% if grains['os'] == 'Ubuntu' %}
 {% set nginx_config_location = '/etc/nginx/sites-enabled' %}
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 {% set nginx_config_location = '/etc/nginx/conf.d' %}
 {% endif %}
 {% set install_dir = pillar['pnda']['homedir'] %}
@@ -56,7 +56,7 @@ console-frontend-dl-and-extract:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - group: www-data
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - group: nginx
 {% endif %}
     - archive_format: tar
@@ -128,7 +128,7 @@ console-frontend-remove_nginx_default_config:
   file.absent:
     - name: {{nginx_config_location}}/default
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 console-frontend-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable nginx
