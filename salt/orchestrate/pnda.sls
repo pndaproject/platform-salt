@@ -238,22 +238,6 @@ orchestrate-pnda-install_remove_new_node_markers:
     - timeout: 120
     - queue: True
 
-orchestrate-saltstack_beacon_config:
-  salt.state:
-    - tgt: '*'
-    - tgt_type: compound
-    - sls: reboot.beacon
-    - timeout: 120
-    - queue: True
-
-orchestrate-pnda_hadoop_service_stop:
-  salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
-    - tgt_type: compound
-    - sls: reboot.hadoop_service_stop
-    - timeout: 120
-    - queue: True
-
 orchestrate-pnda_kernel_reboot:
   salt.state:
     - tgt: '*'
