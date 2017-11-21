@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-1788: Cloudera version can be set in the salt pillar
 - PNDA-3314: Added new flavor for larger PNDAs called "production"
 - PNDA-3484: Add CentOS support
+- PNDA-1899: Scala Spark Jupyter Integration
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
