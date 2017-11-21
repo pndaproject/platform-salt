@@ -17,6 +17,17 @@
 {% set pnda_home = pillar['pnda']['homedir'] %}
 {% set app_packages_dir = pnda_home + "/apps-packages" %}
 
+{%- set data_volume_list = [] %}
+{%- for n in range(flavor_cfg.data_volumes_count) -%}
+  {%- if flavor_cfg.data_volumes_count > 10 and n < 10 -%}
+    {%- set prefix = '/data0' -%}
+  {%- else -%}
+    {%- set prefix = '/data' -%}
+  {%- endif -%}
+  {%- do data_volume_list.append(prefix ~ n ~ '/dn') %}
+{%- endfor -%}
+{%- set data_volumes = data_volume_list|join(",") %}
+
 include:
   - python-pip
 
@@ -62,6 +73,7 @@ cdh-copy_cm_config:
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
       app_packages_dir: {{ app_packages_dir }}
+      data_volumes: {{ data_volumes }}
 
 # Create a python configured scripts to call the cm_setup.setup_hadoop function with
 # the needed aguments (nodes to install cloudera to)

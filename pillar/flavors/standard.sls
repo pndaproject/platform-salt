@@ -14,10 +14,12 @@
             "kafka_heapsize": 4294967296
         },
         "cdh.setup_hadoop": {
-            "template_file": "cfg_standard.py"
+            "template_file": "cfg_standard.py",
+            "data_volumes_count": 1
         },
         "hdp.setup_hadoop": {
-            "template_file": "cfg_standard.py"
+            "template_file": "cfg_standard.py",
+            "data_volumes_count": 1
         },
         "curator": {
             "days_to_keep": 6

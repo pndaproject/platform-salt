@@ -86,7 +86,7 @@ ZK_CFG = {"service": "ZOOKEEPER",
                                    'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}',
                                    'zookeeper_server_java_heapsize': "4294967296"
                                    }}]}
-                                   
+
 
 
 
@@ -259,14 +259,14 @@ HDFS_CFG = {
             },
             {
                 "type": "DATANODE",
-                "config": {'dfs_data_dir_list': '/data0/dn', 
+                "config": {'dfs_data_dir_list': '{{ data_volumes }}',
                            'datanode_log_dir': '/var/log/pnda/hadoop/dn',
                            "datanode_java_heapsize": "2147483648"
                           }
             },
             {
                 "type": "JOURNALNODE",
-                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data', 
+                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data',
                            'journalnode_log_dir': '/var/log/pnda/hadoop/jn',
                            'journalNode_java_heapsize':"2147483648"}
             },
@@ -410,7 +410,7 @@ HIVE_CFG = {
             },
             {
                 "type": "HIVESERVER2",
-                "config": {'hive_log_dir': '/var/log/pnda/hive', 
+                "config": {'hive_log_dir': '/var/log/pnda/hive',
                            'hiveserver2_java_heapsize': '17179869184'
                           }
             },
