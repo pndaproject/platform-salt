@@ -1,3 +1,5 @@
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+
 {% set es_p = pillar['elasticsearch'] %}
 {% do es_p.update({'directory': es_p.directory + '/elasticsearch-' + es_p.version}) %}
 
@@ -19,7 +21,7 @@ elasticsearch-elasticsearch:
 
 elasticsearch-create_elasticsearch_datadir:
   file.directory:
-    - name: {{ es_p.datadir }}
+    - name: {{ flavor_cfg.datadir }}
     - user: elasticsearch
     - group: elasticsearch
     - dir_mode: 755
@@ -82,7 +84,7 @@ elasticsearch-dl_and_extract_elasticsearch:
     - context:
       installdir: {{ es_p.directory }}
       logdir: {{ es_p.logdir }}
-      datadir: {{ es_p.datadir }}
+      datadir: {{ flavor_cfg.datadir }}
       confdir: {{ es_p.confdir }}
       workdir: {{ es_p.workdir }}
       defaultconfig: {{ es_p.confdir }}/elasticsearch.yml

@@ -10,6 +10,7 @@
             "max_mappers": 50
         },
         "kafka.server": {
+            "data_dirs": ["/var/kafka-logs"],
             "kafka_log_retention_bytes": 1073741824,
             "kafka_heapsize": 4294967296
         },
@@ -25,10 +26,17 @@
             "days_to_keep": 6
         },
         "zookeeper": {
-            "zookeeper_heapsize": 2147483648
+            "zookeeper_heapsize": 2147483648,
+            "zookeeper_data_dir": "/var/lib/zookeeper"
         },
         "opentsdb": {
             "opentsdb_heapsize": 4294967296
+        },
+        "mysql": {
+            "data_dir": "/var/lib/mysql"
+        },
+        "elasticsearch": {
+            "datadir": "/var/lib/elasticsearch"
         }
     }
 }

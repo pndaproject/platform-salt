@@ -37,15 +37,15 @@ CMS_CFG = {
           "config": {'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-alertpublisher',
                      "alert_heapsize": "1073741824"}},
          {"type": "EVENTSERVER",
-          "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
+          "config": {'eventserver_index_dir': '/mnt/var/lib/cloudera-scm-eventserver',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver',
                      "event_server_heapsize": "2147483648"}},
          {"type": "HOSTMONITOR",
-          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
+          "config": {'firehose_storage_dir': '/mnt/var/lib/cloudera-host-monitor',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose',
                      "firehose_heapsize":"2147483648"}},
          {"type": "SERVICEMONITOR",
-          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
+          "config": {'firehose_storage_dir': '/mnt/var/lib/cloudera-service-monitor',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose',
                      "firehose_heapsize": "2147483648"}}]
 }
@@ -58,7 +58,7 @@ OOZIE_CFG = {"service": "OOZIE",
                         "type": "OOZIE_SERVER",
                         "target": "MGR04"}],
              "role_cfg": [{"type": "OOZIE_SERVER",
-                           "config": {'oozie_data_dir': '/data0/var/lib/oozie/data',
+                           "config": {'oozie_data_dir': '/mnt/var/lib/oozie/data',
                                       'oozie_log_dir': '/var/log/pnda/oozie',
                                       'oozie_database_type': 'mysql',
                                       'oozie_database_host': '{{ mysql_host }}',
@@ -80,8 +80,8 @@ ZK_CFG = {"service": "ZOOKEEPER",
                      "type": "SERVER",
                      "target": "MGR04"}],
           "role_cfg": [{"type": "SERVER",
-                        "config": {'dataDir': '/data0/var/lib/zookeeper',
-                                   'dataLogDir': '/data0/var/lib/zookeeper',
+                        "config": {'dataDir': '/mnt/var/lib/zookeeper',
+                                   'dataLogDir': '/mnt/var/lib/zookeeper',
                                    'zk_server_log_dir': '/var/log/pnda/zookeeper',
                                    'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}',
                                    'zookeeper_server_java_heapsize': "4294967296"
@@ -140,7 +140,7 @@ MAPRED_CFG = {
             "config":
                 {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
-                    'yarn_nodemanager_local_dirs': '/data0/yarn/nm',
+                    'yarn_nodemanager_local_dirs': '/mnt/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'node_manager_log_dir': '/var/log/pnda/hadoop-yarn',
                     'yarn_nodemanager_resource_cpu_vcores': '48',
@@ -193,7 +193,7 @@ HDFS_CFG = {
         {
             'dfs_replication': 2,
             'core_site_safety_valve':
-                ('<property> <name>hadoop.tmp.dir</name><value>/data0/tmp/hadoop-${user.name}</value></property>\r\n\r\n'
+                ('<property> <name>hadoop.tmp.dir</name><value>/mnt/tmp/hadoop-${user.name}</value></property>\r\n\r\n'
                  '<property> \r\n<name>hadoop.proxyuser.yarn.hosts</name>\r\n<value>*</value>\r\n</property>\r\n\r\n'
                  '<property>\r\n<name>hadoop.proxyuser.yarn.groups</name>\r\n<value>*</value>\r\n</property>') + SWIFT_CONFIG + S3_CONFIG,
             'dfs_block_local_path_access_user': 'impala'
@@ -250,7 +250,7 @@ HDFS_CFG = {
         [
             {
                 "type": "NAMENODE",
-                "config": {'dfs_name_dir_list': '/data0/nn',
+                "config": {'dfs_name_dir_list': '/mnt/nn',
                            'dfs_namenode_handler_count': 60,
                            'dfs_namenode_service_handler_count': 60,
                            'namenode_log_dir': '/var/log/pnda/hadoop/nn',
@@ -266,13 +266,13 @@ HDFS_CFG = {
             },
             {
                 "type": "JOURNALNODE",
-                "config": {'dfs_journalnode_edits_dir':'/data0/jn/data',
+                "config": {'dfs_journalnode_edits_dir':'/mnt/jn/data',
                            'journalnode_log_dir': '/var/log/pnda/hadoop/jn',
                            'journalNode_java_heapsize':"2147483648"}
             },
             {
                 "type": "SECONDARYNAMENODE",
-                "config": {'fs_checkpoint_dir_list': '/data0/snn',
+                "config": {'fs_checkpoint_dir_list': '/mnt/snn',
                            'secondarynamenode_log_dir': '/var/log/pnda/hadoop/snn',
                            'secondary_namenode_java_heapsize': 17179869184}
             },
