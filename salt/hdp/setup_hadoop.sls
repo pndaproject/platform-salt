@@ -15,6 +15,17 @@
 
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
+{%- set data_volume_list = [] %}
+{%- for n in range(flavor_cfg.data_volumes_count) -%}
+  {%- if flavor_cfg.data_volumes_count > 10 and n < 10 -%}
+    {%- set prefix = '/data0' -%}
+  {%- else -%}
+    {%- set prefix = '/data' -%}
+  {%- endif -%}
+  {%- do data_volume_list.append(prefix ~ n ~ '/dn') %}
+{%- endfor -%}
+{%- set data_volumes = data_volume_list|join(",") %}
+
 include:
   - python-pip
 
@@ -60,6 +71,7 @@ hdp-copy_flavor_config:
       mysql_host: {{ mysql_host }}
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
+      data_volumes: {{ data_volumes }}
 
 hdp-execute_hdp_installation_script:
   cmd.run:

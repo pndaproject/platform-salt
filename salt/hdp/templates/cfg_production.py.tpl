@@ -310,7 +310,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "dfs.replication" : "3",
                     "dfs.replication.max" : "50",
-                    "dfs.datanode.data.dir" : "/data0/dn",
+                    "dfs.datanode.data.dir" : "{{ data_volumes }}",
                     "dfs.client.failover.proxy.provider.HDFS-HA" : "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
                     "dfs.ha.automatic-failover.enabled" : "true",
                     "dfs.ha.fencing.methods" : "shell(/bin/true)",

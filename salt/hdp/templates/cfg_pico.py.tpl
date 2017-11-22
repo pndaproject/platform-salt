@@ -276,7 +276,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "dfs.replication" : "3",
                     "dfs.replication.max" : "50",
-                    "dfs.datanode.data.dir" : "/data0/dn"
+                    "dfs.datanode.data.dir" : "{{ data_volumes }}"
                 }
             }
         },

@@ -282,7 +282,7 @@ HDFS_CFG = {
             },
             {
                 "type": "DATANODE",
-                "config": {'dfs_data_dir_list': '/data0/dn', 'datanode_log_dir': '/var/log/pnda/hadoop/dn',
+                "config": {'dfs_data_dir_list': '{{ data_volumes }}', 'datanode_log_dir': '/var/log/pnda/hadoop/dn',
                            'datanode_data_directories_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                            'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
