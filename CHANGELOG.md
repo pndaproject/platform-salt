@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [Unreleased]
 ### Added
 - PNDA-3330: Add default application user configuration to the deployment manager.
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2486: Move yarn local directories to /data0 to separate the data from the operating system partition.
 
 ### Fixed
+- PNDA-3499: Cleanup CHANGELOG with missing release info.
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
 - PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
