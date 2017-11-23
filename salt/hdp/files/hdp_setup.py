@@ -55,7 +55,7 @@ def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
                     logging.debug(task_info)
                     logging.warn('Failed ambari task detected, fetching details')
                     if task_id not in logged_task_id:
-                        logging.info('Task %s is still in %s status. Details were only reported during initial occurence.' % task_id, status)
+                        logging.info('Task %s is still in %s status. Details were only reported during initial occurrence.' % task_id, status)
                     else:
                         task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id), auth=auth, headers=headers)
                         logging.info(task_status_response.json())
