@@ -2,6 +2,7 @@
 {% set pc = p.get('config', {}) %}
 {% set g  = salt['grains.get']('kafka', {}) %}
 {% set gc = g.get('config', {}) %}
+{% set flavor_cfg = pillar['pnda_flavor']['states']['kafka.server'] %}
 
 # these are global - hence pillar-only
 {%- set prefix            = p.get('prefix', '/opt/pnda/kafka') %}
@@ -21,7 +22,7 @@
   'broker_id': gc.get('broker_id', pc.get('broker_id', 0)),
   'port': gc.get('port', pc.get('port', 9092)),
   'zookeeper_connect': gc.get('zookeeper_connect', pc.get('zookeeper_connect', 'localhost:2181')),
-  'log_dirs': gc.get('log_dirs', pc.get('log_dirs', ['/tmp/kafka-logs'])),
+  'log_dirs': flavor_cfg.data_dirs,
   'num_partitions': gc.get('num_partitions', pc.get('num_partitions', 2)),
   'log_retention_bytes': gc.get('log_retention_bytes', pc.get('log_retention_bytes', 16106127360)),
   'host_name': gc.get('host_name', pc.host_name),

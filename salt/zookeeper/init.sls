@@ -10,7 +10,6 @@
 {% set zookeeper_url = mirror_location + zookeeper_package %}
 
 {% set install_dir = pillar['pnda']['homedir'] %}
-{% set zookeeper_data_dir = '/var/lib/zookeeper' %}
 
 zookeeper-user-group:
   group.present:
@@ -23,7 +22,7 @@ zookeeper-user-group:
 
 zookeeper-data-dir:
   file.directory:
-    - name: {{ zookeeper_data_dir }}
+    - name: {{ flavor_cfg.zookeeper_data_dir }}
     - user: zookeeper
     - group: zookeeper
     - mode: 755
@@ -49,7 +48,7 @@ zookeeper-dl-and-extract:
 
 zookeeper-myid:
   file.managed:
-    - name: {{ zookeeper_data_dir }}/myid
+    - name: {{ flavor_cfg.zookeeper_data_dir }}/myid
     - source: salt://zookeeper/files/templates/zookeeper-myid.tpl
     - template: jinja
     - context:
@@ -77,7 +76,7 @@ zookeeper-configuration:
           ip: {{ node.ip }}
           fqdn: {{ node.fqdn }}
       {%- endfor %}
-      data_dir: {{ zookeeper_data_dir }}
+      data_dir: {{ flavor_cfg.zookeeper_data_dir }}
     - mode: 644
 
 zookeeper-environment:

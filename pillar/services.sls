@@ -9,7 +9,6 @@ elasticsearch:
   version: 1.5.0
   directory: /opt/pnda
   logdir: /var/log/elasticsearch
-  datadir: /var/lib/elasticsearch
   confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
@@ -37,9 +36,6 @@ kafka:
   internal_port: 9092
   replication_port: 9093
   ingest_port: 9094
-  config:
-    log_dirs:
-      - '/var/kafka-logs'
 
 kafkatool:
   release_version: v0.2.0

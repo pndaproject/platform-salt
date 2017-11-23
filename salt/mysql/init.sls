@@ -1,4 +1,5 @@
 {% set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') %}
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 include:
   - .connector
@@ -19,6 +20,7 @@ mysql-setup-mysql:
         'mysql-server/start_on_boot': {'type': 'boolean', 'value': 'true'}
     - require:
       - pkg: mysql-install-debconf-utils
+
 {% endif %}
 
 mysql-install-python-library:
@@ -51,6 +53,31 @@ mysql-update-mysql-configuration2:
     - repl: skip-name-resolve
     - require:
       - pkg: mysql-install-mysql-server
+
+mysql-update-mysql-configuration3:
+  file.replace:
+    - name: {{ pillar['mysql-server']['configuration_file'] }}
+    - pattern: datadir\s*=.*$
+    - repl: datadir      = {{ flavor_cfg.data_dir }}
+    - require:
+      - pkg: mysql-install-mysql-server
+
+{% if grains['os'] == 'Ubuntu' %}
+{% if flavor_cfg.data_dir != '/var/lib/mysql' %}
+mysql-copy-data:
+  cmd.run:
+    - name: service mysql stop && cp -R -p /var/lib/mysql {{ flavor_cfg.data_dir }}
+
+mysql-app-armor-rules:
+  file.append:
+    - text: 'alias /var/lib/mysql/ -> {{ flavor_cfg.data_dir }},'
+    - name: /etc/apparmor.d/tunables/alias
+
+mysql-app-armor-reload:
+  cmd.run:
+    - name: service apparmor reload
+{% endif %}
+{% endif %}
 
 {% if grains['os'] in ('RedHat', 'CentOS') %}
 mysql-systemctl_reload:

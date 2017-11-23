@@ -140,7 +140,7 @@ BLUEPRINT = r'''{
             "yarn-site" : {
                 "properties" : {
                     "yarn.nodemanager.log-dirs" : "/var/log/pnda/hadoop-yarn/container",
-                    "yarn.nodemanager.local-dirs" : "/data0/yarn/nm",
+                    "yarn.nodemanager.local-dirs" : "/mnt/hadoop/yarn/nm",
                     "yarn.nodemanager.resource.cpu-vcores" : "48",
                     "yarn.nodemanager.resource.memory-mb" : "78848",
                     "yarn.nodemanager.vmem-check-enabled": "false",
@@ -169,7 +169,8 @@ BLUEPRINT = r'''{
                     "yarn.resourcemanager.webapp.https.address" : "%(cluster_name)s-hadoop-mgr-1:8090",
                     "yarn.timeline-service.address" : "%(cluster_name)s-hadoop-mgr-3:10200",
                     "yarn.timeline-service.webapp.address" : "%(cluster_name)s-hadoop-mgr-3:8188",
-                    "yarn.timeline-service.webapp.https.address" : "%(cluster_name)s-hadoop-mgr-3:8190"
+                    "yarn.timeline-service.webapp.https.address" : "%(cluster_name)s-hadoop-mgr-3:8190",
+                    "yarn.timeline-service.leveldb-timeline-store.path" : "/mnt/hadoop/yarn/timeline"
                 }
             }
         },
@@ -205,7 +206,7 @@ BLUEPRINT = r'''{
         {
             "zoo.cfg" : {
                 "properties" : {
-                    "dataDir" : "/data0/zookeeper"
+                    "dataDir" : "/mnt/hadoop/zookeeper"
                 }
             }
         },
@@ -213,7 +214,7 @@ BLUEPRINT = r'''{
             "oozie-env" : {
                     "properties" : {
                     "oozie_log_dir" : "/var/log/pnda/oozie",
-                    "oozie_data_dir" : "/data0/var/lib/oozie/data",
+                    "oozie_data_dir" : "/mnt/hadoop/oozie/data",
                     "oozie_user" : "oozie",
                     "oozie_admin_users" : "{oozie_user}, oozie-admin",
                     "oozie_database" : "Existing MySQL / MariaDB Database",
@@ -279,6 +280,7 @@ BLUEPRINT = r'''{
             "hbase-site" : {
                 "properties" : {
                     "zookeeper.session.timeout" : "300000",
+                    "hbase.tmp.dir" : "/mnt/hadoop/hbase/tmp",
                     "hbase.rootdir" : "hdfs://HDFS-HA:8020/apps/hbase/data"
                 }
             }
@@ -315,6 +317,7 @@ BLUEPRINT = r'''{
                     "dfs.ha.automatic-failover.enabled" : "true",
                     "dfs.ha.fencing.methods" : "shell(/bin/true)",
                     "dfs.ha.namenodes.HDFS-HA" : "nn1,nn2",
+                    "dfs.journalnode.edits.dir" : "/mnt/hadoop/hdfs/jn",
                     "dfs.namenode.http-address" : "%(cluster_name)s-hadoop-mgr-1:50070",
                     "dfs.namenode.http-address.HDFS-HA.nn1" : "%(cluster_name)s-hadoop-mgr-1:50070",
                     "dfs.namenode.http-address.HDFS-HA.nn2" : "%(cluster_name)s-hadoop-mgr-2:50070",
@@ -324,7 +327,9 @@ BLUEPRINT = r'''{
                     "dfs.namenode.rpc-address.HDFS-HA.nn1" : "%(cluster_name)s-hadoop-mgr-1:8020",
                     "dfs.namenode.rpc-address.HDFS-HA.nn2" : "%(cluster_name)s-hadoop-mgr-2:8020",
                     "dfs.namenode.shared.edits.dir" : "qjournal://%(cluster_name)s-hadoop-mgr-1:8485;%(cluster_name)s-hadoop-mgr-2:8485;%(cluster_name)s-hadoop-mgr-4:8485/HDFS-HA",
-                    "dfs.nameservices" : "HDFS-HA"
+                    "dfs.nameservices" : "HDFS-HA",
+                    "dfs.namenode.checkpoint.dir" : "/mnt/hadoop/hdfs/snn",
+                    "dfs.namenode.name.dir" : "/mnt/hadoop/hdfs/nn"
                 }
             }
         },
@@ -357,6 +362,7 @@ BLUEPRINT = r'''{
                     "hadoop.security.auth_to_local" : "DEFAULT",
                     "hadoop.security.authentication" : "simple",
                     "hadoop.security.authorization" : "false",
+                    "hadoop.tmp.dir" : "/mnt/hadoop-tmp/${user.name}",
                     "io.compression.codecs" : "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.SnappyCodec",
                     "io.file.buffer.size" : "131072",
                     "io.serializations" : "org.apache.hadoop.io.serializer.WritableSerialization",
