@@ -31,6 +31,7 @@ def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
     logging.debug('Waiting for %s...', msg)
     progress_percent = 0
     task_count = 0
+    logged_task_id = []
     while progress_percent < 100 or task_count == 0:
         time.sleep(5)
         status_reponse = requests.get('%s%s' % (tracking_uri, '?fields=tasks/Tasks/status,Requests'), auth=auth, headers=headers)
@@ -50,10 +51,14 @@ def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
                 task_id = task_info['id']
                 status = task_info['status']
                 if status == 'FAILED':
+                    logged_task_id.append(task_id)
                     logging.debug(task_info)
                     logging.warn('Failed ambari task detected, fetching details')
-                    task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id), auth=auth, headers=headers)
-                    logging.info(task_status_response.json())
+                    if task_id not in logged_task_id:
+                        logging.info('Task %s is still in %s status. Details were only reported during initial occurence.' % task_id, status)
+                    else:
+                        task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id), auth=auth, headers=headers)
+                        logging.info(task_status_response.json())
     return cmd_status
 
 def stop_all_services(cluster_name, ambari_api, auth, headers):
