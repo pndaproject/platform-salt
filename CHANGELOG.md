@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [3.0.0] 2017-11-24
 ### Added
 - PNDA-3330: Add default application user configuration to the deployment manager.
 - PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
