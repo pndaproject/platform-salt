@@ -55,40 +55,40 @@ jupyterproxy:
   release_version: 1.3.1
 
 gobblin:
-  release_version: develop
+  release_version: RELEASE_0.1.6
 
 console_frontend:
-  release_version: develop
+  release_version: RELEASE_0.2.1
 
 console_backend_data_logger:
-  release_version: develop
+  release_version: 0.4.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: develop
+  release_version: 0.4.0
   bind_port: 3123
 
 console_backend_utils:
-  release_version: develop
+  release_version: 0.4.0
 
 deployment_manager:
-  release_version: develop
+  release_version: RELEASE_0.5.0
 
 package_repository:
-  release_version: develop
+  release_version: 0.3.1
 
 data-service:
-  release_version: develop
+  release_version: RELEASE_0.2.1
 
 hdfs_cleaner:
-  release_version: develop
+  release_version: RELEASE_0.2.1
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: develop
+  release_version: RELEASE_0.4.0
 
 platformlib:
-  release_version: develop
+  release_version: RELEASE_0.1.4
   target_directory: "/opt/pnda"
 
 jmxproxy:
