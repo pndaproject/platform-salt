@@ -36,7 +36,7 @@ console-backend-data-manager-dl-and-extract:
     - source: {{ packages_server }}/{{ backend_app_package }}
     - source_hash: {{ packages_server }}/{{ backend_app_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/console-backend-data-manager-{{ backend_app_version }}
 
 console-backend-symlink_data_manager_dir:
@@ -79,7 +79,7 @@ console-backend-create_data_manager_logger_conf:
 console-backend-install_backend_app_dependencies:
   cmd.run:
     - cwd: {{ app_dir }}
-    - name: npm rebuild
+    - name: npm rebuild > /dev/null
     - require:
       - archive: nodejs-dl_and_extract_node
       - cmd: console-backend-install_utils_dependencies

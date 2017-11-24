@@ -29,7 +29,7 @@ logserver-dl-and-extract:
     - source: {{ logstash_url }}
     - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
 
 logserver-link_release:

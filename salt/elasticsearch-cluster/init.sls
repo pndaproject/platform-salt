@@ -65,7 +65,7 @@ elasticsearch-dl_and_extract_elasticsearch:
     - source: {{ elasticsearch_url }}
     - source_hash: {{ elasticsearch_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{elasticsearch_directory}}/elasticsearch-{{ elasticsearch_version }}
 
 elasticsearch-create_elasticsearch_confdir:
