@@ -94,10 +94,6 @@
     - match: grain
     - package-repository
 
-  'roles:pnda_restart':
-    - match: grain
-    - reboot.install_restart
-
   'roles:elk-es-*':
    - match: grain
    - elasticsearch-cluster
