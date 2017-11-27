@@ -170,17 +170,46 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     else:
         exit_setup('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
-    repo_requests = [('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
-                      '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_core_stack_repo),
-                     ('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
-                      '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
-
-    for repo_request in repo_requests:
-        logging.debug("Registering repo: %s", repo_request[0])
-        repo_response = requests.put(repo_request[0], repo_request[1], auth=auth, headers=headers)
-        if repo_response.status_code != 200:
-            exit_setup(repo_response.text)
-        logging.debug("Registered repo: %s", repo_request[0])
+    repo_definition = {
+        "RepositoryVersions" : {
+            "display_name" : "HDP",
+            "repository_version" : "2.6"
+        },
+        "operating_systems" : [
+            {
+            "OperatingSystems" : {
+                "os_type" : hdp_os_type,
+                "stack_name" : "HDP",
+                "stack_version" : "2.6"
+            },
+            "repositories" : [
+                {
+                "Repositories" : {
+                    "base_url" : hdp_core_stack_repo,
+                    "os_type" : hdp_os_type,
+                    "repo_id" : "HDP-2.6",
+                    "repo_name" : "HDP",
+                    "unique" : False
+                }
+                },
+                {
+                "Repositories" : {
+                    "base_url" : hdp_utils_stack_repo,
+                    "os_type" : hdp_os_type,
+                    "repo_id" : "HDP-UTILS-1.1.0.21",
+                    "repo_name" : "HDP-UTILS",
+                    "unique" : False
+                }
+                }
+            ]
+            }
+        ]
+    }
+    logging.debug("Registering repos: %s", repo_definition)
+    repo_response = requests.post('%s/stacks/HDP/versions/2.6/repository_versions' % ambari_api, json.dumps(repo_definition), auth=auth, headers=headers)
+    if repo_response.status_code != 201:
+        exit_setup(repo_response.text)
+    logging.debug("Registered repos")
 
     ### Create blueprint ###
     logging.info("Loading blueprint")
