@@ -65,7 +65,7 @@ logstash-dl_and_extract_logstash:
     - source: {{ logstash_url }}
     - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{logstash_directory}}/logstash-{{ logstash_version }}
 
 logstash-create_logstash_confdir:

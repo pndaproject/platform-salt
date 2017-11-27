@@ -49,7 +49,7 @@ jupyterhub-proxy-dl-and-extract:
 
 jupyterhub-proxy-rebuild:
   cmd.run:
-    - name: npm rebuild
+    - name: npm rebuild > /dev/null
     - cwd: {{ pnda_home_directory }}/configurable-http-proxy-{{ proxy_version }}
 
 jupyterhub-install-proxy-modules:

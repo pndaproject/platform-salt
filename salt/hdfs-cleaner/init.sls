@@ -33,7 +33,7 @@ hdfs-cleaner-dl-and-extract:
     - source: {{ packages_server }}/{{ app_package }}
     - source_hash: {{ packages_server }}/{{ app_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ app_directory_name }}
 
 hdfs-cleaner-create-venv:

@@ -60,7 +60,7 @@ deployment-manager-dl-and-extract:
     - source: {{ packages_server }}/{{ deployment_manager_package }}
     - source_hash: {{ packages_server }}/{{ deployment_manager_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }}
 
 deployment-manager-create-venv:

@@ -72,7 +72,7 @@ console-frontend-create_directory_link:
 console-frontend-install_app_dependencies:
   cmd.run:
     - cwd: {{ console_dir }}
-    - name: npm rebuild
+    - name: npm rebuild > /dev/null
     - require:
       - archive: nodejs-dl_and_extract_node
 

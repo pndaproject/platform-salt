@@ -40,7 +40,7 @@ zookeeper-dl-and-extract:
     - source: {{ zookeeper_url }}
     - source_hash: {{ zookeeper_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
 
 {% set nodes = [] %}

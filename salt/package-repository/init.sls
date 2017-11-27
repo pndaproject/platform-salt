@@ -23,7 +23,7 @@ package-repository-dl-and-extract:
     - source: {{ packages_server }}/{{ package_repository_package }}
     - source_hash: {{ packages_server }}/{{ package_repository_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ package_repository_directory_name }}
 
 package-repository-create-venv:
