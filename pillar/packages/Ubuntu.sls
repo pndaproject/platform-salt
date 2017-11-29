@@ -3,10 +3,10 @@ acl:
   version: ""
 ambari-agent:
   package-name: ambari-agent
-  version: "2.5.1.0-159"
+  version: "2.6.0.0-267"
 ambari-server:
   package-name: ambari-server
-  version: "2.5.1.0-159"
+  version: "2.6.0.0-267"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
   version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
