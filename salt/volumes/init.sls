@@ -40,12 +40,25 @@
     {% set device = parts[0] %}
     {% set mountpoint = parts[1] %}
     {% set fs_type = parts[2] %}
+    
     {% if fs_type == 'xfs' %}
       {% set mkfs_opts = '-f' %}
     {% else %}
       {% set mkfs_opts = '' %}
     {% endif %}
 
+    {% if fs_type == 'tmpfs' %}
+    
+    {% set mount_options = parts[3] %}
+    volumes-mount-{{ mountpoint }}:
+      mount.mounted:
+        - name: {{ mountpoint }}
+        - device: {{ device }}
+        - fstype: {{ fs_type }}
+        - opts: {{ mount_options }}
+        - mkmnt: True
+
+    {% else %}
     volumes-wait-{{ device }}:
       cmd.run:
         - name: 'while [ ! -b {{ device }} ]; do   echo waiting for device {{ device }}; sleep 2; done'
@@ -62,5 +75,8 @@
         - device: {{ device }}
         - fstype: {{ fs_type }}
         - mkmnt: True
+
+    {% endif %}
+  
   {% endfor %}
 {% endif %}
