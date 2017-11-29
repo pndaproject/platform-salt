@@ -128,6 +128,22 @@ BLUEPRINT = r'''{
             }
         },
         {
+            "spark2-env" : {
+                "properties_attributes" : { },
+                "properties" : {
+                    "spark_user" : "spark",
+                    "spark_group" : "spark",
+                    "spark_pid_dir" : "/var/run/spark2",
+                    "spark_thrift_cmd_opts" : "",
+                    "spark_daemon_memory" : "1024",
+                    "spark_log_dir" : "/var/log/pnda/spark2",
+{% raw %}
+                    "content" : "\n#!/usr/bin/env bash\n\n# This file is sourced when running various Spark programs.\n# Copy it as spark-env.sh and edit that to configure Spark for your site.\n\n# Options read in YARN client mode\n#SPARK_EXECUTOR_INSTANCES=\"2\" #Number of workers to start (Default: 2)\n#SPARK_EXECUTOR_CORES=\"1\" #Number of cores for the workers (Default: 1).\n#SPARK_EXECUTOR_MEMORY=\"1G\" #Memory per Worker (e.g. 1000M, 2G) (Default: 1G)\n#SPARK_DRIVER_MEMORY=\"512M\" #Memory for Master (e.g. 1000M, 2G) (Default: 512 Mb)\n#SPARK_YARN_APP_NAME=\"spark\" #The name of your application (Default: Spark)\n#SPARK_YARN_QUEUE=\"default\" #The hadoop queue to use for allocation requests (Default: default)\n#SPARK_YARN_DIST_FILES=\"\" #Comma separated list of files to be distributed with the job.\n#SPARK_YARN_DIST_ARCHIVES=\"\" #Comma separated list of archives to be distributed with the job.\n\n# Generic options for the daemons used in the standalone deploy mode\n\n# Alternate conf dir. (Default: ${SPARK_HOME}/conf)\nexport SPARK_CONF_DIR=${SPARK_CONF_DIR:-{{spark_home}}/conf}\n\n# Where log files are stored.(Default:${SPARK_HOME}/logs)\n#export SPARK_LOG_DIR=${SPARK_HOME:-{{spark_home}}}/logs\nexport SPARK_LOG_DIR={{spark_log_dir}}\n\n# Where the pid file is stored. (Default: /tmp)\nexport SPARK_PID_DIR={{spark_pid_dir}}\n\n#Memory for Master, Worker and history server (default: 1024MB)\nexport SPARK_DAEMON_MEMORY={{spark_daemon_memory}}m\n\n# A string representing this instance of spark.(Default: $USER)\nSPARK_IDENT_STRING=$USER\n\n# The scheduling priority for daemons. (Default: 0)\nSPARK_NICENESS=0\n\nexport HADOOP_HOME=${HADOOP_HOME:-{{hadoop_home}}}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-{{hadoop_conf_dir}}}\n\n# The java implementation to use.\nexport JAVA_HOME={{java_home}}"
+{% endraw %}
+                }
+            }
+        },
+        {
             "yarn-env" : {
                 "properties" : {
                     "yarn_log_dir_prefix" : "/var/log/pnda/hadoop-yarn",
@@ -378,6 +394,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "SPARK_CLIENT"
+                },
+                {
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1"
@@ -408,6 +427,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "SPARK_CLIENT"
+                },
+                {
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1"
@@ -455,10 +477,16 @@ BLUEPRINT = r'''{
                 "name" : "SPARK_JOBHISTORYSERVER"
                 },
                 {
+                "name" : "SPARK2_JOBHISTORYSERVER"
+                },
+                {
                 "name" : "JOURNALNODE"
                 },
                 {
                 "name" : "SPARK_CLIENT"
+                },
+                {
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1"
@@ -521,6 +549,9 @@ BLUEPRINT = r'''{
                 "name" : "SPARK_CLIENT"
                 },
                 {
+                "name" : "SPARK2_CLIENT"
+                },
+                {
                 "name" : "SLIDER"
                 },
                 {
@@ -561,6 +592,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "SPARK_CLIENT"
+                },
+                {
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1"
