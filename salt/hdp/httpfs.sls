@@ -11,7 +11,6 @@ hdp-httpfs_pkg:
   pkg.installed:
     - name: hadoop-httpfs
     - ignore_epoch: True
-    - skip_verify: True
 
 hdp-httpfs_create_link:
   file.symlink:
