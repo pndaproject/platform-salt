@@ -20,7 +20,7 @@ DEFAULT_LOG_FILE = '/var/log/pnda/hadoop_setup.log'
 PNDA_BLUEPRINT_NAME = "pnda-blueprint"
 
 logging.basicConfig(filename=DEFAULT_LOG_FILE,
-                    level=logging.DEBUG,
+                    level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
@@ -31,33 +31,34 @@ def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
     logging.debug('Waiting for %s...', msg)
     progress_percent = 0
     task_count = 0
-    logged_task_id = []
+    task_state_by_id = {}
     while progress_percent < 100 or task_count == 0:
         time.sleep(5)
-        status_reponse = requests.get('%s%s' % (tracking_uri, '?fields=tasks/Tasks/status,Requests'), auth=auth, headers=headers)
+        status_reponse = requests.get('%s%s' % (tracking_uri, '?fields=tasks/Tasks/status,tasks/Tasks/command,tasks/Tasks/role,tasks/Tasks/host_name,Requests'),
+                                      auth=auth, headers=headers)
         response_json = status_reponse.json()
         request_info = response_json['Requests']
-        logging.debug(request_info)
+        logging.debug(json.dumps(request_info))
         cmd_status = request_info['request_status']
         task_count = request_info['task_count']
         progress_percent = int(request_info['progress_percent'])
-        logging.debug('Progress for %s: %s%% of %s tasks - %s', tracking_uri, progress_percent, task_count, cmd_status)
+        logging.info('%s%% of %s tasks - %s', progress_percent, task_count, cmd_status)
         # Log some info on any failed tasks:
         if 'tasks' in response_json:
             for task in response_json['tasks']:
                 task_info = task['Tasks']
-                logging.debug(task_info)
-                request_id = task_info['request_id']
                 task_id = task_info['id']
                 status = task_info['status']
-                if status == 'FAILED':
-                    logged_task_id.append(task_id)
-                    logging.debug(task_info)
-                    logging.warn('Failed ambari task detected, fetching details')
-                    if task_id not in logged_task_id:
-                        logging.info('Task %s is still in %s status. Details were only reported during initial occurrence.' % task_id, status)
-                    else:
-                        task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id), auth=auth, headers=headers)
+
+                # Only log this task if we don't yet know about it or we do, but its status has changed
+                if task_id not in task_state_by_id or task_state_by_id[task_id] != status:
+                    task_state_by_id[task_id] = status
+                    logging.info('%s: %s %s on %s', status, task_info['command'], task_info['role'], task_info['host_name'])
+                    request_id = task_info['request_id']
+                    if status == 'FAILED':
+                        logging.warn('Failed ambari task detected, fetching details')
+                        task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id),
+                                                            auth=auth, headers=headers)
                         logging.info(task_status_response.json())
     return cmd_status
 
@@ -177,35 +178,35 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
         },
         "operating_systems" : [
             {
-            "OperatingSystems" : {
-                "os_type" : hdp_os_type,
-                "stack_name" : "HDP",
-                "stack_version" : "2.6"
-            },
-            "repositories" : [
-                {
-                "Repositories" : {
-                    "base_url" : hdp_core_stack_repo,
+                "OperatingSystems" : {
                     "os_type" : hdp_os_type,
-                    "repo_id" : "HDP-2.6",
-                    "repo_name" : "HDP",
-                    "unique" : False
-                }
+                    "stack_name" : "HDP",
+                    "stack_version" : "2.6"
                 },
-                {
-                "Repositories" : {
-                    "base_url" : hdp_utils_stack_repo,
-                    "os_type" : hdp_os_type,
-                    "repo_id" : "HDP-UTILS-1.1.0.21",
-                    "repo_name" : "HDP-UTILS",
-                    "unique" : False
-                }
-                }
-            ]
+                "repositories" : [
+                    {
+                        "Repositories" : {
+                            "base_url" : hdp_core_stack_repo,
+                            "os_type" : hdp_os_type,
+                            "repo_id" : "HDP-2.6",
+                            "repo_name" : "HDP",
+                            "unique" : False
+                        }
+                    },
+                    {
+                        "Repositories" : {
+                            "base_url" : hdp_utils_stack_repo,
+                            "os_type" : hdp_os_type,
+                            "repo_id" : "HDP-UTILS-1.1.0.21",
+                            "repo_name" : "HDP-UTILS",
+                            "unique" : False
+                        }
+                    }
+                ]
             }
         ]
     }
-    logging.debug("Registering repos: %s", repo_definition)
+    logging.info("Registering repos: %s", repo_definition)
     repo_response = requests.post('%s/stacks/HDP/versions/2.6/repository_versions' % ambari_api, json.dumps(repo_definition), auth=auth, headers=headers)
     if repo_response.status_code != 201:
         exit_setup(repo_response.text)
@@ -265,7 +266,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     ### Confgure disk space thresholds ###
     logging.info('Configuring alert thresholds')
     disk_alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=ambari_agent_disk_usage' %
-                                 (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
+                                  (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
     disk_alert_def = requests.get(disk_alert_uri, auth=auth, headers=headers).json()
     for parameter in disk_alert_def['AlertDefinition']['source']['parameters']:
         if parameter['name'] == 'minimum.free.space':
@@ -281,7 +282,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     ###                       an operator could consider re-enabling these after the platform is stable                              ###
     def disable_alert(alert_name):
         alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=%s' %
-                                            (ambari_api, cluster_name, alert_name), auth=auth, headers=headers).json()['items'][0]['href']
+                                 (ambari_api, cluster_name, alert_name), auth=auth, headers=headers).json()['items'][0]['href']
         alert_def = requests.get(alert_uri, auth=auth, headers=headers).json()
         alert_def['AlertDefinition']['enabled'] = False
         alert_def.pop('href', None)
