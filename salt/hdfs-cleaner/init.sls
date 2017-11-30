@@ -17,10 +17,10 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% if pillar['hadoop.distro'] == 'HDP' %}
-{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/app-logs/hdfs/logs/", "/app-logs/pnda/logs/", "/spark-history/"' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/app-logs/*/logs/", "/spark-history/"' %}
 {% set general_dirs_to_clean = '"/mr-history/done/"' %}
 {% else %}
-{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/tmp/logs/hdfs/logs/", "/user/spark/applicationHistory/"' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/tmp/logs/*/logs/", "/user/spark/applicationHistory/"' %}
 {% set general_dirs_to_clean = '"/user/history/done/"' %}
 {% endif %}
 
