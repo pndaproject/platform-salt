@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
 - PNDA-3518: Reduce log output in hadoop_setup.log on HDP by only logging task details on state change
 - PNDA-3487: Manage tmpfs in volume mapping
+- PNDA-3483: Zookeeper version 3.4.11
 
 ### Fixed
 - PNDA-3499: Cleanup CHANGELOG with missing release info.
