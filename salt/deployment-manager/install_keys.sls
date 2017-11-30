@@ -8,13 +8,13 @@
                                 'network.ip_addrs',
                                 expr_form='compound').keys()|first %}
 
-cdh-install_pub_key:
+deployment-manager-install_pub_key:
   module.run:
     - name: cp.get_file
     - path: 'salt://{{ dm_id }}/keys/dm.pem.pub'
     - dest: /tmp/pubkey
 
-cdh-install_key:
+deployment-manager-install_key:
   cmd.run:
     - name: "cat /tmp/pubkey >> $(getent passwd {{ os_user }} | cut -d: -f6)/.ssh/authorized_keys"
 

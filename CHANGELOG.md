@@ -49,6 +49,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3013: Fix issue on Keystone passwords with illegal XML characters (such as &) cause Hadoop setup to fail.
 - PNDA-3524: remove beacons logic
 - PNDA-3323: Clean up files for all users in hdfs_cleaner
+- PNDA-3521: fix issue on push/getting DM keys
 
 ## [2.0.0] 2017-05-23
 ### Added

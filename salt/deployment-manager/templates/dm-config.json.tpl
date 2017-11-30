@@ -50,6 +50,9 @@
 
 {% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
 
+{%- set keys_directory = pillar['deployment_manager']['keys_directory'] -%}
+
+
 {
     "environment": {
         "hadoop_distro":"{{ hadoop_distro }}",
@@ -58,7 +61,7 @@
         "hadoop_manager_username" : "{{ cm_username }}",
         "hadoop_manager_password" : "{{ cm_password }}",
         "cluster_root_user" : "{{ os_user }}",
-        "cluster_private_key" : "./dm.pem",
+        "cluster_private_key" : "{{ keys_directory }}/dm.pem",
         "kafka_zookeeper" : "{{ kafka_zookeepers|join(',') }}",
         "kafka_brokers" : "{{ kafka_brokers|join(',') }}",
         "opentsdb" : "{{ opentsdb_host }}",
