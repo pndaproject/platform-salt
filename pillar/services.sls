@@ -29,7 +29,7 @@ logstash-cluster:
   inputdir: /tmp/logstash
 
 zookeeper:
-  version: 3.4.6
+  version: 3.4.11
 
 kafka:
   version: 0.11.0.0
