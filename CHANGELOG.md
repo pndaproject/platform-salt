@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3451: Use existing MySQL for the Ambari database
 - PNDA-2486: Move yarn local directories to /data0 to separate the data from the operating system partition.
 - PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
+- PNDA-3487: Manage tmpfs in volume mapping
 
 ### Fixed
 - PNDA-3499: Cleanup CHANGELOG with missing release info.
