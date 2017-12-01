@@ -2,7 +2,8 @@
 
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
-{% set cloudera_p = salt['pillar.get']('cloudera', {}) %}
+{% set cloudera_cdh_repo = pillar['cloudera']['parcel_repo'] %}
+{% set cloudera_cdh_version = pillar['cloudera']['parcel_version'] %}
 
 {% set keystone_user = salt['pillar.get']('keystone.user', "") %}
 {% set keystone_password = salt['pillar.get']('keystone.password', "") %}
@@ -13,6 +14,19 @@
 {% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
+{% set pnda_home = pillar['pnda']['homedir'] %}
+{% set app_packages_dir = pnda_home + "/apps-packages" %}
+
+{%- set data_volume_list = [] %}
+{%- for n in range(flavor_cfg.data_volumes_count) -%}
+  {%- if flavor_cfg.data_volumes_count > 10 and n < 10 -%}
+    {%- set prefix = '/data0' -%}
+  {%- else -%}
+    {%- set prefix = '/data' -%}
+  {%- endif -%}
+  {%- do data_volume_list.append(prefix ~ n ~ '/dn') %}
+{%- endfor -%}
+{%- set data_volumes = data_volume_list|join(",") %}
 
 include:
   - python-pip
@@ -27,8 +41,8 @@ cdh-install_deps_ssl:
   pkg.installed:
     - name: {{ pillar['libssl-dev']['package-name'] }}
     - version: {{ pillar['libssl-dev']['version'] }}
-    - ignore_epoch: True    
-    
+    - ignore_epoch: True
+
 # Create a temporary virtualenv to execute the cm_setup scripts_location
 cdh-create_tmp_virtualenv:
   virtualenv.managed:
@@ -58,6 +72,8 @@ cdh-copy_cm_config:
       mysql_host: {{ mysql_host }}
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
+      app_packages_dir: {{ app_packages_dir }}
+      data_volumes: {{ data_volumes }}
 
 # Create a python configured scripts to call the cm_setup.setup_hadoop function with
 # the needed aguments (nodes to install cloudera to)
@@ -67,11 +83,11 @@ cdh-create_cloudera_configuration_script:
     - source: salt://cdh/templates/cloudera_config.py.tpl
     - template: jinja
     - defaults:
-        ips: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
-        cloudera_config: {{ salt['mine.get']('G@cloudera:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
+        ips: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound') }}
+        hadoop_config: {{ salt['mine.get']('G@hadoop:* and G@pnda_cluster:'+pnda_cluster, 'grains.items', expr_form='compound') }}
         cluster_name: {{ pnda_cluster }}
-        parcel_repo: {{ cloudera_p.get('parcel_repo', '') }}
-        parcel_version: {{ cloudera_p.get('parcel_version', '') }}
+        parcel_repo: {{ cloudera_cdh_repo }}
+        parcel_version: {{ cloudera_cdh_version }}
 
 cdh-execute_cloudera_installation_script:
   cmd.run:

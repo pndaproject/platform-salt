@@ -9,4 +9,9 @@
         'graphite_api_default': '/etc/sysconfig/graphite-api',
         'graphite_api_default_src': 'graphite-api.redhat'
     },
+    'CentOS': {
+        'carbon_package': 'python-carbon',
+        'graphite_api_default': '/etc/sysconfig/graphite-api',
+        'graphite_api_default_src': 'graphite-api.redhat'
+    },
 }, merge=salt['pillar.get']('graphite-api:lookup')) %}

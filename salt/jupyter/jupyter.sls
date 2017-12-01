@@ -1,8 +1,20 @@
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 {% set virtual_env_dir = pnda_home_directory + '/jupyter' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
-
 {% set jupyter_kernels_dir = '/usr/local/share/jupyter/kernels' %}
+{% set app_packages_home = pnda_home_directory + '/app-packages' %}
+{% set jupyter_extension_venv = pnda_home_directory + '/jupyter-extensions' %}
+{% set pnda_user  = pillar['pnda']['user'] %}
+
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set anaconda_home = '/opt/pnda/anaconda' %}
+{% set spark_home = '/usr/hdp/current/spark-client' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf' %}
+{% else %}
+{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
+{% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
+{% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
+{% endif %}
 
 include:
   - python-pip
@@ -30,10 +42,28 @@ jupyter-copy_initial_notebooks:
     - require:
       - file: jupyter-create_notebooks_directory
 
+jupyter-create_pam_login_script:
+  file.managed:
+    - source: salt://jupyter/templates/jupyterhub-create_notebook_dir.sh.tpl
+    - name: /root/create_notebook_dir.sh
+    - user: root
+    - group: root
+    - mode: 744
+    - template: jinja
+    - defaults:
+      example_notebooks_dir: '{{ pnda_home_directory }}/jupyter_notebooks'
+      pnda_user: {{ pnda_user }} 
+
+jupyter-create_pam_login_rule:
+  file.append:
+    - name: /etc/pam.d/login
+    - text: |
+        auth    required    pam_exec.so    debug log=/var/log/pnda/login.log /root/create_notebook_dir.sh
+
 # install jupyter kernels (python2, python3, and pyspark)
 jupyter-install_python2_kernel:
   cmd.run:
-    - name: '/opt/cloudera/parcels/Anaconda/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
+    - name: '{{ anaconda_home }}/bin/python -m ipykernel.kernelspec --name anacondapython2 --display-name "Python 2 (Anaconda)"'
     - require:
       - virtualenv: jupyter-create-venv
 
@@ -49,6 +79,12 @@ jupyter-copy_pyspark_kernel:
     - template: jinja
     - require:
       - file: jupyter-create_pyspark_kernel_dir
+    - defaults:
+        anaconda_home: {{ anaconda_home }}
+        spark_home: {{ spark_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
+        app_packages_home: {{ app_packages_home }}
+        jupyter_extension_venv: {{ jupyter_extension_venv }}
 
 #copy data-generator.py script
 jupyter-copy_data_generator_script:

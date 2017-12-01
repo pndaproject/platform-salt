@@ -1,4 +1,5 @@
 {% set settings = salt['pillar.get']('zookeeper', {}) -%}
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
@@ -9,7 +10,6 @@
 {% set zookeeper_url = mirror_location + zookeeper_package %}
 
 {% set install_dir = pillar['pnda']['homedir'] %}
-{% set zookeeper_data_dir = '/var/lib/zookeeper' %}
 
 zookeeper-user-group:
   group.present:
@@ -22,7 +22,7 @@ zookeeper-user-group:
 
 zookeeper-data-dir:
   file.directory:
-    - name: {{ zookeeper_data_dir }}
+    - name: {{ flavor_cfg.zookeeper_data_dir }}
     - user: zookeeper
     - group: zookeeper
     - mode: 755
@@ -40,7 +40,7 @@ zookeeper-dl-and-extract:
     - source: {{ zookeeper_url }}
     - source_hash: {{ zookeeper_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
 
 {% set nodes = [] %}
@@ -48,7 +48,7 @@ zookeeper-dl-and-extract:
 
 zookeeper-myid:
   file.managed:
-    - name: {{ zookeeper_data_dir }}/myid
+    - name: {{ flavor_cfg.zookeeper_data_dir }}/myid
     - source: salt://zookeeper/files/templates/zookeeper-myid.tpl
     - template: jinja
     - context:
@@ -76,7 +76,7 @@ zookeeper-configuration:
           ip: {{ node.ip }}
           fqdn: {{ node.fqdn }}
       {%- endfor %}
-      data_dir: {{ zookeeper_data_dir }}
+      data_dir: {{ flavor_cfg.zookeeper_data_dir }}
     - mode: 644
 
 zookeeper-environment:
@@ -86,6 +86,7 @@ zookeeper-environment:
     - template: jinja
     - context:
       install_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
+      heap_size: {{ flavor_cfg.zookeeper_heapsize }}
     - mode: 644
 
 zookeeper-link:
@@ -106,7 +107,7 @@ zookeeper-service:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-service_startpre:
     file.managed:
       - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-startpre.sh
@@ -141,7 +142,7 @@ zookeeper-systemd:
       - file: zookeeper-data-dir
 {% endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable zookeeper

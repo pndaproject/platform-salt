@@ -20,4 +20,4 @@ ZOOMAIN="-Dcom.sun.management.jmxremote=true
 org.apache.zookeeper.server.quorum.QuorumPeerMain"
 ZOO_LOG4J_PROP="WARN,ROLLINGFILE"
 JMXLOCALONLY=false
-JAVA_OPTS=""
+JAVA_OPTS="-Xms{{ heap_size }} -Xmx{{ heap_size }}"

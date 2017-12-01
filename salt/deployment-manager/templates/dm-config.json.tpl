@@ -1,9 +1,6 @@
-{%- set keystone_user = salt['pillar.get']('keystone.user', '') -%}
-{%- set keystone_password = salt['pillar.get']('keystone.password', '') -%}
-{%- set keystone_account = salt['pillar.get']('keystone.tenant', '') -%}
-{%- set keystone_url = salt['pillar.get']('keystone.auth_url', '') -%}
 {%- set os_user = salt['pillar.get']('os_user', 'cloud-user') -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
+{%- set hadoop_distro = pillar['hadoop.distro'] -%}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}
@@ -41,19 +38,25 @@
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 {%- set data_logger_link = salt['pnda.generate_http_link']('console_backend_data_logger',':'+data_logger_port|string) -%}
 
-{%- set cm_node_ip = salt['pnda.cloudera_manager_ip']() -%}
+{%- set cm_node_ip = salt['pnda.hadoop_manager_ip']() -%}
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
-{%- set pnda_cluster = salt['pnda.cluster_name']() -%}
+
+{% if pillar['identity']['pam_module'] == 'pam_unix' %}
+{%- set application_default_user = pillar['identity']['users'][1]['user'] -%}
+{%- else -%}
+{%- set application_default_user = '' -%}
+{% endif %}
 
 {% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
 
 {
     "environment": {
+        "hadoop_distro":"{{ hadoop_distro }}",
         "queue_name":"default",
-        "cloudera_manager_host" : "{{ cm_node_ip }}",
-        "cloudera_manager_username" : "{{ cm_username }}",
-        "cloudera_manager_password" : "{{ cm_password }}",
+        "hadoop_manager_host" : "{{ cm_node_ip }}",
+        "hadoop_manager_username" : "{{ cm_username }}",
+        "hadoop_manager_password" : "{{ cm_password }}",
         "cluster_root_user" : "{{ os_user }}",
         "cluster_private_key" : "./dm.pem",
         "kafka_zookeeper" : "{{ kafka_zookeepers|join(',') }}",
@@ -63,7 +66,8 @@
         "namespace": "platform_app",
         "metric_logger_url": "{{ data_logger_link }}/metrics",
         "jupyter_host": "{{ jupyter_host }}",
-        "jupyter_notebook_directory": "{{ pnda_home_directory }}/jupyter_notebooks"
+        "jupyter_notebook_directory": "jupyter_notebooks",
+        "application_default_user": "{{ application_default_user }}"
     },
     "config": {
         "stage_root": "stage",

@@ -65,7 +65,7 @@ logstash-dl_and_extract_logstash:
     - source: {{ logstash_url }}
     - source_hash: {{ logstash_url }}.sha1
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{logstash_directory}}/logstash-{{ logstash_version }}
 
 logstash-create_logstash_confdir:
@@ -91,7 +91,7 @@ logstash-copy_configuration_logstash:
 /etc/init/logstash.conf:
   file.managed:
     - source: salt://logstash/templates/logstash.init.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 /usr/lib/systemd/system/logstash.service:
   file.managed:
     - source: salt://logstash/templates/logstash.service.tpl  
@@ -104,7 +104,7 @@ logstash-copy_configuration_logstash:
       confpath: {{logstash_confdir }}/logstash.conf
       datadir: {{logstash_datadir}}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 logstash-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable logstash

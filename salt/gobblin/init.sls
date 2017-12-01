@@ -9,9 +9,7 @@
 {% set gobblin_real_dir = pnda_home + '/gobblin-' + gobblin_version %}
 {% set gobblin_link_dir = pnda_home + '/gobblin' %}
 
-{% set namenodes_ips = salt['pnda.namenodes_ips']() %}
-# Only take the first one
-{% set namenode = namenodes_ips[0] %}
+{% set namenode = salt['pnda.hadoop_namenode']() %}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}
@@ -19,12 +17,18 @@
 {%- endfor -%}
 
 {% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
-{% set pnda_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_master_dataset_location %}
+{% set pnda_kite_dataset_uri = "dataset:" + namenode + pnda_master_dataset_location %}
 
 {% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
-{% set pnda_quarantine_kite_dataset_uri = "dataset:hdfs://" + namenode + ":8020" + pnda_quarantine_dataset_location %}
+{% set pnda_quarantine_kite_dataset_uri = "dataset:" + namenode + pnda_quarantine_dataset_location %}
 
 {% set gobblin_hdfs_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
+
+{% if pillar['hadoop.distro'] == 'HDP' %}
+{% set hadoop_home_bin = '/usr/hdp/current/hadoop-client/bin/' %}
+{% else %}
+{% set hadoop_home_bin = '/opt/cloudera/parcels/CDH/bin' %}
+{% endif %}
 
 gobblin-create_gobblin_version_directory:
   file.directory:
@@ -37,7 +41,7 @@ gobblin-dl-and-extract:
     - source: {{ packages_server }}/{{ gobblin_package }}
     - source_hash: {{ packages_server }}/{{ gobblin_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ gobblin_real_dir }}/gobblin-dist
     - require:
       - file: gobblin-create_gobblin_version_directory
@@ -53,7 +57,7 @@ gobblin-update_gobblin_reference_configuration_file:
   file.replace:
     - name: {{ gobblin_real_dir }}/gobblin-dist/conf/gobblin-mapreduce.properties
     - pattern: '^fs.uri=hdfs://localhost:8020$'
-    - repl: 'fs.uri=hdfs://{{ namenode }}:8020'
+    - repl: 'fs.uri={{ namenode }}'
     - require:
       - archive: gobblin-dl-and-extract
 
@@ -86,7 +90,7 @@ gobblin-install_gobblin_service_script:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/gobblin.conf
     - source: salt://gobblin/templates/gobblin.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/gobblin.service
     - source: salt://gobblin/templates/gobblin.service.tpl
 {%- endif %}
@@ -96,8 +100,9 @@ gobblin-install_gobblin_service_script:
       gobblin_user: {{ pnda_user }}
       gobblin_work_dir: {{ gobblin_hdfs_work_dir }}
       gobblin_job_file: {{ gobblin_link_dir }}/configs/mr.pull
+      hadoop_home_bin: {{ hadoop_home_bin }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 gobblin-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload
@@ -108,7 +113,7 @@ gobblin-add_gobblin_crontab_entry:
     - identifier: GOBBLIN
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start gobblin
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start gobblin
 {%- endif %}
     - user: root

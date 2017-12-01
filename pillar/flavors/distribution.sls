@@ -13,10 +13,18 @@
             "listen_iface": "vlan2506"
         },
         "zookeeper": {
-            "listen_iface": "vlan2506"
+            "listen_iface": "vlan2506",
+            "zookeeper_data_dir": "/var/lib/zookeeper"
         },
         "kafka.server": {
+            "data_dirs": ["/var/kafka-logs"],
             "kafka_log_retention_bytes": 1073741824
+        },
+        "mysql": {
+            "data_dir": "/var/lib/mysql"
+        },
+        "elasticsearch": {
+            "datadir": "/var/lib/elasticsearch"
         }
     }
 }

@@ -1,15 +1,21 @@
 acl:
   package-name: acl
   version: ""
+ambari-agent:
+  package-name: ambari-agent
+  version: "2.5.1.0-159"
+ambari-server:
+  package-name: ambari-server
+  version: "2.5.1.0-159"
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 cloudera-manager-daemons:
   package-name: cloudera-manager-daemons
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 cloudera-manager-server:
   package-name: cloudera-manager-server
-  version: "5.9.0-1.cm590.p0.249~trusty-cm5"
+  version: "5.12.1-1.cm5121.p0.6~trusty-cm5"
 debconf-utils:
   package-name: debconf-utils
   version: ""
@@ -36,6 +42,14 @@ libffi-dev:
 libsasl:
   package-name: libsasl2-dev
   version: ""
+libxml2:
+  package-name: libxml2-dev
+libxslt:
+  package-name: libxslt-dev
+libz:
+  package-name: zlib1g-dev 
+libzmq:
+  package-name: libzmq-dev
 mysql-server:
   package-name: mysql-server-5.6
   version: "5.6.33-0ubuntu0.14.04.1"
@@ -50,6 +64,9 @@ ntp:
 opentsdb:
   package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242
+patch:
+  package-name: patch
+  version: ""
 python-mysqldb:
   package-name: python-mysqldb
   version: "1.2.3-2ubuntu1"
@@ -69,6 +86,9 @@ redis-server:
   package-name: redis-server
   version: "2:2.8.4-2"
   configuration_filename: "/etc/redis/redis.conf"
+ruby-devel:
+  package-name: ruby-dev
+  version: ""
 snappy:
   package-name: libsnappy-dev
   version: ""

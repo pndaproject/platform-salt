@@ -1,6 +1,6 @@
 {%- set logdest = salt['pnda.ip_addresses']('logserver')[0] -%}
 input {
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
    journald {
           path => '/run/log/journal'
           sincedb_path => "/opt/pnda/logstash/sincedb/db2"
@@ -92,7 +92,7 @@ input {
    }
    file {
           path => ["/var/log/salt/minion",
-                   "/var/log/pnda/cm_setup.log"]
+                   "/var/log/pnda/hadoop_setup.log"]
           add_field => {"source" => "provisioning"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           codec => multiline {
@@ -102,7 +102,7 @@ input {
           }
    }
    file {
-          path => ["/var/log/opentsdb/opentsdb.log"]
+          path => ["/var/log/pnda/opentsdb/opentsdb.log"]
           add_field => {"source" => "opentsdb"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           codec => multiline {

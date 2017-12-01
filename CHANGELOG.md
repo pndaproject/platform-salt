@@ -1,6 +1,51 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## [3.0.0] 2017-11-24
+### Added
+- PNDA-3330: Add default application user configuration to the deployment manager.
+- PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
+- PNDA-2982: Added support for adding pyspark application dependencies
+- PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
+- PNDA-2445: Support for Hortonworks HDP hadoop distro
+- PNDA-2163: Support for OpenTSDB Platform testing
+- PNDA-2832: Added sql magic support for Jupyter notebooks
+- PNDA-1788: Cloudera version can be set in the salt pillar
+- PNDA-3314: Added new flavor for larger PNDAs called "production"
+- PNDA-3484: Add CentOS support
+- PNDA-3497: Add pillar config to set how many data directories to configure HDFS to use.
+
+### Changed
+- PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
+- PNDA-3216: Uprev to logstash 5.2.2
+- PNDA-3180: Limit orchestrate commands to new nodes only
+- PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
+- PNDA-3249: Upgrade Kafka version to 0.11.0.0
+- PNDA-3264: Use redis 3.2.10 on redhat
+- PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
+- PNDA-3380: Move opentsdb log to /var/log/pnda
+- PNDA-3441: Cleanup warnings from create_notebook_dir.sh script
+- PNDA-3451: Use existing MySQL for the Ambari database
+- PNDA-2486: Move yarn local directories to /data0 to separate the data from the operating system partition.
+
+### Fixed
+- PNDA-3499: Cleanup CHANGELOG with missing release info.
+- PNDA-3213: fix issue on wrong checksum file name for logserver sls
+- PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
+- PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
+- PNDA-3111: Report failures up if opentsdb.hbase_tables fails
+- PNDA-3309: use local gem installation for Kafka tool
+- PNDA-3343: When expanding a cluster new datanodes are given a spark gateway role
+- PNDA-3309: Write `CM_SETUP_SUCCESS` into a fixed directory
+- PNDA-3369: fix issue on offsets topic replication factor on kafka configuration zhere default value is 3
+- PNDA-3238: Add jupyter extensions to the kenel virtual environment.
+- PNDA-3350: Fix dm.pem permission post deployment highstate.
+- PNDA-3432: Jupyter not launching after reboot on RHEL.
+- PNDA-3013: Fix issue on Keystone passwords with illegal XML characters (such as &) cause Hadoop setup to fail.
+- PNDA-3524: remove beacons logic
+
 ## [2.0.0] 2017-05-23
 ### Added
 - PNDA-2375: Isolate PNDA from breaking dependency changes
@@ -9,9 +54,10 @@ All notable changes to this project will be documented in this file.
 - PNDA-2682: review console backend deployment
 - Add a simple jupyter notebook
 - Allow salt mine for all interfaces
+
 ### Changed
 - PNDA-2446: Download java with wget
-- PNDA-2517: If Cloudera setup (cm_setup.py) fails, orchestrate can be re-run and cm_setup.py will attempt to continue from where it completed up to last time. Progress is recorded in /root/.CM_SETUP_SUCCESS which can be edited if manual control is required over the point to continue from.
+- PNDA-2517: If Cloudera setup (`cm_setup.py`) fails, orchestrate can be re-run and `cm_setup.py` will attempt to continue from where it completed up to last time. Progress is recorded in `/root/.CM_SETUP_SUCCESS` which can be edited if manual control is required over the point to continue from.
 - PNDA-2577: Use spur 0.3.20 for cm_setup.py
 - PNDA-2596: Stop ingesting internal PNDA testbot topic
 - PNDA-2672: Explicitly set CM API version number

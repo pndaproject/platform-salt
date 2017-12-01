@@ -124,7 +124,7 @@ MAPRED_CFG = {
             "config":
                 {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
-                    'yarn_nodemanager_local_dirs': '/var/yarn/nm',
+                    'yarn_nodemanager_local_dirs': '/data0/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'node_manager_log_dir': '/var/log/pnda/hadoop-yarn',
                     'yarn_nodemanager_resource_cpu_vcores': '14',
@@ -155,11 +155,11 @@ MAPRED_CFG = {
 
 SWIFT_CONFIG = """\r\n<property><name>fs.swift.impl</name><value>org.apache.hadoop.fs.swift.snative.SwiftNativeFileSystem</value></property>
                   \r\n<property><name>fs.swift.service.pnda.auth.url</name><value>{{ keystone_auth_url }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region|e }}</value></property>
                   \r\n<property><name>fs.swift.service.pnda.public</name><value>true</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password }}</value></property>"""
+                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password|e }}</value></property>"""
 
 S3_CONFIG = """\r\n<property><name>fs.s3a.access.key</name><value>{{ aws_key }}</value></property>
                \r\n<property><name>fs.s3a.secret.key</name><value>{{ aws_secret_key }}</value></property>"""
@@ -435,7 +435,8 @@ SPARK_CFG = {
     'service': 'SPARK_ON_YARN',
     'name': 'spark_on_yarn',
     'config': {
-        'yarn_service': MAPRED_CFG['name']
+        'yarn_service': MAPRED_CFG['name'],
+        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR02'},

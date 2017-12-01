@@ -1,4 +1,4 @@
-{%- set cm_host = salt['pnda.ip_addresses']('cloudera_manager')[0] -%}
+{%- set cm_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
 
 cloudera-manager-agent-install_daemons:
   pkg.installed:

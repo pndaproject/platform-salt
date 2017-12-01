@@ -10,33 +10,57 @@
 include:
   - python-pip
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
     - version: {{ pillar['cyrus-sasl-devel']['version'] }}
     - ignore_epoch: True
+
+deployment-manager-install_dev_deps_cyrus_gssapi:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-gssapi']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-gssapi']['version'] }}
+    - ignore_epoch: True
+
+deployment-manager-install_dev_deps_cyrus_plain:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-plain']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-plain']['version'] }}
+    - ignore_epoch: True
 {% endif %}
+
+deployment-manager-install_dev_deps_libffi:
+  pkg.installed:
+    - name: {{ pillar['libffi-dev']['package-name'] }}
+    - version: {{ pillar['libffi-dev']['version'] }}
+    - ignore_epoch: True
+
+deployment-manager-install_dev_deps_libssl:
+  pkg.installed:
+    - name: {{ pillar['libssl-dev']['package-name'] }}
+    - version: {{ pillar['libssl-dev']['version'] }}
+    - ignore_epoch: True
 
 deployment-manager-install_dev_deps_sasl:
   pkg.installed:
     - name: {{ pillar['libsasl']['package-name'] }}
     - version: {{ pillar['libsasl']['version'] }}
-    - ignore_epoch: True    
+    - ignore_epoch: True
 
 deployment-manager-install_dev_deps_gcc:
   pkg.installed:
     - name: {{ pillar['g++']['package-name'] }}
     - version: {{ pillar['g++']['version'] }}
-    - ignore_epoch: True    
-    
+    - ignore_epoch: True
+
 deployment-manager-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
     - source: {{ packages_server }}/{{ deployment_manager_package }}
     - source_hash: {{ packages_server }}/{{ deployment_manager_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }}
 
 deployment-manager-create-venv:
@@ -82,7 +106,7 @@ deployment-manager-copy_service:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/deployment-manager.conf
     - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
 {% endif %}    
@@ -90,7 +114,7 @@ deployment-manager-copy_service:
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager

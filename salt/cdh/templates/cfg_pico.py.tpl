@@ -144,9 +144,9 @@ MAPRED_CFG = {
     "role_cfg": [
         {
             "type": "GATEWAY",
-            "config": {'mapred_reduce_tasks': 3, 
+            "config": {'mapred_reduce_tasks': 3,
                        'mapred_submit_replication': 1,
-                       'io_sort_mb': '128',                       
+                       'io_sort_mb': '128',
                        'mapreduce_client_java_heapsize': '321912832',
                        'mapreduce_map_java_opts_max_heap': '321912832',
                        'mapreduce_map_memory_mb': '384',
@@ -160,7 +160,7 @@ MAPRED_CFG = {
             "config":
                 {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
-                    'yarn_nodemanager_local_dirs': '/var/yarn/nm',
+                    'yarn_nodemanager_local_dirs': '/data0/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'yarn_nodemanager_resource_cpu_vcores': '8',
                     'yarn_nodemanager_resource_memory_mb': '4096',
@@ -213,11 +213,11 @@ MAPRED_CFG = {
 
 SWIFT_CONFIG = """\r\n<property><name>fs.swift.impl</name><value>org.apache.hadoop.fs.swift.snative.SwiftNativeFileSystem</value></property>
                   \r\n<property><name>fs.swift.service.pnda.auth.url</name><value>{{ keystone_auth_url }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant }}</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.username</name><value>{{ keystone_user|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.tenant</name><value>{{ keystone_tenant|e }}</value></property>
+                  \r\n<property><name>fs.swift.service.pnda.region</name><value>{{ region|e }}</value></property>
                   \r\n<property><name>fs.swift.service.pnda.public</name><value>true</value></property>
-                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password }}</value></property>"""
+                  \r\n<property><name>fs.swift.service.pnda.password</name><value>{{ keystone_password|e }}</value></property>"""
 
 S3_CONFIG = """\r\n<property><name>fs.s3a.access.key</name><value>{{ aws_key }}</value></property>
                \r\n<property><name>fs.s3a.secret.key</name><value>{{ aws_secret_key }}</value></property>"""
@@ -233,7 +233,6 @@ HDFS_CFG = {
                  '<property> \r\n<name>hadoop.proxyuser.yarn.hosts</name>\r\n<value>*</value>\r\n</property>\r\n\r\n'
                  '<property>\r\n<name>hadoop.proxyuser.yarn.groups</name>\r\n<value>*</value>\r\n</property>') + SWIFT_CONFIG + S3_CONFIG,
             'dfs_block_local_path_access_user': 'impala',
-            'dfs_replication': '1',
             'hdfs_missing_blocks_thresholds': '{"warning":"never","critical":100}'
         },
     "roles":
@@ -283,7 +282,7 @@ HDFS_CFG = {
             },
             {
                 "type": "DATANODE",
-                "config": {'dfs_data_dir_list': '/data0/dn', 'datanode_log_dir': '/var/log/pnda/hadoop/dn',
+                "config": {'dfs_data_dir_list': '{{ data_volumes }}', 'datanode_log_dir': '/var/log/pnda/hadoop/dn',
                            'datanode_data_directories_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                            'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
@@ -536,7 +535,8 @@ SPARK_CFG = {
     'service': 'SPARK_ON_YARN',
     'name': 'spark_on_yarn',
     'config': {
-        'yarn_service': MAPRED_CFG['name']
+        'yarn_service': MAPRED_CFG['name'],
+        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR01'},
