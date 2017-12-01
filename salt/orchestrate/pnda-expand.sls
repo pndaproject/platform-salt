@@ -56,7 +56,7 @@ orchestrate-expand-install_deployment_manager_keys:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
     - tgt_type: compound
-    - sls: deployment-manager.keys
+    - sls: deployment-manager.install_keys
     - timeout: 120
     - queue: True
 

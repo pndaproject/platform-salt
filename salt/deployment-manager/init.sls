@@ -86,21 +86,6 @@ deployment-manager-copy_configuration:
     - require:
       - archive: deployment-manager-dl-and-extract
 
-deployment-manager-gen_key:
-  cmd.run:
-    - name: 'ssh-keygen -b 2048 -t rsa -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem -q -N ""'
-    - unless: test -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem
-    - require:
-      - archive: deployment-manager-dl-and-extract
-
-deployment-manager-push_key:
-  module.run:
-    - name: cp.push
-    - path: '{{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem.pub'
-    - upload_path: '/keys/dm.pem.pub'
-    - require:
-      - cmd: deployment-manager-gen_key
-
 deployment-manager-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}

@@ -144,7 +144,7 @@ orchestrate-pnda-install_deployment_manager_keys:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:* or G@roles:opentsdb )'
     - tgt_type: compound
-    - sls: deployment-manager.keys
+    - sls: deployment-manager.install_keys
     - timeout: 120
     - queue: True
 
