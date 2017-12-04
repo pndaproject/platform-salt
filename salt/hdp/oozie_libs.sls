@@ -1,5 +1,6 @@
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set httpfs_node = salt['pnda.get_hosts_by_role']('HDFS', 'NAMENODE')[0] %}
+{% set oozie_node = salt['pnda.get_hosts_by_role']('OOZIE', 'OOZIE_SERVER')[0] %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 include:
@@ -27,4 +28,7 @@ hdp-execute_hdp_installation_script:
   cmd.run:
     - name: {{ scripts_location }}/venv/bin/python {{ scripts_location }}/oozie_libs.py {{ httpfs_node }}
 
+hdp-update_oozie_sharelib:
+  cmd.run:
+    - name: 'sudo -u oozie oozie admin -oozie http://{{ oozie_node }}:11000/oozie -sharelibupdate'
 

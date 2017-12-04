@@ -6,3 +6,4 @@
     - services
     - env_parameters
     - packages.{{ grains['os'] }}
+    - hadoop.hdp

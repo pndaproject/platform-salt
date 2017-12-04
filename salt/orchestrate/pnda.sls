@@ -75,17 +75,25 @@ orchestrate-pnda-install_hdp_hadoop:
     - timeout: 120
     - queue: True
 
-orchestrate-pnda-install_hdp_hadoop_additional_roles:
+orchestrate-pnda-install_hdp_hadoop_hbase_rest:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
     - tgt_type: compound
-    - sls: hdp.start_additional_roles
+    - sls: hdp.hbase_rest
+    - timeout: 120
+    - queue: True
+
+orchestrate-pnda-install_hdp_hadoop_hbase_thrift:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
+    - tgt_type: compound
+    - sls: hdp.hbase_thrift
     - timeout: 120
     - queue: True
 
 orchestrate-pnda-install_hdp_hadoop_httpfs:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
     - tgt_type: compound
     - sls: hdp.httpfs
     - timeout: 120
