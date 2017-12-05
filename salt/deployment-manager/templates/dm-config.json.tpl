@@ -45,6 +45,7 @@
 {% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
 
 {%- set keys_directory = pillar['deployment_manager']['keys_directory'] -%}
+{% set app_packages_hdfs_path = pillar['pnda']['app_packages']['app_packages_hdfs_path'] -%}
 
 
 {
@@ -63,7 +64,8 @@
         "namespace": "platform_app",
         "metric_logger_url": "{{ data_logger_link }}/metrics",
         "jupyter_host": "{{ jupyter_host }}",
-        "jupyter_notebook_directory": "jupyter_notebooks"
+        "jupyter_notebook_directory": "jupyter_notebooks",
+        "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}"
     },
     "config": {
         "stage_root": "stage",

@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-3484: Add CentOS support
 - PNDA-3497: Add pillar config to set how many data directories to configure HDFS to use.
 - PNDA-3478: Added support for Spark2 on HDP
+- PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
+
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
