@@ -48,7 +48,7 @@ admin_login:
 
 kafkamanager:
   release_directory: /opt/pnda
-  release_version: 1.3.3.6
+  release_version: 1.3.3.15
   bind_port: 10900
 
 jupyterproxy:

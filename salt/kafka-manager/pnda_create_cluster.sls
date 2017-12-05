@@ -1,5 +1,5 @@
 {% set cluster = salt['pnda.cluster_name']() %}
-{% set kafka_version = salt['pillar.get']('kafkamanager:kafka_version', '0.10.0.1') %}
+{% set kafka_version = salt['pillar.get']('kafkamanager:kafka_version', '0.11.0.0') %}
 {% set jmx_enabled = 'true' %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
@@ -27,5 +27,6 @@ pnda-create-cluster-create_cluster:
         jmxUser: ""
         jmxPass: ""
         activeOffsetCacheEnabled: "true"
+        securityProtocol: "PLAINTEXT"
     - require:
       - cmd: pnda-create-cluster-start_service
