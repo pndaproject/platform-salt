@@ -94,7 +94,7 @@ deployment-manager-copy_service:
 {% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
-{% endif %}    
+{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}

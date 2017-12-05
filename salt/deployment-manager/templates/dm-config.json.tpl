@@ -42,12 +42,6 @@
 {%- set cm_username = pillar['admin_login']['user'] -%}
 {%- set cm_password = pillar['admin_login']['password'] -%}
 
-{% if pillar['identity']['pam_module'] == 'pam_unix' %}
-{%- set application_default_user = pillar['identity']['users'][1]['user'] -%}
-{%- else -%}
-{%- set application_default_user = '' -%}
-{% endif %}
-
 {% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
 
 {%- set keys_directory = pillar['deployment_manager']['keys_directory'] -%}
@@ -71,8 +65,7 @@
         "metric_logger_url": "{{ data_logger_link }}/metrics",
         "jupyter_host": "{{ jupyter_host }}",
         "jupyter_notebook_directory": "jupyter_notebooks",
-        "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}",
-        "application_default_user": "{{ application_default_user }}"
+        "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}"
     },
     "config": {
         "stage_root": "stage",
