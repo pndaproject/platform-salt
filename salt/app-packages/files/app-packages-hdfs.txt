@@ -1,2 +1,4 @@
 # App dependency packages to be staged on HDFS for use in pyspark executors
+kafka_python-1.3.5-py2.7.egg
+avro-1.8.1-py2.7.egg
 
