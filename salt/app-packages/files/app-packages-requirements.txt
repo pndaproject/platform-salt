@@ -1,1 +1,4 @@
 # App dependency packages to be installed for use in pyspark and Jupyter clients
+kafka-python
+avro
+
