@@ -54,6 +54,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3524: remove beacons logic
 - PNDA-3323: Clean up files for all users in hdfs_cleaner
 - PNDA-3521: fix issue on push/getting DM keys
+- PNDA-3428: Daemonize HDP HBase services 
 
 ## [2.0.0] 2017-05-23
 ### Added
