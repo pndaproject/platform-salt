@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- PNDA-3478: Added support for Spark2 on HDP
+- PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
+- PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
+### Changed
+- PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
+- PNDA-3518: Reduce log output in hadoop_setup.log on HDP by only logging task details on state change
+- PNDA-3487: Manage tmpfs in volume mapping
+- PNDA-3483: Zookeeper version 3.4.11
+### Fixed
+- PNDA-3323: Clean up files for all users in hdfs_cleaner
+- PNDA-3521: fix issue on push/getting DM keys
+- PNDA-3428: Daemonize HDP HBase services 
 
 ## [3.0.0] 2017-11-24
 ### Added
@@ -16,9 +29,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-3314: Added new flavor for larger PNDAs called "production"
 - PNDA-3484: Add CentOS support
 - PNDA-3497: Add pillar config to set how many data directories to configure HDFS to use.
-- PNDA-3478: Added support for Spark2 on HDP
-- PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
-- PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
@@ -32,10 +42,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-3441: Cleanup warnings from create_notebook_dir.sh script
 - PNDA-3451: Use existing MySQL for the Ambari database
 - PNDA-2486: Move yarn local directories to /data0 to separate the data from the operating system partition.
-- PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
-- PNDA-3518: Reduce log output in hadoop_setup.log on HDP by only logging task details on state change
-- PNDA-3487: Manage tmpfs in volume mapping
-- PNDA-3483: Zookeeper version 3.4.11
 
 ### Fixed
 - PNDA-3499: Cleanup CHANGELOG with missing release info.
@@ -52,9 +58,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-3432: Jupyter not launching after reboot on RHEL.
 - PNDA-3013: Fix issue on Keystone passwords with illegal XML characters (such as &) cause Hadoop setup to fail.
 - PNDA-3524: remove beacons logic
-- PNDA-3323: Clean up files for all users in hdfs_cleaner
-- PNDA-3521: fix issue on push/getting DM keys
-- PNDA-3428: Daemonize HDP HBase services 
 
 ## [2.0.0] 2017-05-23
 ### Added
