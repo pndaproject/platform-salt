@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+ - PNDA-3555: Use /pnda/deployment as HDFS library location 
 
 ## [3.0.0] 2017-11-24
 ### Added
