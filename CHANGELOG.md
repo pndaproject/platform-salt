@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+
+### Changed
+
+### Fixed
+- PNDA-3573: remove eth0 default value on kafka
 
 ## [3.0.0] 2017-11-24
 ### Added

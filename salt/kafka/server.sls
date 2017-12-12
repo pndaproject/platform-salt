@@ -10,8 +10,8 @@
 {%- endfor -%}
 
 {% set inter_broker_listener = salt['pillar.get']('kafka:inter_broker_listener', 'REPLICATION') %}
-{%- set internal_ip = salt['network.interface_ip'](salt['grains.get']('vlans:pnda','eth0')) -%}
-{%- set ingest_ip = salt['network.interface_ip'](salt['grains.get']('vlans:ingest','eth0')) -%}
+{%- set internal_ip = salt['network.interface_ip'](salt['grains.get']('vlans:pnda')) -%}
+{%- set ingest_ip = salt['network.interface_ip'](salt['grains.get']('vlans:ingest')) -%}
 
 {%- set internal_port = salt['grains.get']('kafka:internal_port',9092) -%}
 {%- set replication_port = salt['grains.get']('kafka:replication_port',9093) -%}
