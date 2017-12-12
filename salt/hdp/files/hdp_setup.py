@@ -157,7 +157,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
      - Adds the stack repos
      - Creates the blueprint definition
      - Creates the cluster instance
-     - Creates ambari views for oozie and HDFS
+     - Creates ambari views for hive, oozie and HDFS
     '''
     logging.info("Creating new cluster")
 
@@ -326,6 +326,51 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     create_wf_view_uri = '%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % ambari_api
     create_wf_view_response = requests.post(create_wf_view_uri, json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)
     logging.debug(create_wf_view_response.text)
+
+    logging.info("Modifying Hive view")
+    mod_hive_view_def = {
+        "ViewInstanceInfo": {
+            "properties": {
+                "hive.session.params": "",
+                "hive.ldap.configured": "false",
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "views.tez.instance": None,
+                "scripts.dir": "/user/hdfs/hive/scripts",
+                "jobs.dir": "/user/hdfs/hive/jobs",
+                "scripts.settings.defaults-file": "/user/hdfs/.${instanceName}.defaultSettings",
+                "view.conf.keyvalues": None,
+                "use.hive.interactive.mode": "false"
+            }
+        }
+    }
+    mod_hive_view_uri = '%s/views/HIVE/versions/1.5.0/instances/AUTO_HIVE_INSTANCE' % ambari_api
+    mod_hive_view_response = requests.put(mod_hive_view_uri, json.dumps(mod_hive_view_def), auth=auth, headers=headers)
+    logging.debug(mod_hive_view_response.text)
+
+    logging.info("Modifying Hive2 view")
+    mod_hive2_view_def = {
+        "ViewInstanceInfo": {
+            "properties": {
+                "hive.session.params": "",
+                "hive.ldap.configured": "false",
+                "hive.ranger.servicename": None,
+                "hive.ranger.username": "admin",
+                "hive.ranger.password": "",
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "views.tez.instance": None,
+                "scripts.dir": "/user/hdfs/hive/scripts",
+                "jobs.dir": "/user/hdfs/hive/jobs",
+                "scripts.settings.defaults-file": "/user/hdfs/.${instanceName}.defaultSettings",
+                "use.hive.interactive.mode": "false",
+                "view.conf.keyvalues": None
+            }
+        }
+    }
+    mod_hive2_view_uri = '%s/views/HIVE/versions/2.0.0/instances/AUTO_HIVE20_INSTANCE' % ambari_api
+    mod_hive2_view_response = requests.put(mod_hive2_view_uri, json.dumps(mod_hive2_view_def), auth=auth, headers=headers)
+    logging.debug(mod_hive2_view_response.text)
 
 def update_cluster_config(nodes, cluster_name, ambari_api, auth, headers):
     '''
