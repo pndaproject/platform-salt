@@ -76,7 +76,7 @@
     - match: grain
     - cdh.create_data_dirs
     - snappy
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
     - anaconda
 {% else %}
     - cdh.anaconda

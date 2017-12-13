@@ -136,9 +136,9 @@ input {
           }
    }
 
-   {% for log_section in pillar[pillar['hadoop.distro']]['log-shipper-patterns'] %}
+   {% for log_section in pillar['log-shipper-patterns'] %}
    file {
-          {%- set log_section_paths = pillar[pillar['hadoop.distro']]['log-shipper-patterns'][log_section] -%}
+          {%- set log_section_paths = pillar['log-shipper-patterns'][log_section] -%}
           path => [{{ log_section_paths|join(',') }}]
           add_field => {"source" => "{{ log_section }}"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"

@@ -31,7 +31,7 @@ master-dataset_copy_kite_parition_conf:
     - name: /tmp/pnda_kite_partition.json
     - source: salt://master-dataset/files/pnda_kite_partition.json
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 master-dataset-kitesdk_dir:
   file.directory:
     - name: {{ kite_install_path }}

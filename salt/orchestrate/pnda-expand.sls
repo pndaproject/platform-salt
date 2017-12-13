@@ -1,6 +1,6 @@
 {% set pnda_cluster = salt['environ.get']('CLUSTER') %}
 
-{% if pillar['hadoop.distro'] == 'CDH' %}
+{% if grains['hadoop.distro'] == 'CDH' %}
 orchestrate-expand-create_cloudera_user:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:* and G@pnda:is_new_node'
@@ -26,7 +26,7 @@ orchestrate-expand-install_hadoop:
     - queue: True
 {% endif %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-expand-install_ambari_agents:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:* and G@pnda:is_new_node'

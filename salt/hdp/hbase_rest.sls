@@ -1,5 +1,5 @@
-{% set rest_port = pillar[pillar['hadoop.distro']]['hbase-rest']['port'] %}
-{% set info_port = pillar[pillar['hadoop.distro']]['hbase-rest']['info-port'] %}
+{% set rest_port = pillar['hbase-rest']['port'] %}
+{% set info_port = pillar['hbase-rest']['info-port'] %}
 
 {% if grains['os'] == 'Ubuntu' %}
 /etc/init/hbase-rest.conf:

@@ -6,4 +6,4 @@
     - services
     - env_parameters
     - packages.{{ grains['os'] }}
-    - hadoop.hdp
+    - hadoop.{{ salt['grains.get']('hadoop.distro', 'HDP') }}

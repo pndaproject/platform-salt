@@ -76,7 +76,7 @@ def check_connectivity():
     """
       Procedure to check connection cloudera manager
     """
-    hadoop_distro = __salt__['pillar.get']('hadoop.distro')  # pylint: disable=E0602,E0603
+    hadoop_distro = __salt__['grains.get']('hadoop.distro')  # pylint: disable=E0602,E0603
     if hadoop_distro == 'CDH':
         cm_host = __salt__['pnda.hadoop_manager_ip']()  # pylint: disable=E0602,E0603
         cm_user = __salt__['pillar.get']('admin_login:user')  # pylint: disable=E0602,E0603
