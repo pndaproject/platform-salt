@@ -2,8 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+
 ### Changed
- - PNDA-3555: Use /pnda/deployment as HDFS library location 
+- PNDA-3555: Use /pnda/deployment as HDFS library location
+
+### Fixed
+- PNDA-3573: remove eth0 default value on kafka
 
 ## [3.0.0] 2017-11-24
 ### Added
