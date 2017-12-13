@@ -1,5 +1,5 @@
-{% set thrift_port = pillar['hdp']['hbase-thrift']['port'] %}
-{% set info_port = pillar['hdp']['hbase-thrift']['info-port'] %}
+{% set thrift_port = pillar[pillar['hadoop.distro']]['hbase-thrift']['port'] %}
+{% set info_port = pillar[pillar['hadoop.distro']]['hbase-thrift']['info-port'] %}
 
 {% if grains['os'] == 'Ubuntu' %}
 /etc/init/hbase-thrift.conf:
