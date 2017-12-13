@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
-
+- PNDA-3580: Add spark cli that implements a user/group placement policy.
 ### Changed
 
 ### Fixed
