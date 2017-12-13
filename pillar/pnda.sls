@@ -11,4 +11,4 @@ pnda:
     bulk_directory: /user/pnda/PNDA_datasets/bulk
   
   app_packages:
-    app_packages_hdfs_path: /user/deployment/app_packages
+    app_packages_hdfs_path: /pnda/deployment/app_packages
