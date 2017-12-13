@@ -16,7 +16,7 @@ input {
             pattern => "^%{TIMESTAMP_ISO8601}"
             negate => true
             what => "previous"
-          }          
+          }
    }
    file {
           path => ["/var/log/upstart/gobblin.log"]
@@ -46,7 +46,7 @@ input {
             pattern => "^%{TIMESTAMP_ISO8601}"
             negate => true
             what => "previous"
-          }          
+          }
    }
    file {
           path => ["/var/log/upstart/jupyterhub.log"]
@@ -135,10 +135,12 @@ input {
             what => "previous"
           }
    }
+
+   {% for log_section in pillar[pillar['hadoop.distro']]['log-shipper-patterns'] %}
    file {
-          path => ["/var/log/pnda/hadoop/*/*.log",
-                   "/var/log/pnda/hadoop/*/*.log.out"]
-          add_field => {"source" => "hadoop"}
+          {%- set log_section_paths = pillar[pillar['hadoop.distro']]['log-shipper-patterns'][log_section] -%}
+          path => [{{ log_section_paths|join(',') }}]
+          add_field => {"source" => "{{ log_section }}"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           codec => multiline {
             pattern => "^%{TIMESTAMP_ISO8601}"
@@ -146,71 +148,7 @@ input {
             what => "previous"
           }
    }
-   file {
-          path => ["/var/log/pnda/hadoop-yarn/*.log.out"]
-          add_field => {"source" => "hadoop-yarn"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/pnda/hadoop-mapreduce/*.log",
-                   "/var/log/pnda/hadoop-mapreduce/*.log.out"]
-          add_field => {"source" => "hadoop-mapreduce"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/pnda/hbase/*.log.out"]
-          add_field => {"source" => "hbase"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/pnda/impala/*.ERROR",
-                   "/var/log/pnda/impala/*.WARNING",
-                   "/var/log/pnda/impala/*.INFO",
-                   "/var/log/pnda/impala-llama/*.log"]
-          add_field => {"source" => "impala"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/pnda/hue/*.log"]
-          add_field => {"source" => "hue"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/pnda/oozie/*.log",
-                   "/var/log/pnda/oozie/*.log.out"]
-          add_field => {"source" => "oozie"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
+   {% endfor %}
 }
 
 filter {
@@ -234,11 +172,11 @@ filter {
            drop { }
        }
    }
-   
+
    grok {
        match => { "path" => "/var/log/pnda/hadoop-yarn/container/%{DATA:applicationId}/%{DATA:containerId}/%{GREEDYDATA:logtype}" }
    }
-  
+
 }
 
 output {

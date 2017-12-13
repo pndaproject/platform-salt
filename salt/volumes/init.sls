@@ -40,7 +40,7 @@
     {% set device = parts[0] %}
     {% set mountpoint = parts[1] %}
     {% set fs_type = parts[2] %}
-    
+
     {% if fs_type == 'xfs' %}
       {% set mkfs_opts = '-f' %}
     {% else %}
@@ -48,7 +48,7 @@
     {% endif %}
 
     {% if fs_type == 'tmpfs' %}
-    
+
     {% set mount_options = parts[3] %}
     volumes-mount-{{ mountpoint }}:
       mount.mounted:
@@ -77,6 +77,6 @@
         - mkmnt: True
 
     {% endif %}
-  
+
   {% endfor %}
 {% endif %}

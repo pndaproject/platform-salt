@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
+- PNDA-3553: Configure PNDA log aggregation to use HDP specific paths when collecting hadoop service logs on HDP
 
 ## [3.0.0] 2017-11-24
 ### Added
