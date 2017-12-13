@@ -41,9 +41,11 @@ def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
         logging.debug(json.dumps(request_info))
         cmd_status = request_info['request_status']
         task_count = request_info['task_count']
-        progress_percent = int(request_info['progress_percent'])
-        logging.info('%s%% of %s tasks - %s', progress_percent, task_count, cmd_status)
-        # Log some info on any failed tasks:
+        latest_progress_percent = int(request_info['progress_percent'])
+        if progress_percent != latest_progress_percent:
+            progress_percent = latest_progress_percent
+            logging.info('%s%% of %s tasks - %s', progress_percent, task_count, cmd_status)
+
         if 'tasks' in response_json:
             for task in response_json['tasks']:
                 task_info = task['Tasks']
