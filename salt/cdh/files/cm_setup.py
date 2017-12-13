@@ -798,7 +798,7 @@ def setup_hadoop(
 def setup_common_oozie_libs(name_node):
     webhdfs_port = '14000'
     webhdfs_user = 'hdfs'
-    platform_dir = 'user/deployment/platform'
+    platform_dir = 'pnda/deployment/platform'
     lib_path_list = ['/opt/cloudera/parcels/CDH/lib/hbase/hbase-client.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-common.jar',
                      '/opt/cloudera/parcels/CDH/lib/hbase/hbase-protocol.jar',

@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 ### Changed
- - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
+- PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
+- PNDA-3555: Use /pnda/deployment as HDFS library location
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka

@@ -6,7 +6,7 @@ from pywebhdfs.webhdfs import PyWebHdfsClient
 def setup_common_oozie_libs(name_node):
     webhdfs_port = '14000'
     webhdfs_user = 'hdfs'
-    platform_dir = 'user/deployment/platform'
+    platform_dir = 'pnda/deployment/platform'
     lib_path_list = ['/usr/hdp/current/hbase-client/lib/hbase-client.jar',
                      '/usr/hdp/current/hbase-client/lib/hbase-common.jar',
                      '/usr/hdp/current/hbase-client/lib/hbase-protocol.jar',
