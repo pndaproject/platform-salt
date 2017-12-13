@@ -7,7 +7,7 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
@@ -16,7 +16,7 @@
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 {% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/app-logs/*/logs/", "/spark-history/"' %}
 {% set general_dirs_to_clean = '"/mr-history/done/"' %}
 {% else %}

@@ -1,5 +1,5 @@
 
-{% if pillar['hadoop.distro'] == 'CDH' %}
+{% if grains['hadoop.distro'] == 'CDH' %}
 {% set zk_service = 'zk01' %}
 {% set zk_role = 'SERVER' %}
 {% else %}
@@ -41,7 +41,7 @@ pnda_opentsdb-pnda-opentsdb-configuration-cors:
     - pattern: '.*tsd.http.request.cors_domains =.*'
     - repl: 'tsd.http.request.cors_domains = *'
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 pnda_opentsdb-pnda-opentsdb-hbase-zk-root:
   file.replace:
     - name: /etc/opentsdb/opentsdb.conf

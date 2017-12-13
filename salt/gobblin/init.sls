@@ -24,7 +24,7 @@
 
 {% set gobblin_hdfs_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 {% set hadoop_home_bin = '/usr/hdp/current/hadoop-client/bin/' %}
 {% else %}
 {% set hadoop_home_bin = '/opt/cloudera/parcels/CDH/bin' %}

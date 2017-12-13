@@ -32,7 +32,7 @@ def hadoop_manager_password():
 
 def hadoop_distro():
     """Returns hadoop distro"""
-    distro = __salt__['pillar.get']('hadoop.distro')
+    distro = __salt__['grains.get']('hadoop.distro')
     return distro
 
 def ambari_request(uri):

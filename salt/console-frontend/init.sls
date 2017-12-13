@@ -14,7 +14,7 @@
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 
 {% set data_manager_host = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
@@ -28,7 +28,7 @@
     {%- set edge_node_ip = '' -%}
 {%- endif -%}
 
-{%- if pillar['hadoop.distro'] == 'CDH' -%}
+{%- if grains['hadoop.distro'] == 'CDH' -%}
 {% set cm_port = ':7180' %}
 {%- else -%}
 {% set cm_port = ':8080' %}

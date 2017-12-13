@@ -1,6 +1,6 @@
 {%- set os_user = salt['pillar.get']('os_user', 'cloud-user') -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
-{%- set hadoop_distro = pillar['hadoop.distro'] -%}
+{%- set hadoop_distro = grains['hadoop.distro'] -%}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}

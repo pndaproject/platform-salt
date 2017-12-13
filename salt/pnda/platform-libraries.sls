@@ -8,9 +8,9 @@
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% else %}
 {% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}

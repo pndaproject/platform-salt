@@ -4,7 +4,7 @@
 
 {% set platform_testing_package = 'platform-testing-cdh' %}
 
-{%- if pillar['hadoop.distro'] == 'CDH' -%}
+{%- if grains['hadoop.distro'] == 'CDH' -%}
 {% set platform_testing_service = 'cdh' %}
 {% set cm_port = '7180' %}
 {%- else -%}
@@ -22,7 +22,7 @@
 {% set console_hoststring = salt['pnda.ip_addresses']('console_backend_data_logger')[0] + ":" + console_port %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
 include:

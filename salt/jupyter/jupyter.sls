@@ -6,7 +6,7 @@
 {% set jupyter_extension_venv = pnda_home_directory + '/jupyter-extensions' %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% set spark_home = '/usr/hdp/current/spark-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}

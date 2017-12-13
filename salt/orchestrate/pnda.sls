@@ -1,6 +1,6 @@
 {% set pnda_cluster = salt['environ.get']('CLUSTER') %}
 
-{% if pillar['hadoop.distro'] == 'CDH' %}
+{% if grains['hadoop.distro'] == 'CDH' %}
 orchestrate-pnda-run_cloudera_user:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
@@ -50,7 +50,7 @@ orchestrate-pnda-hue_setup:
     - queue: True
 {% endif %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_ambari_server:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
@@ -220,7 +220,7 @@ orchestrate-pnda-install_test_modules:
     - timeout: 120
     - queue: True
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_hdp_hadoop_oozie_libs:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:EDGE'
