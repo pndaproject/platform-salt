@@ -1,6 +1,6 @@
 {% set package_server = pillar['packages_server']['base_uri'] %}
 {% set platformlib_version = salt['pillar.get']('platformlib:release_version', '0.6.8') %}
-{% set platformlib_target_directory = salt['pillar.get']('platformlib:target_directory', '/home/cloud-user') %}
+{% set platformlib_target_directory = salt['pillar.get']('platformlib:target_directory') %}
 {% set platformlib_package = 'platformlibs-' + platformlib_version + '-py2.7.egg' %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}

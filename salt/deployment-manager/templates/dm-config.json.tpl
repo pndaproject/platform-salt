@@ -1,4 +1,4 @@
-{%- set os_user = salt['pillar.get']('os_user', 'cloud-user') -%}
+{%- set os_user = pillar['os_user'] -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
 {%- set hadoop_distro = grains['hadoop.distro'] -%}
 

@@ -2,7 +2,7 @@
 {% set deployment_manager_directory_name = 'deployment-manager-' + deployment_manager_version %}
 {% set cluster = salt['pnda.cluster_name']() %}
 {% set install_dir = pillar['pnda']['homedir'] %}
-{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
+{% set os_user = pillar['os_user'] %}
 
 {% set dm_id = salt['mine.get']('G@pnda_cluster:{} and G@roles:deployment_manager'.format(cluster),
                                 'network.ip_addrs',
