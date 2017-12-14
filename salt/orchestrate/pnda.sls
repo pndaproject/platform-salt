@@ -108,6 +108,14 @@ orchestrate-pnda-create_master_dataset:
     - timeout: 120
     - queue: True
 
+orchestrate-pnda-install_spark_wrapper:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
+    - tgt_type: compound
+    - sls: resource-manager
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-install_gobblin:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:gobblin'
