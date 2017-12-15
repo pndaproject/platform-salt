@@ -46,9 +46,10 @@ ambari-server-init_mysql_user_permissions:
     - connection_user: root
     - connection_pass: {{ mysql_root_password }}
   cmd.run:
-    - name: mysql -h {{ cmdb_host }} -uroot -p{{ mysql_root_password }} {{ cmdb_database }} < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+    - name: 'mysql -h {{ cmdb_host }} -uroot -p{{ mysql_root_password }} {{ cmdb_database }} < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql && echo done > /opt/pnda/.ambari-sql-progress'
     - require:
       - pkg: ambari-server-pkg
+    - unless: ls /opt/pnda/.ambari-sql-progress
 
 ambari-server-pkg:
   pkg.installed:
@@ -96,7 +97,8 @@ ambari-server-systemctl_reload:
 
 ambari-server-setup_init:
   cmd.run:
-    - name: 'ambari-server setup -s -j /usr/share/java/{{ pillar['java']['version_name'] }}/;'
+    - name: 'ambari-server setup -s -j /usr/share/java/{{ pillar['java']['version_name'] }}/ && echo done > /opt/pnda/.ambari-setup-progress'
+    - unless: ls /opt/pnda/.ambari-setup-progress
 
 ambari-server-properties_delete_pool:
   file.line:
