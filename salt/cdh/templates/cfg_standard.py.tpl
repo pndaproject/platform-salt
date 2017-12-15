@@ -455,6 +455,7 @@ SPARK_CFG = {
     'role_cfg': [
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},
         {'type': 'GATEWAY', 'config': {
-            'spark_history_enabled': 'false'}}
+            'spark_history_enabled': 'false',
+	    'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.metrics.conf.*.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink\nspark.metrics.conf.*.sink.graphite.host={{ pnda_graphite_host }}\nspark.metrics.conf.*.sink.graphite.port=2003\nspark.metrics.conf.*.sink.graphite.period=60\nspark.metrics.conf.*.sink.graphite.prefix=spark\nspark.metrics.conf.*.sink.graphite.unit=seconds\nspark.metrics.conf.master.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.worker.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.driver.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.executor.source.jvm.class=org.apache.spark.metrics.source.JvmSource'}}
     ]
 }
