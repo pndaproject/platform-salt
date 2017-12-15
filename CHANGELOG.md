@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - PNDA-3580: Add spark cli that implements a user/group placement policy.
+- PNDA-3273: Capture Spark metrics for all applications. 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
 - PNDA-3555: Use /pnda/deployment as HDFS library location
