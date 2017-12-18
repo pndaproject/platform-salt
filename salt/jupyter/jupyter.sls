@@ -10,16 +10,45 @@
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% set spark_home = '/usr/hdp/current/spark-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}
+{% set livy_dir = '/usr/hdp/current/livy-server' %}
 {% else %}
 {% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
 {% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
+{% set packages_server = pillar['packages_server']['base_uri'] %}
+{% set livy_version = pillar['livy']['release_version'] %}
+{% set livy_package = 'livy-' + livy_version + '.tar.gz' %}
+{% set livy_dir = pnda_home_directory + '/livy-' + livy_version %}
 {% endif %}
+
+{% set python_lib_dir = virtual_env_dir + '/lib/python3.4/site-packages' %}
 
 include:
   - python-pip
   - python-pip.pip3
   - .jupyter_deps
+
+{% if grains['os'] == 'Ubuntu' %}
+dependency-install_dev_krb:
+  pkg.installed:
+    - name: {{ pillar['libkrb5-dev']['package-name'] }}
+    - version: {{ pillar['libkrb5-dev']['version'] }}
+    - ignore_epoch: True
+{% endif %}
+
+{% if grains['os'] == 'RedHat' %}
+dependency-install_krb5_devel:
+  pkg.installed:
+    - name: {{ pillar['krb5-devel']['package-name'] }}
+    - version: {{ pillar['krb5-devel']['version'] }}
+    - ignore_epoch: True
+
+dependency-install_gcc:
+  pkg.installed:
+    - name: {{ pillar['gcc']['package-name'] }}
+    - version: {{ pillar['gcc']['version'] }}
+    - ignore_epoch: True
+{% endif %}
 
 jupyter-create-venv:
   virtualenv.managed:
@@ -92,3 +121,74 @@ jupyter-copy_data_generator_script:
     - source: salt://jupyter/files/data_generator.py
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
+
+# Add sparkmagic to the supported kernel and install livy server
+livy-create_logs_dir:
+  file.directory:
+    - name: {{ livy_dir }}/logs
+    - user: pnda
+    - group: pnda
+    - mode: 766
+    - makedirs: True
+
+{% if grains['hadoop.distro'] == 'HDP' %}
+livy-update_configuration_hdp:
+  file.append:
+    - name: {{ livy_dir }}/conf/livy.conf
+    - text: livy.spark.master = yarn-client
+
+{% else %}
+livy-download:
+  cmd.run:
+    - cwd: {{ pnda_home_directory }}
+    - name: wget {{ packages_server }}/{{ livy_package }} && tar xvf {{ livy_package }} && rm {{ livy_package }}
+
+livy-update_configuration_cdh:
+  file.append:
+    - name: {{ livy_dir }}/conf/livy.conf
+    - text: livy.spark.master = yarn-client
+{% endif %}
+
+jupyter-scala_extension_spark:
+  cmd.run:
+    - name: |
+        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
+        {{ virtual_env_dir }}/bin/jupyter-kernelspec install  {{ python_lib_dir }}/sparkmagic/kernels/sparkkernel &&
+        {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
+
+jupyter-copy_scala_spark_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/scala_spark_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/sparkkernel/kernel.json
+    - template: jinja
+    - defaults:
+        virtual_env_dir: {{ virtual_env_dir }}
+
+livy-conf_service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /etc/init/livy.conf
+    - source: salt://jupyter/templates/livy.conf.tpl
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/livy.service
+    - source: salt://jupyter/templates/livy.service.tpl
+{% endif %}
+    - template: jinja
+    - mode: 644
+    - defaults:
+        install_dir: {{ livy_dir }}
+        spark_home: {{ spark_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
+
+{% if grains['os'] == 'RedHat' %}
+livy-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable livy
+{%- endif %}
+
+livy-server-start_service:
+  service.running:
+    - name: livy
+    - enable: True
+    - reload: True
+
