@@ -83,6 +83,7 @@ gobblin-install_gobblin_pnda_job_file:
 gobblin-create_gobblin_logs_directory:
   file.directory:
     - name: /var/log/pnda/gobblin
+    - user: {{ pnda_user }}
     - makedirs: True
 
 gobblin-install_gobblin_service_script:
