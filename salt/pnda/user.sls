@@ -9,8 +9,8 @@ pnda-install_selinux:
     - pkgs:
       - policycoreutils-python
       - selinux-policy-targeted
-  onlyif:
-    - ls /etc/selinux/config
+    - onlyif:
+      - ls /etc/selinux/config
 
 permissive:
   selinux.mode:
