@@ -9,15 +9,21 @@ pnda-install_selinux:
     - pkgs:
       - policycoreutils-python
       - selinux-policy-targeted
+  onlyif:
+    - ls /etc/selinux/config
 
 permissive:
-  selinux.mode: []
+  selinux.mode:
+    - onlyif:
+      - ls /etc/selinux/config
   file.replace:
     - name: '/etc/selinux/config'
     - pattern: '^SELINUX=(?!\s*permissive).*'
     - repl: 'SELINUX=permissive'
     - append_if_not_found: True
     - show_changes: True
+    - onlyif:
+      - ls /etc/selinux/config
 {% endif %}
 
 pnda-create_pnda_user:
