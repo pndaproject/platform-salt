@@ -2,7 +2,7 @@
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
-{% set node_version = 'node-v6.10.2-linux-x64' %}
+{% set node_version = pillar['nodejs']['version'] %}
 {% set node_package = node_version + '.tar.gz' %}
 {% set node_url = mirror_location + node_package %}
 
@@ -26,6 +26,12 @@ nodejs-create_bin_link_node:
     - force: True
     - name: /usr/bin/node
     - target: {{ install_dir }}/{{ node_version }}/bin/node
+
+nodejs-create_bin_link_node-gyp:
+  file.symlink:
+    - force: True
+    - name: /usr/bin/node-gyp
+    - target: {{ install_dir }}/{{ node_version }}/bin/node-gyp
 
 nodejs-create_bin_link_npm:
   file.symlink:

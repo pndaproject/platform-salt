@@ -85,6 +85,9 @@ ntp:
 opentsdb:
   package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
+pam-devel:
+  package-name: pam-devel
+  version: ""
 patch:
   package-name: patch
   version: ""

@@ -90,13 +90,6 @@ def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
     return ip_addresses('zookeeper')
 
-def ldap_ip():
-    """Returns the ip address of the LDAP server"""
-    query = "G@roles:LDAP"
-    result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
-    # Only get first ip address
-    return result[0][0] if len(result) > 0 else None
-
 def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)

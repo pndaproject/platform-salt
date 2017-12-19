@@ -41,9 +41,7 @@
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
 {% set jupyter_link = salt['pnda.generate_http_link']('jupyter',':8000') %}
-
-# disable LDAP login on the console if the LDAP server is not present
-{% set ldap_ip = salt['pnda.ldap_ip']() %}
+{% set login_mode = 'PAM' %}
 
 include:
   - nodejs
@@ -109,9 +107,7 @@ console-frontend-create_pnda_console_config:
         grafana_link: "{{ grafana_link }}"
         kibana_link: "{{ kibana_link }}"
         jupyter_link: "{{ jupyter_link }}"
-{% if ldap_ip != None %}
-        ldap_server_present: True
-{% endif %}
+        login_mode: "{{ login_mode }}"
 
 # Create a configuration file for nginx and specify where the PNDA console file are
 console-frontend-create_pnda_nginx_config:

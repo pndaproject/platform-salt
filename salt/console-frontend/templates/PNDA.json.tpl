@@ -37,5 +37,5 @@
       "host": "{{data_manager_host}}", "port": "{{data_manager_port}}"
     }
   },
-  "disable_ldap_login": true
+  "login_mode": "{{ login_mode }}"
 }

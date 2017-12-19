@@ -18,17 +18,25 @@
 {% set console_frontend_hosts_csv = console_frontend_hosts|join(",") %}
 {% set dm_link = salt['pnda.generate_http_link']('deployment_manager',':5000') %}
 {% set data_service_link = salt['pnda.generate_http_link']('data_service',':7000') %}
-{% set ldap_ip = salt['pnda.ldap_ip']() %}
-{% if ldap_ip == None %}
-{%   set ldap_ip = "" %}
-{% endif %}
 {% set backend_app_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
 {% set data_manager_log_file = '/var/log/pnda/console/data-manager.log' %}
 {% set data_manager_log_level = 'debug' %}
+{% set node_version = pillar['nodejs']['version'] %}
 
 include:
   - nodejs
   - .utils
+
+console-backend-data-manager-install_deps_pam_devel:
+  pkg.installed:
+    - name: {{ pillar['pam-devel']['package-name'] }}
+    - version: {{ pillar['pam-devel']['version'] }}
+    - ignore_epoch: True
+console-backend-data-manager-install_deps_gcc:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
 
 console-backend-data-manager-dl-and-extract:
   archive.extracted:
@@ -56,15 +64,6 @@ console-backend-data-manager-config:
         dm_endpoint: {{dm_link}}
         data_service_url: {{data_service_link}}
 
-# Create LDAP config file from template
-console-backend-ldap-config:
-  file.managed:
-    - name: {{app_config_dir}}/ldap_config.js
-    - source: salt://console-backend/templates/backend_ldap_conf.js.tpl
-    - template: jinja
-    - defaults:
-        ldap_endpoint: {{ ldap_ip }}
-
 # Create logger config file
 console-backend-create_data_manager_logger_conf:
   file.managed:
@@ -79,7 +78,7 @@ console-backend-create_data_manager_logger_conf:
 console-backend-install_backend_app_dependencies:
   cmd.run:
     - cwd: {{ app_dir }}
-    - name: npm rebuild > /dev/null
+    - name: npm rebuild --nodedir {{ install_dir }}/{{ node_version }}/bin/node > /dev/null
     - require:
       - archive: nodejs-dl_and_extract_node
       - cmd: console-backend-install_utils_dependencies

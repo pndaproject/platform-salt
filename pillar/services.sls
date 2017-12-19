@@ -117,3 +117,6 @@ hadoop_manager:
 
 livy:
   release_version: "0.3.0"
+
+nodejs:
+  version: 'node-v6.10.2-linux-x64'
