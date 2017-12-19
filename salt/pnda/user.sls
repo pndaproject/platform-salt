@@ -3,7 +3,6 @@
 {% set pnda_group = pillar['pnda']['group'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 pnda-install_selinux:
   pkg.installed:
     - pkgs:
@@ -24,7 +23,6 @@ permissive:
     - show_changes: True
     - onlyif:
       - ls /etc/selinux/config
-{% endif %}
 
 pnda-create_pnda_user:
   user.present:
