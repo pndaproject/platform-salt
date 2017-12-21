@@ -36,6 +36,9 @@ libkrb5-dev:
 libmysql-java:
   package-name: libmysql-java
   version: "5.1.28-1"
+libpq-dev:
+  package-name: libpq-dev
+  version: ""
 libssl-dev:
   package-name: libssl-dev
   version: ""

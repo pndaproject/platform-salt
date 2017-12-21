@@ -21,7 +21,8 @@
 {% set livy_dir = pnda_home_directory + '/livy-' + livy_version %}
 {% endif %}
 
-{% set python_lib_dir = virtual_env_dir + '/lib/python3.4/site-packages' %}
+{% set anaconda_python_lib = anaconda_home + '/lib/python2.7/site-packages/' %}
+{% set jupyter_python_lib = virtual_env_dir + '/lib/python3.4/site-packages/' %}
 
 include:
   - python-pip
@@ -153,7 +154,7 @@ jupyter-scala_extension_spark:
   cmd.run:
     - name: |
         {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
-        {{ virtual_env_dir }}/bin/jupyter-kernelspec install  {{ python_lib_dir }}/sparkmagic/kernels/sparkkernel &&
+        {{ virtual_env_dir }}/bin/jupyter-kernelspec install  {{ jupyter_python_lib }}/sparkmagic/kernels/sparkkernel &&
         {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
 
 jupyter-copy_scala_spark_kernel:
@@ -192,3 +193,11 @@ livy-server-start_service:
     - enable: True
     - reload: True
 
+{% if grains['hadoop.distro'] == 'CDH' %}
+dependency-configurations-python2:
+ cmd.run:
+    - name: sed -i "s/if 'mssql' not in str(conn.dialect):/if config.autocommit and ('mssql' not in str(conn.dialect)):/" {{ anaconda_python_lib }}/sql/run.py && sed -i '/def __init__(self, shell):/i \    autocommit = Bool(True, config=True, help="Set autocommit mode")\n' {{ anaconda_python_lib }}/sql/magic.py
+dependency-configurations-python3:
+  cmd.run:
+    - name: sed -i "s/if 'mssql' not in str(conn.dialect):/if config.autocommit and ('mssql' not in str(conn.dialect)):/" {{ jupyter_python_lib }}/sql/run.py && sed -i '/def __init__(self, shell):/i \    autocommit = Bool(True, config=True, help="Set autocommit mode")\n' {{ jupyter_python_lib }}/sql/magic.py
+{% endif %}

@@ -91,6 +91,9 @@ pam-devel:
 patch:
   package-name: patch
   version: ""
+postgresql-devel:
+  package-name: postgresql-devel
+  version: ""
 python-pip:
   package-name: python2-pip
   version: ""
