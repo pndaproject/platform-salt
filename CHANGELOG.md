@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-3562: enable PAM authentication on PNDA console frontend
 - PNDA-3580: Add spark cli that implements a user/group placement policy.
+- PNDA-2832: Jupyter %sql magic support.
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
