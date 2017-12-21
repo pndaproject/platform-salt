@@ -5,6 +5,7 @@
 {% set app_packages_home = pnda_home_directory + '/app-packages' %}
 {% set jupyter_extension_venv = pnda_home_directory + '/jupyter-extensions' %}
 {% set pnda_user  = pillar['pnda']['user'] %}
+{% set wrapper_spark_home = '/usr/' %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
@@ -111,6 +112,7 @@ jupyter-copy_pyspark_kernel:
       - file: jupyter-create_pyspark_kernel_dir
     - defaults:
         anaconda_home: {{ anaconda_home }}
+        wrapper_spark_home: {{ wrapper_spark_home }}
         spark_home: {{ spark_home }}
         hadoop_conf_dir: {{ hadoop_conf_dir }}
         app_packages_home: {{ app_packages_home }}

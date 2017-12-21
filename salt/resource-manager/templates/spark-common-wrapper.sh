@@ -49,5 +49,6 @@ fi
 set -- "${KEEP[@]}"
 
 # Call the script with all the arguments.
+[[ "X${WRAPPED_SPARK_HOME}" != 'X' ]] && export SPARK_HOME=$WRAPPED_SPARK_HOME
 echo "Executing: $EXECUTABLE $@"
 exec "${EXECUTABLE}" "$@"
