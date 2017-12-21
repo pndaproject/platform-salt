@@ -1,7 +1,20 @@
-# Mapping table of the form
-# user:group queue
-# when the user is empty, the whole group will be mmaped to the queue
-# when the group is empty, he user will be ammped to the queue irrespective of the group
-pnda:pnda system
+# Mapping table. 
+# --------------
+#
+# Supported Rule Syntax
+# user: queue 
+# :group queue
+#
+# when the group is empty (first rule above), the user will be mapped to the queue irrespective of the group
+# when the user is empty (second rule above), the whole group will be mapped to the queue
+# when both the user and the group are defined, the group will be ignored
+
+# The 'pnda' user will be mapped to the default queue.
+pnda: default
+
+# The 'prod' group users will be mapped to the prod queue unless the dev queue is explicitly requested.
 :prod prod
-dev1 dev
+:prod dev
+
+# The 'dev' group users will be mapped to the dev queue. 
+:dev dev

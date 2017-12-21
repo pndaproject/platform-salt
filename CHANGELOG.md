@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3583: hadoop distro is now part of grains
 - PNDA-2540: Stop supplying 'cloud-user' as the default operating system user as this is deployment specific and must be supplied in the pnda-env.yaml
 - PNDA-1899: Scala Spark Jupyter Integration
+- PNDA-3600: Make the spark cli wrapper the master spark cli of the system.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
