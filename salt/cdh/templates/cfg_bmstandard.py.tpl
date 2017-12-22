@@ -147,7 +147,8 @@ MAPRED_CFG = {
                     'resourcemanager_config_safety_valve':
                         '<property> \r\n<name>yarn.resourcemanager.proxy-user-privileges.enabled</name>\r\n<value>true</value>\r\n</property>',
                     'resource_manager_java_heapsize': '4294967296',
-                    'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn'
+                    'resource_manager_log_dir': '/var/log/pnda/hadoop-yarn',
+                    'resourcemanager_fair_scheduler_configuration': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?> <allocations> <queue name="root"> <weight>1.0</weight> <schedulingPolicy>fair</schedulingPolicy> <aclSubmitApps> </aclSubmitApps> <aclAdministerApps>pnda </aclAdministerApps><queue name="default"> <weight>1.0</weight> <schedulingPolicy>fair</schedulingPolicy> <aclSubmitApps>pnda </aclSubmitApps> </queue> <queue name="applications" type="parent"> <weight>0.0</weight> <schedulingPolicy>fair</schedulingPolicy> <queue name="dev"> <weight>0.0</weight> <schedulingPolicy>fair</schedulingPolicy> <aclSubmitApps> dev,prod</aclSubmitApps> </queue> <queue name="prod"> <weight>1.0</weight> <schedulingPolicy>fair</schedulingPolicy> <aclSubmitApps> prod</aclSubmitApps> </queue> </queue> </queue> <defaultQueueSchedulingPolicy>fair</defaultQueueSchedulingPolicy> <queuePlacementPolicy> <rule name="specified" create="false"/> <rule name="default"/> </queuePlacementPolicy> </allocations>'
                 }
         }
     ]
