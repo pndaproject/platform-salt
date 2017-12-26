@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3487: Manage tmpfs in volume mapping
 - PNDA-3483: Zookeeper version 3.4.11
 - PNDA-3600: Make the spark/MR cli wrapper the master system cli.
+- PNDA-3581: Create a mapping table for the Fair Scheduler queue setup (CDH) of PNDA-3527.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
