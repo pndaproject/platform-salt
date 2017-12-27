@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3478: Added support for Spark2 on HDP
 - PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
 - PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
+- PNDA-3527: Add dev/prod queues to YARN CDH config.
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
@@ -22,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3483: Zookeeper version 3.4.11
 - PNDA-3600: Make the spark/MR cli wrapper the master system cli.
 - PNDA-3581: Create a mapping table for the Fair Scheduler queue setup (CDH) of PNDA-3527.
+- PNDA-3529: Make Jupyter use the system spark cli.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
