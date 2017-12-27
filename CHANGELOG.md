@@ -20,6 +20,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-3518: Reduce log output in hadoop_setup.log on HDP by only logging task details on state change
 - PNDA-3487: Manage tmpfs in volume mapping
 - PNDA-3483: Zookeeper version 3.4.11
+- PNDA-3600: Make the spark/MR cli wrapper the master system cli.
+- PNDA-3529: Make Jupyter use the system spark cli.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka

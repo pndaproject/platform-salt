@@ -1,7 +1,0 @@
-# Mapping table of the form
-# user:group queue
-# when the user is empty, the whole group will be mmaped to the queue
-# when the group is empty, he user will be ammped to the queue irrespective of the group
-pnda:pnda system
-:prod prod
-dev1 dev

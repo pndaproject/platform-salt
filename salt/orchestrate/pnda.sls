@@ -110,7 +110,7 @@ orchestrate-pnda-create_master_dataset:
 
 orchestrate-pnda-install_spark_wrapper:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:* or G@roles:jupyter )'
     - tgt_type: compound
     - sls: resource-manager
     - timeout: 120
