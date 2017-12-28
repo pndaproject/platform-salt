@@ -1,5 +1,6 @@
-{% set resource_manager_dir = pillar['pnda']['homedir'] + "/rm-wrapper" %}
-{% set map_file = resource_manager_dir + "/policies/map.txt" %}
+{% set resource_manager_path = pillar['resource_manager']['path'] %}
+{% set map_file = resource_manager_path + "policies/map.txt" %}
+{% set policy_file_link = resource_manager_path + pillar['resource_manager']['policy_file'] %}
 {% set execs = [ 'spark-submit', 'spark-shell', 'pyspark', 'mapred' ] %} 
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set map_file_source = 'capacity_scheduler_map.txt' %}
@@ -9,7 +10,7 @@
 
 resource-manager_user-group-policy_install:
   file.managed:
-    - name: {{ resource_manager_dir }}/policies/yarn-user-group-policy.sh
+    - name: {{ resource_manager_path }}/policies/yarn-user-group-policy.sh
     - source: salt://resource-manager/templates/yarn-user-group-policy.sh
     - template: jinja
     - defaults:
@@ -26,25 +27,26 @@ resource-manager_group_map_install:
 
 resource-manager_policy_selection:
   file.symlink:
-    - name: {{ resource_manager_dir }}/yarn-policy.sh
-    - target: {{ resource_manager_dir }}/policies/yarn-user-group-policy.sh
+    - name: {{ policy_file_link }}
+    - target: {{ resource_manager_path }}/policies/yarn-user-group-policy.sh
     - mode: 755
 
 resource-manager_spark_common_wrapper:
   file.managed:
-    - name: {{ resource_manager_dir }}/spark-common-wrapper.sh
+    - name: {{ resource_manager_path }}/spark-common-wrapper.sh
     - source: salt://resource-manager/templates/spark-common-wrapper.sh
     - template: jinja
     - defaults:
-      resource_manager_dir: {{ resource_manager_dir }}
+        resource_manager_path: {{ resource_manager_path }}
+        policy_file_link: {{ policy_file_link }}
     - mode: 755
 
 {% for exec in execs %}
 
 resource-manager_{{ exec }}:
   file.symlink:
-    - name: {{ resource_manager_dir }}/{{ exec }}
-    - target: {{ resource_manager_dir }}/spark-common-wrapper.sh
+    - name: {{ resource_manager_path }}/{{ exec }}
+    - target: {{ resource_manager_path }}/spark-common-wrapper.sh
     - mode: 755
 
 resource-manager_{{ exec }}_move:
@@ -68,7 +70,7 @@ resource-manager_{{ exec }}_wrapper:
   alternatives.install:
     - name: {{ exec }}
     - link: /usr/bin/{{ exec }}
-    - path: {{ resource_manager_dir }}/{{ exec }}
+    - path: {{ resource_manager_path }}/{{ exec }}
     - priority: 100
 
 {% endfor %}
