@@ -2,10 +2,10 @@
 
 # Find which script to call
 CALLER_DIR="$(cd "`dirname "$0"`"; pwd)"
-if [ "$CALLER_DIR" == "/usr/bin" ] || [ "$CALLER_DIR" == "/bin" ] || [ "$CALLER_DIR" == "{{ resource_manager_dir }}" ]; then
+if [ "$CALLER_DIR" == "/usr/bin" ] || [ "$CALLER_DIR" == "/bin" ] || [ "$CALLER_DIR" == "{{ resource_manager_path }}" ]; then
   # The wrapper (or master alternative) is the caller, so we can now call the original script.
   script=`basename "$0"`
-  EXECUTABLE="$(update-alternatives --display "$script" | egrep -v '^/bin' | egrep -v '^/usr/bin' | egrep -v '^{{ resource_manager_dir }}' | egrep -o ^/.*"${script}" | head -n 1)"
+  EXECUTABLE="$(update-alternatives --display "$script" | egrep -v '^/bin' | egrep -v '^/usr/bin' | egrep -v '^{{ resource_manager_path }}' | egrep -o ^/.*"${script}" | head -n 1)"
   if [ "X$EXECUTABLE" == "X" ]; then
     echo "There is no alternative for $script"
     exit 1
@@ -35,7 +35,7 @@ do
 done
 
 # define the appropriate queue according to the policy
-QUEUE=`{{ resource_manager_dir }}/yarn-policy.sh ${REQUEST}`
+QUEUE=`{{ policy_file_link }} ${REQUEST}`
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then 
   echo "Error: yarn-policy returned exit $EXIT_CODE: $QUEUE"
