@@ -31,7 +31,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-3535: Make ambari server sls idempotent
 - PNDA-3323: Clean up files for all users in hdfs_cleaner
 - PNDA-3521: fix issue on push/getting DM keys
-- PNDA-3428: Daemonize HDP HBase services 
+- PNDA-3428: Daemonize HDP HBase services
+- PNDA-3530: Update yarn resource manager config to include both resource managers for webapp settings in the standard flavor
 
 ## [3.0.0] 2017-11-24
 ### Added
