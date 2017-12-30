@@ -9,6 +9,7 @@ pnda:
     directory: /user/pnda/PNDA_datasets/datasets
     quarantine_directory: /user/pnda/PNDA_datasets/quarantine
     bulk_directory: /user/pnda/PNDA_datasets/bulk
+    staging_directory: /user/pnda/PNDA_datasets/staging
   
   app_packages:
     app_packages_hdfs_path: /pnda/deployment/app_packages
