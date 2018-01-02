@@ -156,19 +156,6 @@ platform-testing-cdh-blackbox_service:
       cm_password: {{ cm_password }}
       hadoop_distro: {{ hadoop_distro }}
 
-platform-testing-cdh-crontab-cdh_blackbox:
-  cron.present:
-    - identifier: PLATFORM-TESTING-CDH-BLACKBOX
-    - user: root
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /sbin/start platform-testing-cdh-blackbox
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
-    - name: /bin/systemctl start platform-testing-cdh-blackbox
-{% endif %}
-    - require:
-      - pip: platform-testing-cdh-install-requirements-cdh_blackbox
-      - file: platform-testing-cdh-blackbox_service
-
 {% if grains['os'] in ('RedHat', 'CentOS') %}
 platform-testing-cdh-systemctl_reload:
   cmd.run:
