@@ -55,7 +55,7 @@ jupyterproxy:
   release_version: 1.3.1
 
 gobblin:
-  release_version: develop
+  release_version: 0.11.0
 
 console_frontend:
   release_version: develop
