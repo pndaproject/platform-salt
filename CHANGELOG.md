@@ -5,12 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-3562: enable PAM authentication on PNDA console frontend
 - PNDA-3580: Add spark cli that implements a user/group placement policy.
-- PNDA-2832: Jupyter %sql magic support.
-- PNDA-3478: Added support for Spark2 on HDP
-- PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
-- PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
-- PNDA-3527: Add dev/prod queues to YARN CDH config.
-- PNDA-3528: Add some pillars for the resource manager and used in the dm-config.
+- PNDA-3273: Capture Spark metrics for all applications. 
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
