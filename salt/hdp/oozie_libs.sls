@@ -9,6 +9,7 @@ include:
 hdp-oozie_libs_link_spark_examples:
   cmd.run:
     - name: 'ln -s /usr/hdp/current/spark-client/lib/spark-examples*.jar /usr/hdp/current/spark-client/lib/spark-examples.jar'
+    - unless: ls /usr/hdp/current/spark-client/lib/spark-examples.jar
 
 hdp-oozie_libs_create_virtualenv:
   virtualenv.managed:
