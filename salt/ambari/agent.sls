@@ -6,7 +6,7 @@ ambari-agent-user:
     - groups:
       - root
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-agent-libtirpc:
   pkg.installed:
     - name: {{ pillar['libtirpc-devel']['package-name'] }}
@@ -34,11 +34,28 @@ ambari-agent-create_log_dir:
     - name: /var/log/pnda/ambari/
     - makedirs: True
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-agent-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable ambari-agent
 {%- endif %}
+
+{% if grains['os'] == 'Ubuntu' %}
+# See AMBARI-22532, and remove this work around when that is resolved
+ambari-agent-patchfix1:
+  file.replace:
+    - name: /usr/lib/ambari-agent/lib/resource_management/core/providers/package/apt.py
+    - pattern: '^.*if repo_id in package\[2\]:'
+    - repl: '          if urllib.unquote(repo_id).decode("utf-8") in urllib.unquote(package[2]).decode("utf-8"):'
+
+ambari-agent-patchfix2:
+  file.replace:
+    - name: /usr/lib/ambari-agent/lib/resource_management/core/providers/package/apt.py
+    - pattern: 'import subprocess'
+    - repl: |
+        import subprocess
+        import urllib
+{% endif %}
 
 ambari-agent-start_service:
   cmd.run:

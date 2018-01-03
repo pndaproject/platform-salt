@@ -7,7 +7,7 @@
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
 
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
 
@@ -16,11 +16,11 @@
 {% set virtual_env_dir = install_dir + "/" + app_directory_name + "/venv" %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
-{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/app-logs/hdfs/logs/", "/app-logs/pnda/logs/", "/spark-history/"' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/app-logs/*/logs/", "/spark-history/"' %}
 {% set general_dirs_to_clean = '"/mr-history/done/"' %}
 {% else %}
-{% set streaming_dirs_to_clean = '"/user/hdfs/.sparkStaging/", "/tmp/logs/hdfs/logs/", "/user/spark/applicationHistory/"' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/tmp/logs/*/logs/", "/user/spark/applicationHistory/"' %}
 {% set general_dirs_to_clean = '"/user/history/done/"' %}
 {% endif %}
 
@@ -33,7 +33,7 @@ hdfs-cleaner-dl-and-extract:
     - source: {{ packages_server }}/{{ app_package }}
     - source_hash: {{ packages_server }}/{{ app_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ app_directory_name }}
 
 hdfs-cleaner-create-venv:
@@ -75,7 +75,7 @@ hdfs-cleaner-copy_service:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/hdfs-cleaner.conf
     - source: salt://hdfs-cleaner/templates/hdfs-cleaner.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/hdfs-cleaner.service
     - source: salt://hdfs-cleaner/templates/hdfs-cleaner.service.tpl
 {%- endif %}
@@ -83,7 +83,7 @@ hdfs-cleaner-copy_service:
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 hdfs-cleaner-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload
@@ -94,7 +94,7 @@ hdfs-cleaner-add_crontab_entry:
     - identifier: HDFS-CLEANER
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start hdfs-cleaner
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start hdfs-cleaner
 {%- endif %}
     - user: root

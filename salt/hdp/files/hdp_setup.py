@@ -23,20 +23,45 @@ logging.basicConfig(filename=DEFAULT_LOG_FILE,
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-def wait_on_cmd(tracking_uri, msg, auth, headers):
+def wait_on_cmd(tracking_uri, msg, cluster_name, ambari_api, auth, headers):
     '''
     Wait for ambari to complete running a command. A command is complete when the
     progress_percent value reaches 100.
     '''
     logging.debug('Waiting for %s...', msg)
     progress_percent = 0
-    while progress_percent < 100:
+    task_count = 0
+    task_state_by_id = {}
+    while progress_percent < 100 or task_count == 0:
         time.sleep(5)
-        status_reponse = requests.get(tracking_uri, auth=auth, headers=headers)
-        logging.debug(status_reponse.json()['Requests'])
-        cmd_status = status_reponse.json()['Requests']['request_status']
-        progress_percent = int(status_reponse.json()['Requests']['progress_percent'])
-        logging.debug('Progress for %s: %s%% - %s', tracking_uri, progress_percent, cmd_status)
+        status_reponse = requests.get('%s%s' % (tracking_uri, '?fields=tasks/Tasks/status,tasks/Tasks/command,tasks/Tasks/role,tasks/Tasks/host_name,Requests'),
+                                      auth=auth, headers=headers)
+        response_json = status_reponse.json()
+        request_info = response_json['Requests']
+        logging.debug(json.dumps(request_info))
+        cmd_status = request_info['request_status']
+        task_count = request_info['task_count']
+        latest_progress_percent = int(request_info['progress_percent'])
+        if progress_percent != latest_progress_percent:
+            progress_percent = latest_progress_percent
+            logging.info('%s%% of %s tasks - %s', progress_percent, task_count, cmd_status)
+
+        if 'tasks' in response_json:
+            for task in response_json['tasks']:
+                task_info = task['Tasks']
+                task_id = task_info['id']
+                status = task_info['status']
+
+                # Only log this task if we don't yet know about it or we do, but its status has changed
+                if task_id not in task_state_by_id or task_state_by_id[task_id] != status:
+                    task_state_by_id[task_id] = status
+                    logging.info('%s: %s %s on %s', status, task_info['command'], task_info['role'], task_info['host_name'])
+                    request_id = task_info['request_id']
+                    if status == 'FAILED':
+                        logging.warn('Failed ambari task detected, fetching details')
+                        task_status_response = requests.get('%s/clusters/%s/requests/%s/tasks/%s' % (ambari_api, cluster_name, request_id, task_id),
+                                                            auth=auth, headers=headers)
+                        logging.info(task_status_response.json())
     return cmd_status
 
 def stop_all_services(cluster_name, ambari_api, auth, headers):
@@ -62,7 +87,7 @@ def stop_all_services(cluster_name, ambari_api, auth, headers):
     stop_response = requests.put(stop_uri, json.dumps(stop_command), auth=auth, headers=headers)
     logging.debug(stop_response.text)
     if stop_response.status_code == 202:
-        wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari', auth, headers)
+        wait_on_cmd(stop_response.json()['href'], 'services to be stopped by Ambari', cluster_name, ambari_api, auth, headers)
 
 def start_all_services(cluster_name, ambari_api, auth, headers):
     '''
@@ -87,7 +112,8 @@ def start_all_services(cluster_name, ambari_api, auth, headers):
     start_response = requests.put(start_uri, json.dumps(start_command), auth=auth, headers=headers)
     logging.debug(start_response.text)
     if start_response.status_code == 202:
-        wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari', auth, headers)
+        return wait_on_cmd(start_response.json()['href'], 'services to be started by Ambari', cluster_name, ambari_api, auth, headers)
+    return 'COMPLETED'
 
 def exit_setup(error_message):
     '''
@@ -133,7 +159,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
      - Adds the stack repos
      - Creates the blueprint definition
      - Creates the cluster instance
-     - Creates ambari views for oozie and HDFS
+     - Creates ambari views for hive, oozie and HDFS
     '''
     logging.info("Creating new cluster")
 
@@ -147,17 +173,46 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     else:
         exit_setup('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
-    repo_requests = [('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-2.6' % (ambari_api, hdp_os_type),
-                      '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_core_stack_repo),
-                     ('%s/stacks/HDP/versions/2.6/operating_systems/%s/repositories/HDP-UTILS-1.1.0.21' % (ambari_api, hdp_os_type),
-                      '{"Repositories" : { "base_url" : "%s", "verify_base_url" : true }}' % hdp_utils_stack_repo)]
-
-    for repo_request in repo_requests:
-        logging.debug("Registering repo: %s", repo_request[0])
-        repo_response = requests.put(repo_request[0], repo_request[1], auth=auth, headers=headers)
-        if repo_response.status_code != 200:
-            exit_setup(repo_response.text)
-        logging.debug("Registered repo: %s", repo_request[0])
+    repo_definition = {
+        "RepositoryVersions" : {
+            "display_name" : "HDP",
+            "repository_version" : "2.6"
+        },
+        "operating_systems" : [
+            {
+                "OperatingSystems" : {
+                    "os_type" : hdp_os_type,
+                    "stack_name" : "HDP",
+                    "stack_version" : "2.6"
+                },
+                "repositories" : [
+                    {
+                        "Repositories" : {
+                            "base_url" : hdp_core_stack_repo,
+                            "os_type" : hdp_os_type,
+                            "repo_id" : "HDP-2.6",
+                            "repo_name" : "HDP",
+                            "unique" : False
+                        }
+                    },
+                    {
+                        "Repositories" : {
+                            "base_url" : hdp_utils_stack_repo,
+                            "os_type" : hdp_os_type,
+                            "repo_id" : "HDP-UTILS-1.1.0.21",
+                            "repo_name" : "HDP-UTILS",
+                            "unique" : False
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    logging.info("Registering repos: %s", repo_definition)
+    repo_response = requests.post('%s/stacks/HDP/versions/2.6/repository_versions' % ambari_api, json.dumps(repo_definition), auth=auth, headers=headers)
+    if repo_response.status_code != 201:
+        exit_setup(repo_response.text)
+    logging.debug("Registered repos")
 
     ### Create blueprint ###
     logging.info("Loading blueprint")
@@ -192,7 +247,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     logging.debug(cluster_response.text)
     status_tracking_uri = cluster_response.json()['href']
 
-    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari", auth, headers)
+    blueprint_status = wait_on_cmd(status_tracking_uri, "blueprint to be instantiated by Ambari", cluster_name, ambari_api, auth, headers)
 
     ### Check everything started and retry if needed ###
     if blueprint_status == 'COMPLETED':
@@ -205,12 +260,15 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
 
     # Even if there were no errors starting the services try issuing a start just to make sure everything is running
     time.sleep(60)
-    start_all_services(cluster_name, ambari_api, auth, headers)
+    final_start_result = start_all_services(cluster_name, ambari_api, auth, headers)
+    # If this fails then abort here because something didn't come up
+    if final_start_result != 'COMPLETED':
+        exit_setup('Did not manage to start all services successfully')
 
     ### Confgure disk space thresholds ###
     logging.info('Configuring alert thresholds')
     disk_alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=ambari_agent_disk_usage' %
-                                 (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
+                                  (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
     disk_alert_def = requests.get(disk_alert_uri, auth=auth, headers=headers).json()
     for parameter in disk_alert_def['AlertDefinition']['source']['parameters']:
         if parameter['name'] == 'minimum.free.space':
@@ -222,13 +280,17 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     disk_alert_def.pop('href', None)
     requests.put(disk_alert_uri, json.dumps(disk_alert_def), auth=auth, headers=headers)
 
-    ### Disable Ambari metrics restart alert ###
-    metric_restart_alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=ams_metrics_collector_autostart' %
-                                           (ambari_api, cluster_name), auth=auth, headers=headers).json()['items'][0]['href']
-    metric_restart_alert_def = requests.get(metric_restart_alert_uri, auth=auth, headers=headers).json()
-    metric_restart_alert_def['AlertDefinition']['enabled'] = False
-    metric_restart_alert_def.pop('href', None)
-    requests.put(metric_restart_alert_uri, json.dumps(metric_restart_alert_def), auth=auth, headers=headers)
+    ### Disable some alerts - these cause problems by often showing up on newly provisioned clusters, when everything is actually OK ###
+    ###                       an operator could consider re-enabling these after the platform is stable                              ###
+    def disable_alert(alert_name):
+        alert_uri = requests.get('%s/clusters/%s/alert_definitions?AlertDefinition/name=%s' %
+                                 (ambari_api, cluster_name, alert_name), auth=auth, headers=headers).json()['items'][0]['href']
+        alert_def = requests.get(alert_uri, auth=auth, headers=headers).json()
+        alert_def['AlertDefinition']['enabled'] = False
+        alert_def.pop('href', None)
+        requests.put(alert_uri, json.dumps(alert_def), auth=auth, headers=headers)
+    disable_alert('ams_metrics_collector_autostart')
+    disable_alert('ambari_server_stale_alerts')
 
     ### Create Ambari views ###
     logging.info("Creating Ambari HDFS files view")
@@ -266,6 +328,51 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
     create_wf_view_uri = '%s/views/WORKFLOW_MANAGER/versions/1.0.0/instances/PNDA_WORKFLOW' % ambari_api
     create_wf_view_response = requests.post(create_wf_view_uri, json.dumps(oozie_workflow_view_def), auth=auth, headers=headers)
     logging.debug(create_wf_view_response.text)
+
+    logging.info("Modifying Hive view")
+    mod_hive_view_def = {
+        "ViewInstanceInfo": {
+            "properties": {
+                "hive.session.params": "",
+                "hive.ldap.configured": "false",
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "views.tez.instance": None,
+                "scripts.dir": "/user/hdfs/hive/scripts",
+                "jobs.dir": "/user/hdfs/hive/jobs",
+                "scripts.settings.defaults-file": "/user/hdfs/.${instanceName}.defaultSettings",
+                "view.conf.keyvalues": None,
+                "use.hive.interactive.mode": "false"
+            }
+        }
+    }
+    mod_hive_view_uri = '%s/views/HIVE/versions/1.5.0/instances/AUTO_HIVE_INSTANCE' % ambari_api
+    mod_hive_view_response = requests.put(mod_hive_view_uri, json.dumps(mod_hive_view_def), auth=auth, headers=headers)
+    logging.debug(mod_hive_view_response.text)
+
+    logging.info("Modifying Hive2 view")
+    mod_hive2_view_def = {
+        "ViewInstanceInfo": {
+            "properties": {
+                "hive.session.params": "",
+                "hive.ldap.configured": "false",
+                "hive.ranger.servicename": None,
+                "hive.ranger.username": "admin",
+                "hive.ranger.password": "",
+                "webhdfs.username": "hdfs",
+                "webhdfs.auth": None,
+                "views.tez.instance": None,
+                "scripts.dir": "/user/hdfs/hive/scripts",
+                "jobs.dir": "/user/hdfs/hive/jobs",
+                "scripts.settings.defaults-file": "/user/hdfs/.${instanceName}.defaultSettings",
+                "use.hive.interactive.mode": "false",
+                "view.conf.keyvalues": None
+            }
+        }
+    }
+    mod_hive2_view_uri = '%s/views/HIVE/versions/2.0.0/instances/AUTO_HIVE20_INSTANCE' % ambari_api
+    mod_hive2_view_response = requests.put(mod_hive2_view_uri, json.dumps(mod_hive2_view_def), auth=auth, headers=headers)
+    logging.debug(mod_hive2_view_response.text)
 
 def update_cluster_config(nodes, cluster_name, ambari_api, auth, headers):
     '''
@@ -342,8 +449,22 @@ def expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers):
     expand_response = requests.post(blueprint_expand_post_uri, json.dumps(expansion_def), auth=auth, headers=headers)
     logging.debug(expand_response.text)
     expand_tracking_uri = expand_response.json()['href']
-    expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", auth, headers)
+    expand_status = wait_on_cmd(expand_tracking_uri, "blueprint to be applied to new nodes by Ambari", cluster_name, ambari_api, auth, headers)
     logging.info("Expansion finished, result: %s", expand_status)
+
+def wait_for_api_up(ambari_api, auth, headers):
+    check_api_response_code = 0
+    attempts = 60
+    while check_api_response_code != 200 and attempts > 0:
+        try:
+            logging.debug('Waiting for API to come up')
+            time.sleep(5)
+            attempts -= 1
+            check_api_response = requests.get('%s/users' % (ambari_api), auth=auth, headers=headers)
+            check_api_response_code = check_api_response.status_code
+        except:
+            logging.debug('API is not up yet')
+            check_api_response_code = 0
 
 def setup_hadoop(
         ambari_host,
@@ -372,6 +493,8 @@ def setup_hadoop(
     ambari_api = 'http://%s:8080/api/v1' % ambari_host
     headers = {'X-Requested-By': 'admin'}
     auth = ('admin', 'admin')
+
+    wait_for_api_up(ambari_api, auth, headers)
 
     get_admin_user_response = requests.get('%s/users/admin' % (ambari_api), auth=auth, headers=headers)
     if get_admin_user_response.status_code != 200 or (ambari_username == 'admin' and ambari_password == 'admin'):

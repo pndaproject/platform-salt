@@ -1,16 +1,83 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [Unreleased]
 ### Added
+- PNDA-3127: Post ingress aggregation for Kafka datasets
+- PNDA-3562: enable PAM authentication on PNDA console frontend
+- PNDA-3580: Add spark cli that implements a user/group placement policy.
+- PNDA-2832: Jupyter %sql magic support.
+- PNDA-3478: Added support for Spark2 on HDP
+- PNDA-3345: Provide the app_packages HDFS location (from Pillar) to applications deployed with DM
+- PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
+- PNDA-3527: Add dev/prod queues to YARN CDH config.
+- PNDA-3528: Add some pillars for the resource manager and used in the dm-config.
+
+### Changed
+- PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
+- PNDA-3555: Use /pnda/deployment as HDFS library location
+- PNDA-3583: hadoop distro is now part of grains
+- PNDA-2540: Stop supplying 'cloud-user' as the default operating system user as this is deployment specific and must be supplied in the pnda-env.yaml
+- PNDA-1899: Scala Spark Jupyter Integration
+- PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
+- PNDA-3518: Reduce log output in hadoop_setup.log on HDP by only logging task details on state change
+- PNDA-3487: Manage tmpfs in volume mapping
+- PNDA-3483: Zookeeper version 3.4.11
+- PNDA-3600: Make the spark/MR cli wrapper the master system cli.
+- PNDA-3581: Create a mapping table for the Fair Scheduler queue setup (CDH) of PNDA-3527.
+- PNDA-3529: Make Jupyter use the system spark cli.
+
+### Fixed
+- PNDA-3573: remove eth0 default value on kafka
+- PNDA-3553: Configure PNDA log aggregation to use HDP specific paths when collecting hadoop service logs on HDP
+- PNDA-3535: Make ambari server sls idempotent
+- PNDA-3323: Clean up files for all users in hdfs_cleaner
+- PNDA-3521: fix issue on push/getting DM keys
+- PNDA-3428: Daemonize HDP HBase services
+- PNDA-3530: Update yarn resource manager config to include both resource managers for webapp settings in the standard flavor
+
+## [3.0.0] 2017-11-24
+### Added
+- PNDA-3330: Add default application user configuration to the deployment manager.
+- PNDA-2389: PNDA automatically reboots instances that need rebooting following kernel updates
+- PNDA-2982: Added support for adding pyspark application dependencies
+- PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
+- PNDA-2163: Support for OpenTSDB Platform testing
+- PNDA-2832: Added sql magic support for Jupyter notebooks
+- PNDA-1788: Cloudera version can be set in the salt pillar
+- PNDA-3314: Added new flavor for larger PNDAs called "production"
+- PNDA-3484: Add CentOS support
+- PNDA-3497: Add pillar config to set how many data directories to configure HDFS to use.
 
 ### Changed
 - PNDA-2965: Rename `cloudera_*` role grains to `hadoop_*`
+- PNDA-3216: Uprev to logstash 5.2.2
+- PNDA-3180: Limit orchestrate commands to new nodes only
+- PNDA-3212: Link logstash install directory using salt file.symlink command as the cmd.run version was preventing logshipper/logserver upgrades
+- PNDA-3249: Upgrade Kafka version to 0.11.0.0
+- PNDA-3264: Use redis 3.2.10 on redhat
+- PNDA-2884: Upgrade CDH and Cloudera Manager version 5.12.1
+- PNDA-3380: Move opentsdb log to /var/log/pnda
+- PNDA-3441: Cleanup warnings from create_notebook_dir.sh script
+- PNDA-3451: Use existing MySQL for the Ambari database
+- PNDA-2486: Move yarn local directories to /data0 to separate the data from the operating system partition.
 
 ### Fixed
+- PNDA-3499: Cleanup CHANGELOG with missing release info.
 - PNDA-3213: fix issue on wrong checksum file name for logserver sls
 - PNDA-3615: conda command now works 'out-of-the-box' with correct PATH additions
+- PNDA-3216: Use new logstash plugin mechanism in 5.2.2 that actually works when offline
+- PNDA-3111: Report failures up if opentsdb.hbase_tables fails
+- PNDA-3309: use local gem installation for Kafka tool
+- PNDA-3343: When expanding a cluster new datanodes are given a spark gateway role
+- PNDA-3309: Write `CM_SETUP_SUCCESS` into a fixed directory
+- PNDA-3369: fix issue on offsets topic replication factor on kafka configuration zhere default value is 3
+- PNDA-3238: Add jupyter extensions to the kenel virtual environment.
+- PNDA-3350: Fix dm.pem permission post deployment highstate.
+- PNDA-3432: Jupyter not launching after reboot on RHEL.
+- PNDA-3013: Fix issue on Keystone passwords with illegal XML characters (such as &) cause Hadoop setup to fail.
+- PNDA-3524: remove beacons logic
 
 ## [2.0.0] 2017-05-23
 ### Added

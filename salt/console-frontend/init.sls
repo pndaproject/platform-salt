@@ -3,7 +3,7 @@
 {% set console_frontend_package = 'console-frontend-' + console_frontend_version + '.tar.gz' %}
 {% if grains['os'] == 'Ubuntu' %}
 {% set nginx_config_location = '/etc/nginx/sites-enabled' %}
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
 {% set nginx_config_location = '/etc/nginx/conf.d' %}
 {% endif %}
 {% set install_dir = pillar['pnda']['homedir'] %}
@@ -14,7 +14,7 @@
 {% set clustername = salt['pnda.cluster_name']() %}
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
-{% set hadoop_distro = pillar['hadoop.distro'] %}
+{% set hadoop_distro = grains['hadoop.distro'] %}
 
 {% set data_manager_host = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
@@ -28,7 +28,7 @@
     {%- set edge_node_ip = '' -%}
 {%- endif -%}
 
-{%- if pillar['hadoop.distro'] == 'CDH' -%}
+{%- if grains['hadoop.distro'] == 'CDH' -%}
 {% set cm_port = ':7180' %}
 {%- else -%}
 {% set cm_port = ':8080' %}
@@ -41,9 +41,7 @@
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
 {% set jupyter_link = salt['pnda.generate_http_link']('jupyter',':8000') %}
-
-# disable LDAP login on the console if the LDAP server is not present
-{% set ldap_ip = salt['pnda.ldap_ip']() %}
+{% set login_mode = 'PAM' %}
 
 include:
   - nodejs
@@ -56,7 +54,7 @@ console-frontend-dl-and-extract:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - group: www-data
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - group: nginx
 {% endif %}
     - archive_format: tar
@@ -72,7 +70,7 @@ console-frontend-create_directory_link:
 console-frontend-install_app_dependencies:
   cmd.run:
     - cwd: {{ console_dir }}
-    - name: npm rebuild
+    - name: npm rebuild > /dev/null
     - require:
       - archive: nodejs-dl_and_extract_node
 
@@ -109,9 +107,7 @@ console-frontend-create_pnda_console_config:
         grafana_link: "{{ grafana_link }}"
         kibana_link: "{{ kibana_link }}"
         jupyter_link: "{{ jupyter_link }}"
-{% if ldap_ip != None %}
-        ldap_server_present: True
-{% endif %}
+        login_mode: "{{ login_mode }}"
 
 # Create a configuration file for nginx and specify where the PNDA console file are
 console-frontend-create_pnda_nginx_config:
@@ -128,7 +124,7 @@ console-frontend-remove_nginx_default_config:
   file.absent:
     - name: {{nginx_config_location}}/default
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 console-frontend-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable nginx

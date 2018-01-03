@@ -1,0 +1,15 @@
+# Mapping table. 
+# --------------
+#
+# Supported Rule Syntax
+# * queue
+# user: queue 
+# :group queue
+#
+# the character '*' is a whild card that matches every user of the system
+# when the group is empty (first rule above), the user will be mapped to the queue irrespective of the group
+# when the user is empty (second rule above), the whole group will be mapped to the queue
+# when both the user and the group are defined, the group will be ignored
+
+# Every user will be mapped to the default queue.
+* default

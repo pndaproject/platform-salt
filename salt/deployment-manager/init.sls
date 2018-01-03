@@ -10,7 +10,7 @@
 include:
   - python-pip
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
@@ -60,7 +60,7 @@ deployment-manager-dl-and-extract:
     - source: {{ packages_server }}/{{ deployment_manager_package }}
     - source_hash: {{ packages_server }}/{{ deployment_manager_package }}.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ install_dir }}/{{ deployment_manager_directory_name }}
 
 deployment-manager-create-venv:
@@ -86,35 +86,20 @@ deployment-manager-copy_configuration:
     - require:
       - archive: deployment-manager-dl-and-extract
 
-deployment-manager-gen_key:
-  cmd.run:
-    - name: 'ssh-keygen -b 2048 -t rsa -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem -q -N ""'
-    - unless: test -f {{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem
-    - require:
-      - archive: deployment-manager-dl-and-extract
-
-deployment-manager-push_key:
-  module.run:
-    - name: cp.push
-    - path: '{{ install_dir }}/{{ deployment_manager_directory_name }}/dm.pem.pub'
-    - upload_path: '/keys/dm.pem.pub'
-    - require:
-      - cmd: deployment-manager-gen_key
-
 deployment-manager-copy_service:
   file.managed:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/deployment-manager.conf
     - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
-{% endif %}    
+{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager

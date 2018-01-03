@@ -2,12 +2,11 @@ import sys
 import os
 import time
 from pywebhdfs.webhdfs import PyWebHdfsClient
-from pywebhdfs.errors import PyWebHdfsException
 
 def setup_common_oozie_libs(name_node):
     webhdfs_port = '14000'
     webhdfs_user = 'hdfs'
-    platform_dir = 'user/deployment/platform'
+    platform_dir = 'pnda/deployment/platform'
     lib_path_list = ['/usr/hdp/current/hbase-client/lib/hbase-client.jar',
                      '/usr/hdp/current/hbase-client/lib/hbase-common.jar',
                      '/usr/hdp/current/hbase-client/lib/hbase-protocol.jar',
@@ -31,7 +30,7 @@ def setup_common_oozie_libs(name_node):
         with open(path) as file_data:
             try:
                 hdfs_client.create_file(platform_file, file_data, overwrite=True)
-            except PyWebHdfsException:
+            except Exception:
                 print 'retrying HDFS copy command for %s' % platform_file
                 time.sleep(5)
                 hdfs_client.create_file(platform_file, file_data, overwrite=True)

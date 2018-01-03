@@ -1,11 +1,9 @@
-{%- set cm_ver = '5.9.0' -%}
-
 {%- set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') -%}
 {%- set cmdb_host = salt['pnda.ip_addresses']('oozie_database')[0] -%}
 {%- set cm_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
-{%- set cmdb_user = salt['pillar.get']('cloudera:cmdb:user', 'scm') -%}
-{%- set cmdb_database = salt['pillar.get']('cloudera:cmdb:database', 'scm') -%}
-{%- set cmdb_password = salt['pillar.get']('cloudera:cmdb:password', 'scm') -%}
+{% set cmdb_user = pillar['hadoop_manager']['cmdb']['user'] %}
+{% set cmdb_database = pillar['hadoop_manager']['cmdb']['database'] %}
+{% set cmdb_password = pillar['hadoop_manager']['cmdb']['password'] %}
 
 include:
   - java
@@ -22,7 +20,7 @@ cloudera-manager-install_server:
     - name: {{ pillar['cloudera-manager-server']['package-name'] }}
     - version: {{ pillar['cloudera-manager-server']['version'] }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 cloudera-manager-ensure_cloudera_manager_enabled:
   cmd.run:
     - name: /bin/systemctl enable cloudera-scm-server

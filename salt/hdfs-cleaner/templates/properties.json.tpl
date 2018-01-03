@@ -4,8 +4,24 @@
 {%- do cm_node.append(addrs[0]) %}
 {%- endfor %}
 {%- set cm_node_ip = cm_node|join(" ") %}
-{% set cm_username = pillar['admin_login']['user'] %}
-{% set cm_password = pillar['admin_login']['password'] %}
+{%- set cm_username = pillar['admin_login']['user'] %}
+{%- set cm_password = pillar['admin_login']['password'] %}
+{%- set perform_compaction = salt['pillar.get']('dataset_compaction:compaction', False) %}
+
+{%- if perform_compaction %}
+{%- set compaction_pattern = salt['pillar.get']('dataset_compaction:pattern', 'd') %}
+{%- if compaction_pattern == 'H' %}
+{%- set age = 1 %}
+{%- elif compaction_pattern == 'd' %}
+{%- set age = 2 %}
+{%- elif compaction_pattern == 'M' %}
+{%- set age = 32 %}
+{%- elif compaction_pattern == 'Y' %}
+{%- set age = 367 %}
+{%- endif %}
+{%- set pnda_dataset_staging_location =  pillar['pnda']['master_dataset']['staging_directory'] %}
+{%- set pnda_dataset_staging_retention_mode =  salt['pillar.get']('dataset_compaction:retention_mode', 'delete') %}
+{%- endif %}
 {
     "hadoop_distro":"{{ hadoop_distro }}",
     "cm_host":"{{ cm_node_ip }}",
@@ -18,6 +34,13 @@
         {"name": "{{ gobblin_work_dir }}/metrics", "age_seconds": 172800},
         {"name": "{{ gobblin_work_dir }}/state-store/PullFromKafkaMR", "age_seconds": 172800}
     ],
+{%- if perform_compaction %}
+    "staging_dataset_to_clean":{
+        "staging_dataset_location": "{{ pnda_dataset_staging_location }}",
+        "mode": "{{ pnda_dataset_staging_retention_mode }}",
+        "age": {{ age }}
+    },
+{%- endif %}
     "swift_repo": "{{ archive_type }}://{{ container }}{{ archive_service }}/{{ repo_path }}",
     "container_name": "{{ container }}",
     "s3_archive_region": "{{ salt['pillar.get']('aws.archive_region', '') }}",

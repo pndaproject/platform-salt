@@ -3,9 +3,21 @@
 {% set pnda_group = pillar['pnda']['group'] %}
 {% set pnda_home_directory = pillar['pnda']['homedir'] %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+pnda-install_selinux:
+  pkg.installed:
+    - pkgs:
+      - policycoreutils-python
+      - selinux-policy-targeted
+
 permissive:
-    selinux.mode
+  selinux.mode: []
+  file.replace:
+    - name: '/etc/selinux/config'
+    - pattern: '^SELINUX=(?!\s*permissive).*'
+    - repl: 'SELINUX=permissive'
+    - append_if_not_found: True
+    - show_changes: True
 {% endif %}
 
 pnda-create_pnda_user:
@@ -25,5 +37,3 @@ pnda-set_home_dir_perms:
   file.directory:
     - name: {{ pnda_home_directory }}
     - mode: 755
-    - recurse:
-      - mode

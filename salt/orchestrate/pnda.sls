@@ -1,12 +1,13 @@
 {% set pnda_cluster = salt['environ.get']('CLUSTER') %}
 
-{% if pillar['hadoop.distro'] == 'CDH' %}
+{% if grains['hadoop.distro'] == 'CDH' %}
 orchestrate-pnda-run_cloudera_user:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
     - tgt_type: compound
     - sls: cdh.cloudera_user
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_hadoop_manager:
   salt.state:
@@ -14,6 +15,7 @@ orchestrate-pnda-install_hadoop_manager:
     - tgt_type: compound
     - sls: cdh.cloudera-manager
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install-agents:
   salt.state:
@@ -21,6 +23,7 @@ orchestrate-pnda-install-agents:
     - tgt_type: compound
     - sls: cdh.cloudera-manager-agent
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_cdh_hadoop:
   salt.state:
@@ -28,6 +31,7 @@ orchestrate-pnda-install_cdh_hadoop:
     - tgt_type: compound
     - sls: cdh.setup_hadoop
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-impala_wrapper:
   salt.state:
@@ -35,22 +39,25 @@ orchestrate-pnda-impala_wrapper:
     - tgt_type: compound
     - sls: cdh.impala-shell
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-hue_setup:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hue'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:MGR*'
     - tgt_type: compound
     - sls: cdh.hue-login
     - timeout: 120
+    - queue: True
 {% endif %}
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_ambari_server:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
     - tgt_type: compound
     - sls: ambari.server
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_ambari_agents:
   salt.state:
@@ -58,6 +65,7 @@ orchestrate-pnda-install_ambari_agents:
     - tgt_type: compound
     - sls: ambari.agent
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_hdp_hadoop:
   salt.state:
@@ -65,20 +73,31 @@ orchestrate-pnda-install_hdp_hadoop:
     - tgt_type: compound
     - sls: hdp.setup_hadoop
     - timeout: 120
+    - queue: True
 
-orchestrate-pnda-install_hdp_hadoop_additional_roles:
+orchestrate-pnda-install_hdp_hadoop_hbase_rest:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
     - tgt_type: compound
-    - sls: hdp.start_additional_roles
+    - sls: hdp.hbase_rest
     - timeout: 120
+    - queue: True
+
+orchestrate-pnda-install_hdp_hadoop_hbase_thrift:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
+    - tgt_type: compound
+    - sls: hdp.hbase_thrift
+    - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_hdp_hadoop_httpfs:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR01'
     - tgt_type: compound
     - sls: hdp.httpfs
     - timeout: 120
+    - queue: True
 {% endif %}
 
 orchestrate-pnda-create_master_dataset:
@@ -87,6 +106,15 @@ orchestrate-pnda-create_master_dataset:
     - tgt_type: compound
     - sls: master-dataset
     - timeout: 120
+    - queue: True
+
+orchestrate-pnda-install_spark_wrapper:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:* or G@roles:jupyter )'
+    - tgt_type: compound
+    - sls: resource-manager
+    - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_gobblin:
   salt.state:
@@ -94,6 +122,7 @@ orchestrate-pnda-install_gobblin:
     - tgt_type: compound
     - sls: gobblin
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_platform_libraries:
   salt.state:
@@ -101,6 +130,7 @@ orchestrate-pnda-install_platform_libraries:
     - tgt_type: compound
     - sls: pnda.platform-libraries
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_jupyter:
   salt.state:
@@ -108,6 +138,7 @@ orchestrate-pnda-install_jupyter:
     - tgt_type: compound
     - sls: jupyter
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-configure_yarn_for_spark:
   salt.state:
@@ -115,6 +146,7 @@ orchestrate-pnda-configure_yarn_for_spark:
     - tgt_type: compound
     - sls: cdh.create-yarn-home
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_deployment_manager:
   salt.state:
@@ -122,13 +154,15 @@ orchestrate-pnda-install_deployment_manager:
     - tgt_type: compound
     - sls: deployment-manager
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_deployment_manager_keys:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:* or G@roles:opentsdb )'
     - tgt_type: compound
-    - sls: deployment-manager.keys
+    - sls: deployment-manager.install_keys
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-create_hbase_opentsdb_tables:
   salt.state:
@@ -136,6 +170,7 @@ orchestrate-pnda-create_hbase_opentsdb_tables:
     - tgt_type: compound
     - sls: opentsdb.hbase_tables
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-km_create_cluster:
   salt.state:
@@ -143,6 +178,7 @@ orchestrate-pnda-km_create_cluster:
     - tgt_type: compound
     - sls: kafka-manager.pnda_create_cluster
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_data_service:
   salt.state:
@@ -150,6 +186,7 @@ orchestrate-pnda-install_data_service:
     - tgt_type: compound
     - sls: data-service
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_opentsdb:
   salt.state:
@@ -157,6 +194,7 @@ orchestrate-pnda-install_opentsdb:
     - tgt_type: compound
     - sls: pnda_opentsdb.conf
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_hdfs_cleaner:
   salt.state:
@@ -164,6 +202,7 @@ orchestrate-pnda-install_hdfs_cleaner:
     - tgt_type: compound
     - sls: hdfs-cleaner
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-kafka_create_topics:
   salt.state:
@@ -171,6 +210,7 @@ orchestrate-pnda-kafka_create_topics:
     - tgt_type: compound
     - sls: platform-testing.create_topic
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-data_service-create_datasets:
   salt.state:
@@ -178,6 +218,7 @@ orchestrate-pnda-data_service-create_datasets:
     - tgt_type: compound
     - sls: data-service.create_datasets
     - timeout: 120
+    - queue: True
 
 orchestrate-pnda-install_test_modules:
   salt.state:
@@ -185,13 +226,30 @@ orchestrate-pnda-install_test_modules:
     - tgt_type: compound
     - sls: platform-testing.cdh
     - timeout: 120
+    - queue: True
 
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_hdp_hadoop_oozie_libs:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:EDGE'
     - tgt_type: compound
     - sls: hdp.oozie_libs
     - timeout: 120
+    - queue: True
 {% endif %}
 
+orchestrate-pnda-app-packages:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@hadoop:role:EDGE or G@roles:jupyter )'
+    - tgt_type: compound
+    - sls: app-packages
+    - timeout: 120
+    - queue: True
+
+orchestrate-pnda-install_remove_new_node_markers:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
+    - tgt_type: compound
+    - sls: orchestrate.remove_new_node_marker
+    - timeout: 120
+    - queue: True

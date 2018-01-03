@@ -3,10 +3,10 @@ acl:
   version: ""
 ambari-agent:
   package-name: ambari-agent
-  version: "2.5.0.3-7"
+  version: "2.6.0.0-267"
 ambari-server:
   package-name: ambari-server
-  version: "2.5.0.3-7"
+  version: "2.6.0.0-267"
 at:
   package-name: at
   version: ""
@@ -15,13 +15,13 @@ bzip2:
   version: ""
 cloudera-manager-agent:
   package-name: cloudera-manager-agent
-  version: "5.9.0-1.cm590.p0.249.el7"
+  version: "5.12.1-1.cm5121.p0.6.el7"
 cloudera-manager-daemons:
   package-name: cloudera-manager-daemons
-  version: "5.9.0-1.cm590.p0.249.el7"
+  version: "5.12.1-1.cm5121.p0.6.el7"
 cloudera-manager-server:
   package-name: cloudera-manager-server
-  version: "5.9.0-1.cm590.p0.249.el7"
+  version: "5.12.1-1.cm5121.p0.6.el7"
 cyrus-sasl-devel:
   package-name: cyrus-sasl-devel
   version: ""
@@ -34,6 +34,9 @@ cyrus-sasl-plain:
 g++:
   package-name: gcc-c++
   version: ""
+gcc:
+  package-name: gcc
+  version: ""
 glibc-devel:
   package-name: glibc-devel
   version: ""
@@ -42,6 +45,9 @@ gnuplot:
   version: ""
 grafana:
   package-source: 'grafana-4.2.0-1.x86_64.rpm'
+krb5-devel:
+  package-name: krb5-devel
+  version: ""
 libssl-dev:
   package-name: openssl-devel
   version: ""
@@ -54,6 +60,14 @@ libtirpc-devel:
 libsasl:
   package-name: libgsasl-devel
   version: ""
+libxml2:
+  package-name: libxml2-devel
+libxslt:
+  package-name: libxslt-devel
+libz:
+  package-name: zlib-devel
+libzmq:
+  package-name: czmq-devel
 mysql-server:
   package-name: mysql-community-server
   version: "5.5.54-2.el7"
@@ -71,6 +85,15 @@ ntp:
 opentsdb:
   package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
+pam-devel:
+  package-name: pam-devel
+  version: ""
+patch:
+  package-name: patch
+  version: ""
+postgresql-devel:
+  package-name: postgresql-devel
+  version: ""
 python-pip:
   package-name: python2-pip
   version: ""
@@ -88,8 +111,11 @@ python-mysqldb:
   version: "1.2.5-1.el7"
 redis-server:
   package-name: redis
-  version: "3.2.3-1.el7"
+  version: "3.2.10-2.el7"
   configuration_filename: "/etc/redis.conf"
+ruby-devel:
+  package-name: ruby-devel
+  version: ""
 snappy:
   package-name: snappy-devel
   version: ""

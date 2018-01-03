@@ -1,8 +1,15 @@
 # Install httpfs, note no need to specify version as it comes from the hdp repo mirror
+hdp-apt-debug1:
+  cmd.run:
+    - name: ps aux | grep apt
+
+hdp-apt-debug2:
+  cmd.run:
+    - name: ps aux | grep salt-minion
+
 hdp-httpfs_pkg:
   pkg.installed:
-    - pkgs:
-      - hadoop-httpfs
+    - name: hadoop-httpfs
     - ignore_epoch: True
 
 hdp-httpfs_create_link:

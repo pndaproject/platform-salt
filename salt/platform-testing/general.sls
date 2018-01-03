@@ -11,6 +11,7 @@
 {% set console_port = '3001' %}
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
+{% set opentsdb_port = '4242' %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
@@ -22,6 +23,11 @@
 {%- set kafka_zookeepers = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
 {%- do kafka_zookeepers.append(ip + ':' + zookeeper_port) -%}
+{%- endfor -%}
+
+{%- set opentsdb_hosts = [] -%}
+{%- for ip in salt['pnda.opentsdb_ips']() -%}
+{%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
@@ -40,7 +46,7 @@
 include:
   - python-pip
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 platform-testing-general-install_dev_deps_nmap_ncat:
   pkg.installed:
     - name: {{ pillar['nmap-ncat']['package-name'] }}
@@ -72,7 +78,7 @@ platform-testing-general-dl-and-extract:
     - source: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz
     - source_hash: {{ packages_server }}/{{platform_testing_package}}-{{ platform_testing_version }}.tar.gz.sha512.txt
     - archive_format: tar
-    - tar_options: v
+    - tar_options: ''
     - if_missing: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}
 
 platform-testing-general-create-venv:
@@ -103,7 +109,7 @@ platform-testing-general-kafka_service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-kafka.conf.tpl
     - name: /etc/init/platform-testing-general-kafka.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/platform-testing-general-kafka.service
     - source: salt://platform-testing/templates/platform-testing-general-kafka.service.tpl
 {% endif %}
@@ -122,7 +128,7 @@ platform-testing-general-crontab-kafka:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-kafka
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-kafka
 {% endif %}
 
@@ -139,7 +145,7 @@ platform-testing-general-zookeeper-service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.conf.tpl
     - name: /etc/init/platform-testing-general-zookeeper.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/platform-testing-general-zookeeper.service
     - source: salt://platform-testing/templates/platform-testing-general-zookeeper.service.tpl
 {% endif %}
@@ -157,8 +163,40 @@ platform-testing-general-crontab-zookeeper:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-zookeeper
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-zookeeper
+{% endif %}
+
+platform-testing-general-opentsdb-service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - source: salt://platform-testing/templates/platform-testing-general-opentsdb.conf.tpl
+    - name: /etc/init/platform-testing-general-opentsdb.conf
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+    - name: /usr/lib/systemd/system/platform-testing-general-opentsdb.service
+    - source: salt://platform-testing/templates/platform-testing-general-opentsdb.service.tpl
+{% endif %}
+    - mode: 644
+    - template: jinja
+    - context:
+      platform_testing_directory: {{ platform_testing_directory }}
+      platform_testing_package: {{ platform_testing_package }}
+      console_hosts: {{ console_hosts }}
+      opentsdb_hosts: {{ opentsdb_hosts }}
+
+platform-testing-general-crontab-opentsdb:
+  cron.present:
+    - identifier: PLATFORM-TESTING-OPENTSDB
+    - user: root
+{% if opentsdb_hosts|length > 10 %}
+    - minute: '*/2'
+{% else %}
+    - minute: '*'
+{% endif %}
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /sbin/start platform-testing-general-opentsdb
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+    - name: /bin/systemctl start platform-testing-general-opentsdb
 {% endif %}
 
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}
@@ -175,7 +213,7 @@ platform-testing-general-dm-blackbox_service:
 {% if grains['os'] == 'Ubuntu' %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.conf.tpl
     - name: /etc/init/platform-testing-general-dm-blackbox.conf
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - source: salt://platform-testing/templates/platform-testing-general-dm-blackbox.service.tpl
     - name: /usr/lib/systemd/system/platform-testing-general-dm-blackbox.service
 {%- endif %}
@@ -193,13 +231,13 @@ platform-testing-general-crontab-dm-blackbox:
     - user: root
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start platform-testing-general-dm-blackbox
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-dm-blackbox
 {% endif %}
 
 {% endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 platform-testing-general-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload

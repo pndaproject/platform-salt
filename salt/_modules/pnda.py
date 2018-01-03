@@ -1,4 +1,5 @@
 import requests
+import socket
 
 def get_name_service():
     """ Returns name service for HA Cluster """
@@ -31,7 +32,7 @@ def hadoop_manager_password():
 
 def hadoop_distro():
     """Returns hadoop distro"""
-    distro = __salt__['pillar.get']('hadoop.distro')
+    distro = __salt__['grains.get']('hadoop.distro')
     return distro
 
 def ambari_request(uri):
@@ -65,7 +66,8 @@ def hbase_master_host():
     if hadoop_distro() == 'CDH':
         return 'todo'
     else:
-        return ambari_request('/clusters/%s/services/HBASE/components/HBASE_MASTER' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
+        hostname= ambari_request('/clusters/%s/services/HBASE/components/HBASE_MASTER' % (cluster_name()))['host_components'][0]['HostRoles']['host_name']
+        return socket.getfqdn(hostname)
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
@@ -75,20 +77,18 @@ def hadoop_manager_ip():
     else:
         return None
 
+
 def kafka_brokers_ips():
     """Returns kafka brokers ip addresses"""
     return ip_addresses('kafka')
 
+def opentsdb_ips():
+    """Returns opentsdb nodes ip addresses"""
+    return ip_addresses('opentsdb')
+
 def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
     return ip_addresses('zookeeper')
-
-def ldap_ip():
-    """Returns the ip address of the LDAP server"""
-    query = "G@roles:LDAP"
-    result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
-    # Only get first ip address
-    return result[0][0] if len(result) > 0 else None
 
 def ip_addresses(role):
     """Returns ip addresses of minions having a specific role"""
@@ -131,10 +131,38 @@ def cloudera_get_hosts_by_role(service, role_type):
     return hosts_ips
 
 def ambari_get_hosts_by_role(service, role_type):
-    return [host['HostRoles']['host_name'] for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
+    return [socket.getfqdn(host['HostRoles']['host_name']) for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
+
 
 def get_hosts_by_role(service, role_type):
     if hadoop_distro() == 'CDH':
         return cloudera_get_hosts_by_role(service, role_type)
     else:
         return ambari_get_hosts_by_role(service, role_type)
+
+def cloudera_get_service_status(service):
+    user = hadoop_manager_username()
+    password = hadoop_manager_password()
+    endpoint = hadoop_manager_ip() + ':7180'
+    cluster = cluster_name()
+
+    request_url = 'http://{}/api/v14/clusters/{}/services/{}'.format(endpoint, cluster, service)
+    response = requests.get(request_url, auth=(user, password))
+    response.raise_for_status()
+    service_resp = response.json()
+
+    return service_resp['healthSummary']
+
+
+def ambari_get_service_status(service):
+    user = hadoop_manager_username()
+    password = hadoop_manager_password()
+    endpoint = hadoop_manager_ip() + ':8080'
+    cluster = cluster_name()
+
+    request_url = 'http://{}/api/v1/clusters/{}/services/{}'.format(endpoint, cluster, service)
+    response = requests.get(request_url, auth=(user, password))
+    response.raise_for_status()
+    service_resp = response.json()
+
+    return service_resp['ServiceInfo']['state']

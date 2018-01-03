@@ -1,6 +1,6 @@
-{%- set os_user = salt['pillar.get']('os_user', 'cloud-user') -%}
+{%- set os_user = pillar['os_user'] -%}
 {%- set pnda_cluster = salt['pnda.cluster_name']() -%}
-{%- set hadoop_distro = pillar['hadoop.distro'] -%}
+{%- set hadoop_distro = grains['hadoop.distro'] -%}
 
 {%- set kafka_brokers = [] -%}
 {%- for ip in salt['pnda.kafka_brokers_ips']() -%}
@@ -44,15 +44,19 @@
 
 {% set repository_manager_link = salt['pnda.generate_http_link']('package_repository',':8888') %}
 
+{%- set keys_directory = pillar['deployment_manager']['keys_directory'] -%}
+{% set app_packages_hdfs_path = pillar['pnda']['app_packages']['app_packages_hdfs_path'] -%}
+
+{% set policy_file_link = pillar['resource_manager']['path'] + pillar['resource_manager']['policy_file'] %}
+
 {
     "environment": {
         "hadoop_distro":"{{ hadoop_distro }}",
-        "queue_name":"default",
         "hadoop_manager_host" : "{{ cm_node_ip }}",
         "hadoop_manager_username" : "{{ cm_username }}",
         "hadoop_manager_password" : "{{ cm_password }}",
         "cluster_root_user" : "{{ os_user }}",
-        "cluster_private_key" : "./dm.pem",
+        "cluster_private_key" : "{{ keys_directory }}/dm.pem",
         "kafka_zookeeper" : "{{ kafka_zookeepers|join(',') }}",
         "kafka_brokers" : "{{ kafka_brokers|join(',') }}",
         "opentsdb" : "{{ opentsdb_host }}",
@@ -60,7 +64,9 @@
         "namespace": "platform_app",
         "metric_logger_url": "{{ data_logger_link }}/metrics",
         "jupyter_host": "{{ jupyter_host }}",
-        "jupyter_notebook_directory": "{{ pnda_home_directory }}/jupyter_notebooks"
+        "jupyter_notebook_directory": "jupyter_notebooks",
+        "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}",
+        "queue_policy": "{{ policy_file_link }}"
     },
     "config": {
         "stage_root": "stage",

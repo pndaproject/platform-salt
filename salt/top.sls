@@ -1,9 +1,11 @@
 {{ env }}:
 
   '*':
+    - volumes
     - tasks.system_update
     - motd
     - pnda.user
+    - identity.users
     - hostsfile
     - java
     - java.env
@@ -17,6 +19,10 @@
   'roles:kafka':
     - match: grain
     - kafka.server
+
+  'roles:kafka_tool':
+    - match: grain
+    - kafka-tool
 
   'roles:kafka_manager':
     - match: grain
@@ -70,7 +76,7 @@
     - match: grain
     - cdh.create_data_dirs
     - snappy
-{% if pillar['hadoop.distro'] == 'HDP' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
     - anaconda
 {% else %}
     - cdh.anaconda
@@ -88,9 +94,9 @@
     - match: grain
     - package-repository
 
-  'roles:pnda_restart':
+  'roles:deployment_manager':
     - match: grain
-    - reboot.install_restart
+    - deployment-manager.generate_keys
 
   'roles:elk-es-*':
    - match: grain

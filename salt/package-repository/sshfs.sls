@@ -1,10 +1,10 @@
 {% set sshfs_fs_location_path = salt['pillar.get']('package_repository:fs_location_path', '/opt/pnda/packages') %}
 {% set pr_sshfs_identity_file = salt['pillar.get']('package_repository:sshfs_key', 'pr_key') %}
-{% set pr_sshfs_user = salt['pillar.get']('package_repository:sshfs_user', 'cloud-user')%}
+{% set pr_sshfs_user = salt['pillar.get']('package_repository:sshfs_user')%}
 {% set pr_sshfs_host = salt['pillar.get']('package_repository:sshfs_host', '127.0.0.1')%}
 {% set pr_sshfs_path = salt['pillar.get']('package_repository:sshfs_path', '/mnt/packages')%}
 {% set pr_sshfs_device = pr_sshfs_user+'@'+pr_sshfs_host+':'+pr_sshfs_path %}
-{% set os_user = salt['pillar.get']('os_user', 'cloud-user') %}
+{% set os_user = pillar['os_user'] %}
 
 sshfs-install:
   pkg.installed:

@@ -1,9 +1,5 @@
-mine_functions:
-  network.ip_addrs: [eth0]
-  grains.items: []
-
 logstash:
-  version: 5.0.2
+  version: 5.2.2
 
 kibana:
   version: 4.1.6-linux-x64
@@ -13,7 +9,6 @@ elasticsearch:
   version: 1.5.0
   directory: /opt/pnda
   logdir: /var/log/elasticsearch
-  datadir: /var/lib/elasticsearch
   confdir: /etc/elasticsearch
   workdir: /tmp/elasticsearch
 
@@ -26,7 +21,7 @@ elasticsearch-cluster:
   workdir: /tmp/elasticsearch
 
 logstash-cluster:
-  version: 5.0.2
+  version: 5.2.2
   directory: /opt/pnda
   logdir: /var/log/logstash
   confdir: /etc/logstash
@@ -34,13 +29,18 @@ logstash-cluster:
   inputdir: /tmp/logstash
 
 zookeeper:
-  version: 3.4.6
+  version: 3.4.11
 
 kafka:
-  version: 0.10.0.1
-  config:
-    log_dirs:
-      - '/var/kafka-logs'
+  version: 0.11.0.0
+  internal_port: 9092
+  replication_port: 9093
+  ingest_port: 9094
+
+kafkatool:
+  release_version: v0.2.0
+  config_dir: '/etc'
+  release_dir: '/opt/pnda'
 
 admin_login:
   user: admin
@@ -48,7 +48,7 @@ admin_login:
 
 kafkamanager:
   release_directory: /opt/pnda
-  release_version: 1.3.3.6
+  release_version: 1.3.3.15
   bind_port: 10900
 
 jupyterproxy:
@@ -73,6 +73,7 @@ console_backend_utils:
 
 deployment_manager:
   release_version: develop
+  keys_directory: /opt/pnda/dm_keys
 
 package_repository:
   release_version: develop
@@ -91,6 +92,10 @@ platformlib:
   release_version: develop
   target_directory: "/opt/pnda"
 
+resource_manager:
+  path: /opt/pnda/rm-wrapper/
+  policy_file: yarn-policy.sh
+
 jmxproxy:
   release_version: "3.2.0"
   release_hash: "sha512=97e69d7922f6515bc5ecaa9ab7326e2d61d275dd8d419bdb2fb246ec36dbc21cb8df45881a991623f1a8785744a618198094f16f37d5b66f3029516d8824b7a1"
@@ -103,3 +108,19 @@ java:
   version: "jdk-8u131-linux-x64"
   version_name: "jdk1.8.0_131"
   source_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
+
+cloudera:
+  parcel_repo: "http://archive.cloudera.com/cdh5/parcels/5.12.1/"
+  parcel_version: "5.12.1-1.cdh5.12.1.p0.3"
+
+hadoop_manager:
+  cmdb:
+    user: scm
+    password: scm
+    database: scm
+
+livy:
+  release_version: "0.3.0"
+
+nodejs:
+  version: 'node-v6.10.2-linux-x64'
