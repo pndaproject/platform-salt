@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3521: fix issue on push/getting DM keys
 - PNDA-3428: Daemonize HDP HBase services
 - PNDA-3530: Update yarn resource manager config to include both resource managers for webapp settings in the standard flavor
+- PNDA-3574: Make hdp.oozie_libs sls idempotent
 
 ## [3.0.0] 2017-11-24
 ### Added
