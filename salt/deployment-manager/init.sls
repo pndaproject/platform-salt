@@ -99,12 +99,35 @@ deployment-manager-copy_service:
     - defaults:
         install_dir: {{ install_dir }}
 
+dm-application-summary-copy_service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /etc/init/dm-application-summary.conf
+    - source: salt://deployment-manager/templates/dm-application-summary.conf.tpl
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+    - name: /usr/lib/systemd/system/dm-application-summary.service
+    - source: salt://deployment-manager/templates/dm-application-summary.service.tpl
+{% endif %}
+    - template: jinja
+    - defaults:
+        install_dir: {{ install_dir }}
+
 {% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager
 {%- endif %}
 
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+dm-application-summary-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable dm-application-summary
+{%- endif %}
+
 deployment-manager-start_service:
   cmd.run:
     - name: 'service deployment-manager stop || echo already stopped; service deployment-manager start'
+
+dm-application-summary-start_service:
+  cmd.run:
+    - name: 'service dm-application-summary stop || echo already stopped; service dm-application-summary start'

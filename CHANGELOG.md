@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
 - PNDA-3527: Add dev/prod queues to YARN CDH config.
 - PNDA-3528: Add some pillars for the resource manager and used in the dm-config.
+- PNDA-2834: Actual application status by deployment manager
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
