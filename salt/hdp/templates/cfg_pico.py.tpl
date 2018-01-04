@@ -189,6 +189,7 @@ BLUEPRINT = r'''{
                   "yarn.scheduler.capacity.root.queues" : "applications,default",
                   "yarn.scheduler.capacity.root.priority" : "0",
                   "yarn.scheduler.capacity.root.accessible-node-labels" : "*",
+                  "yarn.scheduler.capacity.root.default.maximum-applications" : "10000",
                   "yarn.scheduler.capacity.root.default.acl_submit_applications" : "*",
                   "yarn.scheduler.capacity.root.default.maximum-capacity" : "100",
                   "yarn.scheduler.capacity.root.default.user-limit-factor" : "1",
