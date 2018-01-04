@@ -16,6 +16,7 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set pnda_home = pillar['pnda']['homedir'] %}
 {% set app_packages_dir = pnda_home + "/apps-packages" %}
+{% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
 
 {%- set data_volume_list = [] %}
 {%- for n in range(flavor_cfg.data_volumes_count) -%}
@@ -74,6 +75,7 @@ cdh-copy_cm_config:
       aws_secret_key: {{ aws_secret_key }}
       app_packages_dir: {{ app_packages_dir }}
       data_volumes: {{ data_volumes }}
+      pnda_graphite_host: {{ pnda_graphite_host }}
 
 # Create a python configured scripts to call the cm_setup.setup_hadoop function with
 # the needed aguments (nodes to install cloudera to)
