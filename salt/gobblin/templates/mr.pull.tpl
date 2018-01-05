@@ -13,7 +13,7 @@ job.description=Pulls data from all kafka topics to HDFS
 mr.job.max.mappers={{ max_mappers }}
 
 # ==== Kafka Source ====
-source.class=gobblin.source.extractor.extract.kafka.KafkaSimpleSource
+source.class=gobblin.source.extractor.extract.kafka.KafkaDeserializerSource
 source.timezone=UTC
 source.schema={"namespace": "pnda.entity",                 \
                "type": "record",                            \
@@ -25,6 +25,9 @@ source.schema={"namespace": "pnda.entity",                 \
                    {"name": "rawdata",   "type": "bytes"}   \
                ]                                            \
               }
+
+kafka.deserializer.type=BYTE_ARRAY
+kafka.workunit.packer.type=BI_LEVEL
 
 kafka.brokers={{ kafka_brokers|join(",") }}
 bootstrap.with.offset=earliest
