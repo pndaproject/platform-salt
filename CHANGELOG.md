@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3600: Make the spark/MR cli wrapper the master system cli.
 - PNDA-3581: Create a mapping table for the Fair Scheduler queue setup (CDH) of PNDA-3527.
 - PNDA-3529: Make Jupyter use the system spark cli.
+- PNDA-3133: Remove Gobblin fork and use apache release distribution / Fixed issue to run the mapreduce job appropriately.
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
@@ -246,3 +247,4 @@ All notable changes to this project will be documented in this file.
 ## [0.1.0] 2016-07-01
 ### First version
 - Creates and configures all PNDA services
+

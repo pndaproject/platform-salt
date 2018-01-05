@@ -2,12 +2,21 @@
 
 {% set packages_server = pillar['packages_server']['base_uri'] %}
 {% set gobblin_version = pillar['gobblin']['release_version'] %}
-{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '.tar.gz' %}
+
+{% if grains['hadoop.distro'] == 'HDP' %}
+{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-HDP.tar.gz' %}
+{% else %}
+{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-CDH.tar.gz' %}
+{% endif %}
+
+{% set pnda_modules_version = pillar['platform_gobblin_modules']['release_version'] %}
+{% set pnda_modules_package = 'gobblin-PNDA-' + pnda_modules_version + '.tar.gz' %}
 
 {% set pnda_home = pillar['pnda']['homedir'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_real_dir = pnda_home + '/gobblin-' + gobblin_version %}
 {% set gobblin_link_dir = pnda_home + '/gobblin' %}
+{% set pnda_modules_dir = pnda_home + '/gobblin-' + gobblin_version + '/pnda-modules' %}
 
 {% set namenode = salt['pnda.hadoop_namenode']() %}
 
@@ -46,6 +55,18 @@ gobblin-dl-and-extract:
     - require:
       - file: gobblin-create_gobblin_version_directory
 
+pnda_modules-dl-and-extract:
+  archive.extracted:
+    - name: {{ pnda_modules_dir }}
+    - source: {{ packages_server }}/{{ pnda_modules_package }}
+    - source_hash: {{ packages_server }}/{{ pnda_modules_package }}.sha512.txt
+    - archive_format: tar
+    - tar_options: ''
+
+pnda_modules-copy-to-gobblin-lib:
+  cmd.run:
+    - name: cp {{ pnda_modules_dir }}/* {{ gobblin_real_dir }}/gobblin-dist/lib
+
 gobblin-create_link:
   file.symlink:
     - name: {{ gobblin_link_dir }}
@@ -58,6 +79,14 @@ gobblin-update_gobblin_reference_configuration_file:
     - name: {{ gobblin_real_dir }}/gobblin-dist/conf/gobblin-mapreduce.properties
     - pattern: '^fs.uri=hdfs://localhost:8020$'
     - repl: 'fs.uri={{ namenode }}'
+    - require:
+      - archive: gobblin-dl-and-extract
+
+gobblin-update_gobblin_mapreduce_sh_file:
+  file.replace:
+    - name: {{ gobblin_real_dir }}/gobblin-dist/bin/gobblin-mapreduce.sh
+    - pattern: 'data-2.6.0.jar'
+    - repl: 'data-11.0.0.jar'
     - require:
       - archive: gobblin-dl-and-extract
 
@@ -85,6 +114,13 @@ gobblin-create_gobblin_logs_directory:
     - name: /var/log/pnda/gobblin
     - user: {{ pnda_user }}
     - makedirs: True
+
+gobblin-create_gobblin_logs_file:
+  file.managed:
+    - name: /var/log/pnda/gobblin/gobblin-current.log
+    - user: pnda
+    - group: pnda
+    - mode: 0644
 
 gobblin-install_gobblin_service_script:
   file.managed:
