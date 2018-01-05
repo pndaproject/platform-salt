@@ -138,8 +138,10 @@ livy-create_logs_dir:
 livy-update_configuration_hdp:
   file.append:
     - name: {{ livy_dir }}/conf/livy.conf
-    - text: livy.spark.master = yarn-client
-
+    - text:
+      - livy.spark.master = yarn-client
+      - livy.impersonation.enabled = true
+    
 {% else %}
 livy-download:
   cmd.run:
@@ -149,7 +151,9 @@ livy-download:
 livy-update_configuration_cdh:
   file.append:
     - name: {{ livy_dir }}/conf/livy.conf
-    - text: livy.spark.master = yarn-client
+    - text:
+      - livy.spark.master = yarn-client
+      - livy.impersonation.enabled = true
 {% endif %}
 
 jupyter-scala_extension_spark:
