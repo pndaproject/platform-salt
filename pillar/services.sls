@@ -58,7 +58,7 @@ gobblin:
   release_version: develop
 
 console_frontend:
-  release_version: develop
+  release_version: PNDA-3609
 
 console_backend_data_logger:
   release_version: develop
