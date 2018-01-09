@@ -11,5 +11,12 @@
 # when the user is empty (second rule above), the whole group will be mapped to the queue
 # when both the user and the group are defined, the group will be ignored
 
-# Every user will be mapped to the default queue.
-* default
+# The 'pnda' user will be mapped to the default queue.
+pnda: default
+
+# The 'prod' group users will be mapped to the prod queue unless the dev queue is explicitly requested.
+:prod prod
+:prod dev
+
+# The 'dev' group users will be mapped to the dev queue. 
+:dev dev
