@@ -25,6 +25,6 @@ module.exports = {
   },
   session: {
     secret: "data-manager-secret",
-    max_age: 60000
+    max_age: 86400000
   }
 };
