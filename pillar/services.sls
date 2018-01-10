@@ -61,18 +61,18 @@ platform_gobblin_modules:
   release_version: develop
 
 console_frontend:
-  release_version: develop
+  release_version: RT1
 
 console_backend_data_logger:
-  release_version: develop
+  release_version: RT1
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: develop
+  release_version: RT1
   bind_port: 3123
 
 console_backend_utils:
-  release_version: develop
+  release_version: RT1
 
 deployment_manager:
   release_version: develop
