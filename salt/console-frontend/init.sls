@@ -40,7 +40,7 @@
 {% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
-{% set jupyter_link = salt['pnda.generate_http_link']('jupyter',':8000') %}
+{% set jupyter_link = salt['pnda.generate_external_link']('jupyter',':8000') %}
 {% set login_mode = 'PAM' %}
 
 include:
