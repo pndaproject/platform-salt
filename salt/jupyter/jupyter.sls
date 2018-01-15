@@ -6,7 +6,7 @@
 {% set jupyter_extension_venv = pnda_home_directory + '/jupyter-extensions' %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set wrapper_spark_home = '/usr/' %}
-
+{% set features = salt['pillar.get']('features', []) %}
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% set spark_home = '/usr/hdp/current/spark-client' %}
@@ -70,6 +70,11 @@ jupyter-copy_initial_notebooks:
   file.recurse:
     - source: 'salt://jupyter/files/notebooks'
     - name: '{{ pnda_home_directory }}/jupyter_notebooks'
+# BEGIN EXPERIMENTAL
+{% if 'EXPERIMENTAL' not in features %}
+    - exclude_pat: "PNDA minimal Spark notebook*"
+{% endif %}
+# END EXPERIMENTAL
     - require:
       - file: jupyter-create_notebooks_directory
 
@@ -124,6 +129,9 @@ jupyter-copy_data_generator_script:
     - source: salt://jupyter/files/data_generator.py
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
+
+# BEGIN EXPERIMENTAL
+{% if 'EXPERIMENTAL' in features %}
 
 # Add sparkmagic to the supported kernel and install livy server
 livy-create_logs_dir:
@@ -194,6 +202,9 @@ livy-server-start_service:
     - name: livy
     - enable: True
     - reload: True
+
+{% endif %}
+# END EXPERIMENTAL
 
 {% if grains['hadoop.distro'] == 'CDH' %}
 dependency-configurations-python2:
