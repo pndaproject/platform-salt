@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-2834: Actual application status by deployment manager
 - PNDA-3126: Create files from multiple Kafka partitions.
 - PNDA-3273: Capture spark metrics for all applications
+- PNDA-3630: Added EXPERIMENTAL flag section to pillar which is initially only used to include Jupyter Scala support
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
