@@ -101,7 +101,7 @@ hdfs-cleaner-add_crontab_entry:
     - hour: '*/4'
     - minute: 0
 
-/data0/tmp/hadoop-hdfs:
+/mnt/hadoop-tmp:
   file.directory:
     - user: root
     - mode: 777

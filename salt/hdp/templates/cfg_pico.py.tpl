@@ -162,7 +162,7 @@ BLUEPRINT = r'''{
             "yarn-site" : {
                 "properties" : {
                     "yarn.nodemanager.log-dirs" : "/var/log/pnda/hadoop-yarn/container",
-                    "yarn.nodemanager.local-dirs" : "/data0/yarn/nm",
+                    "yarn.nodemanager.local-dirs" : "/mnt/hadoop/yarn/nm",
                     "yarn.nodemanager.localizer.cache.target-size-mb" : "1024",
                     "yarn.nodemanager.resource.cpu-vcores" : "8",
                     "yarn.nodemanager.resource.memory-mb" : "4096",
@@ -171,7 +171,8 @@ BLUEPRINT = r'''{
                     "yarn.scheduler.minimum-allocation-mb" : "256",
                     "yarn.scheduler.maximum-allocation-mb" : "4096",
                     "yarn.scheduler.maximum-allocation-vcores" : "8",
-                    "yarn.acl.enable" : "true"
+                    "yarn.acl.enable" : "true",
+                    "yarn.timeline-service.leveldb-timeline-store.path" : "/mnt/hadoop/yarn/timeline"
                 }
             }
         },
@@ -255,7 +256,7 @@ BLUEPRINT = r'''{
         {
             "zoo.cfg" : {
                 "properties" : {
-                    "dataDir" : "/data0/zookeeper"
+                    "dataDir" : "/mnt/hadoop/zookeeper"
                 }
             }
         },
@@ -263,7 +264,7 @@ BLUEPRINT = r'''{
             "oozie-env" : {
                     "properties" : {
                     "oozie_log_dir" : "/var/log/pnda/oozie",
-                    "oozie_data_dir" : "/data0/var/lib/oozie/data",
+                    "oozie_data_dir" : "/mnt/hadoop/oozie",
                     "oozie_user" : "oozie",
                     "oozie_admin_users" : "{oozie_user}, oozie-admin",
                     "oozie_database" : "Existing MySQL / MariaDB Database"
@@ -319,7 +320,8 @@ BLUEPRINT = r'''{
         {
             "hbase-site" : {
                 "properties" : {
-                    "zookeeper.session.timeout" : "300000"
+                    "zookeeper.session.timeout" : "300000",
+                    "hbase.tmp.dir" : "/mnt/hadoop/hbase/tmp"
                 }
             }
         },
@@ -349,7 +351,9 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "dfs.replication" : "3",
                     "dfs.replication.max" : "50",
-                    "dfs.datanode.data.dir" : "{{ data_volumes }}"
+                    "dfs.datanode.data.dir" : "{{ data_volumes }}",
+                    "dfs.namenode.checkpoint.dir" : "/mnt/hadoop/hdfs/snn",
+                    "dfs.namenode.name.dir" : "/mnt/hadoop/hdfs/nn"
                 }
             }
         },
@@ -382,6 +386,7 @@ BLUEPRINT = r'''{
                     "hadoop.security.auth_to_local" : "DEFAULT",
                     "hadoop.security.authentication" : "simple",
                     "hadoop.security.authorization" : "false",
+                    "hadoop.tmp.dir" : "/mnt/hadoop-tmp/${user.name}",
                     "io.compression.codecs" : "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.SnappyCodec",
                     "io.file.buffer.size" : "131072",
                     "io.serializations" : "org.apache.hadoop.io.serializer.WritableSerialization",
