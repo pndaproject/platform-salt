@@ -49,7 +49,7 @@ CMS_CFG = {
                      'max_log_backup_index': '2',
                      'max_log_size': '100'}},
          {"type": "EVENTSERVER",
-          "config": {'eventserver_index_dir': '/data0/var/lib/cloudera-scm-eventserver',
+          "config": {'eventserver_index_dir': '/mnt/cloudera-scm-eventserver',
                      'eventserver_index_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                      'log_directory_free_space_absolute_thresholds': '{"warning":1073741824,"critical":1073741824}',
                      'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":3221225472}',
@@ -57,7 +57,7 @@ CMS_CFG = {
                      'max_log_size': '100',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-eventserver'}},
          {"type": "HOSTMONITOR",
-          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-host-monitor',
+          "config": {'firehose_storage_dir': '/mnt/cloudera-host-monitor',
                      'firehose_heapsize': '268435456',
                      'firehose_non_java_memory_bytes': '805306368',
                      'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>524288000</value>\n</property>\n',
@@ -68,7 +68,7 @@ CMS_CFG = {
                      'max_log_size': '100',
                      'mgmt_log_dir': '/var/log/pnda/cdh/cloudera-scm-firehose'}},
          {"type": "SERVICEMONITOR",
-          "config": {'firehose_storage_dir': '/data0/var/lib/cloudera-service-monitor',
+          "config": {'firehose_storage_dir': '/mnt/cloudera-service-monitor',
                      'firehose_heapsize': '268435456',
                      'firehose_non_java_memory_bytes': '805306368',
                      'firehose_safety_valve': '<property>\n    <name>firehose_time_series_storage_bytes</name>\n    <value>524288000</value>\n</property>',
@@ -88,7 +88,7 @@ OOZIE_CFG = {"service": "OOZIE",
                         "type": "OOZIE_SERVER",
                         "target": "MGR01"}],
              "role_cfg": [{"type": "OOZIE_SERVER",
-                           "config": {'oozie_data_dir': '/data0/var/lib/oozie/data',
+                           "config": {'oozie_data_dir': '/mnt/hadoop/oozie',
                                       'oozie_log_dir': '/var/log/pnda/oozie',
                                       'oozie_database_type': 'mysql',
                                       'oozie_database_host': '{{ mysql_host }}',
@@ -104,8 +104,8 @@ ZK_CFG = {"service": "ZOOKEEPER",
                      "type": "SERVER",
                      "target": "MGR01"}],
           "role_cfg": [{"type": "SERVER",
-                        "config": {'dataDir': '/data0/var/lib/zookeeper',
-                                   'dataLogDir': '/data0/var/lib/zookeeper',
+                        "config": {'dataDir': '/mnt/hadoop/zookeeper',
+                                   'dataLogDir': '/mnt/hadoop/zookeeper',
                                    'zk_server_log_dir': '/var/log/pnda/zookeeper',
                                    'maxSessionTimeout': '60000',
                                    'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}',
@@ -160,7 +160,7 @@ MAPRED_CFG = {
             "config":
                 {
                     'yarn_nodemanager_heartbeat_interval_ms': 100,
-                    'yarn_nodemanager_local_dirs': '/data0/yarn/nm',
+                    'yarn_nodemanager_local_dirs': '/mnt/hadoop/yarn/nm',
                     'yarn_nodemanager_log_dirs': '/var/log/pnda/hadoop-yarn/container',
                     'yarn_nodemanager_resource_cpu_vcores': '8',
                     'yarn_nodemanager_resource_memory_mb': '4096',
@@ -230,7 +230,7 @@ HDFS_CFG = {
         {
             'dfs_replication': 1,
             'core_site_safety_valve':
-                ('<property> <name>hadoop.tmp.dir</name><value>/data0/tmp/hadoop-${user.name}</value></property>\r\n\r\n'
+                ('<property> <name>hadoop.tmp.dir</name><value>/mnt/hadoop-tmp/${user.name}</value></property>\r\n\r\n'
                  '<property> \r\n<name>hadoop.proxyuser.yarn.hosts</name>\r\n<value>*</value>\r\n</property>\r\n\r\n'
                  '<property>\r\n<name>hadoop.proxyuser.yarn.groups</name>\r\n<value>*</value>\r\n</property>') + SWIFT_CONFIG + S3_CONFIG,
             'dfs_block_local_path_access_user': 'impala',
@@ -268,7 +268,7 @@ HDFS_CFG = {
         [
             {
                 "type": "NAMENODE",
-                "config": {'dfs_name_dir_list': '/data0/nn',
+                "config": {'dfs_name_dir_list': '/mnt/hadoop/hdfs/nn',
                            'dfs_namenode_handler_count': 60,
                            'dfs_namenode_service_handler_count': 60,
                            'dfs_namenode_servicerpc_address': '8022',
@@ -294,7 +294,7 @@ HDFS_CFG = {
             },
             {
                 "type": "SECONDARYNAMENODE",
-                "config": {'fs_checkpoint_dir_list': '/data0/snn',
+                "config": {'fs_checkpoint_dir_list': '/mnt/hadoop/hdfs/snn',
                            'secondarynamenode_log_dir': '/var/log/pnda/hadoop/snn',
                            'log_directory_free_space_absolute_thresholds': '{"warning":4294967296,"critical":3221225472}',
                            'heap_dump_directory_free_space_absolute_thresholds': '{"warning":"never","critical":5368709120}',

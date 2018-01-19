@@ -284,7 +284,7 @@ BLUEPRINT = r'''{
             "oozie-env" : {
                     "properties" : {
                     "oozie_log_dir" : "/var/log/pnda/oozie",
-                    "oozie_data_dir" : "/mnt/hadoop/oozie/data",
+                    "oozie_data_dir" : "/mnt/hadoop/oozie",
                     "oozie_user" : "oozie",
                     "oozie_admin_users" : "{oozie_user}, oozie-admin",
                     "oozie_database" : "Existing MySQL / MariaDB Database",
