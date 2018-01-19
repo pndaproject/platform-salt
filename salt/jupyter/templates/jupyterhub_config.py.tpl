@@ -217,12 +217,12 @@ c.JupyterHub.extra_log_file = '/var/log/pnda/jupyter/jupyterhub.log'
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
 #  Use with ssl_key
-#c.JupyterHub.ssl_cert = ''
+c.JupyterHub.ssl_cert = '{{ jupyterhub_ssl_cert }}'
 
 ## Path to SSL key file for the public facing interface of the proxy
 #  
 #  Use with ssl_cert
-#c.JupyterHub.ssl_key = ''
+c.JupyterHub.ssl_key = '{{ jupyterhub_ssl_key }}'
 
 ## Host to send statsd metrics to
 #c.JupyterHub.statsd_host = ''
