@@ -10,6 +10,7 @@
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 {% set spark_home = '/usr/hdp/current/spark-client' %}
+{% set spark2_home = '/usr/hdp/current/spark2-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}
 {% set livy_dir = '/usr/hdp/current/livy-server' %}
 {% else %}
@@ -21,7 +22,6 @@
 {% set livy_package = 'livy-' + livy_version + '.tar.gz' %}
 {% set livy_dir = pnda_home_directory + '/livy-' + livy_version %}
 {% endif %}
-
 {% set anaconda_python_lib = anaconda_home + '/lib/python2.7/site-packages/' %}
 {% set jupyter_python_lib = virtual_env_dir + '/lib/python3.4/site-packages/' %}
 
@@ -129,6 +129,29 @@ jupyter-copy_data_generator_script:
     - source: salt://jupyter/files/data_generator.py
     - name: {{ pnda_home_directory }}/data_generator.py
     - mode: 555
+
+#install pyspark2 kernel #
+{% if grains['hadoop.distro'] == 'HDP' %}
+jupyter-create_pyspark2_kernel_dir:
+  file.directory:
+    - name: {{ jupyter_kernels_dir }}/pyspark2
+    - makedirs: True
+
+jupyter-copy_pyspark2_kernel:
+  file.managed:
+    - source: salt://jupyter/templates/pyspark2_kernel.json.tpl
+    - name: {{ jupyter_kernels_dir }}/pyspark2/kernel.json
+    - template: jinja
+    - require:
+      - file: jupyter-create_pyspark2_kernel_dir
+    - defaults:
+        anaconda_home: {{ anaconda_home }}
+        wrapper_spark_home: {{ wrapper_spark_home }}
+        spark2_home: {{ spark2_home }}
+        hadoop_conf_dir: {{ hadoop_conf_dir }}
+        app_packages_home: {{ app_packages_home }}
+        jupyter_extension_venv: {{ jupyter_extension_venv }}
+{% endif %}
 
 # BEGIN EXPERIMENTAL
 {% if 'EXPERIMENTAL' in features %}
