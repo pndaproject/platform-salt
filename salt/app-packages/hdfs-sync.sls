@@ -5,13 +5,19 @@
 {% set app_packages_fs_path = pnda_home + "/apps-packages" %}
 {% set mirror_url = pnda_mirror + app_packages_mirror_path %}
 
-app-packages-hdfs-sync_instantiate-package-list:
+app-packages-create-directory:
+  file.directory:
+    - name: {{ app_packages_fs_path }}
+    - mode: 755
+    - makedirs: True
+
+app-packages-instantiate-package-list:
   file.managed:
     - name: {{ app_packages_fs_path }}/app-packages-hdfs.txt
     - source: salt://app-packages/files/app-packages-hdfs.txt
     - template: jinja
 
-app-packages-hdfs-sync_sync-hdfs:
+app-packages-sync-hdfs:
   cmd.script:
     - name: salt://app-packages/templates/sync.sh.tpl
     - template: jinja

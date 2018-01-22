@@ -15,7 +15,7 @@ do
     echo "Uploading new package ${c}"
     curl -fsO {{ mirror_url }}/$c
     [[ $? -ne 0 ]] && echo "Error downloading ${c} from mirror" && exit -1
-    sudo -u hdfs hdfs dfs -put $c {{ app_packages_hdfs_path }}/
+    sudo -u hdfs hdfs dfs -put -f $c {{ app_packages_hdfs_path }}/
     [[ $? -ne 0 ]] && echo "Error uploading ${c} to HDFS" && exit -1
   fi
 done
