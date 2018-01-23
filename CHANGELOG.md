@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3128: Add kafka-python (new version) and avro python packages to app-packages
 - PNDA-3623: Add support for configuring Jupyter with SSL cert/key.
 - PNDA-3550: Add a pyspark2 Jupyter kernel for HDP clusters to allow Jupyter to use Spark 2
+- PNDA-3549: Include common jar and egg dependencies used by applications that run on PNDA
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
