@@ -13,6 +13,7 @@
 {% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
 {% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
+{% set pnda_user = pillar['pnda']['user'] %}
 
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
@@ -73,6 +74,7 @@ hdp-copy_flavor_config:
       aws_key: {{ aws_key }}
       aws_secret_key: {{ aws_secret_key }}
       data_volumes: {{ data_volumes }}
+      pnda_user: {{ pnda_user }}
       pnda_graphite_host: {{ pnda_graphite_host }}
 
 hdp-execute_hdp_installation_script:
