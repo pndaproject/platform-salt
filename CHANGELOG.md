@@ -35,7 +35,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-3581: Create a mapping table for the Fair Scheduler queue setup (CDH) of PNDA-3527.
 - PNDA-3529: Make Jupyter use the system spark cli.
 - PNDA-3582: Create a mapping table for the Capacity Scheduler queue setup (HDP) from PNDA-3526.
-- PNDA-4029: Allow YARN RM to view task logs
 
 ### Fixed
 - PNDA-3573: remove eth0 default value on kafka
@@ -47,6 +46,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3530: Update yarn resource manager config to include both resource managers for webapp settings in the standard flavor
 - PNDA-3574: Make hdp.oozie_libs sls idempotent
 - PNDA-3651: Fix HDP capacity scheduler's ACL settings
+- PNDA-4029: Allow YARN RM to view task logs
 
 ## [3.0.0] 2017-11-24
 ### Added
