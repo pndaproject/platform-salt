@@ -48,7 +48,7 @@ if [ "X$QUEUE" != "X" ]; then
   exit 0
 else
   if [ "X$1" == "X" ]; then
-    echo "Error: No matching rule."
+    echo "Error: No matching rule for $(id)"
     exit 2
   else
     echo "Error: No matching queue."
