@@ -16,6 +16,6 @@
   "WRAPPED_SPARK_HOME": "{{ spark2_home }}",
   "PYTHONPATH": "{{ app_packages_home }}/lib/python2.7/site-packages:{{ jupyter_extension_venv }}/lib/python2.7/site-packages:{{ spark2_home }}/python:{{ spark2_home }}/python/lib/py4j-0.10.4-src.zip",
   "PYTHONSTARTUP": "{{ spark2_home }}/python/pyspark/shell.py",
-  "PYSPARK_SUBMIT_ARGS": "--master yarn-client --jars {{ spark2_home }}/examples/jars/spark-examples_2.11-2.2.0.2.6.3.0-235.jar pyspark-shell"
+  "PYSPARK_SUBMIT_ARGS": "--master yarn-client --jars {{ spark2_home }}/examples/jars/spark-examples_2.11-2.2.0.2.6.4.0-91.jar pyspark-shell"
  }
 }

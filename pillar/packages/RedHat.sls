@@ -3,10 +3,10 @@ acl:
   version: ""
 ambari-agent:
   package-name: ambari-agent
-  version: "2.6.0.0-267"
+  version: "2.6.1.0-143"
 ambari-server:
   package-name: ambari-server
-  version: "2.6.0.0-267"
+  version: "2.6.1.0-143"
 at:
   package-name: at
   version: ""
