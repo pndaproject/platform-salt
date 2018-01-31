@@ -37,6 +37,10 @@ kafka:
   replication_port: 9093
   ingest_port: 9094
 
+consul:
+  service: True
+  version: 1.0.3
+
 kafkatool:
   release_version: v0.2.0
   config_dir: '/etc'

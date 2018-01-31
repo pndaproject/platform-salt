@@ -46,7 +46,11 @@ kafka-server-conf:
     - mode: 644
     - template: jinja
     - context:
+{% if 'EXPERIMENTAL' in salt['pillar.get']('features', []) %}
       zk_hosts: {{ kafka_zookeepers|join(',') }}
+{% else %}
+      zk_hosts: {{ "zookeeper.pnda:2181" }}
+{% endif %}
       kafka_log_retention_bytes: {{ flavor_cfg.kafka_log_retention_bytes }}
       listener_map: {{ listener_map }}
       listeners: {{ listeners }}

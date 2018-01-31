@@ -1,6 +1,10 @@
 {{ env }}:
 
   '*':
+{% if 'EXPERIMENTAL' in salt['pillar.get']('features', []) %}
+    - consul
+    - consul.dns
+{% endif %}
     - volumes
     - tasks.system_update
     - motd
