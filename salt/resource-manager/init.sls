@@ -37,6 +37,8 @@ resource-manager_log:
     - user: pnda
     - group: pnda
     - mode: 666
+    - makedirs: True
+    - dir_mode: 755
 
 resource-manager_spark_common_wrapper:
   file.managed:
