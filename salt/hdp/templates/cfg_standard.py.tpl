@@ -130,7 +130,7 @@ BLUEPRINT = r'''{
         {
             "spark-metrics-properties" : {
                 "properties" : {
-                    "content" : "*.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink\n*.sink.graphite.host={{ pnda_graphite_host }}\n*.sink.graphite.port=2003\n*.sink.graphite.period=60\n*.sink.graphite.prefix=spark\n*.sink.graphite.unit=seconds\n# Enable jvm source for instance master, worker, driver and executor\nmaster.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nworker.source.jvm.class=org.apache.spark.metrics.source.JvmSource\ndriver.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nexecutor.source.jvm.class=org.apache.spark.metrics.source.JvmSource"
+                    "content" : "*.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink\n*.sink.graphite.host={{ pnda_graphite_host }}\n*.sink.graphite.port={{ pnda_graphite_port }}\n*.sink.graphite.period=60\n*.sink.graphite.prefix=spark\n*.sink.graphite.unit=seconds\n# Enable jvm source for instance master, worker, driver and executor\nmaster.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nworker.source.jvm.class=org.apache.spark.metrics.source.JvmSource\ndriver.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nexecutor.source.jvm.class=org.apache.spark.metrics.source.JvmSource"
                 }
             }
         },
