@@ -73,6 +73,7 @@
         "plugins_path": "plugins",
         "log_level": "INFO",
         "deployer_thread_limit": 100,
+        "environment_sync_interval": 120,
         "package_callback": "{{ data_logger_link }}/packages",
         "application_callback": "{{ data_logger_link }}/applications",
         "package_repository": "{{ repository_manager_link }}"
