@@ -42,3 +42,4 @@ compaction.job.runner.class=gobblin.compaction.mapreduce.avro.MRCompactorAvroKey
 compaction.timezone=UTC
 compaction.job.overwrite.output.dir=true
 compaction.recompact.from.input.for.late.data=true
+mapred.output.compress=true
