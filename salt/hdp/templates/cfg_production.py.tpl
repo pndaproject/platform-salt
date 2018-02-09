@@ -665,7 +665,7 @@ BLUEPRINT = r'''{
                 "name" : "MAPREDUCE2_CLIENT"
                 },
                 {
-                "name" : "SPARK_CLIENT"
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1+"
@@ -692,7 +692,7 @@ BLUEPRINT = r'''{
                 "name" : "SPARK_CLIENT"
                 },
                 {
-                "name" : "SPARK_CLIENT"
+                "name" : "SPARK2_CLIENT"
                 }
             ],
             "cardinality" : "1"
