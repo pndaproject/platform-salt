@@ -3,8 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
-- PNDA-3127: Post ingress aggregation for Kafka datasets.
-- PNDA-3562: enable PAM authentication on PNDA console frontend
+- PNDA-3127: Post ingress compaction for Kafka datasets
+- PNDA-3562: Enable PAM authentication on PNDA console frontend
 - PNDA-3580: Add spark cli that implements a user/group placement policy.
 - PNDA-2832: Jupyter %sql magic support.
 - PNDA-3478: Added support for Spark2 on HDP
@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-3548: Upgrade Kafka manager to version 1.3.3.15
 - PNDA-3527: Add dev/prod queues to YARN CDH config.
 - PNDA-3528: Add some pillars for the resource manager and used in the dm-config.
-- PNDA-2834: Actual application status by deployment manager
+- PNDA-2834: Application status reported by DM / console should indicate real status of application
 - PNDA-3126: Create files from multiple Kafka partitions.
 - PNDA-3273: Capture spark metrics for all applications
 - PNDA-3630: Added EXPERIMENTAL flag section to pillar which is initially only used to include Jupyter Scala support
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
 - PNDA-3555: Use /pnda/deployment as HDFS library location
-- PNDA-3583: hadoop distro is now part of grains
+- PNDA-3583: Hadoop distro is now part of grains
 - PNDA-2540: Stop supplying 'cloud-user' as the default operating system user as this is deployment specific and must be supplied in the pnda-env.yaml
 - PNDA-1899: Scala Spark Jupyter Integration
 - PNDA-3530: Ambari version 2.6.0.0 and HDP version 2.6.3.0
@@ -38,18 +38,24 @@ All notable changes to this project will be documented in this file.
 - PNDA-3582: Create a mapping table for the Capacity Scheduler queue setup (HDP) from PNDA-3526.
 - PNDA-4043: Update HDP to version 2.6.4.0
 - PNDA-4016: Use file.append instead of cmd.run in httpfs.sls
+- PNDA-3542: Modify deployment manager plugins to execute commands as the supplied user
+- PNDA-3133: Remove Gobblin fork and use release distribution instead
+- PNDA-3515: Move all hadoop app data to a sensible directory for app data like /mnt and not /data0
 
 ### Fixed
-- PNDA-3573: remove eth0 default value on kafka
+- PNDA-3573: Remove eth0 default value on kafka
 - PNDA-3553: Configure PNDA log aggregation to use HDP specific paths when collecting hadoop service logs on HDP
 - PNDA-3535: Make ambari server sls idempotent
 - PNDA-3323: Clean up files for all users in hdfs_cleaner
-- PNDA-3521: fix issue on push/getting DM keys
+- PNDA-3521: Fix issue on push/getting DM keys
 - PNDA-3428: Daemonize HDP HBase services
 - PNDA-3530: Update yarn resource manager config to include both resource managers for webapp settings in the standard flavor
 - PNDA-3574: Make hdp.oozie_libs sls idempotent
 - PNDA-3651: Fix HDP capacity scheduler's ACL settings
 - PNDA-4029: Allow YARN RM to view task logs
+- PNDA-4056: Expanded Data Nodes not being recognized in Deployment Manager
+- PNDA-3360: Remove skip_verify on hadoop-httpfs for hdp ubuntu clusters
+- PNDA-3519: Failure to copy some files to Hadoop during setup
 
 ## [3.0.0] 2017-11-24
 ### Added
@@ -59,7 +65,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-1960: Make Kafkat available on nodes as option for Kafka management at CLI
 - PNDA-2445: Support for Hortonworks HDP hadoop distro
 - PNDA-2163: Support for OpenTSDB Platform testing
-- PNDA-2832: Added sql magic support for Jupyter notebooks
+- PNDA-2832: Added sql magic support for Jupyter notebooks (experimental)
 - PNDA-1788: Cloudera version can be set in the salt pillar
 - PNDA-3314: Added new flavor for larger PNDAs called "production"
 - PNDA-3484: Add CentOS support
