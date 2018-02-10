@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
 - PNDA-3562: Enable PAM authentication on PNDA console frontend
