@@ -6,7 +6,6 @@
 #   network.ip_addrs:
 #     - eth0
 # mine_interval: 2
-
 {%- set pnda_cluster = salt['pnda.cluster_name']() %}
 {%- set addrs = salt['mine.get']('G@pnda_cluster:' + pnda_cluster, 'network.ip_addrs', expr_form='compound') %}
 
@@ -18,6 +17,7 @@
     - ip: {{ addrlist|first() }}
     - names:
       - {{ name }}
+
 {% endfor %}
 
 {% endif %}

@@ -151,3 +151,49 @@ zookeeper-systemctl_reload:
 zookeeper-ensure-service-running:
   cmd.run:
     - name: 'service zookeeper stop || echo already stopped; service zookeeper start'
+
+{% if 'EXPERIMENTAL' in salt['pillar.get']('features', []) %}
+{%- set internal_ip = salt['network.interface_ip'](pillar["mine_functions"]["network.ip_addrs"][0]) -%}
+{% set myid = 0 %}
+{%- for node in nodes -%}
+{%- if node.fqdn == salt['grains.get']('id') -%}
+{% set myid = node.id %}
+{%- endif -%}
+{%- endfor -%}
+
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+zookeeper-pkg_install_netcat:
+  pkg.installed:
+    - name: {{ pillar['nmap-ncat']['package-name'] }}
+    - version: {{ pillar['nmap-ncat']['version'] }}
+    - ignore_epoch: True
+{%- endif %}
+
+zookeeper-consul-check:
+  file.managed:
+    - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/consul_check.sh
+    - source: salt://zookeeper/files/templates/consul_check.sh.tpl
+    - mode: 755
+    - template: jinja
+    - context:
+{% if grains['os'] == 'Ubuntu' %}
+      netcat: nc
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+      netcat: ncat
+{%- endif %}
+
+zookeeper-consul-register:
+  file.managed:
+    - name: /etc/consul.d/zookeeper.json
+    - source: salt://zookeeper/files/templates/consul.json.tpl
+    - template: jinja
+    - context:
+      myid: {{ myid }}
+      internal_ip: {{ internal_ip }}
+      zookeeper_check_script: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/consul_check.sh
+
+zookeeper-consul-reload:
+  module.run:
+    - name: service.reload
+    - m_name: consul
+{% endif %}

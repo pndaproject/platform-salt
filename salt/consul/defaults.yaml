@@ -1,0 +1,27 @@
+consul:
+  version: 0.7.0
+  download_host: releases.hashicorp.com
+
+  service: false
+
+  user: root
+  group: root
+
+  config:
+    server: false
+    bind_addr: 0.0.0.0
+    client_addr: 0.0.0.0
+    data_dir: /var/consul
+    ui: true
+    enable_debug: false
+    log_level: info
+    encrypt: ""
+    retry_join: []
+    retry_interval: 30s
+    datacenter: "dc1"
+    enable_script_checks: true
+    ports:
+      - dns: 53
+    domain: "pnda.local"
+  register: []
+  scripts: []
