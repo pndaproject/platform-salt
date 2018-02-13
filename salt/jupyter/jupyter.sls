@@ -38,7 +38,7 @@ dependency-install_dev_krb:
     - ignore_epoch: True
 {% endif %}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 dependency-install_krb5_devel:
   pkg.installed:
     - name: {{ pillar['krb5-devel']['package-name'] }}
@@ -203,7 +203,7 @@ livy-conf_service:
 {% if grains['os'] == 'Ubuntu' %}
     - name: /etc/init/livy.conf
     - source: salt://jupyter/templates/livy.conf.tpl
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/livy.service
     - source: salt://jupyter/templates/livy.service.tpl
 {% endif %}
@@ -214,7 +214,7 @@ livy-conf_service:
         spark_home: {{ spark_home }}
         hadoop_conf_dir: {{ hadoop_conf_dir }}
 
-{% if grains['os'] == 'RedHat' %}
+{% if grains['os'] in ('RedHat', 'CentOS') %}
 livy-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable livy
