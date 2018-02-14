@@ -1,7 +1,5 @@
 {%- from 'consul/map.jinja' import consul with context -%}
 
-{% if 'EXPERIMENTAL' in salt['pillar.get']('features', []) %}
-
 {%- set internal_ip = salt['network.interface_ip'](pillar["mine_functions"]["network.ip_addrs"][0]) -%}
 {% do consul.config.update({'bind_addr': internal_ip}) %}
 {% do consul.config.update({'client_addr': internal_ip}) %}
@@ -15,8 +13,6 @@
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
 {%- do consul.config.retry_join.append(ip) -%}
 {%- endfor -%}
-{% endif %}
-
 {% endif %}
 
 consul-config:
