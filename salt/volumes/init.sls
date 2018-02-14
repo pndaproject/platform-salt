@@ -61,7 +61,16 @@
     {% else %}
     volumes-wait-{{ device }}:
       cmd.run:
-        - name: 'while [ ! -b {{ device }} ]; do   echo waiting for device {{ device }}; sleep 2; done'
+        - name: |
+            DISK_READY_RETRIES=0
+            DISK_READY_RETRY_LIMIT=60
+            DISK_READY_RETRY_INTERVAL=2
+            DEVICE={{ device }}
+            until [ -b $DEVICE ] || [ $DISK_READY_RETRIES -eq $DISK_READY_RETRY_LIMIT ]; do
+                sleep $DISK_READY_RETRY_INTERVAL
+                echo waiting for device $DEVICE - retry $(( DISK_READY_RETRIES++ )) of $DISK_READY_RETRY_LIMIT
+            done
+            [ ! $DISK_READY_RETRIES -eq $DISK_READY_RETRY_LIMIT ]
 
     volumes-format-{{ device }}:
       cmd.run:
