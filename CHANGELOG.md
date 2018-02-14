@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- PNDA-3673: Added consul service and agents
 
 ## [4.0.0] 2018-02-10
 ### Added
@@ -23,7 +25,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-3550: Add a pyspark2 Jupyter kernel for HDP clusters to allow Jupyter to use Spark 2
 - PNDA-3549: Include common jar and egg dependencies used by applications that run on PNDA
 - PNDA-3654: Add wrapper functions for the Hive and Beeline cli
-- PNDA-3673: Added consul service and agents
 
 ### Changed
 - PNDA-3545: Configure Hive and Hive2 Ambari views to run as the hdfs super user
