@@ -61,7 +61,7 @@ platform_gobblin_modules:
   release_version: 0.1.0-rc.1
 
 console_frontend:
-  release_version: 1.0.0-rc.0
+  release_version: 1.0.0-rc.1
 
 console_backend_data_logger:
   release_version: 1.0.0-rc.0
