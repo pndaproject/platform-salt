@@ -1,5 +1,8 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
+{% set pnda_home = pillar['pnda']['homedir'] %}
+{% set app_packages_dir = pnda_home + "/app-packages" %}
+
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 {% set hdp_p = salt['pillar.get']('hdp', {}) %}
@@ -76,6 +79,7 @@ hdp-copy_flavor_config:
       data_volumes: {{ data_volumes }}
       pnda_user: {{ pnda_user }}
       pnda_graphite_host: {{ pnda_graphite_host }}
+      app_packages_dir: {{ app_packages_dir }}
 
 hdp-execute_hdp_installation_script:
   cmd.run:
