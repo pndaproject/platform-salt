@@ -63,7 +63,7 @@ elasticsearch-dl_and_extract_elasticsearch:
   archive.extracted:
     - name: {{ es_p.directory }}
     - source: {{ elasticsearch_url }}
-    - source_hash: {{ elasticsearch_url }}.sha1.txt
+    - source_hash: {{ elasticsearch_url }}.sha512
     - user: elasticsearch
     - group: elasticsearch
     - archive_format: tar
