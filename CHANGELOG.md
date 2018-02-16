@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - PNDA-3673: Added consul service and agents
 
+### Changed
+- Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
+
 ## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
