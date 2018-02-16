@@ -58,41 +58,41 @@ gobblin:
   release_version: 0.11.0
 
 platform_gobblin_modules:
-  release_version: 0.1.0-rc.1
+  release_version: 0.1.0
 
 console_frontend:
-  release_version: 1.0.0-rc.1
+  release_version: 1.0.0
 
 console_backend_data_logger:
-  release_version: 1.0.0-rc.0
+  release_version: 1.0.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 1.0.0-rc.0
+  release_version: 1.0.0
   bind_port: 3123
 
 console_backend_utils:
-  release_version: 1.0.0-rc.0
+  release_version: 1.0.0
 
 deployment_manager:
-  release_version: 1.0.0-rc.0
+  release_version: 1.0.0
   keys_directory: /opt/pnda/dm_keys
 
 package_repository:
-  release_version: 0.3.2-rc.0
+  release_version: 0.3.2
 
 data-service:
-  release_version: 0.2.2-rc.0
+  release_version: 0.2.2
 
 hdfs_cleaner:
-  release_version: 0.2.2-rc.0
+  release_version: 0.2.2
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 0.5.0-rc.0
+  release_version: 0.5.0
 
 platformlib:
-  release_version:  0.1.5rc1
+  release_version:  0.1.5
   target_directory: "/opt/pnda"
 
 resource_manager:
