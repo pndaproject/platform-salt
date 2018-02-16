@@ -12,6 +12,16 @@
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
 {% set opentsdb_port = '4242' %}
+{% set elk_port = '9200' %}
+{% set data_service_port = '7000' %}
+{% set metric_console_port = '3123' %}
+{% set gobblin_cron_interval = 30 %}
+{% set gobblin_retry_count = 11 %}
+{% set gobblin_log_path = '/var/log/pnda/gobblin/gobblin_current.log' %}
+{% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
+{% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
+{% set console_user = pillar['pnda']['user'] %}
+{% set console_password = pillar['pnda']['password'] %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
@@ -30,9 +40,21 @@
 {%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
 {%- endfor -%}
 
+{%- set data_service_hosts = [] -%}
+{%- for ip in salt['pnda.ip_addresses']('data_service') -%}
+{%- do data_service_hosts.append("http://" + ip + ':' + data_service_port) -%}
+{%- endfor -%}
+
+{%- set elk_hosts = [] -%}
+{%- for ip in salt['pnda.ip_addresses']('kibana_dashboard') -%}
+{%- do elk_hosts.append("http://" + ip + ':' + elk_port) -%}
+{%- endfor -%}
+
 {%- set console_hosts = [] -%}
+{%- set metric_console_hosts = [] -%}
 {%- for ip in salt['pnda.ip_addresses']('console_backend_data_logger') -%}
 {%- do console_hosts.append(ip + ':' + console_port) -%}
+{%- do metric_console_hosts.append("http://" + ip + ':' + metric_console_port) -%}
 {%- endfor -%}
 
 {%- set dm_hosts = [] -%}
@@ -197,6 +219,43 @@ platform-testing-general-crontab-opentsdb:
     - name: /sbin/start platform-testing-general-opentsdb
 {% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-opentsdb
+{% endif %}
+
+platform-testing-general-dataset_service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - source: salt://platform-testing/templates/platform-testing-general-dataset.conf.tpl
+    - name: /etc/init/platform-testing-general-dataset.conf
+{% elif grains['os'] == 'RedHat' %}
+    - name: /usr/lib/systemd/system/platform-testing-general-dataset.service
+    - source: salt://platform-testing/templates/platform-testing-general-dataset.service.tpl
+{% endif %}
+    - mode: 644
+    - template: jinja
+    - context:
+      platform_testing_directory: {{ platform_testing_directory }}
+      platform_testing_package: {{ platform_testing_package }}
+      console_hosts: {{ console_hosts }}
+      data_service_hosts: {{ data_service_hosts }}
+      metric_console_hosts: {{ metric_console_hosts }}
+      pnda_cluster: {{ pnda_cluster }}
+      elk_hosts: {{ elk_hosts }}
+      gobblin_cron_interval: {{ gobblin_cron_interval }}
+      gobblin_log_path: {{ gobblin_log_path }}
+      gobblin_retry_count: {{ gobblin_retry_count }}
+      pnda_master_dataset_location: {{ pnda_master_dataset_location }}
+      pnda_quarantine_dataset_location: {{ pnda_quarantine_dataset_location }}
+      console_user: {{ console_user }}
+      console_password: {{ console_password }}
+
+platform-testing-general-crontab-dataset:
+  cron.present:
+    - identifier: PLATFORM-TESTING-DATASET
+    - user: root
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /sbin/start platform-testing-general-dataset
+{% elif grains['os'] == 'RedHat' %}
+    - name: /bin/systemctl start platform-testing-general-dataset
 {% endif %}
 
 {%- if dm_hosts is not none and dm_hosts|length > 0 %}
