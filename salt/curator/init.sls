@@ -14,10 +14,28 @@ curator-python-elasticsearch-curator:
     - require:
       - pip: python-pip-install_python_pip
 
+curator-logs-dir:
+  file.directory:
+    - name: /var/log/pnda/curator
+    - mode: 755
+    - makedirs: True
+    - recurse:
+      - mode
+
+curator-deploy-config:
+  file.managed:
+    - name: {{ virtual_env_dir }}/config.yml
+    - source: salt://curator/files/config.yml
+
+curator-deploy-action:
+  file.managed:
+    - name: {{ virtual_env_dir }}/action.yml
+    - source: salt://curator/files/action.yml
+
 curator-update-crontab-inc-curator:
   cron.present:
     - identifier: CURATOR-DELETE-INDICES
     - user: root
     - minute: 01
     - hour: 00
-    - name: {{ virtual_env_dir }}/bin/curator delete indices --older-than {{ flavor_cfg.days_to_keep }} --time-unit days --prefix logstash- --timestring \%Y.\%m.\%d >> /tmp/curator.log 2>&1
+    - name: {{ virtual_env_dir }}/bin/curator --config {{ virtual_env_dir }}/config.yml {{ virtual_env_dir }}/action.yml

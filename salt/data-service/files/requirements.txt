@@ -1,6 +1,6 @@
 backports-abc==0.5
 backports.ssl-match-hostname==3.5.0.1
-certifi==2016.9.26
+certifi==2017.4.17
 cm-api==14.0.0
 functools32==3.2.3.post2
 futures==3.0.5

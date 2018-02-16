@@ -5,4 +5,4 @@ respawn limit unlimited
 post-stop exec sleep 2
 env confFile={{ install_dir }}/logstash/collector.conf
 env programDir={{ install_dir }}/logstash
-exec ${programDir}/bin/logstash -f ${confFile}
+exec ${programDir}/bin/logstash --path.data {{ install_dir }}/logstash/logserver-data -f ${confFile}

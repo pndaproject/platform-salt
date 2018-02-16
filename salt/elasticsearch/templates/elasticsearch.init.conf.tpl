@@ -23,4 +23,4 @@ end script
 
 chdir {{ installdir }}
 
-exec bin/elasticsearch -Des.default.config={{ defaultconfig }} -Des.default.path.logs={{ logdir }} -Des.default.path.data={{ datadir }} -Des.default.path.work={{ workdir }} -Des.default.path.conf={{ confdir }}
+exec bin/elasticsearch -Epath.logs={{ logdir }} -Epath.data={{ datadir }}

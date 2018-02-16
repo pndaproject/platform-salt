@@ -148,6 +148,8 @@ input {
 
 filter {
    if [_systemd_unit] {
+       mutate { remove_field => [ "_uid"] }
+
        if [_systemd_unit] == "kafka.service" {
            mutate {add_field => {"source" => "kafka"}}
        }

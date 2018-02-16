@@ -7,7 +7,7 @@
 {% set logstash_version = pillar['logstash']['version'] %}
 {% set logstash_package = 'logstash-' + logstash_version + '.tar.gz' %}
 {% set logstash_url = mirror_location + logstash_package %}
-{% set plugin_pack_name = 'logstash-offline-plugins-5.2.2.zip' %}
+{% set plugin_pack_name = 'logstash-offline-plugins-6.2.1.zip' %}
 {% set plugin_pack_url = mirror_location + plugin_pack_name %}
 
 include:
@@ -29,7 +29,7 @@ logshipper-dl-and-extract:
   archive.extracted:
     - name: {{ install_dir }}
     - source: {{ logstash_url }}
-    - source_hash: {{ logstash_url }}.sha1
+    - source_hash: {{ logstash_url }}.sha512
     - archive_format: tar
     - tar_options: ''
     - if_missing: {{ install_dir }}/logstash-{{ logstash_version }}
