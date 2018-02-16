@@ -205,7 +205,7 @@ BLUEPRINT = r'''{
                     "yarn.scheduler.capacity.resource-calculator" : "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
                     "yarn.scheduler.capacity.root.accessible-node-labels" : "*",
                     "yarn.scheduler.capacity.root.acl_administer_queue" : "pnda",
-                    "yarn.scheduler.capacity.root.acl_submit_applications" : "",
+                    "yarn.scheduler.capacity.root.acl_submit_applications" : " ",
                     "yarn.scheduler.capacity.root.applications.acl_administer_queue" : " ",
                     "yarn.scheduler.capacity.root.applications.acl_submit_applications" : " ",
                     "yarn.scheduler.capacity.root.applications.capacity" : "1",
