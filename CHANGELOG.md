@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
 
+### Fixed
+- PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
+
 ## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
