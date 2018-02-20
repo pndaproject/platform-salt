@@ -186,19 +186,6 @@ gobblin-systemctl_reload:
     - name: /bin/systemctl daemon-reload
 {%- endif %}
 
-gobblin-add_gobblin_crontab_entry:
-  cron.present:
-    - identifier: GOBBLIN
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /sbin/start gobblin
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
-    - name: /bin/systemctl start gobblin
-{%- endif %}
-    - user: root
-    - minute: 0,30
-    - require:
-      - file: gobblin-install_gobblin_service_script
-
 {% if perform_compaction %}
 gobblin-add_gobblin_compact_crontab_entry:
   cron.present:
