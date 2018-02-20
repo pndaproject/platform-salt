@@ -30,7 +30,7 @@
 # automatically configure the host name based on the hostname of the node where the
 # JobManager runs.
 
-jobmanager.rpc.address: {{ node }}
+jobmanager.rpc.address: {{ jmnode }}
 
 # The RPC port where the JobManager is reachable.
 
@@ -89,19 +89,20 @@ web.port: 8081
 
 # Directory to upload completed jobs to. Add this directory to the list of
 # monitored directories of the HistoryServer as well (see below).
-#jobmanager.archive.fs.dir: hdfs:///completed-jobs/
+jobmanager.archive.fs.dir: {{ namenode }}/{{ path }}
 
 # The address under which the web-based HistoryServer listens.
-#historyserver.web.address: 0.0.0.0
+historyserver.web.address: 0.0.0.0
 
 # The port under which the web-based HistoryServer listens.
-#historyserver.web.port: 8082
+historyserver.web.port: 8082
 
 # Comma separated list of directories to monitor for completed jobs.
-#historyserver.archive.fs.dir: hdfs:///completed-jobs/
+# Currently configured the history-server archive directory to read it from job-manager archive directory.
+historyserver.archive.fs.dir: {{ namenode }}/{{ path }}
 
 # Interval in milliseconds for refreshing the monitored directories.
-#historyserver.archive.fs.refresh-interval: 10000
+historyserver.archive.fs.refresh-interval: 10000
 
 #==============================================================================
 # Streaming state checkpointing
