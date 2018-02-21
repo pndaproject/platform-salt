@@ -21,7 +21,7 @@ kibana-dl_and_extract_kibana:
   archive.extracted:
     - name: {{ kibana_directory }}
     - source: {{ kibana_url }}
-    - source_hash: {{ kibana_url }}.sha1.txt
+    - source_hash: {{ kibana_url }}.sha512
     - user: kibana
     - group: kibana
     - archive_format: tar

@@ -2,11 +2,11 @@ logstash:
   version: 5.2.2
 
 kibana:
-  version: 4.1.6-linux-x64
+  version: 6.2.1-linux-x86_64
   directory: /opt/pnda
 
 elasticsearch:
-  version: 1.5.0
+  version: 6.2.1
   directory: /opt/pnda
   logdir: /var/log/elasticsearch
   confdir: /etc/elasticsearch
