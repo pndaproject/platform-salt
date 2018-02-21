@@ -15,7 +15,7 @@
 {% set flink_link_dir = pnda_home + '/flink' %}
 
 {% set namenode = salt['pnda.hadoop_namenode']() %}
-{% set archive_dir = '/user/' + pnda_user + '/flink/completed-jobs' %}
+{% set archive_dir = pnda_user + '/flink/completed-jobs' %}
 {% set archive_dir_hdfs_path = namenode + '/' + archive_dir %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
