@@ -9,6 +9,10 @@ respawn
 respawn limit unlimited
 post-stop exec sleep 2
 
+setuid pnda
+setgid pnda
+
 chdir {{ install_dir }}
 pre-start exec bin/historyserver.sh start
 post-stop exec bin/historyserver.sh stop
+
