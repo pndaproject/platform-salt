@@ -5,6 +5,26 @@
 include:
   - python-pip
 
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+app-packages-install_dev_deps_cyrus:
+  pkg.installed:
+    - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
+    - version: {{ pillar['cyrus-sasl-devel']['version'] }}
+    - ignore_epoch: True
+{% endif %}
+
+app-packages-install_dev_deps_sasl:
+  pkg.installed:
+    - name: {{ pillar['libsasl']['package-name'] }}
+    - version: {{ pillar['libsasl']['version'] }}
+    - ignore_epoch: True
+
+app-packages-install_dev_deps_gcc:
+  pkg.installed:
+    - name: {{ pillar['g++']['package-name'] }}
+    - version: {{ pillar['g++']['version'] }}
+    - ignore_epoch: True
+
 app-packages-create-venv:
   virtualenv.managed:
     - name: {{ pnda_home }}/app-packages
