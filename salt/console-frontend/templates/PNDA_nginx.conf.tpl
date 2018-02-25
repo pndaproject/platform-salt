@@ -1,6 +1,5 @@
 server {
 	listen {{port}} default_server;
-	listen [::]:{{port}} default_server ipv6only=on;
 
 	root {{ console_dir }};
 	index index.html index.htm;
