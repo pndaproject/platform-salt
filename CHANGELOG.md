@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
+- PNDA-4399: Remove IPV6 dependency in nginx
 
 ## [4.0.0] 2018-02-10
 ### Added
