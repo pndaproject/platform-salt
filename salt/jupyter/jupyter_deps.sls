@@ -1,11 +1,5 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
-
-{% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
-{% else %}
-{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
-{% endif %}
-
 
 {% if grains['os'] == 'Ubuntu' %}
 dependency-install-libpq:

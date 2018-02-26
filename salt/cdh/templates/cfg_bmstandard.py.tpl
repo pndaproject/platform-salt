@@ -437,7 +437,7 @@ SPARK_CFG = {
     'name': 'spark_on_yarn',
     'config': {
         'yarn_service': MAPRED_CFG['name'],
-        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
+        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYSPARK_DRIVER_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYSPARK_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR02'},
@@ -446,6 +446,7 @@ SPARK_CFG = {
     'role_cfg': [
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},
         {'type': 'GATEWAY', 'config': {
-            'spark_history_enabled': 'false'}}
+            'spark_history_enabled': 'false',
+            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.yarn.appMasterEnv.PYSPARK_PYTHON=/opt/pnda/anaconda/bin/python\nspark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON=/opt/pnda/anaconda/bin/python'}}
     ]
 }

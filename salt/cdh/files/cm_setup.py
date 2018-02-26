@@ -688,9 +688,7 @@ def setup_hadoop(
         cm_username='admin',
         cm_password='admin',
         parcel_repo=None,
-        parcel_version=None,
-        anaconda_repo=None,
-        anaconda_version=None):
+        parcel_version=None):
 
     ha_enabled = _CFG.isHA_enabled
 
@@ -761,11 +759,6 @@ def setup_hadoop(
         # to install the correct CDH parcel via the download/distribute/activate
         logging.info("Downloading, distributing and activating parcels")
         install_parcel(cloudera_manager, cluster, 'CDH', parcel_repo, parcel_version)
-
-        # to install Anaconda parcels
-        logging.info("Downloading anaconda parcels")
-        if anaconda_repo is not None and anaconda_version is not None:
-            install_parcel(cloudera_manager, cluster, 'Anaconda', anaconda_repo, anaconda_version)
 
     if cluster_action == 'create_new':
         # Some services are sensitive to perceived health so CMS needs to be started

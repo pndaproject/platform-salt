@@ -78,11 +78,7 @@
     - match: grain
     - cdh.create_data_dirs
     - snappy
-{% if grains['hadoop.distro'] == 'HDP' %}
     - anaconda
-{% else %}
-    - cdh.anaconda
-{% endif %}
 
   'roles:mysql_connector':
     - match: grain
