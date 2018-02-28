@@ -1,8 +1,8 @@
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
-{% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
-{% set anaconda_package = 'Anaconda2-' + anaconda_parcel_version + '-Linux-x86_64.sh' %}
+{% set anaconda_bundle_version = pillar['anaconda']['bundle_version'] %}
+{% set anaconda_package = 'Anaconda2-' + anaconda_bundle_version + '-Linux-x86_64.sh' %}
 
 {% if grains['os'] in ('RedHat', 'CentOS') %}
 anaconda-deps:
@@ -28,7 +28,7 @@ anaconda-dl:
 anaconda-setup:
   cmd.run:
     - cwd: /tmp
-    - name: './Anaconda2-{{ anaconda_parcel_version }}-Linux-x86_64.sh -b -p /opt/pnda/anaconda'
+    - name: './Anaconda2-{{ anaconda_bundle_version }}-Linux-x86_64.sh -b -p /opt/pnda/anaconda'
     - unless: test -d /opt/pnda/anaconda
 
 anaconda-conda_cmd_link:

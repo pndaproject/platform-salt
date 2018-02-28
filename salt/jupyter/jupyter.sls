@@ -7,14 +7,13 @@
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set wrapper_spark_home = '/usr/' %}
 {% set features = salt['pillar.get']('features', []) %}
-{% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
+{% if grains['hadoop.distro'] == 'HDP' %}
 {% set spark_home = '/usr/hdp/current/spark-client' %}
 {% set spark2_home = '/usr/hdp/current/spark2-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}
 {% set livy_dir = '/usr/hdp/current/livy-server' %}
 {% else %}
-{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
 {% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
 {% set packages_server = pillar['packages_server']['base_uri'] %}

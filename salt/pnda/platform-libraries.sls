@@ -7,14 +7,8 @@
 {% set cm_ip = salt['pnda.ip_addresses']('hadoop_manager')[0] %}
 {% set platformlibs_config_dir = '/etc/platformlibs' %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
-
 {% set hadoop_distro = grains['hadoop.distro'] %}
-
-{% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
-{% else %}
-{% set anaconda_home = '/opt/cloudera/parcels/Anaconda' %}
-{% endif %}
 
 include:
   - python-pip

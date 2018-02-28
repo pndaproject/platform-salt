@@ -537,7 +537,7 @@ SPARK_CFG = {
     'name': 'spark_on_yarn',
     'config': {
         'yarn_service': MAPRED_CFG['name'],
-        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
+        'spark-conf/spark-env.sh_service_safety_valve': "SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYSPARK_DRIVER_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYSPARK_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""
     },
     'roles': [
         {'name': 'spark', 'type': 'SPARK_YARN_HISTORY_SERVER', 'target': 'MGR01'},
@@ -548,7 +548,7 @@ SPARK_CFG = {
         {'type': 'SPARK_YARN_HISTORY_SERVER', 'config': {}},
         {'type': 'GATEWAY', 'config': {
             'spark_history_enabled': 'false',
-            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.yarn.executor.memoryOverhead=256\nspark.driver.memory=384m\nspark.executor.memory=384m\nspark.yarn.am.memory=384m\nspark.executor.cores=1\nspark.metrics.conf.*.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink\nspark.metrics.conf.*.sink.graphite.host={{ pnda_graphite_host }}\nspark.metrics.conf.*.sink.graphite.port=2003\nspark.metrics.conf.*.sink.graphite.period=60\nspark.metrics.conf.*.sink.graphite.prefix=spark\nspark.metrics.conf.*.sink.graphite.unit=seconds\nspark.metrics.conf.master.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.worker.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.driver.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.executor.source.jvm.class=org.apache.spark.metrics.source.JvmSource',
+            'spark-conf/spark-defaults.conf_client_config_safety_valve': 'spark.yarn.executor.memoryOverhead=256\nspark.driver.memory=384m\nspark.executor.memory=384m\nspark.yarn.am.memory=384m\nspark.executor.cores=1\nspark.metrics.conf.*.sink.graphite.class=org.apache.spark.metrics.sink.GraphiteSink\nspark.metrics.conf.*.sink.graphite.host={{ pnda_graphite_host }}\nspark.metrics.conf.*.sink.graphite.port=2003\nspark.metrics.conf.*.sink.graphite.period=60\nspark.metrics.conf.*.sink.graphite.prefix=spark\nspark.metrics.conf.*.sink.graphite.unit=seconds\nspark.metrics.conf.master.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.worker.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.driver.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.metrics.conf.executor.source.jvm.class=org.apache.spark.metrics.source.JvmSource\nspark.yarn.appMasterEnv.PYSPARK_PYTHON=/opt/pnda/anaconda/bin/python\nspark.yarn.appMasterEnv.PYSPARK_DRIVER_PYTHON=/opt/pnda/anaconda/bin/python',
             'spark_dynamic_allocation_max_executors': '4'}}
     ]
 }

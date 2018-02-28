@@ -47,12 +47,8 @@ parcel_version = None
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
 
-{% set anaconda_parcel_repo = pillar['anaconda']['parcel_repo'] %}
-{% set anaconda_parcel_version = pillar['anaconda']['parcel_version'] %}
-
 if __name__ == '__main__':
     cm_setup.setup_hadoop(manager, nodes,
                           cluster_name='{{ cluster_name }}', cm_username='{{ cm_username }}',
                           cm_password='{{ cm_password }}',
-                          parcel_repo=parcel_repo, parcel_version=parcel_version,
-                          anaconda_repo='{{ anaconda_parcel_repo }}', anaconda_version='{{ anaconda_parcel_version }}')
+                          parcel_repo=parcel_repo, parcel_version=parcel_version)
