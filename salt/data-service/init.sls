@@ -24,7 +24,7 @@ data-service-dl-and-extract:
 data-service-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
-    - requirements: salt://data-service/files/requirements.txt
+    - requirements: {{ install_dir }}/{{ app_directory_name }}/requirements.txt
     - python: python2
     - index_url: {{ pip_index_url }}
     - reload_modules: True
