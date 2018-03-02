@@ -12,6 +12,7 @@
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
 {% set opentsdb_port = '4242' %}
+{% set flink_history_server_port = '8082' %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
@@ -40,6 +41,16 @@
 {%- if dm_nodes is not none and dm_nodes|length > 0 -%}
   {%- for ip in dm_nodes -%}
   {%- do dm_hosts.append("http://" + ip + ':' + dm_port) -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- set fh_hosts = [] -%}
+{%- set fh_nodes = salt['pnda.ip_addresses']('flink') -%}
+{%- if fh_nodes is not none and fh_nodes|length > 0 -%}
+  {%- for ip in fh_nodes -%}
+    {%- if ip in dm_nodes -%}
+        {%- do fh_hosts.append("http://" + ip + ':' + flink_history_server_port) -%}
+    {%- endif -%}
   {%- endfor -%}
 {%- endif -%}
 
@@ -233,6 +244,44 @@ platform-testing-general-crontab-dm-blackbox:
     - name: /sbin/start platform-testing-general-dm-blackbox
 {% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start platform-testing-general-dm-blackbox
+{% endif %}
+
+{% endif %}
+
+{%- if fh_hosts is not none and fh_hosts|length > 0 %}
+platform-testing-general-install-requirements-flink:
+  pip.installed:
+    - bin_env: {{ virtual_env_dir }}
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/flink/requirements.txt
+    - index_url: {{ pip_index_url }}
+    - require:
+      - virtualenv: platform-testing-general-create-venv
+
+platform-testing-general-flink_service:
+  file.managed:
+{% if grains['os'] == 'Ubuntu' %}
+    - source: salt://platform-testing/templates/platform-testing-general-flink.conf.tpl
+    - name: /etc/init/platform-testing-general-flink.conf
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+    - source: salt://platform-testing/templates/platform-testing-general-flink.service.tpl
+    - name: /usr/lib/systemd/system/platform-testing-general-flink.service
+{%- endif %}
+    - mode: 644
+    - template: jinja
+    - context:
+      platform_testing_directory: {{ platform_testing_directory }}
+      platform_testing_package: {{ platform_testing_package }}
+      console_hosts: {{ console_hosts }}
+      fh_hosts: {{ fh_hosts }}
+
+platform-testing-general-crontab-flink:
+  cron.present:
+    - identifier: PLATFORM-TESTING-FLINK
+    - user: root
+{% if grains['os'] == 'Ubuntu' %}
+    - name: /sbin/start platform-testing-general-flink
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
+    - name: /bin/systemctl start platform-testing-general-flink
 {% endif %}
 
 {% endif %}

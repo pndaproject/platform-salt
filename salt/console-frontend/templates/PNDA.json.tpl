@@ -26,6 +26,10 @@
     {
       "name": "Jupyter",
       "link": "{{ jupyter_link }}"
+    },
+    {
+      "name": "Flink",
+      "link": "{{ flink_link }}"
     }
   ],
   "frontend": {
