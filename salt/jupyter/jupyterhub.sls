@@ -63,7 +63,7 @@ jupyterhub-event_cn:
       ssl: True
       old_cn: {{ old_cn }}
       new_cn: {{ new_cn }}
-      ip_addr: {{ salt.pnda.ip_addresses('jupyter')[0] }}
+      ip_addr: {{ salt.pnda.get_hosts_for_role('jupyter')[0] }}
 {% endif %}
 
 {% else %}

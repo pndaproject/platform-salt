@@ -18,10 +18,10 @@ consul:
     encrypt: ""
     retry_join: []
     retry_interval: 30s
-    datacenter: "dc1"
+    datacenter: "{{ pillar['consul']['data_center'] }}"
     enable_script_checks: true
     ports:
       - dns: 53
-    domain: "pnda.local"
+    domain: "{{ pillar['consul']['domain'] }}"
   register: []
   scripts: []

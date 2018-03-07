@@ -5,7 +5,7 @@
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
 {%- set kafka_zookeepers = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}
 {%- do kafka_zookeepers.append(ip+':2181') -%}
 {%- endfor -%}
 
@@ -21,7 +21,7 @@
 {% set listeners = 'INGEST://'+ingest_ip+':'+ingest_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
 {% set advertised_listeners = 'INGEST://'+ingest_ip+':'+ingest_port|string+',REPLICATION://'+internal_ip+':'+replication_port|string+',INTERNAL_PLAINTEXT://'+internal_ip+':'+internal_port|string %}
 
-{% set offsets_topic_replication_factor  = salt['pnda.kafka_brokers_ips']()|length -%}
+{% set offsets_topic_replication_factor  = salt['pnda.kafka_brokers_hosts']()|length -%}
 {% set kafka_log_level = salt['pillar.get']('kafka:log_level', 'INFO') %}
 
 include:

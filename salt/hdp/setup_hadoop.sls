@@ -12,10 +12,10 @@
 {% set keystone_tenant = salt['pillar.get']('keystone.tenant', "") %}
 {% set keystone_auth_url = salt['pillar.get']('keystone.auth_url', "") + '/tokens' %}
 {% set region = salt['pillar.get']('keystone.region_name', "") %}
-{% set mysql_host = salt['pnda.ip_addresses']('oozie_database')[0] %}
+{% set mysql_host = salt['pnda.get_hosts_for_role']('oozie_database')[0] %}
 {% set aws_key = salt['pillar.get']('aws.archive_key', '') %}
 {% set aws_secret_key = salt['pillar.get']('aws.archive_secret', '') %}
-{% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
+{% set pnda_graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
 {% set pnda_user = pillar['pnda']['user'] %}
 
 {% set pip_index_url = pillar['pip']['index_url'] %}

@@ -21,6 +21,7 @@ max_reconnect_retry_delay=30
 
 
 [agent]
+hostname_script=/etc/hadoop-hostname.sh
 logdir=/var/log/pnda/ambari-agent
 piddir=/var/run/ambari-agent
 prefix=/var/lib/ambari-agent/data

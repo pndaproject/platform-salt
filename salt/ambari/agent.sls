@@ -1,4 +1,4 @@
-{%- set ambari_server_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
+{%- set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] -%}
 
 ambari-agent-user:
   user.present:
@@ -28,6 +28,13 @@ ambari-agent-properties:
     - mode: 0644
     - defaults:
         ambari_server_host: {{ ambari_server_host }}
+
+ambari-agent-hostname_script:
+  file.managed:
+    - name: /etc/hadoop-hostname.sh
+    - source: salt://ambari/templates/hadoop-hostname.sh.tpl
+    - template: jinja
+    - mode: 0755
 
 ambari-agent-create_log_dir:
   file.directory:

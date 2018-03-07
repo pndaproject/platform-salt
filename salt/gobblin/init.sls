@@ -21,7 +21,7 @@
 {% set namenode = salt['pnda.hadoop_namenode']() %}
 
 {%- set kafka_brokers = [] -%}
-{%- for ip in salt['pnda.kafka_brokers_ips']() -%}
+{%- for ip in salt['pnda.kafka_brokers_hosts']() -%}
 {%-   do kafka_brokers.append(ip + ':9092') -%}
 {%- endfor -%}
 
