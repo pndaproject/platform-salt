@@ -40,6 +40,9 @@ kafka:
 consul:
   service: True
   version: 1.0.3
+  domain: pnda.local
+  data_center: dc1
+  node: node
 
 kafkatool:
   release_version: v0.2.0

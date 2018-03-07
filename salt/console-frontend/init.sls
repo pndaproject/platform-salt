@@ -16,12 +16,12 @@
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 {% set hadoop_distro = grains['hadoop.distro'] %}
 
-{% set data_manager_host = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
+{% set data_manager_host = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
 
 # edge node IP
-{% set edge_nodes = salt['pnda.ip_addresses']('hadoop_edge') %}
+{% set edge_nodes = salt['pnda.get_hosts_for_role']('hadoop_edge') %}
 {%- if edge_nodes is not none and edge_nodes|length > 0 -%}
     {%- set edge_node_ip = edge_nodes[0] -%}
 {%- else -%}

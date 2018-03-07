@@ -5,7 +5,7 @@
 {% set app_dir = install_dir + '/console-backend-data-manager' %}
 {% set app_config_dir = app_dir + '/conf' %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
-{% set host_ip = salt['pnda.ip_addresses']('console_backend_data_manager')[0] %}
+{% set host_ip = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set console_frontend_port = salt['pillar.get']('console_frontend:bind_port', '') %}
 # get host names of the instance where the console frontend is running in the cluster
 {% set console_frontend_fqdn = salt['mine.get']('roles:console_frontend', 'grains.items', expr_form='grain').values()[0]['fqdn'] %}

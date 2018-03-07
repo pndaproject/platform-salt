@@ -153,7 +153,7 @@ def set_hdf_repl_factor(blueprint, nodes):
         if 'hdfs-site' in config:
             config['hdfs-site']['properties']['dfs.replication'] = hdfs_repl_factor
 
-def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers):
+def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers):
     '''
     Create a new cluster, will fail if a cluster with this name already exists.
      - Adds the stack repos
@@ -216,7 +216,7 @@ def create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack
 
     ### Create blueprint ###
     logging.info("Loading blueprint")
-    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
+    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name, 'domain_name': domain_name})
     set_hdf_repl_factor(blueprint, nodes)
 
     logging.debug("Blueprint to be used:")
@@ -383,7 +383,7 @@ def update_cluster_config(nodes, cluster_name, ambari_api, auth, headers):
     logging.info("Updating cluster configuration")
 
     ### Load properties out of blueprint definition ###
-    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name})
+    blueprint = json.loads(_CFG.BLUEPRINT % {'cluster_name': cluster_name, 'domain_name': domain_name})
     set_hdf_repl_factor(blueprint, nodes)
     blueprint_config = {}
     for requested_config in blueprint['configurations']:
@@ -470,6 +470,7 @@ def setup_hadoop(
         ambari_host,
         nodes,
         cluster_name,
+        domain_name,
         ambari_username='admin',
         ambari_password='admin',
         hdp_core_stack_repo=None,
@@ -537,17 +538,16 @@ def setup_hadoop(
     auth = (ambari_username, ambari_password)
 
     new_nodes = get_new_nodes(nodes, cluster_name, ambari_api, auth, headers)
-
     if len(new_nodes) == 0:
         # no new nodes, reapply config to existing ones
-        update_cluster_config(nodes, cluster_name, ambari_api, auth, headers)
+        update_cluster_config(nodes, cluster_name, domain_name, ambari_api, auth, headers)
     elif len(new_nodes) == len([node for node in nodes if node['type'] == 'DATANODE']):
         # all new nodes, create new cluster
-        create_new_cluster(nodes, cluster_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers)
+        create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hdp_utils_stack_repo, ambari_api, auth, headers)
     else:
         # some new nodes, expand cluster onto them
         expand_cluster(new_nodes, cluster_name, ambari_api, auth, headers)
         # config might also have been updated so make sure that is up to date too
-        update_cluster_config(nodes, cluster_name, ambari_api, auth, headers)
+        update_cluster_config(nodes, cluster_name, domain_name, ambari_api, auth, headers)
 
     logging.info("HDP setup finished")

@@ -4,7 +4,7 @@
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set app_dir = install_dir + '/console-backend-data-logger' %}
 {% set app_config_dir = app_dir + '/conf' %}
-{% set host_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] %}
+{% set host_ip = salt['pnda.get_hosts_for_role']('console_backend_data_logger')[0] %}
 {% set backend_app_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') %}
 {% set data_logger_log_file = '/var/log/pnda/console/data-logger.log' %}
 {% set data_logger_log_level = 'debug' %}

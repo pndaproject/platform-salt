@@ -1,4 +1,4 @@
-{%- set ambari_server_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
+{%- set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] -%}
 
 ambari-agent-user:
   user.present:
