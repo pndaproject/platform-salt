@@ -67,6 +67,7 @@ nginx:
 ntp:
   package-name: ntp
   version: ""
+  service_name: ntp
 opentsdb:
   package-source: 'opentsdb-2.3.0_all.deb'
   bind_port: 4242

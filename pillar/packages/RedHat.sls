@@ -82,6 +82,7 @@ nmap-ncat:
 ntp:
   package-name: ntp
   version: ""
+  service_name: ntpd
 opentsdb:
   package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
