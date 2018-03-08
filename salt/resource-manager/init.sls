@@ -1,7 +1,11 @@
 {% set resource_manager_path = pillar['resource_manager']['path'] %}
 {% set map_file = resource_manager_path + "policies/map.txt" %}
 {% set policy_file_link = resource_manager_path + pillar['resource_manager']['policy_file'] %}
-{% set execs = [ 'spark-submit', 'spark-shell', 'pyspark', 'mapred', 'hive', 'beeline' ] %} 
+{% set execs = [ 'spark-submit', 'spark-shell', 'pyspark', 'mapred', 'hive', 'beeline', 'flink', 'pyflink.sh', 'start-scala-shell.sh', 'yarn-session.sh' ] %} 
+{% set flink_version = pillar['flink']['release_version'] %}
+{% set pnda_home = pillar['pnda']['homedir'] %}
+{% set flink_real_dir = pnda_home + '/flink-' + flink_version %}
+{% set flink_bin_dir = flink_real_dir + '/bin' %}
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set map_file_source = 'capacity_scheduler_map.txt' %}
 {% else %}
@@ -83,6 +87,14 @@ resource-manager_{{ exec }}_wrapper:
     - path: {{ resource_manager_path }}/{{ exec }}
     - priority: 100
 
+{% if exec in ['flink', 'pyflink.sh', 'start-scala-shell.sh', 'yarn-session.sh'] %}
+resource-manager_{{ exec }}_priority:
+  alternatives.install:
+      - name: {{ exec }}
+      - link: /usr/bin/{{ exec }}
+      - path: {{ flink_bin_dir }}/{{ exec }}
+      - priority: 10
+{% endif %}
 {% endfor %}
 
 resource-manager_spark_script_move:
@@ -92,3 +104,4 @@ resource-manager_spark_script_move:
     - makedirs: True
     - onlyif: 
       - test -x /usr/bin/spark-script-wrapper.sh
+

@@ -61,6 +61,9 @@ jupyterproxy:
 gobblin:
   release_version: 0.11.0
 
+flink:
+  release_version: 1.4.0
+
 platform_gobblin_modules:
   release_version: develop
 
