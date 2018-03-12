@@ -1,8 +1,6 @@
 {{ env }}:
 
   '*':
-    - consul
-    - consul.dns
     - volumes
     - tasks.system_update
     - motd

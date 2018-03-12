@@ -2,13 +2,13 @@
 {%- set prefix  = p.get('prefix', '/opt/pnda/kafka') %}
 
 {%- set kafka_zookeepers = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}
 {%- do kafka_zookeepers.append(ip+':2181') -%}
 {%- endfor -%}
 
 {% set topic = 'avro.internal.testbot' %}
 {% set partitions = '1' %}
-{%- set replication = salt['pnda.kafka_brokers_ips']()|length -%}
+{%- set replication = salt['pnda.kafka_brokers_hosts']()|length -%}
 
 platform-testing-topic-check-script:
   file.managed:

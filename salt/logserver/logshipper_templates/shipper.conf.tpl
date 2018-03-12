@@ -1,4 +1,4 @@
-{%- set logdest = salt['pnda.ip_addresses']('logserver')[0] -%}
+{%- set logdest = salt['pnda.get_hosts_for_role']('logserver')[0] -%}
 input {
 {% if grains['os'] in ('RedHat', 'CentOS') %}
    journald {

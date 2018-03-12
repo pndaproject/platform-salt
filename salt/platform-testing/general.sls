@@ -16,27 +16,27 @@
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
 
 {%- set kafka_brokers = [] -%}
-{%- for ip in salt['pnda.kafka_brokers_ips']() -%}
+{%- for ip in salt['pnda.kafka_brokers_hosts']() -%}
 {%- do kafka_brokers.append(ip + ':' + kafka_jmx_port) -%}
 {%- endfor -%}
 
 {%- set kafka_zookeepers = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}
 {%- do kafka_zookeepers.append(ip + ':' + zookeeper_port) -%}
 {%- endfor -%}
 
 {%- set opentsdb_hosts = [] -%}
-{%- for ip in salt['pnda.opentsdb_ips']() -%}
+{%- for ip in salt['pnda.opentsdb_hosts']() -%}
 {%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
-{%- for ip in salt['pnda.ip_addresses']('console_backend_data_logger') -%}
+{%- for ip in salt['pnda.get_hosts_for_role']('console_backend_data_logger') -%}
 {%- do console_hosts.append(ip + ':' + console_port) -%}
 {%- endfor -%}
 
 {%- set dm_hosts = [] -%}
-{%- set dm_nodes = salt['pnda.ip_addresses']('deployment_manager') -%}
+{%- set dm_nodes = salt['pnda.get_hosts_for_role']('deployment_manager') -%}
 {%- if dm_nodes is not none and dm_nodes|length > 0 -%}
   {%- for ip in dm_nodes -%}
   {%- do dm_hosts.append("http://" + ip + ':' + dm_port) -%}

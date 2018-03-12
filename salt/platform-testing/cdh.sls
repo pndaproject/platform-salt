@@ -19,7 +19,7 @@
 
 
 {% set cm_hoststring = salt['pnda.hadoop_manager_ip']()  %}
-{% set console_hoststring = salt['pnda.ip_addresses']('console_backend_data_logger')[0] + ":" + console_port %}
+{% set console_hoststring = salt['pnda.get_hosts_for_role']('console_backend_data_logger')[0] + ":" + console_port %}
 {% set cm_username = pillar['admin_login']['user'] %}
 {% set cm_password = pillar['admin_login']['password'] %}
 {% set hadoop_distro = grains['hadoop.distro'] %}

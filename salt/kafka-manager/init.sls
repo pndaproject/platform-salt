@@ -5,7 +5,7 @@
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
 {%- set zk_servers = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}
 {%-   do zk_servers.append(ip + ':2181') -%}
 {%- endfor -%}
 

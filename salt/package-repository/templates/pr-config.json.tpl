@@ -1,5 +1,5 @@
 {%- set package_repository_fs_type = salt['pillar.get']('package_repository:fs_type', '') -%}
-{%- set data_logger_ip = salt['pnda.ip_addresses']('console_backend_data_logger')[0] -%}
+{%- set data_logger_ip = salt['pnda.get_hosts_for_role']('console_backend_data_logger')[0] -%}
 {%- set data_logger_port = salt['pillar.get']('console_backend_data_logger:bind_port', '3001') -%}
 
 {
