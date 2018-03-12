@@ -1,9 +1,15 @@
 {%- from 'consul/map.jinja' import consul with context -%}
 {% set domain_name = pillar['consul']['node'] + '.' + pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+{% set resolv_conf = '/etc/resolv.conf' %}
+{% else %}
+{% set resolv_conf = '/etc/resolvconf/resolv.conf.d/base' %}
+{% endif %}
+
 consul_dns-add-nameserver:
   file.prepend:
-    - name: /etc/resolv.conf
+    - name: {{ resolv_conf }}
     - text: |
 {%- for ip in salt['pnda.kafka_zookeepers_ips']() %}
         nameserver {{ ip }}
@@ -12,18 +18,21 @@ consul_dns-add-nameserver:
 
 consul_dns-add-domain:
   file.replace:
-    - name: /etc/resolv.conf
+    - name: {{ resolv_conf }}
     - pattern: 'search(.*)'
     - repl: 'search\1 {{consul.config.domain}}'
 
-{% if grains['os'] == 'RedHat' %}
-# Temporary fix to stop this file being reset on RedHat
-# There is probably a more appropriate way to do this
-# Both ubuntu and redhat need a fix to prevent the changes
-# to resolv.conf from being lost.
+{% if grains['os'] in ('RedHat', 'CentOS') %}
+{% for cfg_file in salt['cmd.shell']('ls -1 /etc/sysconfig/network-scripts/ifcfg-*').split('\n') %}
+consul_turn-off-peer-dns-{{ cfg_file }}:
+  file.append:
+    - name: {{ cfg_file }}
+    - text: PEERDNS=no
+{% endfor %}
+
 consul_prevent-modify-resolv-conf:
   cmd.run:
-    - name: chattr +i /etc/resolv.conf
+    - name: chattr +i {{ resolv_conf }}
 
 consul_install-at:
   pkg.installed:
@@ -34,6 +43,10 @@ consul_install-at:
 consul_start-atd:
   service.running:
     - name: atd
+{% else %}
+consul_refresh-resolv-conf:
+  cmd.run:
+    - name: resolvconf -u
 {% endif %}
 
 consul_schedule-minion-restart:
