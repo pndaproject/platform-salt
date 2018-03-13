@@ -4,13 +4,13 @@
 {% do consul.config.update({'bind_addr': internal_ip}) %}
 {% do consul.config.update({'client_addr': internal_ip}) %}
 
-{%- if 'zookeeper' in salt['grains.get']('roles', []) -%}
+{%- if 'consul_server' in salt['grains.get']('roles', []) -%}
 {% do consul.config.update({'server': true}) %}
-{%- set nb_consul = salt['pnda.kafka_zookeepers_ips']()|length -%}
+{%- set nb_consul = salt['pnda.dns_nameserver_ips']()|length -%}
 {% do consul.config.update({'bootstrap_expect': nb_consul}) %}
 
 {%- else -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.dns_nameserver_ips']() -%}
 {%- do consul.config.retry_join.append(ip) -%}
 {%- endfor -%}
 {% endif %}

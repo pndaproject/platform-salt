@@ -88,9 +88,9 @@ def kafka_zookeepers_hosts():
     """Returns zookeeper hosts"""
     return get_hosts_for_role('zookeeper')
 
-def kafka_zookeepers_ips():
-    """Returns zookeeper ip addresses"""
-    return get_ips_for_role('zookeeper')
+def dns_nameserver_ips():
+    """Returns ip addresses of PNDA DNS nameservers"""
+    return get_ips_for_role('consul_server')
 
 def get_ips_for_role(role):
     """Returns ip addresses of minions having a specific role"""

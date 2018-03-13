@@ -5,7 +5,7 @@ consul_dns-add-nameserver:
   file.prepend:
     - name: /etc/resolv.conf
     - text: |
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() %}
+{%- for ip in salt['pnda.dns_nameserver_ips']() %}
         nameserver {{ ip }}
 {%- endfor %}
 
@@ -32,7 +32,7 @@ consul_dns-add-nameserver:
   file.append:
     - name: /etc/resolvconf/resolv.conf.d/head
     - text: |
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() %}
+{%- for ip in salt['pnda.dns_nameserver_ips']() %}
         nameserver {{ ip }}
 {%- endfor %}
 
