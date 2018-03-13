@@ -12,7 +12,7 @@
 {% set kafka_log_path = flavor_cfg.data_dirs[0] %}
 
 {%- set zk_ips = [] -%}
-{%- for ip in salt['pnda.kafka_zookeepers_ips']() -%}
+{%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}
 {%-   do zk_ips.append(ip + ':2181') -%}
 {%- endfor -%}
 

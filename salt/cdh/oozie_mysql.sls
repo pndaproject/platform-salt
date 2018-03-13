@@ -12,6 +12,10 @@
 {% set hue_database = salt['pillar.get']('hadoop:hue:database', 'hue') %}
 {% set hue_password = salt['pillar.get']('hadoop:hue:password', 'hue') %}
 
+{% set scm_user = salt['pillar.get']('hadoop_manager:cmdb:user', 'scm') %}
+{% set scm_database = salt['pillar.get']('hadoop_manager:cmdb:database', 'scm') %}
+{% set scm_password = salt['pillar.get']('hadoop_manager:cmdb:password', 'scm') %}
+
 include:
   - mysql
 
@@ -149,6 +153,40 @@ cdh-Grant privileges to root user from outside:
     - grant_option: True
     - database: '*.*'
     - user: root
+    - host: '%'
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}
+
+cdh-Create scm MySQL user:
+  mysql_user.present:
+    - name: {{ scm_user }}
+    - host: localhost
+    - password: {{ scm_password }}
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}
+
+cdh-Create scm MySQL user remote:
+  mysql_user.present:
+    - name: {{ scm_user }}
+    - host: '%'
+    - password: {{ scm_password }}
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}
+
+cdh-Grant privileges to scm user from localhost:
+   mysql_grants.present:
+    - grant: all privileges
+    - database: {{ scm_database }}.*
+    - user: {{ scm_user }}
+    - host: localhost
+    - connection_user: root
+    - connection_pass: {{ mysql_root_password }}
+
+cdh-Grant privileges to scm user from outside:
+   mysql_grants.present:
+    - grant: all privileges
+    - database: {{ scm_database }}.*
+    - user: {{ scm_user }}
     - host: '%'
     - connection_user: root
     - connection_pass: {{ mysql_root_password }}

@@ -1,6 +1,6 @@
 {%- set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') -%}
-{%- set cmdb_host = salt['pnda.ip_addresses']('oozie_database')[0] -%}
-{%- set cm_host = salt['pnda.ip_addresses']('hadoop_manager')[0] -%}
+{%- set cmdb_host = salt['pnda.get_hosts_for_role']('oozie_database')[0] -%}
+{%- set cm_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] -%}
 {% set cmdb_user = pillar['hadoop_manager']['cmdb']['user'] %}
 {% set cmdb_database = pillar['hadoop_manager']['cmdb']['database'] %}
 {% set cmdb_password = pillar['hadoop_manager']['cmdb']['password'] %}

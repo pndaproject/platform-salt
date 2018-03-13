@@ -25,15 +25,18 @@ manager = ips['{{ host }}']
 {% endif %}
 {% endfor %}
 
-nodes = []
-for host in ips.keys():
-    nodes.append({'type': roles[host], 'ip_addr': ips[host], 'host_name': host})
-
 {% set ambari_username = pillar['admin_login']['user'] %}
 {% set ambari_password = pillar['admin_login']['password'] %}
+{% set domain_name = '.' + pillar['consul']['node'] + '.' + pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
+
+nodes = []
+for host in ips.keys():
+    nodes.append({'type': roles[host], 'ip_addr': ips[host], 'host_name': '%s%s' % (host,'{{ domain_name }}')})
 
 if __name__ == '__main__':
     hdp_setup.setup_hadoop(manager, nodes,
-                          cluster_name='{{ cluster_name }}', ambari_username='{{ ambari_username }}',
+                          cluster_name='{{ cluster_name }}',
+                          domain_name='{{ domain_name }}',
+                          ambari_username='{{ ambari_username }}',
                           ambari_password='{{ ambari_password }}',
                           hdp_core_stack_repo='{{ hdp_core_stack_repo }}', hdp_utils_stack_repo='{{ hdp_utils_stack_repo }}')

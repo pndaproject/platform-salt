@@ -58,7 +58,7 @@ BLUEPRINT = r'''{
                     "timeline.metrics.host.aggregator.daily.checkpointCutOffMultiplier" : "2",
                     "timeline.metrics.service.resultset.fetchSize" : "2000",
                     "timeline.metrics.cluster.aggregator.hourly.ttl" : "31536000",
-                    "cluster.zookeeper.quorum" : "%(cluster_name)s-hadoop-mgr-1",
+                    "cluster.zookeeper.quorum" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "timeline.metrics.downsampler.topn.function" : "max",
                     "timeline.metrics.host.aggregator.ttl" : "86400",
                     "phoenix.spool.directory" : "/tmp",
@@ -274,7 +274,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "oozie.service.JPAService.jdbc.password" : "oozie",
                     "oozie.service.JPAService.jdbc.username" : "oozie",
-                    "oozie.service.JPAService.jdbc.url" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/oozie",
+                    "oozie.service.JPAService.jdbc.url" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1%(domain_name)s/oozie",
                     "oozie.service.JPAService.jdbc.driver" : "com.mysql.jdbc.Driver",
                     "oozie.authentication.type" : "simple",
                     "oozie.db.schema.name" : "oozie"
@@ -285,18 +285,18 @@ BLUEPRINT = r'''{
             "hive-env" : {
                 "properties" : {
                     "hive_ambari_database" : "MySQL",
-                    "hive_ambari_host" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hive_ambari_host" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "hive_database" : "MySQL Database",
                     "hive_database_name" : "hive",
                     "hive_database_type" : "mysql",
-                    "hive_existing_mssql_server_2_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_existing_mssql_server_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_existing_mysql_host" : "%(cluster_name)s-hadoop-mgr-1",
-                    "hive_hostname" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hive_existing_mssql_server_2_host" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
+                    "hive_existing_mssql_server_host" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
+                    "hive_existing_mysql_host" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
+                    "hive_hostname" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "hive_user" : "hive",
                     "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
                     "javax.jdo.option.ConnectionPassword" : "hive",
-                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/hive",
+                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1%(domain_name)s/hive",
                     "javax.jdo.option.ConnectionUserName" : "hive",
                     "hive_log_dir" : "/var/log/pnda/hive",
                     "hive.heapsize" : "512",
@@ -310,7 +310,7 @@ BLUEPRINT = r'''{
                 "properties" : {
                     "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
                     "javax.jdo.option.ConnectionPassword" : "hive",
-                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1/hive?createDatabaseIfNotExist=true",
+                    "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1%(domain_name)s/hive?createDatabaseIfNotExist=true",
                     "javax.jdo.option.ConnectionUserName" : "hive"
                 }
             }
@@ -363,13 +363,13 @@ BLUEPRINT = r'''{
                     }
                 },
                 "properties" : {
-                    "fs.defaultFS" : "hdfs://%(cluster_name)s-hadoop-mgr-1:8020",
+                    "fs.defaultFS" : "hdfs://%(cluster_name)s-hadoop-mgr-1%(domain_name)s:8020",
                     "fs.trash.interval" : "360",
                     "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
                     "hadoop.http.authentication.simple.anonymous.allowed" : "true",
                     "hadoop.http.staticuser.user": "{{ pnda_user }}",
                     "hadoop.proxyuser.hcat.groups" : "users",
-                    "hadoop.proxyuser.hcat.hosts" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hadoop.proxyuser.hcat.hosts" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "hadoop.proxyuser.hdfs.groups" : "*",
                     "hadoop.proxyuser.hdfs.hosts" : "*",
                     "hadoop.proxyuser.hive.groups" : "*",
@@ -381,7 +381,7 @@ BLUEPRINT = r'''{
                     "hadoop.proxyuser.root.groups" : "*",
                     "hadoop.proxyuser.root.hosts" : "*",
                     "hadoop.proxyuser.oozie.groups" : "*",
-                    "hadoop.proxyuser.oozie.hosts" : "%(cluster_name)s-hadoop-mgr-1",
+                    "hadoop.proxyuser.oozie.hosts" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "hadoop.security.auth_to_local" : "DEFAULT",
                     "hadoop.security.authentication" : "simple",
                     "hadoop.security.authorization" : "false",

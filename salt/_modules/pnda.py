@@ -14,7 +14,6 @@ def get_name_service():
             name_service = response['items'][0]['name']
     return name_service
 
-
 def cluster_name():
     """Returns PNDA cluster name of the minion"""
     cname = __grains__['pnda_cluster']
@@ -71,26 +70,29 @@ def hbase_master_host():
 
 def hadoop_manager_ip():
     """ Returns the Cloudera Manager ip address"""
-    cm = ip_addresses('hadoop_manager')
+    cm = get_hosts_for_role('hadoop_manager')
     if cm is not None and len(cm) > 0:
         return cm[0]
     else:
         return None
 
+def kafka_brokers_hosts():
+    """Returns kafka brokers hosts"""
+    return get_hosts_for_role('kafka')
 
-def kafka_brokers_ips():
-    """Returns kafka brokers ip addresses"""
-    return ip_addresses('kafka')
+def opentsdb_hosts():
+    """Returns opentsdb node hosts"""
+    return get_hosts_for_role('opentsdb')
 
-def opentsdb_ips():
-    """Returns opentsdb nodes ip addresses"""
-    return ip_addresses('opentsdb')
+def kafka_zookeepers_hosts():
+    """Returns zookeeper hosts"""
+    return get_hosts_for_role('zookeeper')
 
 def kafka_zookeepers_ips():
     """Returns zookeeper ip addresses"""
-    return ip_addresses('zookeeper')
+    return get_ips_for_role('zookeeper')
 
-def ip_addresses(role):
+def get_ips_for_role(role):
     """Returns ip addresses of minions having a specific role"""
     query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
     result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').values()
@@ -98,8 +100,16 @@ def ip_addresses(role):
     result = [r[0] for r in result]
     return result if len(result) > 0 else None
 
+def get_hosts_for_role(role):
+    """Returns ip addresses of minions having a specific role"""
+    query = "G@pnda_cluster:{} and G@roles:{}".format(cluster_name(), role)
+    result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').keys()
+    # Add on the domain set in the pillar
+    result = [host_name for host_name in result]
+    return result if len(result) > 0 else None
+
 def generate_http_link(role, suffix):
-    nodes = ip_addresses(role)
+    nodes = get_hosts_for_role(role)
     if nodes is not None and len(nodes) > 0:
         return 'http://%s%s' % (nodes[0], suffix)
     else:
@@ -142,7 +152,6 @@ def cloudera_get_hosts_by_role(service, role_type):
 def ambari_get_hosts_by_role(service, role_type):
     return [socket.getfqdn(host['HostRoles']['host_name']) for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
 
-
 def get_hosts_by_role(service, role_type):
     if hadoop_distro() == 'CDH':
         return cloudera_get_hosts_by_role(service, role_type)
@@ -161,7 +170,6 @@ def cloudera_get_service_status(service):
     service_resp = response.json()
 
     return service_resp['healthSummary']
-
 
 def ambari_get_service_status(service):
     user = hadoop_manager_username()

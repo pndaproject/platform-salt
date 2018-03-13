@@ -5,7 +5,7 @@
 {% set mirror_location = pnda_mirror + misc_packages_path %}
 
 {% set pnda_graphite_port = 8013 %}
-{% set pnda_graphite_host = salt['pnda.ip_addresses']('graphite')[0] %}
+{% set pnda_graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
 
 {% set grafana_login = pillar['pnda']['user'] %}
 # Because grafana is checking for password length, we need a password of at least 8 characters
