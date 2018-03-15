@@ -116,6 +116,14 @@ orchestrate-pnda-install_spark_wrapper:
     - timeout: 120
     - queue: True
 
+orchestrate-pnda-install_flink:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:flink'
+    - tgt_type: compound
+    - sls: flink
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-install_gobblin:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:gobblin'

@@ -66,6 +66,8 @@ gobblin:
 
 flink:
   release_version: 1.4.0
+  historyserver_web_port: 8082
+  jobmanager_web_port: 8083
 
 platform_gobblin_modules:
   release_version: develop

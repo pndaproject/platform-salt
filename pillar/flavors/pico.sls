@@ -37,6 +37,13 @@
         },
         "elasticsearch": {
             "datadir": "/var/lib/elasticsearch"
+        },
+        "flink": {
+            "jobmanager_heapsize": 1024,
+            "taskmanager_heapsize": 1024,
+            "taskmanager_slots": 1,
+            "parallelism": 1,
+            "taskmanager_mem_preallocate": false
         }
     }
 }
