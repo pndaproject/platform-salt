@@ -64,8 +64,9 @@ resource-manager_{{ exec }}_move:
     - name: /opt/pnda/rm-client/{{ exec }}
     - source: /usr/bin/{{ exec }}
     - makedirs: True
-    - unless: 
-      - test -e /opt/pnda/rm-client/{{ exec }}
+    - onlyif:
+      - echo " ! ls -q /opt/pnda/rm-client/{{ exec }}" | /bin/bash
+      - echo " ! readlink /usr/bin/{{ exec }} | fgrep -q /etc/alternatives/" | /bin/bash
 
 resource-manager_{{ exec }}_orig:
   alternatives.install:
