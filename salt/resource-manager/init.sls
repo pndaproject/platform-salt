@@ -65,7 +65,7 @@ resource-manager_{{ exec }}_move:
     - source: /usr/bin/{{ exec }}
     - makedirs: True
     - unless: 
-      - test -e /opt/pnda/rm-client/{{ exec }}
+      - ls /opt/pnda/rm-client/{{ exec }}
 
 resource-manager_{{ exec }}_orig:
   alternatives.install:

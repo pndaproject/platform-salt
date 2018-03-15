@@ -137,7 +137,7 @@ def get_new_nodes(all_nodes, cluster_name, ambari_api, auth, headers):
         existing_hosts = []
 
     logging.debug("Existing hosts are: %s", json.dumps(existing_hosts))
-    new_nodes = [node for node in all_nodes if node['host_name'] not in existing_hosts and node['type'] == 'DATANODE']
+    new_nodes = [node for node in all_nodes if node['host_name'].split('.')[0] not in existing_hosts and node['type'] == 'DATANODE']
     logging.info("New nodes are: %s", json.dumps(new_nodes))
     return new_nodes
 
@@ -374,7 +374,7 @@ def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hd
     mod_hive2_view_response = requests.put(mod_hive2_view_uri, json.dumps(mod_hive2_view_def), auth=auth, headers=headers)
     logging.debug(mod_hive2_view_response.text)
 
-def update_cluster_config(nodes, cluster_name, ambari_api, auth, headers):
+def update_cluster_config(nodes, cluster_name, domain_name, ambari_api, auth, headers):
     '''
     Apply updated config to a cluster.
     Does not use Blueprint API as changes cannot be applied in this way using blueprints,
