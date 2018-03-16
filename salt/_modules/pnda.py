@@ -1,6 +1,19 @@
 import requests
 import socket
 
+def get_fqdn():
+    """ Return FQDN based on getaddrinfo or None otherwise (getfqdn not reliable - bugs.python.org/issue5004) """
+    canonname = None
+    
+    try:
+        addr_info = socket.getaddrinfo(socket.gethostname(), None, 0, socket.SOCK_DGRAM, 0, socket.AI_CANONNAME)
+        if 0 < len(addr_info):
+            family, socktype, proto, canonname, sockaddr = addr_info[0]
+    except socket.error:
+        pass
+
+    return canonname
+
 def get_name_service():
     """ Returns name service for HA Cluster """
     user_name = hadoop_manager_username()

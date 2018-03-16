@@ -8,8 +8,9 @@
 {% set host_ip = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set console_frontend_port = salt['pillar.get']('console_frontend:bind_port', '') %}
 # get host names of the instance where the console frontend is running in the cluster
-{% set console_frontend_fqdn = salt['mine.get']('roles:console_frontend', 'grains.items', expr_form='grain').values()[0]['fqdn'] %}
-{% set console_frontend_hosts = [ console_frontend_fqdn ] %}
+{% set console_frontend_host = salt['mine.get']('roles:console_frontend', 'network.get_hostname', expr_form='grain').values()[0] %}
+{% set console_frontend_fqdn = salt['mine.get']('roles:console_frontend', 'pnda.get_fqdn', expr_form='grain').values()[0] %}
+{% set console_frontend_hosts = [ console_frontend_fqdn, console_frontend_host ] %}
 {% for id, addr_list in salt['mine.get']('G@roles:console_frontend and G@pnda_cluster:'+pnda_cluster, 'network.ip_addrs', expr_form='compound').items() %}
 {%   for addr in addr_list %}
 {%     do console_frontend_hosts.append(addr) %}
