@@ -124,8 +124,12 @@ java:
   source_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
 
 cloudera:
+  hadoop_version: "2.6.0-cdh5.12.1"
   parcel_repo: "http://archive.cloudera.com/cdh5/parcels/5.12.1/"
   parcel_version: "5.12.1-1.cdh5.12.1.p0.3"
+
+hdp:
+  hadoop_version: "2.7.3.2.6.4.0-91"
 
 hadoop_manager:
   cmdb:
