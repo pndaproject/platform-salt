@@ -81,6 +81,11 @@ flink-create_flink_logs_directory:
     - user: {{ pnda_user }}
     - makedirs: True
 
+flink-configure_log_properties:
+  file.managed:
+    - name: {{ flink_real_dir }}/conf/log4j-cli.properties
+    - source: salt://flink/files/log4j-cli.properties
+
 flink-jobmanager_archive_dir_initialize-hdfs:
   cmd.run:
     - name: 'sudo -u hdfs hdfs dfs -mkdir -p {{ archive_dir_hdfs_path }}; sudo -u hdfs hdfs dfs -chmod 777 {{ archive_dir_hdfs_path }}'
