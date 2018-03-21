@@ -46,6 +46,8 @@
 {% set hadoop_home_bin = '/opt/cloudera/parcels/CDH/bin' %}
 {% endif %}
 
+{% set features = salt['pillar.get']('features', []) %}
+
 gobblin-create_gobblin_version_directory:
   file.directory:
     - name: {{ gobblin_real_dir }}
@@ -113,6 +115,11 @@ gobblin-install_gobblin_pnda_job_file:
       quarantine_kite_dataset_uri: {{ pnda_quarantine_kite_dataset_uri }}
       kafka_brokers: {{ kafka_brokers }}
       max_mappers: {{ flavor_cfg.max_mappers }}
+{% if 'EXPERIMENTAL' in features %}
+      converter_classes: gobblin.pnda.PNDARegistryBasedConverter
+{% else %}
+      converter_classes: gobblin.pnda.PNDAConverter
+{%endif%}
     - require:
       - file: gobblin-create_gobblin_jobs_directory
 

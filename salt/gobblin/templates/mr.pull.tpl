@@ -33,7 +33,7 @@ kafka.brokers={{ kafka_brokers|join(",") }}
 bootstrap.with.offset=earliest
 
 # ==== Converter ====
-converter.classes=gobblin.pnda.PNDAConverter
+converter.classes={{ converter_classes }}
 PNDA.quarantine.dataset.uri={{ quarantine_kite_dataset_uri }}
 
 
