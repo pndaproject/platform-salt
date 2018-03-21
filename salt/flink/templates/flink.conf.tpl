@@ -228,3 +228,4 @@ historyserver.archive.fs.refresh-interval: 10000
 
 # Configure log directory path for PNDA flink
 env.log.dir: /var/log/pnda/flink
+python.dc.tmp.dir: {{ namenode }}/{{ python_tmp_dir }}/dc
