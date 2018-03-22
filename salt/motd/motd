@@ -11,4 +11,5 @@
     Cluster Name: {{ grains['pnda_cluster'] }}
           Flavor: {{ grains['pnda']['flavor'] }}
  Saltstack roles: {{ grains['roles'] | default([])  | join(', ') | wordwrap(75, break_long_words=False) | indent(18) }}
+  List all nodes: consul members --http-addr http://$(hostname --ip-address):8500
 
