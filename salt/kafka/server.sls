@@ -33,6 +33,9 @@ kafka-directories:
     - group: kafka
     - mode: 755
     - makedirs: True
+    - recurse:
+      - user
+      - group
     - names:
 {% for log_dir in config.log_dirs %}
       - {{ log_dir }}
