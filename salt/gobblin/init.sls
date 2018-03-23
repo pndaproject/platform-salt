@@ -212,7 +212,7 @@ gobblin-add_gobblin_compact_crontab_entry:
     - identifier: GOBBLIN-COMPACT
 {% if grains['os'] == 'Ubuntu' %}
     - name: /sbin/start gobblin-compact
-{% elif grains['os'] == 'RedHat' %}
+{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /bin/systemctl start gobblin-compact
 {%- endif %}
     - user: root
