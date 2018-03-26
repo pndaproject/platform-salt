@@ -137,7 +137,7 @@ def get_new_nodes(all_nodes, cluster_name, ambari_api, auth, headers):
         existing_hosts = []
 
     logging.debug("Existing hosts are: %s", json.dumps(existing_hosts))
-    new_nodes = [node for node in all_nodes if node['host_name'].split('.')[0] not in existing_hosts and node['type'] == 'DATANODE']
+    new_nodes = [node for node in all_nodes if node['host_name'] not in existing_hosts and node['type'] == 'DATANODE']
     logging.info("New nodes are: %s", json.dumps(new_nodes))
     return new_nodes
 
