@@ -107,18 +107,21 @@ gobblin-create_gobblin_jobs_directory:
 gobblin-install_gobblin_pnda_job_file:
   file.managed:
     - name: {{ gobblin_link_dir }}/configs/mr.pull
+{% if 'EXPERIMENTAL' in features %}
+    - source: salt://gobblin/templates/mp.pull.tpl
+{% else %}
     - source: salt://gobblin/templates/mr.pull.tpl
+{%endif%}
     - template: jinja
     - context:
       namenode: {{ namenode }}
-      kite_dataset_uri: {{ pnda_kite_dataset_uri }}
       quarantine_kite_dataset_uri: {{ pnda_quarantine_kite_dataset_uri }}
       kafka_brokers: {{ kafka_brokers }}
       max_mappers: {{ flavor_cfg.max_mappers }}
 {% if 'EXPERIMENTAL' in features %}
-      converter_classes: gobblin.pnda.PNDARegistryBasedConverter
+      master_dataset_location: {{ pnda_master_dataset_location }}
 {% else %}
-      converter_classes: gobblin.pnda.PNDAConverter
+      kite_dataset_uri: {{ pnda_kite_dataset_uri }}
 {%endif%}
     - require:
       - file: gobblin-create_gobblin_jobs_directory
