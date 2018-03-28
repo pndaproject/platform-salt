@@ -145,6 +145,11 @@ input {
           add_field => {"source" => "yarn"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           discover_interval => "5"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
    }
 
    {% for log_section in pillar['log-shipper-patterns'] %}
