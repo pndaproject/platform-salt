@@ -25,6 +25,10 @@ app-packages-install_dev_deps_gcc:
     - version: {{ pillar['g++']['version'] }}
     - ignore_epoch: True
 
+app-packages-install_m4:
+  pkg.installed:
+    - name: m4
+
 app-packages-create-venv:
   virtualenv.managed:
     - name: {{ pnda_home }}/app-packages
