@@ -6,7 +6,7 @@
  /_/   /_/ |_/_____/_/  |_|   be over-written.
 
       PNDA Guide: http://pnda.io/guide
-        PNDA Q&A: http://pnda.io/qa
+  PNDA Community: http://pnda.io/community
 
     Cluster Name: {{ grains['pnda_cluster'] }}
           Flavor: {{ grains['pnda']['flavor'] }}
