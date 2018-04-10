@@ -75,8 +75,7 @@
     volumes-format-{{ device }}:
       cmd.run:
         - name: mkfs -t {{ fs_type  }} {{ mkfs_opts }} {{ device }}
-        - unless:
-          - 'grep "{{ device }}" <<< "$(cat /etc/fstab)"'
+        - unless: cat /etc/fstab | grep "{{ device }}"
 
     volumes-mount-{{ device }}:
       mount.mounted:
