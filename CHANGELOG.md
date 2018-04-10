@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
 - PNDA-4399: Remove IPV6 dependency in nginx
 - PNDA-4243: Fix update mode for HDP
+- PNDA-4514: Fix issue on volume state which affects Ubuntu update
 
 ## [4.0.0] 2018-02-10
 ### Added
