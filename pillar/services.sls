@@ -96,7 +96,7 @@ platformlib:
   target_directory: "/opt/pnda"
 
 resource_manager:
-  path: /opt/pnda/rm-wrapper/
+  path: /opt/pnda/rm-wrapper
   policy_file: yarn-policy.sh
 
 jmxproxy:
