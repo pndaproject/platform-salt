@@ -33,13 +33,23 @@ kafka.brokers={{ kafka_brokers|join(",") }}
 bootstrap.with.offset=earliest
 
 # ==== Converter ====
-converter.classes=gobblin.pnda.PNDAConverter
+converter.classes=gobblin.pnda.PNDARegistryBasedConverter
 PNDA.quarantine.dataset.uri={{ quarantine_kite_dataset_uri }}
 
-
 # ==== Writer ====
-writer.builder.class=gobblin.pnda.PNDAKiteWriterBuilder
-kite.writer.dataset.uri={{ kite_dataset_uri }}
+writer.builder.class=gobblin.pnda.AvroDataWriterBuilder
+writer.codec.type=snappy
+writer.destination.type=HDFS
+writer.partitioner.class=gobblin.pnda.PNDATimeBasedAvroWriterPartitioner
+writer.partition.columns=timestamp
+writer.partition.level=hourly
+writer.partition.pattern='year='YYYY/'month='MM/'day='dd/'hour='HH
+writer.partition.prefix=template
+
+# ==== Publisher ====
+data.publisher.type=gobblin.publisher.TimePartitionedDataPublisher
+data.publisher.final.dir={{ master_dataset_location }}
+data.publisher.appendExtractToFinalDir=false
 
 # ==== Metrics ====
 metrics.enabled=true
