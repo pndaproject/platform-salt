@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4417: Add fastavro library for more efficient avro handling in applications
 - PNDA-4431: Add basic platform test & console elements for Flink
 - PNDA-4432: Handle logging for flink
+- PNDA-4464: (PDP-2) Experimental support for protobuf and user defined avro schemas for ingest
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
