@@ -93,12 +93,3 @@
   'roles:deployment_manager':
     - match: grain
     - deployment-manager.generate_keys
-
-  'roles:elk-es-*':
-   - match: grain
-   - elasticsearch-cluster
-
-  'roles:elk-logstash':
-   - match: grain
-   - logstash
-
