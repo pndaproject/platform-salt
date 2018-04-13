@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4408: Update kafka to 0.11.0.2
 - PNDA-4430: Handle mapping of users to yarn queues
 - PNDA-4384: Use the PNDARegistryBasedConverter for gobblin in experimental mode
+- PNDA-4122: Remove scalable ELK
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
