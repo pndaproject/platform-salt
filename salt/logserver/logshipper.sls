@@ -39,11 +39,9 @@ logshipper-link_release:
     - name: {{ install_dir }}/logstash
     - target: {{ install_dir }}/logstash-{{ logstash_version }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 logshipper-journald-plugin:
   cmd.run:
     - name: curl {{ plugin_pack_url }} > {{ install_dir }}/logstash/{{ plugin_pack_name }}; cd {{ install_dir }}/logstash; bin/logstash-plugin install file://{{ install_dir }}/logstash/{{ plugin_pack_name }};
-{% endif %}
 
 logshipper-copy_configuration:
   file.managed:
@@ -90,22 +88,15 @@ logshipper-create_sincedb_folder:
 
 logshipper-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/logshipper.conf
-    - source: salt://logserver/logshipper_templates/logstash.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/logshipper.service
     - source: salt://logserver/logshipper_templates/logstash.service.tpl
-{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 logshipper-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable logshipper
-{%- endif %}
 
 logshipper-start_service:
   cmd.run:

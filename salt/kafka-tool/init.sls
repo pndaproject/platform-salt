@@ -38,12 +38,6 @@ kafka-tool-install_packages:
       - {{ pillar['g++']['package-name'] }}
       - {{ pillar['patch']['package-name'] }}
 
-{% if grains['os'] == 'Ubuntu' %}
-kafka-tool-install_build_essential:
-  pkg.installed:
-    - name: build-essential
-{% endif %}
-
 kafka-tool-install_gem_kafkat:
   cmd.run:
     - name: gem install --local kafkat-{{ release_version }}.gem
@@ -67,10 +61,8 @@ kafka-tool-cfg_create_link:
     - target: {{ release_directory }}/kafka-tool/kafkatcfg
 
 #by default kafkat is installed in /usr/local/bin, this is not in $PATH for RHEL. Create sym link in /usr/bin
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 kafka-tool-bin_create_link:
   file.symlink:
     - name: /usr/bin/kafkat
     - target: /usr/local/bin/kafkat
-{% endif %}
 

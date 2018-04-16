@@ -3,13 +3,6 @@ set -e
 
 [ "$#" -ne 1 ] && echo "Missing template filename" && exit 1
 
-{% if grains['os'] == 'Ubuntu' %}
-while ! nc -z localhost 3000; do
-  sleep 1
-done
-sleep 1
-{% endif %}
-
 TEMP_FILE="$1.salt.tmp"
 trap 'rm -f -- "${TEMP_FILE}"' INT TERM HUP EXIT
 

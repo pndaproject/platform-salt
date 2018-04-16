@@ -1,13 +1,6 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}
 
-{% if grains['os'] == 'Ubuntu' %}
-dependency-install-libpq:
-  pkg.installed:
-    - name: {{ pillar['libpq-dev']['package-name'] }}
-    - version: {{ pillar['libpq-dev']['version'] }}
-    - ignore_epoch: True
-{% else %}
 dependency-install_gcc-dep:
   pkg.installed:
     - name: {{ pillar['gcc']['package-name'] }}
@@ -19,8 +12,6 @@ dependency-install_postgresql-devel:
     - name: {{ pillar['postgresql-devel']['package-name'] }}
     - version: {{ pillar['postgresql-devel']['version'] }}
     - ignore_epoch: True
-{% endif %}
-
 
 jupyter-install_anaconda_deps:
   cmd.run:

@@ -166,12 +166,10 @@ def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hd
     ### Add HDP stack repositories ###
     logging.info("Configuring Ambari to use HDP stack repos")
 
-    if 'ubuntu14' in hdp_core_stack_repo:
-        hdp_os_type = 'ubuntu14'
-    elif 'centos7' in hdp_core_stack_repo:
+    if 'centos7' in hdp_core_stack_repo:
         hdp_os_type = 'redhat7'
     else:
-        exit_setup('Expected ubuntu14 or centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
+        exit_setup('Expected  centos7 in hdp_core_stack_repo but found: %s' % hdp_core_stack_repo)
 
     repo_definition = {
         "RepositoryVersions" : {

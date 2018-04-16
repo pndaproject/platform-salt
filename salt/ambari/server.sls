@@ -89,11 +89,9 @@ ambari-server-jdbc-dl:
     - source: {{ mirror_location }}/{{ jdbc_package }}
     - source_hash: {{ mirror_location }}/{{ jdbc_package }}.sha512.txt
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 ambari-server-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable ambari-server
-{%- endif %}
 
 ambari-server-setup_init:
   cmd.run:
@@ -154,23 +152,6 @@ ambari-server-properties_update_config:
 ambari-server-setup_mysql:
   cmd.run:
     - name: 'ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar; ambari-server setup --jdbc-db=bdb --jdbc-driver=/opt/pnda/jdbc-driver/{{ jdbc_package }}'
-
-{% if grains['os'] == 'Ubuntu' %}
-# See AMBARI-22532, and remove this work around when that is resolved
-ambari-server-patchfix1:
-  file.replace:
-    - name: /usr/lib/ambari-server/lib/resource_management/core/providers/package/apt.py
-    - pattern: '^.*if repo_id in package\[2\]:'
-    - repl: '          if urllib.unquote(repo_id).decode("utf-8") in urllib.unquote(package[2]).decode("utf-8"):'
-
-ambari-server-patchfix2:
-  file.replace:
-    - name: /usr/lib/ambari-server/lib/resource_management/core/providers/package/apt.py
-    - pattern: 'import subprocess'
-    - repl: |
-        import subprocess
-        import urllib
-{% endif %}
 
 ambari-server-start_service:
   cmd.run:

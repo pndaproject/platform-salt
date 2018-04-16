@@ -9,6 +9,17 @@
 {% set zookeeper_package = 'zookeeper-' + zookeeper_version + '.tar.gz' %}
 {% set zookeeper_url = mirror_location + zookeeper_package %}
 
+{% set nodes = [] %}
+{% include "zookeeper/nodes.sls" %}
+
+{%- set internal_ip = salt['network.interface_ip'](pillar["mine_functions"]["network.ip_addrs"][0]) -%}
+{% set myid = 0 %}
+{%- for node in nodes -%}
+{%- if node.fqdn == salt['grains.get']('id') -%}
+{% set myid = node.id %}
+{%- endif -%}
+{%- endfor -%}
+
 {% set install_dir = pillar['pnda']['homedir'] %}
 
 zookeeper-user-group:
@@ -42,9 +53,6 @@ zookeeper-dl-and-extract:
     - archive_format: tar
     - tar_options: ''
     - if_missing: {{ install_dir }}/zookeeper-{{ zookeeper_version }}
-
-{% set nodes = [] %}
-{% include "zookeeper/nodes.sls" %}
 
 zookeeper-myid:
   file.managed:
@@ -96,18 +104,6 @@ zookeeper-link:
     - require:
       - archive: zookeeper-dl-and-extract
 
-{% if grains['os'] == 'Ubuntu' %}
-zookeeper-service:
-  file.managed:
-    - name: /etc/init/zookeeper.conf
-    - source: salt://zookeeper/files/templates/zookeeper.init.conf.tpl
-    - template: jinja
-    - context:
-      conf_dir: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/conf
-    - mode: 644
-    - require:
-      - file: zookeeper-data-dir
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-service_startpre:
     file.managed:
       - name: {{ install_dir }}/zookeeper-{{ zookeeper_version }}/bin/zookeeper-service-startpre.sh
@@ -140,33 +136,20 @@ zookeeper-systemd:
     - mode: 644
     - require:
       - file: zookeeper-data-dir
-{% endif %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable zookeeper
-{%- endif %}
 
 zookeeper-ensure-service-running:
   cmd.run:
     - name: 'service zookeeper stop || echo already stopped; service zookeeper start'
 
-{%- set internal_ip = salt['network.interface_ip'](pillar["mine_functions"]["network.ip_addrs"][0]) -%}
-{% set myid = 0 %}
-{%- for node in nodes -%}
-{%- if node.fqdn == salt['grains.get']('id') -%}
-{% set myid = node.id %}
-{%- endif -%}
-{%- endfor -%}
-
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 zookeeper-pkg_install_netcat:
   pkg.installed:
     - name: {{ pillar['nmap-ncat']['package-name'] }}
     - version: {{ pillar['nmap-ncat']['version'] }}
     - ignore_epoch: True
-{%- endif %}
 
 zookeeper-consul-check:
   file.managed:
@@ -175,11 +158,7 @@ zookeeper-consul-check:
     - mode: 755
     - template: jinja
     - context:
-{% if grains['os'] == 'Ubuntu' %}
-      netcat: nc
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
       netcat: ncat
-{%- endif %}
 
 zookeeper-consul-register:
   file.managed:

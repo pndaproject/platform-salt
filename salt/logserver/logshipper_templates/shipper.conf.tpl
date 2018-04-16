@@ -1,64 +1,11 @@
 {%- set logdest = salt['pnda.get_hosts_for_role']('logserver')[0] -%}
 input {
-{% if grains['os'] in ('RedHat', 'CentOS') %}
    journald {
           path => '/run/log/journal'
           sincedb_path => "/opt/pnda/logstash/sincedb/db2"
           add_field => {"path" => "journald"}
           lowercase => true
    }
-{% elif grains['os'] == 'Ubuntu' %}
-   file {
-          path => ["/var/log/upstart/kafka.log"]
-          add_field => {"source" => "kafka"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/upstart/gobblin.log"]
-          add_field => {"source" => "gobblin"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/upstart/deployment-manager.log"]
-          add_field => {"source" => "deployment-manager"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/upstart/package-repository.log"]
-          add_field => {"source" => "package-repository"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-   file {
-          path => ["/var/log/upstart/jupyterhub.log"]
-          add_field => {"source" => "jupyter"}
-          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
-          codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
-            negate => true
-            what => "previous"
-          }
-   }
-{% endif %}
    file {
           path => ["/var/log/pnda/kafka/server.log",
                    "/var/log/pnda/kafka/controller.log"]

@@ -18,18 +18,6 @@ graphite-api-carbon-whitelist-configure:
     - require:
       - pkg: graphite-api-carbon-install
 
-{% if grains['os'] == 'Ubuntu' %}
-graphite-api-carbon-enable-ubuntu:
-  file.managed:
-    - name: /etc/default/graphite-carbon
-    - source: salt://graphite-api/files/graphite-carbon.default
-    - user: root
-    - group: root
-    - mode: 644
-    - require:
-      - pkg: graphite-api-carbon-install
-{% endif %}
-
 graphite-api-carbon-whitelist-enable:
   file.replace:
     - name: /etc/carbon/carbon.conf
@@ -48,23 +36,10 @@ graphite-api-carbon-enable-and-start:
       - file: graphite-api-carbon-configure
       - file: graphite-api-carbon-whitelist-configure
       - file: /etc/carbon/carbon.conf
-{% if grains['os'] == 'Ubuntu' %}
-      - file: graphite-api-carbon-enable-ubuntu
-{% endif %}
-
-{% if grains['os'] == 'Ubuntu' %}
-{% set misc_packages_path = pillar['pnda_mirror']['base_url'] + pillar['pnda_mirror']['misc_packages_path'] %}
-{% set graphite_api_deb_package = misc_packages_path + 'graphite-api_1.1.2-1447943657-ubuntu14.04_amd64.deb' %}
-{%- endif %}
 
 graphite-api-install-graphite:
   pkg.installed:
-{% if grains['os'] in ('RedHat', 'CentOS') %}
     - name: graphite-api
-{% elif grains['os'] == 'Ubuntu' %}
-    - sources:
-      - graphite-api: {{ graphite_api_deb_package }}
-{% endif %}
 
 graphite-api-configure-default:
   file.managed:
@@ -74,11 +49,7 @@ graphite-api-configure-default:
 graphite-api-configure:
   file.managed:
     - name: /etc/graphite-api.yaml
-{% if grains['os'] in ('RedHat', 'CentOS') %}
     - source: salt://graphite-api/files/graphite-api.yaml.redhat
-{% elif grains['os'] == 'Ubuntu' %}
-    - source: salt://graphite-api/files/graphite-api.yaml.debian
-{% endif %}
 
 graphite-api-enable-and-start:
   service.running:

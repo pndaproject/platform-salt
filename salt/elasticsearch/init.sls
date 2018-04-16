@@ -70,15 +70,9 @@ elasticsearch-dl_and_extract_elasticsearch:
     - tar_options: --strip-components=1
     - if_missing: {{ es_p.directory }}/bin/elasticsearch
 
-{% if grains['os'] == 'Ubuntu' %}
-/etc/init/elasticsearch.conf:
-  file.managed:
-    - source: salt://elasticsearch/templates/elasticsearch.init.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
 /usr/lib/systemd/system/elasticsearch.service:
   file.managed:
     - source: salt://elasticsearch/templates/elasticsearch.service.tpl
-{% endif %}
     - mode: 644
     - template: jinja
     - context:
@@ -89,11 +83,9 @@ elasticsearch-dl_and_extract_elasticsearch:
       workdir: {{ es_p.workdir }}
       defaultconfig: {{ es_p.confdir }}/elasticsearch.yml
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 elasticsearch-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable elasticsearch
-{%- endif %}
 
 elasticsearch-start_service:
   cmd.run:

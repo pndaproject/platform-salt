@@ -30,17 +30,9 @@ ntp-ntpdate_sync_on_boot_script:
       ntp_service: {{ ntp_service }}
       ntp_servers: {{ ntp_servers }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 ntp-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable {{ ntp_service }}; /bin/systemctl stop chronyd; /bin/systemctl disable chronyd; /bin/systemctl enable ntpdate;
-{%- else %}
-ntp-ntpdate_sync_on_boot_cmd:
-  file.append:
-    - name: /etc/rc.local
-    - text:
-      - "/etc/ntpdate.sh 2>&1 | tee -a /var/log/pnda/ntpdate_sync_on_boot.log"
-{%- endif %}
 
 ntp-ntpdate-sync:
   cmd.run:

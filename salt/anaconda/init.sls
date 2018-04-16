@@ -6,14 +6,11 @@
 {% set anaconda_package = 'Anaconda2-' + anaconda_bundle_version + '-Linux-x86_64.sh' %}
 {% set anaconda_link = install_dir + '/anaconda' %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 anaconda-deps:
   pkg.installed:
     - name: {{ pillar['bzip2']['package-name'] }}
     - version: {{ pillar['bzip2']['version'] }}
     - ignore_epoch: True
-
-{%- endif %}
 
 anaconda-dir:
   file.directory:

@@ -69,18 +69,6 @@ kafka-server-log-conf:
     - context:
       kafka_log_level: {{ kafka_log_level }}
 
-{% if grains['os'] == 'Ubuntu' %}
-kafka-copy_kafka_service:
-  file.managed:
-    - source: salt://kafka/templates/kafka.init.conf.tpl
-    - name: /etc/init/kafka.conf
-    - mode: 644
-    - template: jinja
-    - context:
-      workdir: {{ kafka.prefix }}
-      mem_xmx: {{ flavor_cfg.kafka_heapsize }}
-      mem_xms: {{ flavor_cfg.kafka_heapsize }}
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
 kafka-copy_script:
   file.managed:
     - source: salt://kafka/templates/kafka-start.sh.tpl
@@ -111,7 +99,6 @@ kafka-copy_kafka_systemd:
 kafka-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable kafka
-{% endif %}
 
 kafka-logs-configuration-dirs:
   file.directory:
