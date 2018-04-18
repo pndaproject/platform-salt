@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4430: Handle mapping of users to yarn queues
 - PNDA-4384: Use the PNDARegistryBasedConverter for gobblin in experimental mode
 - PNDA-4122: Remove scalable ELK
+- PNDA-4525: Deprecate Ubuntu 14.04
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
