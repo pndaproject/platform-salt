@@ -52,13 +52,8 @@ package-repository-copy_configuration:
 
 package-repository-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/package-repository.conf
-    - source: salt://package-repository/templates/package-repository.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/package-repository.service
     - source: salt://package-repository/templates/package-repository.service.tpl
-{% endif %}    
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
@@ -75,11 +70,9 @@ package-repository-create_fs_location_path:
 
 {% endif %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 package-repository-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable package-repository
-{%- endif %}
 
 package-repository-start_service:
   cmd.run:

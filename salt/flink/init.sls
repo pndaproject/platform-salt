@@ -92,13 +92,8 @@ flink-jobmanager_archive_dir_initialize-hdfs:
 
 flink-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/flink-history-server.conf
-    - source: salt://flink/templates/flink-service.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/flink-history-server.service
     - source: salt://flink/templates/flink-service.service.tpl
-{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ flink_link_dir }}

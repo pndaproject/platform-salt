@@ -45,13 +45,8 @@ kafka-manager-install-application_configuration:
 
 kafka-manager-install-kafka-manager-service-script:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/kafka-manager.conf
-    - source: salt://kafka-manager/templates/kafka-manager.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/kafka-manager.service
     - source: salt://kafka-manager/templates/kafka-manager.service.tpl
-{% endif %}
     - template: jinja
     - context:
       kafka_manager_port: {{ km_port }}
@@ -61,11 +56,9 @@ kafka-manager-update-kafka-manager:
     - name: {{ release_directory }}/kafka-manager-{{ release_version }}/bin/kafka-manager
     - mode: 755
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 kafka-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable kafka-manager
-{%- endif %}
 
 kafka-manager-start_service:
   cmd.run:

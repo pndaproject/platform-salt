@@ -10,7 +10,6 @@
 include:
   - python-pip
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
@@ -28,7 +27,6 @@ deployment-manager-install_dev_deps_cyrus_plain:
     - name: {{ pillar['cyrus-sasl-plain']['package-name'] }}
     - version: {{ pillar['cyrus-sasl-plain']['version'] }}
     - ignore_epoch: True
-{% endif %}
 
 deployment-manager-install_dev_deps_libffi:
   pkg.installed:
@@ -88,41 +86,27 @@ deployment-manager-copy_configuration:
 
 deployment-manager-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/deployment-manager.conf
-    - source: salt://deployment-manager/templates/deployment-manager.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/deployment-manager.service
     - source: salt://deployment-manager/templates/deployment-manager.service.tpl
-{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
 dm-application-summary-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/dm-application-summary.conf
-    - source: salt://deployment-manager/templates/dm-application-summary.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/dm-application-summary.service
     - source: salt://deployment-manager/templates/dm-application-summary.service.tpl
-{% endif %}
     - template: jinja
     - defaults:
         install_dir: {{ install_dir }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 deployment-manager-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable deployment-manager
-{%- endif %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 dm-application-summary-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable dm-application-summary
-{%- endif %}
 
 deployment-manager-start_service:
   cmd.run:

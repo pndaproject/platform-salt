@@ -37,23 +37,16 @@ kibana-copy_configuration_kibana:
 
 kibana-copy_kibana_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - source: salt://kibana/templates/kibana.init.conf.tpl
-    - name: /etc/init/kibana.conf
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - source: salt://kibana/templates/kibana.service.tpl
     - name: /usr/lib/systemd/system/kibana.service
-{% endif %}
     - mode: 644
     - template: jinja
     - context:
       installdir: {{ kibana_directory }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 kibana-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable kibana
-{%- endif %}
 
 kibana-start_service:
   cmd.run:

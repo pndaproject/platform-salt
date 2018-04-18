@@ -29,15 +29,6 @@ include:
   - python-pip.pip3
   - .jupyter_deps
 
-{% if grains['os'] == 'Ubuntu' %}
-dependency-install_dev_krb:
-  pkg.installed:
-    - name: {{ pillar['libkrb5-dev']['package-name'] }}
-    - version: {{ pillar['libkrb5-dev']['version'] }}
-    - ignore_epoch: True
-{% endif %}
-
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 dependency-install_krb5_devel:
   pkg.installed:
     - name: {{ pillar['krb5-devel']['package-name'] }}
@@ -49,7 +40,6 @@ dependency-install_gcc:
     - name: {{ pillar['gcc']['package-name'] }}
     - version: {{ pillar['gcc']['version'] }}
     - ignore_epoch: True
-{% endif %}
 
 jupyter-create-venv:
   virtualenv.managed:
@@ -199,13 +189,8 @@ jupyter-copy_scala_spark_kernel:
 
 livy-conf_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - name: /etc/init/livy.conf
-    - source: salt://jupyter/templates/livy.conf.tpl
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/livy.service
     - source: salt://jupyter/templates/livy.service.tpl
-{% endif %}
     - template: jinja
     - mode: 644
     - defaults:
@@ -213,11 +198,9 @@ livy-conf_service:
         spark_home: {{ spark_home }}
         hadoop_conf_dir: {{ hadoop_conf_dir }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 livy-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable livy
-{%- endif %}
 
 livy-server-start_service:
   service.running:

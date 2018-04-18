@@ -5,13 +5,11 @@
 include:
   - python-pip
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 app-packages-install_dev_deps_cyrus:
   pkg.installed:
     - name: {{ pillar['cyrus-sasl-devel']['package-name'] }}
     - version: {{ pillar['cyrus-sasl-devel']['version'] }}
     - ignore_epoch: True
-{% endif %}
 
 app-packages-install_dev_deps_sasl:
   pkg.installed:

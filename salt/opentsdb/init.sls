@@ -32,15 +32,6 @@ opentsdb-log_config:
       log_folder: /var/log/pnda/opentsdb
     - template: jinja
 
-{% if grains['os'] == 'Ubuntu' %}
-opentsdb-copy_defaults:
-  file.managed:
-    - name: /etc/default/opentsdb
-    - source: salt://opentsdb/templates/opentsdb.default.tpl
-    - context:
-      heap_size: {{ flavor_cfg.opentsdb_heapsize }}
-    - template: jinja
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-copy_defaults:
   file.managed:
     - name: {{ opentsdb_home }}/opentsdb_env.sh
@@ -65,13 +56,10 @@ opentsdb-copy_service:
     - template: jinja
     - context:
       home: {{ opentsdb_home }}
-{%- endif %}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 opentsdb-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable opentsdb
-{%- endif %}
 
 opentsdb-start_service:
   cmd.run:

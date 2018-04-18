@@ -121,24 +121,17 @@ jupyterhub-install-proxy-command:
 # set up service script
 jupyterhub-copy_service:
   file.managed:
-{% if grains['os'] == 'Ubuntu' %}
-    - source: salt://jupyter/templates/jupyterhub.conf.tpl
-    - name: /etc/init/jupyterhub.conf
-{% elif grains['os'] in ('RedHat', 'CentOS') %}
     - name: /usr/lib/systemd/system/jupyterhub.service
     - source: salt://jupyter/templates/jupyterhub.service.tpl
-{%- endif %}
     - mode: 644
     - template: jinja
     - context:
       jupyterhub_config_dir: {{ jupyterhub_config_dir }}
       virtual_env_dir: {{ virtual_env_dir }}
 
-{% if grains['os'] in ('RedHat', 'CentOS') %}
 jupyterhub-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload; /bin/systemctl enable jupyterhub
-{%- endif %}
 
 jupyterhub-service_started:
   cmd.run:
