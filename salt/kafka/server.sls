@@ -121,3 +121,17 @@ kafka-logs-configuration:
 kafka-start_service:
   cmd.run:
     - name: 'service kafka stop || echo already stopped; service kafka start'
+
+kafka-consul-register:
+  file.managed:
+    - name: /etc/consul.d/kafka.json
+    - source: salt://kafka/templates/consul.json.tpl
+    - template: jinja
+    - context:
+      public_ip: {{ salt['grains.get']('public_ip') }}
+      ingest_port: {{ ingest_port }}
+
+kafka-consul-reload:
+  module.run:
+    - name: service.reload
+    - m_name: consul

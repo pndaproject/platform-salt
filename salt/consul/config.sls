@@ -9,6 +9,14 @@
 {%- set nb_consul = salt['pnda.dns_nameserver_ips']()|length -%}
 {% do consul.config.update({'bootstrap_expect': nb_consul}) %}
 
+consul-dns-register:
+  file.managed:
+    - name: /etc/consul.d/dns.json
+    - source: salt://consul/templates/consul.json.tpl
+    - template: jinja
+    - context:
+      public_ip: {{ salt['grains.get']('public_ip') }}
+
 {%- else -%}
 {%- for ip in salt['pnda.dns_nameserver_ips']() -%}
 {%- do consul.config.retry_join.append(ip) -%}
