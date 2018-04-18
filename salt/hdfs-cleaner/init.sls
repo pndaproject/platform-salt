@@ -10,6 +10,7 @@
 {% set hadoop_distro = grains['hadoop.distro'] %}
 {% set pnda_user  = pillar['pnda']['user'] %}
 {% set gobblin_work_dir = '/user/' + pnda_user + '/gobblin/work' %}
+{% set flink_job_dir = '/' + pnda_user + '/flink/completed-jobs' %}
 
 {% set install_dir = pillar['pnda']['homedir'] %}
 
@@ -17,10 +18,10 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
-{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/app-logs/*/logs/", "/spark-history/"' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/app-logs/*/logs/", "/spark-history/", "/user/*/.flink/"' %}
 {% set general_dirs_to_clean = '"/mr-history/done/"' %}
 {% else %}
-{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/tmp/logs/*/logs/", "/user/spark/applicationHistory/"' %}
+{% set streaming_dirs_to_clean = '"/user/*/.sparkStaging/", "/tmp/logs/*/logs/", "/user/spark/applicationHistory/", "/user/*/.flink/"' %}
 {% set general_dirs_to_clean = '"/user/history/done/"' %}
 {% endif %}
 
@@ -65,6 +66,7 @@ hdfs-cleaner-copy_config:
         archive_type: '{{ archive_type }}'
         archive_service: '{{ archive_service }}'
         gobblin_work_dir: {{ gobblin_work_dir }}
+        flink_job_dir: {{ flink_job_dir }}
         streaming_dirs_to_clean: '{{ streaming_dirs_to_clean }}'
         general_dirs_to_clean: '{{ general_dirs_to_clean }}'
     - require:
