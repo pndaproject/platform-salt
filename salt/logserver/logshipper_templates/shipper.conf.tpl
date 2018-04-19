@@ -133,6 +133,16 @@ filter {
        else if [_systemd_unit] == "jupyterhub.service" {
            mutate {add_field => {"source" => "jupyterhub"}}
        }
+       else if [_systemd_unit] =~ "^platform_app" {
+           mutate {
+             add_field => {"source" => "%{_systemd_unit}"}
+           }
+           mutate {
+             gsub => [
+               "source", ".service", ""
+             ]
+           }
+       }
        else {
            drop { }
        }

@@ -68,6 +68,20 @@ logserver-add_crontab_entry2:
     - user: root
     - minute: 15
 
+logserver-add_crontab_entry3:
+  cron.present:
+    - identifier: DELETE-PLATFORM-APP-OLD
+    - name: /usr/bin/find /var/log/pnda -name 'platform_app*' -type f -mmin +4320 -delete
+    - user: root
+    - minute: 15
+
+logserver-add_crontab_entry4:
+  cron.present:
+    - identifier: DELETE-PLATFORM-APP-ZERO
+    - name: /usr/bin/find /var/log/pnda -name 'platform_app*' -type f -size 0 -delete
+    - user: root
+    - minute: 15
+
 logserver-create_log_folder:
   file.directory:
     - name: /var/log/pnda
