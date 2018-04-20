@@ -43,7 +43,8 @@
             "taskmanager_heapsize": 2048,
             "taskmanager_slots": 1,
             "parallelism": 1,
-            "taskmanager_mem_preallocate": false
+            "taskmanager_mem_preallocate": false,
+            "pyflink_yarn_container_count": 1
         }
     }
 }

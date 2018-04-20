@@ -27,6 +27,9 @@
 {% set hadoop_home_bin = '/opt/cloudera/parcels/CDH/bin' %}
 {% endif %}
 
+{% set python_tmp_dir = pnda_user + '/flink/tmp' %}
+{% set python_tmp_dir_hdfs_path = namenode + '/' + python_tmp_dir %}
+
 flink-create_flink_version_directory:
   file.directory:
     - name: {{ flink_real_dir }}
@@ -59,6 +62,16 @@ flink-copy_configurations:
       taskmanager_slots: {{ flavor_cfg.taskmanager_slots }}
       parallelism: {{ flavor_cfg.parallelism }}
       taskmanager_mem_preallocate: {{ flavor_cfg.taskmanager_mem_preallocate }}
+      python_tmp_dir: {{ python_tmp_dir }}
+
+flink-copy_pyflink_yarn_driver_script:
+  file.managed:
+    - name: {{ flink_real_dir }}/bin/pyflink-yarn.sh
+    - source: salt://flink/templates/pyflink-yarn.sh.tpl
+    - mode: 755
+    - template: jinja
+    - context:
+      pyflink_yarn_container_count: {{ flavor_cfg.pyflink_yarn_container_count }}
 
 flink-configure_log_dir:
   file.directory:
@@ -89,6 +102,10 @@ flink-configure_log_properties:
 flink-jobmanager_archive_dir_initialize-hdfs:
   cmd.run:
     - name: 'sudo -u hdfs hdfs dfs -mkdir -p {{ archive_dir_hdfs_path }}; sudo -u hdfs hdfs dfs -chmod 777 {{ archive_dir_hdfs_path }}'
+
+flink-python_dc_tmp_dir_initialize-hdfs:
+  cmd.run:
+    - name: 'sudo -u hdfs hdfs dfs -mkdir -p {{ python_tmp_dir_hdfs_path }}; sudo -u hdfs hdfs dfs -chmod 777 {{ python_tmp_dir_hdfs_path }}'
 
 flink-copy_service:
   file.managed:
