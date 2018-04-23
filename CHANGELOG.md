@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4432: Handle logging for Flink
 - PNDA-4483: Log cleanup etc. Flink by hdfs-cleaner
 - PNDA-4464: (PDP-2) Experimental support for protobuf and user defined avro schemas for ingest
+- PNDA-4532: Add supervisor log for spark streaming applications to PNDA logshipper
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
