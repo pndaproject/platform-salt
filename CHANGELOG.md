@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4384: Use the PNDARegistryBasedConverter for gobblin in experimental mode
 - PNDA-4122: Remove scalable ELK
 - PNDA-4525: Deprecate Ubuntu 14.04
+- PNDA-4511: Use a config property to set which spark-submit command the Deployment Manager calls for spark streaming components
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
