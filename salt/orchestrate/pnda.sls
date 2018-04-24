@@ -239,7 +239,7 @@ orchestrate-pnda-install_test_modules:
 {% if grains['hadoop.distro'] == 'HDP' %}
 orchestrate-pnda-install_hdp_hadoop_oozie_libs:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:EDGE'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_edge'
     - tgt_type: compound
     - sls: hdp.oozie_libs
     - timeout: 120

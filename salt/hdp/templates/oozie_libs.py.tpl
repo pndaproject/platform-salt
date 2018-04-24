@@ -17,7 +17,7 @@ def setup_common_oozie_libs(name_node):
                      '/usr/hdp/current/hbase-client/lib/hbase-prefix-tree.jar',
                      '/usr/hdp/current/hbase-client/lib/zookeeper.jar',
                      '/usr/hdp/current/pig-client/piggybank.jar',
-                     '/usr/hdp/current/spark-client/lib/spark-examples.jar']
+                     '{{ spark_examples_jar }}']
 
     # Setup a connection with hdfs using namenode.
     hdfs_client = PyWebHdfsClient(host=name_node, port=webhdfs_port, user_name=webhdfs_user, timeout=None)
