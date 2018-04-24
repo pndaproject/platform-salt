@@ -49,6 +49,9 @@
 
 {% set policy_file_link = pillar['resource_manager']['path'] + pillar['resource_manager']['policy_file'] %}
 {%- set flink_lib_dir = pillar['pnda']['homedir'] + '/flink/lib' -%}
+{%- set flink_history_server_port = salt['pillar.get']('flink:history_server_port', 8082) -%}
+{%- set fh_nodes = salt['pnda.get_hosts_for_role']('flink') -%}
+{%- set flink_history_server = fh_nodes[0]+':'+flink_history_server_port|string -%}
 
 {% set resource_manager_path = pillar['resource_manager']['path'] %}
 
@@ -74,6 +77,7 @@
         "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}",
         "queue_policy": "{{ policy_file_link }}",
         "flink_lib_dir": "{{ flink_lib_dir }}",
+        "flink_history_server": "{{ flink_history_server }}",
         "spark_submit": "{{ resource_manager_path }}/bin/spark-submit",
         "flink": "{{ resource_manager_path }}/bin/flink"
     },
