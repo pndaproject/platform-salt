@@ -10,12 +10,10 @@
             "max_mappers": 20
         },
         "cdh.setup_hadoop": {
-            "template_file": "cfg_production.py",
-            "data_volumes_count": 24
+            "template_file": "cfg_production.py"
         },
         "hdp.setup_hadoop": {
-            "template_file": "cfg_production.py",
-            "data_volumes_count": 24
+            "template_file": "cfg_production.py"
         },
         "curator": {
             "days_to_keep": 6
