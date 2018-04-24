@@ -229,3 +229,10 @@ historyserver.archive.fs.refresh-interval: 10000
 # Configure log directory path for PNDA flink
 env.log.dir: /var/log/pnda/flink
 python.dc.tmp.dir: {{ namenode }}/{{ python_tmp_dir }}/dc
+# Expose Metric to an external system (Graphite) by configuring the Reporter
+metrics.reporters: grph
+metrics.reporter.grph.class: org.apache.flink.metrics.graphite.GraphiteReporter
+metrics.reporter.grph.host: {{ graphite_node }}
+metrics.reporter.grph.port: {{ graphite_port }}
+metrics.reporter.grph.protocol: TCP
+metrics.reporter.grph.prefix: flink

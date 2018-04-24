@@ -30,6 +30,10 @@
 {% set python_tmp_dir = pnda_user + '/flink/tmp' %}
 {% set python_tmp_dir_hdfs_path = namenode + '/' + python_tmp_dir %}
 
+# Graphite host and default port
+{% set graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
+{% set graphite_default_port = '2003' %}
+
 flink-create_flink_version_directory:
   file.directory:
     - name: {{ flink_real_dir }}
@@ -63,6 +67,8 @@ flink-copy_configurations:
       parallelism: {{ flavor_cfg.parallelism }}
       taskmanager_mem_preallocate: {{ flavor_cfg.taskmanager_mem_preallocate }}
       python_tmp_dir: {{ python_tmp_dir }}
+      graphite_node: {{ graphite_host }}
+      graphite_port: {{ graphite_default_port }}
 
 flink-copy_pyflink_yarn_driver_script:
   file.managed:
@@ -120,3 +126,12 @@ flink-history_server_start_service:
     - name: flink-history-server
     - enable: True
     - reload: True
+
+{% set dep_jars = salt['file.find']('%s/opt/' %flink_real_dir, name="*graphite*") %}
+{% for file in dep_jars %}
+{%- set filename = salt['file.basename'](file) %}
+flink-copy_dependency_jar-{{ filename }}:
+  file.managed:
+    - name: {{ flink_real_dir }}/lib/{{ filename }}
+    - source: {{ file }}
+{% endfor %}
