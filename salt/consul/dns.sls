@@ -12,7 +12,7 @@ consul_dns-add-domain:
   file.replace:
     - name: /etc/resolv.conf
     - pattern: 'search(.*)'
-    - repl: 'search\1 {{ domain_name }}'
+    - repl: 'search {{ domain_name }} \1'
 
 {% for cfg_file in salt['cmd.shell']('ls -1 /etc/sysconfig/network-scripts/ifcfg-*').split('\n') %}
 consul_turn-off-peer-dns-{{ cfg_file }}:
