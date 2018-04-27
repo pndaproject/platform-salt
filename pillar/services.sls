@@ -49,7 +49,7 @@ gobblin:
   release_version: 0.11.0
 
 flink:
-  release_version: 1.4.0
+  release_version: 1.4.2
   historyserver_web_port: 8082
   jobmanager_web_port: 8083
 
