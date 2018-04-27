@@ -184,15 +184,6 @@ gobblin-systemctl_reload:
   cmd.run:
     - name: /bin/systemctl daemon-reload
 
-gobblin-add_gobblin_crontab_entry:
-  cron.present:
-    - identifier: GOBBLIN
-    - name: /bin/systemctl start gobblin
-    - user: root
-    - minute: 0,30
-    - require:
-      - file: gobblin-install_gobblin_service_script
-
 {% if perform_compaction %}
 gobblin-add_gobblin_compact_crontab_entry:
   cron.present:
