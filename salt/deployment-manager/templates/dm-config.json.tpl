@@ -72,7 +72,8 @@
         "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}",
         "queue_policy": "{{ policy_file_link }}",
         "flink_lib_dir": "{{ flink_lib_dir }}",
-        "spark_submit": "{{ resource_manager_path }}/bin/spark-submit"
+        "spark_submit": "{{ resource_manager_path }}/bin/spark-submit",
+        "flink": "{{ resource_manager_path }}/bin/flink"
     },
     "config": {
         "stage_root": "stage",
