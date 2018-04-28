@@ -73,7 +73,6 @@ console_backend_utils:
 deployment_manager:
   release_version: develop
   keys_directory: /opt/pnda/dm_keys
-  admin_user: pnda
 
 package_repository:
   release_version: develop
