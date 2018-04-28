@@ -52,8 +52,6 @@
 
 {% set resource_manager_path = pillar['resource_manager']['path'] %}
 
-{% set admin_user = pillar['deployment_manager']['admin_user'] %}
-
 
 {
     "environment": {
@@ -77,7 +75,6 @@
         "spark_submit": "{{ resource_manager_path }}/bin/spark-submit"
     },
     "config": {
-        "admin_user": {{ admin_user }},
         "stage_root": "stage",
         "plugins_path": "plugins",
         "log_level": "INFO",
