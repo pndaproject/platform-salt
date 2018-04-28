@@ -53,6 +53,32 @@ gobblin-create_gobblin_version_directory:
     - name: {{ gobblin_real_dir }}
     - makedirs: True
 
+gobblin-create-run-directory:
+  file.directory:
+    - name: {{ gobblin_real_dir }}/run
+    - makedirs: True
+    - mode: 0674
+    - group: {{ pnda_user }}
+
+gobblin-install-exec-script:
+  file.managed:
+    - name: {{ gobblin_real_dir }}/run/exec-gobblin.sh
+    - source: salt://gobblin/templates/exec-gobblin.sh.tpl
+    - mode: 0654
+    - group: {{ pnda_user }}
+
+gobblin-copy-logrotate:
+  file.managed:
+    - name: /etc/logrotate.d/gobblin
+    - source: salt://gobblin/templates/logrotate.conf.tpl
+
+gobblin-update-crontab:
+  cron.present:
+    - identifier: GOBBLIN_LOGROTATE
+    - user: root
+    - hour: 0
+    - name: /usr/sbin/logrotate /etc/logrotate.conf
+
 gobblin-dl-and-extract:
   archive.extracted:
     - name: {{ gobblin_real_dir }}
