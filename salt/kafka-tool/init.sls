@@ -1,5 +1,6 @@
 #read all pillar data
-{% set flavor_cfg = pillar['pnda_flavor']['states']['kafka.server'] %}
+{% set data_dirs = pillar['kafka']['data_dirs'] %}
+{% set data_dirs_list = data_dirs.split(',') %}
 
 {% set install_dir = pillar['pnda']['homedir'] %}
 {% set packages_server = pillar['packages_server']['base_uri'] %}
@@ -9,7 +10,7 @@
 
 {% set p  = salt['pillar.get']('kafka', {}) %}
 {% set local_kafka_path = p.get('prefix', '/opt/pnda/kafka') %}
-{% set kafka_log_path = flavor_cfg.data_dirs[0] %}
+{% set kafka_log_path = data_dirs_list[0] %}
 
 {%- set zk_ips = [] -%}
 {%- for ip in salt['pnda.kafka_zookeepers_hosts']() -%}

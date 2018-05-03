@@ -26,7 +26,6 @@
             "zookeeper_data_dir": "/var/lib/zookeeper"
         },
         "kafka.server": {
-            "data_dirs": ["/var/kafka-logs"],
             "kafka_log_retention_bytes": 1073741824
         },
         "mysql": {
