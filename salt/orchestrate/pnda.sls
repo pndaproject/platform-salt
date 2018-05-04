@@ -262,6 +262,14 @@ orchestrate-pnda-app-packages-hdfs:
     - timeout: 120
     - queue: True
 
+orchestrate-pnda-knox:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@roles:knox )'
+    - tgt_type: compound
+    - sls: knox
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-install_remove_new_node_markers:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}}'

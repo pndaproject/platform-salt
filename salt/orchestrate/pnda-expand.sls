@@ -60,6 +60,14 @@ orchestrate-expand-install_deployment_manager_keys:
     - timeout: 120
     - queue: True
 
+orchestrate-pnda-knox:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@roles:knox )'
+    - tgt_type: compound
+    - sls: knox
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-expand_remove_new_node_markers:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}}'
