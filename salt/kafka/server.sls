@@ -37,9 +37,9 @@ kafka-directories:
       - user
       - group
     - names:
-{% for log_dir in config.log_dirs %}
+{%- for log_dir in config.log_dirs %}
       - {{ log_dir }}
-{% endfor %}
+{%- endfor %}
 
 kafka-server-conf:
   file.managed:

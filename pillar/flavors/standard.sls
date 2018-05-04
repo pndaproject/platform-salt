@@ -10,17 +10,14 @@
             "max_mappers": 50
         },
         "kafka.server": {
-            "data_dirs": ["/var/kafka-logs"],
             "kafka_log_retention_bytes": 1073741824,
             "kafka_heapsize": 4294967296
         },
         "cdh.setup_hadoop": {
-            "template_file": "cfg_standard.py",
-            "data_volumes_count": 1
+            "template_file": "cfg_standard.py"
         },
         "hdp.setup_hadoop": {
-            "template_file": "cfg_standard.py",
-            "data_volumes_count": 1
+            "template_file": "cfg_standard.py"
         },
         "curator": {
             "days_to_keep": 6
