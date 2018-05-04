@@ -14,18 +14,6 @@ mr.job.max.mappers={{ max_mappers }}
 
 # ==== Kafka Source ====
 source.class=gobblin.source.extractor.extract.kafka.KafkaDeserializerSource
-source.timezone=UTC
-source.schema={"namespace": "pnda.entity",                 \
-               "type": "record",                            \
-               "name": "event",                             \
-               "fields": [                                  \
-                   {"name": "timestamp", "type": "long"},   \
-                   {"name": "src",       "type": "string"}, \
-                   {"name": "host_ip",   "type": "string"}, \
-                   {"name": "rawdata",   "type": "bytes"}   \
-               ]                                            \
-              }
-
 kafka.deserializer.type=BYTE_ARRAY
 kafka.workunit.packer.type=BI_LEVEL
 
@@ -35,6 +23,16 @@ bootstrap.with.offset=earliest
 # ==== Converter ====
 converter.classes=gobblin.pnda.PNDARegistryBasedConverter
 PNDA.quarantine.dataset.uri={{ quarantine_kite_dataset_uri }}
+PNDA.converter.schema={"namespace": "pnda.entity",          \
+               "type": "record",                            \
+               "name": "event",                             \
+               "fields": [                                  \
+                   {"name": "timestamp", "type": "long"},   \
+                   {"name": "src",       "type": "string"}, \
+                   {"name": "host_ip",   "type": "string"}, \
+                   {"name": "rawdata",   "type": "bytes"}   \
+               ]                                            \
+              }
 
 # ==== Writer ====
 writer.builder.class=gobblin.pnda.AvroDataWriterBuilder
@@ -61,3 +59,22 @@ metrics.reporting.file.enabled=true
 # Don't ingest the avro.internal.testbot topic as it's only an internal PNDA
 # testing topic
 topic.blacklist=__consumer_offsets,avro.internal.testbot
+
+# ==== Configure topics ====
+kafka.topic.specific.state=[ \
+  { \
+    "dataset": "protobuf.telemetry.\*", \
+    "pnda.converter.delegate.class": "gobblin.pnda.PNDAProtoBufConverter", \
+    "pnda.family.id": "protobuf.telemetry", \
+    "pnda.protobuf.source.tag": "1", \
+    "pnda.protobuf.timestamp.tag": "10" \
+  }, \
+  { \
+    "dataset": "avro.pnda.\*", \
+    "pnda.converter.delegate.class": "gobblin.pnda.PNDAAvroConverter", \
+    "pnda.family.id": "avro.pnda", \
+    "pnda.avro.source.field": "src", \
+    "pnda.avro.timestamp.field": "timestamp", \
+    "pnda.avro.schema": '{"namespace": "pnda.entity","type": "record","name": "event","fields": [ {"name": "timestamp", "type": "long"}, {"name": "src", "type": "string"}, {"name": "host_ip", "type": "string"}, {"name": "rawdata", "type": "bytes"}]}' \
+  } \
+ ]
