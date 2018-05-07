@@ -13,7 +13,7 @@
     },
     {
       "name": "OpenTSDB",
-      "link": "{{ opentsdb_link }}"
+      "link": "{{ opentsdb_hosts }}"
     },
     {
       "name": "Grafana",
