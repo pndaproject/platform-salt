@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4532: Add supervisor log for spark streaming applications to PNDA logshipper
 - PNDA-4398: Support Spark 2 for Oozie jobs
 - PNDA-4546: Define an admin user for the Deployment Manager who is authorised to modify any application
+- PNDA-4558: Add Knox as gateway to cluster
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
