@@ -127,3 +127,8 @@ livy:
 
 nodejs:
   version: 'node-v6.10.2-linux-x64'
+
+knox:
+  release_version: "1.0.0"
+  authentication: "internal"
+  master_secret: "secret"

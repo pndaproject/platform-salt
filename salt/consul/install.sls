@@ -5,7 +5,7 @@
 
 consul-dep-unzip:
   pkg.installed:
-    - name: unzip
+    - name: {{ pillar['unzip']['package-name'] }}
 
 consul-bin-dir:
   file.directory:

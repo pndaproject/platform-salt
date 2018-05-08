@@ -31,6 +31,9 @@ cyrus-sasl-gssapi:
 cyrus-sasl-plain:
   package-name: cyrus-sasl-plain
   version: ""
+expect:
+  package-name: expect
+  version: ""
 g++:
   package-name: gcc-c++
   version: ""
