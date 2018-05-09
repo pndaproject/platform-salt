@@ -107,7 +107,7 @@ gobblin-create_gobblin_jobs_directory:
 gobblin-install_gobblin_pnda_job_file:
   file.managed:
     - name: {{ gobblin_link_dir }}/configs/mr.pull
-    - source: salt://gobblin/templates/mp.pull.tpl
+    - source: salt://gobblin/templates/mr.pull.tpl
     - template: jinja
     - context:
       namenode: {{ namenode }}
