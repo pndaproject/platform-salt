@@ -54,7 +54,7 @@ flink:
   jobmanager_web_port: 8083
 
 platform_gobblin_modules:
-  release_version: develop
+  release_version: PNDA-4609
 
 console_frontend:
   release_version: develop
