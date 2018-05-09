@@ -1,9 +1,7 @@
 {% set knox_version = salt['pillar.get']('knox:release_version', '') %}
 {% set knox_authentication = salt['pillar.get']('knox:authentication', '') %}
 {% set knox_master_secret = salt['pillar.get']('knox:master_secret', '') %}
-
 {% set knox_zip = 'knox-' + knox_version + '.zip' %}
-
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
@@ -16,6 +14,7 @@
 {% set bin_directory = knox_home_directory + '/bin' %}
 {% set conf_directory = knox_home_directory + '/conf' %}
 {% set knox_log_directory = '/var/log/pnda/knox' %}
+{% set knox_deployment_dir = knox_home_directory + '/data/deployments/' %}
 
 include:
   - java
@@ -49,6 +48,19 @@ knox-link_release:
   file.symlink:
     - name: {{ knox_home_directory }}
     - target: {{ release_directory }}/knox-{{ knox_version }}
+
+knox-clean-deployments:
+  file.directory:
+    - name: {{ knox_deployment_dir }}
+    - clean: True
+    - makedirs: True
+    - user: knox
+    - group: knox
+    - recurse:
+      - user
+      - group
+    - require:
+      - archive: knox-dl-and-extract
 
 knox-update-permissions-scripts:
   cmd.run:
@@ -111,6 +123,8 @@ knox-embedded-ldap-start_service:
   cmd.run:
     - name: 'service knoxldap stop || echo already stopped; service knoxldap start'
 
+{% endif %}
+
 knox-master-secret-script:
   file.managed:
     - name: {{ bin_directory }}/create-secret.sh
@@ -130,7 +144,6 @@ knox-init-authentication:
     - group: knox
     - require:
       - file: knox-master-secret-script
-{% endif %}
 
 knox-set-configuration:
   file.managed:
