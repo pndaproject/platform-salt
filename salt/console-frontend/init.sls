@@ -33,12 +33,26 @@
 # Set links
 {% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager', cm_port) %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
-{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
 {% set jupyter_link = salt['pnda.generate_external_link']('jupyter',':8000') %}
 {% set flink_link = salt['pnda.generate_external_link']('flink',':8082') %}
 {% set login_mode = 'PAM' %}
+
+#Set link for all opentsdb node's in order
+{% set opentsdb_port = '4242' %}
+{% set tsdb_hosts = [] %}
+{% set tsdb_node_count = salt['pnda.opentsdb_hosts']()|length %}
+
+{%- if tsdb_node_count > 1 -%}
+    {%- for host_num in range(tsdb_node_count) -%}
+        {%- do tsdb_hosts.append("http://%s-opentsdb-%d:%s" % (clustername, host_num, opentsdb_port)) -%}
+    {%- endfor -%}
+{%- else -%}
+    {%- do tsdb_hosts.append("http://%s:%s" % (salt['pnda.opentsdb_hosts']()[0], opentsdb_port)) -%}
+{%- endif -%}
+
+{% set opentsdb_hosts = tsdb_hosts|join(', ') %}
 
 include:
   - nodejs
@@ -96,7 +110,7 @@ console-frontend-create_pnda_console_config:
         edge_node: {{ edge_node_ip }}
         hadoop_manager_link: "{{ hadoop_manager_link }}"
         kafka_manager_link: "{{ km_link }}"
-        opentsdb_link: "{{ opentsdb_link }}"
+        opentsdb_hosts: "{{ opentsdb_hosts }}"
         grafana_link: "{{ grafana_link }}"
         kibana_link: "{{ kibana_link }}"
         jupyter_link: "{{ jupyter_link }}"
