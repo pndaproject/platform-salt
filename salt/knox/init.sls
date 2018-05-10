@@ -10,6 +10,7 @@
 {% set namenode_host = salt['pnda.get_hosts_by_role']('HDFS', 'NAMENODE')[0] %}
 {% set oozie_node = salt['pnda.get_hosts_by_role']('OOZIE', 'OOZIE_SERVER')[0] %}
 {% set hive_node = salt['pnda.get_hosts_by_role']('HIVE', 'HIVE_SERVER')[0] %}
+{% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 
 include:
@@ -106,16 +107,32 @@ knox-set-configuration:
       namenode_host: {{ namenode_host }}
       oozie_node: {{ oozie_node }}
       hive_node: {{ hive_node }}
+      pnda_domain: {{ pnda_domain }}
     - require:
       - cmd: knox-init-authentication
 
-knox-start-gateway:
-  cmd.run:
-    - name: {{ release_directory }}/knox-{{ knox_version }}/bin/gateway.sh start
-    - user: knox
+{% set knox_dm_dir = release_directory + '/knox/data/services/pnda-deployment-manager/1.0.0/' %}
+
+knox-dm_dir:
+  file.directory:
+    - name: {{ knox_dm_dir }}
+    - makedirs: True
+
+knox-dm_service:
+  file.managed:
+    - name: {{ knox_dm_dir }}/service.xml
+    - source: salt://knox/files/dm_service.xml
     - require:
-      - cmd: knox-init-authentication
-knox--service-script:
+      - file: knox-dm_dir
+
+knox-dm_rewrite:
+  file.managed:
+    - name: {{ knox_dm_dir }}/rewrite.xml
+    - source: salt://knox/files/dm_rewrite.xml
+    - require:
+      - file: knox-dm_dir
+
+knox-service-script:
   file.managed:
     - name: /usr/lib/systemd/system/knox.service
     - source: salt://{{ sls }}/templates/knox.service.tpl
@@ -126,7 +143,7 @@ knox--service-script:
         user: knox
         group: knox
         service: gateway
-        service_name: Knox
+        service_name: knox
 
 knox-systemctl_reload:
   cmd.run:
@@ -137,3 +154,5 @@ knox-start_service:
     - name: 'service knox stop || echo already stopped; service knox start'
     - require:
       - cmd: knox-init-authentication
+      - file: knox-dm_service
+      - file: knox-dm_rewrite

@@ -1,0 +1,5 @@
+<rules>
+    <rule dir="IN" name="pnda-deployment-manager" pattern="*://*:*/**/pnda-deployment-manager/{**}?{**}">
+        <rewrite template="{$serviceUrl[pnda-deployment-manager]}/{**}?{**}"/>
+    </rule>
+</rules>
