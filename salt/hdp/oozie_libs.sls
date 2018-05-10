@@ -4,21 +4,8 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set oozie_spark_version = salt['pillar.get']('hdp:oozie_spark_version', '1') %}
 
-{% if oozie_spark_version == '1' %}
-{% set spark_examples_jar = '/usr/hdp/current/spark-client/lib/spark-examples.jar' %}
-{% set spark_examples_jar_src = '/usr/hdp/current/spark-client/lib/spark-examples*.jar' %}
-{% else %}
-{% set spark_examples_jar = '/usr/hdp/current/spark2-client/examples/jars/spark-examples.jar' %}
-{% set spark_examples_jar_src = '/usr/hdp/current/spark2-client/examples/jars/spark-examples_*.jar' %}
-{% endif %}
-
 include:
   - python-pip
-
-hdp-oozie_libs_link_spark_examples:
-  cmd.run:
-    - name: 'ln -s {{ spark_examples_jar_src }} {{ spark_examples_jar }}'
-    - unless: ls {{ spark_examples_jar }}
 
 hdp-oozie_libs_create_virtualenv:
   virtualenv.managed:
