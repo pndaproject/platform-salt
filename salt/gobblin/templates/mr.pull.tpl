@@ -28,8 +28,7 @@ PNDA.converter.schema={"namespace": "pnda.entity",          \
                "name": "event",                             \
                "fields": [                                  \
                    {"name": "timestamp", "type": "long"},   \
-                   {"name": "src",       "type": "string"}, \
-                   {"name": "host_ip",   "type": "string"}, \
+                   {"name": "source",    "type": "string"}, \
                    {"name": "rawdata",   "type": "bytes"}   \
                ]                                            \
               }
@@ -73,8 +72,8 @@ kafka.topic.specific.state=[ \
     "dataset": "avro.pnda.\*", \
     "pnda.converter.delegate.class": "gobblin.pnda.PNDAAvroConverter", \
     "pnda.family.id": "avro.pnda", \
-    "pnda.avro.source.field": "src", \
+    "pnda.avro.source.field": "source", \
     "pnda.avro.timestamp.field": "timestamp", \
-    "pnda.avro.schema": '{"namespace": "pnda.entity","type": "record","name": "event","fields": [ {"name": "timestamp", "type": "long"}, {"name": "src", "type": "string"}, {"name": "host_ip", "type": "string"}, {"name": "rawdata", "type": "bytes"}]}' \
+    "pnda.avro.schema": '{"namespace": "pnda.entity","type": "record","name": "event","fields": [ {"name": "timestamp", "type": "long"}, {"name": "source", "type": "string"}, {"name": "rawdata", "type": "bytes"}]}' \
   } \
  ]
