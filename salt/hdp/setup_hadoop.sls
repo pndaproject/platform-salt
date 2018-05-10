@@ -94,3 +94,28 @@ hdp-fix_oozie_sharelib:
   cmd.run:
     - name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/); sudo -u hdfs hadoop fs -copyFromLocal /usr/hdp/current/spark-client/lib/spark-assembly-*.jar /usr/hdp/current/spark-client/python/lib/py4j-0.9-src.zip /usr/hdp/current/spark-client/python/lib/pyspark.zip /user/oozie/share/lib/lib_${libvers##*_}/spark/ || true;
 
+hdp-oozie_libs_link_spark1_examples:
+  cmd.run:
+    - name: 'ln -s /usr/hdp/current/spark-client/lib/spark-examples*.jar /usr/hdp/current/spark-client/lib/spark1-examples.jar'
+    - unless: ls /usr/hdp/current/spark-client/lib/spark1-examples.jar
+
+hdp-oozie_libs_link_spark2_examples:
+  cmd.run:
+    - name: 'ln -s /usr/hdp/current/spark2-client/examples/jars/spark-examples*.jar /usr/hdp/current/spark2-client/examples/jars/spark2-examples.jar'
+    - unless: ls /usr/hdp/current/spark2-client/examples/jars/spark2-examples.jar 
+
+hdp-create_oozie_spark2_sharelib:
+  cmd.run:
+- name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/);  sudo -u hdfs hdfs dfs -mkdir /user/oozie/share/lib/lib_${libvers##*_}/spark2; sudo -u hdfs hdfs dfs -put /usr/hdp/current/spark2-client/jars/* /user/oozie/share/lib/lib_${libvers##*_}/spark2/ ;  sudo -u hdfs hdfs dfs -cp /user/oozie/share/lib/lib_${libvers##*_}/spark/oozie-sharelib-spark-*.jar /user/oozie/share/lib/lib_${libvers##*_}/spark2/ ;  sudo -u hdfs hdfs dfs -cp /user/oozie/share/lib/lib_${libvers##*_}/spark/hive-site.xml /user/oozie/share/lib/lib_${libvers##*_}/spark2/ ; sudo -u hdfs hdfs dfs -put /usr/hdp/current/spark2-client/python/lib/py* /user/oozie/share/lib/lib_${libvers##*_}/spark2/ ;  sudo -u oozie oozie admin -oozie http://${1}:11000/oozie -sharelibupdate ;	
+ 
+hdp-fix_duplicate_jars_spark2_sharelib:
+  cmd.run:
+- name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/); sudo -su hdfs hdfs dfs -ls /user/oozie/share/lib/lib_${libvers##*_}/oozie | awk -F \/ '{print $8}' > /tmp/listoozie; for f in $(cat /tmp/listoozie);do echo $f; hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_${libvers##*_}/spark2/$f;done; sudo -su hdfs hdfs dfs -ls /pnda/deployment/platform | awk -F \/ '{print $8}' > /tmp/listplatform; for f in $(cat /tmp/listplatform);do echo $f; hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_${libvers##*_}/spark2/$f;done; sudo -u oozie oozie admin -oozie http://${1}:11000/oozie -sharelibupdate ;	
+
+hdp-fix_jackson_jars_spark2_sharelib:
+  cmd.run:
+- name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/);sudo -u hdfs hadoop fs -rm -r -f -skipTrash user/oozie/share/lib/lib_${libvers##*_}/oozie/jackson*;  sudo -u hdfs hadoop fs -mv /user/oozie/share/lib/lib_${libvers##*_}/spark2/jackson* /user/oozie/share/lib/lib_${libvers##*_}/oozie/ ; sudo -u oozie oozie admin -oozie http://${1}:11000/oozie -sharelibupdate ;	
+
+hdp-fix_example_jars_spark_sharelib:
+  cmd.run:
+- name: libvers=$(sudo -u hdfs hadoop fs -ls /user/oozie/share/lib/); sudo -u hdfs hdfs dfs -put /usr/hdp/current/spark-client/lib/spark1-examples.jar /user/oozie/share/lib/lib_${libvers##*_}/spark/ ; sudo -u hdfs hdfs dfs -put /usr/hdp/current/spark2-client/examples/jars/spark2-examples.jar /user/oozie/share/lib/lib_${libvers##*_}/spark2/ ; sudo -u oozie oozie admin -oozie http://${1}:11000/oozie -sharelibupdate ;
