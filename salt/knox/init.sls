@@ -54,13 +54,26 @@ knox-update-permissions-scripts:
       - archive: knox-dl-and-extract
 
 {% if knox_authentication == 'internal' %}
-knox-start-embedded-ldap:
+knox-embedded-ldap-service-script:
+  file.managed:
+    - name: /usr/lib/systemd/system/knoxldap.service
+    - source: salt://{{ sls }}/templates/knox.service.tpl
+    - mode: 0644
+    - template: jinja
+    - context:
+        knox_bin_dir: {{ release_directory }}/knox-{{ knox_version }}/bin
+        user: knox
+        group: knox
+        service: ldap
+        service_name: "Knox Embedded LDAP"
+
+knox-embedded-ldap-systemctl_reload:
   cmd.run:
-    - name: {{ release_directory }}/knox-{{ knox_version }}/bin/ldap.sh start
-    - user: knox
-    - group: knox
-    - require:
-      - archive: knox-dl-and-extract
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable knoxldap
+
+knox-embedded-ldap-start_service:
+  cmd.run:
+    - name: 'service knoxldap stop || echo already stopped; service knoxldap start'
 
 knox-master-secret-script:
   file.managed:
@@ -100,5 +113,27 @@ knox-start-gateway:
   cmd.run:
     - name: {{ release_directory }}/knox-{{ knox_version }}/bin/gateway.sh start
     - user: knox
+    - require:
+      - cmd: knox-init-authentication
+knox--service-script:
+  file.managed:
+    - name: /usr/lib/systemd/system/knox.service
+    - source: salt://{{ sls }}/templates/knox.service.tpl
+    - mode: 0644
+    - template: jinja
+    - context:
+        knox_bin_dir: {{ release_directory }}/knox-{{ knox_version }}/bin
+        user: knox
+        group: knox
+        service: gateway
+        service_name: Knox
+
+knox-systemctl_reload:
+  cmd.run:
+    - name: /bin/systemctl daemon-reload; /bin/systemctl enable knox
+
+knox-start_service:
+  cmd.run:
+    - name: 'service knox stop || echo already stopped; service knox start'
     - require:
       - cmd: knox-init-authentication
