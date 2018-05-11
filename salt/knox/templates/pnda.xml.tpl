@@ -61,10 +61,6 @@
     </service>
 
     <service>
-        <role>WEBHCAT</role>
-    </service>
-
-    <service>
         <role>OOZIE</role>
         <url>http://{{ oozie_node }}:11000/oozie</url>
     </service>
@@ -82,46 +78,6 @@
     <service>
         <role>RESOURCEMANAGER</role>
         <url>http://{{ namenode_host }}:8088/ws</url>
-    </service>
-
-    <service>
-        <role>DRUID-COORDINATOR-UI</role>
-        
-    </service>
-
-    <service>
-        <role>DRUID-COORDINATOR</role>
-        
-    </service>
-
-    <service>
-        <role>DRUID-OVERLORD-UI</role>
-        
-    </service>
-
-    <service>
-        <role>DRUID-OVERLORD</role>
-        
-    </service>
-
-    <service>
-        <role>DRUID-ROUTER</role>
-        
-    </service>
-
-    <service>
-        <role>DRUID-BROKER</role>
-        
-    </service>
-
-    <service>
-        <role>ZEPPELINUI</role>
-        
-    </service>
-
-    <service>
-        <role>ZEPPELINWS</role>
-        
     </service>
 
     <service>
