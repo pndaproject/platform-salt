@@ -30,7 +30,7 @@ retentions = 60:43200
 
 [spark]
 pattern = ^spark\..*
-retentions = 60:10080
+retentions = {{ retentions }}
 
 [default]
 pattern = .*
