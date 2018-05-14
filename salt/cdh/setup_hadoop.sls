@@ -1,4 +1,5 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+{% set data_volumes_count = pillar['datanode']['data_volume_count'] %}
 
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
@@ -19,8 +20,8 @@
 {% set pnda_graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
 
 {%- set data_volume_list = [] %}
-{%- for n in range(flavor_cfg.data_volumes_count) -%}
-  {%- if flavor_cfg.data_volumes_count > 10 and n < 10 -%}
+{%- for n in range(data_volumes_count) -%}
+  {%- if data_volumes_count > 10 and n < 10 -%}
     {%- set prefix = '/data0' -%}
   {%- else -%}
     {%- set prefix = '/data' -%}
