@@ -7,6 +7,16 @@ input {
           lowercase => true
    }
    file {
+          path => ["/var/log/pnda/knox/*.*"]
+          add_field => {"source" => "knox"}
+          sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
+          codec => multiline {
+            pattern => "^%{TIMESTAMP_ISO8601}"
+            negate => true
+            what => "previous"
+          }
+   }
+   file {
           path => ["/var/log/pnda/kafka/server.log",
                    "/var/log/pnda/kafka/controller.log"]
           add_field => {"source" => "kafka"}
