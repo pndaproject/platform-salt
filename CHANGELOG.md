@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4525: Deprecate Ubuntu 14.04
 - PNDA-4511: Use a config property to set which spark-submit command the Deployment Manager calls for spark streaming components
 - PNDA-4553: Remove experimental flag on PNDARegistryBasedConverter and add default topic config
+- PNDA-4537: Graphite metrics retention set per-flavor
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
