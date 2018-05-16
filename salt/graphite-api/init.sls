@@ -1,4 +1,5 @@
 {% from "graphite-api/map.jinja" import config with context %}
+{% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
 
 graphite-api-carbon-install:
   pkg.installed:
@@ -7,7 +8,10 @@ graphite-api-carbon-install:
 graphite-api-carbon-configure:
   file.managed:
     - name: /etc/carbon/storage-schemas.conf
-    - source: salt://graphite-api/files/storage-schemas.conf
+    - source: salt://graphite-api/files/storage-schemas.conf.tpl
+    - template: jinja
+    - context:
+      retentions: {{ flavor_cfg.retention_spark_metrics }}
     - require:
       - pkg: graphite-api-carbon-install
 

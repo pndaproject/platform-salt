@@ -45,6 +45,9 @@
             "parallelism": 1,
             "taskmanager_mem_preallocate": false,
             "pyflink_yarn_container_count": 1
+        },
+        "graphite-api":{
+            "retention_spark_metrics": "60:20160"
         }
     }
 }
