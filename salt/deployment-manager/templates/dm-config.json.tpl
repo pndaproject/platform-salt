@@ -52,6 +52,8 @@
 
 {% set resource_manager_path = pillar['resource_manager']['path'] %}
 
+{% set oozie_spark_version = pillar['hdp']['oozie_spark_version'] %}
+
 {
     "environment": {
         "hadoop_distro":"{{ hadoop_distro }}",
@@ -82,6 +84,7 @@
         "environment_sync_interval": 120,
         "package_callback": "{{ data_logger_link }}/packages",
         "application_callback": "{{ data_logger_link }}/applications",
-        "package_repository": "{{ repository_manager_link }}"
+        "package_repository": "{{ repository_manager_link }}",
+        "oozie_spark_version": "{{ oozie_spark_version }}"
     }
 }
