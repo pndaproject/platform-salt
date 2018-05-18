@@ -11,7 +11,6 @@
 {% set frontend_version = salt['pillar.get']('console_frontend:release_version', 'unknown') %}
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 {% set hadoop_distro = grains['hadoop.distro'] %}
-
 {% set data_manager_host = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
@@ -112,6 +111,8 @@ console-frontend-create_pnda_nginx_config:
     - defaults:
         console_dir: {{ console_dir }}
         port: {{ nginx_port }}
+        data_manager_host: {{ data_manager_host }}
+        data_manager_port: {{ data_manager_port }}
 
 # Remove default nginx configuration
 console-frontend-remove_nginx_default_config:
