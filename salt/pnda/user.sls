@@ -9,6 +9,7 @@ pnda-install_selinux:
       - policycoreutils-python
       - selinux-policy-targeted
 
+{% if salt['cmd.run']('getenforce')|lower != 'disabled' %}
 permissive:
   selinux.mode: []
   file.replace:
@@ -17,6 +18,7 @@ permissive:
     - repl: 'SELINUX=permissive'
     - append_if_not_found: True
     - show_changes: True
+{% endif %}
 
 pnda-create_pnda_user:
   user.present:
