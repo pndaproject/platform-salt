@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4514: Fix issue on volume state which affects Ubuntu update
 - PNDA-4045: Re-enable logstash multiline plugin for YARN application logs
 - PNDA-4510: Logrotate fixed for /var/log/pnda
+- PNDA-4604: Ensure re-runnability of Knox state
 
 ## [4.0.0] 2018-02-10
 ### Added
