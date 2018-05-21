@@ -24,58 +24,46 @@ jupyterhub-create_config_dir:
     - require:
       - pip: jupyterhub-install
 
-{% if salt.file.file_exists(jupyterhub_config_dir+'/jupyterhub.cert') %}
-{% set old_cert_string = salt.cmd.shell("sed -e '/-----END CERTIFICATE-----/q' "+jupyterhub_config_dir+'/jupyterhub.cert') %}
-{% set old_cn = salt.x509.read_certificate(old_cert_string)['Subject']['CN'] %}
-{% else %}
-{% set old_cn = None %}
-{% endif %}
-
-{% if pillar.jupyter is defined and pillar.jupyter.cert is defined and pillar.jupyter.key is defined %}
-{% set jupyterhub_ssl_cert = jupyterhub_config_dir+'/jupyterhub.cert' %}
+{% if pillar.jupyter is defined and pillar.jupyter.cert is defined and pillar.jupyter.key is defined and pillar.CA is defined and pillar.CA.cert is defined %}
+{% set jupyterhub_ssl_chain = jupyterhub_config_dir+'/jupyterhub.chain' %}
 {% set jupyterhub_ssl_key = jupyterhub_config_dir+'/jupyterhub.key' %}
 
 jupyterhub-create_ssl_cert:
   file.managed:
-    - name: {{ jupyterhub_config_dir }}/jupyterhub.cert
+    - name: {{ jupyterhub_config_dir }}/jupyter.crt
     - contents_pillar: jupyter:cert
+    - user: root
+    - group: pnda
+    - mode: 640
+
+jupyterhub-create_ssl_ca_cert:
+  file.managed:
+    - name: {{ jupyterhub_config_dir }}/ca.crt
+    - contents_pillar: CA:cert
+    - user: root
+    - group: pnda
+    - mode: 640
+
+jupyterhub-create_ssl_chain:
+  file.managed:
+    - name: {{ jupyterhub_ssl_chain }}
+    - source:
+      - {{ jupyterhub_config_dir }}/jupyter.crt
+      - {{ jupyterhub_config_dir }}/ca.crt
     - user: root
     - group: pnda
     - mode: 640
 
 jupyterhub-create_ssl_key:
   file.managed:
-    - name: {{ jupyterhub_config_dir }}/jupyterhub.key
+    - name: {{ jupyterhub_ssl_key }}
     - contents_pillar: jupyter:key
     - user: root
     - group: pnda
     - mode: 640
-
-{% set cert = salt.pillar.get('jupyter:cert') %}
-{% set new_cert_string = salt.cmd.shell("echo '"+ cert +"' | sed -e '/-----END CERTIFICATE-----/q'") %}
-{% set new_cn = salt.x509.read_certificate(new_cert_string)['Subject']['CN'] %}
-
-{% if old_cn != new_cn %}
-jupyterhub-event_cn:
-  event.send:
-    - name: 'fqdn/updated/jupyter'
-    - data:
-      ssl: True
-      old_cn: {{ old_cn }}
-      new_cn: {{ new_cn }}
-      ip_addr: {{ salt.pnda.get_hosts_for_role('jupyter')[0] }}
-{% endif %}
-
 {% else %}
-{% set jupyterhub_ssl_cert = '\'\'' %}
+{% set jupyterhub_ssl_chain = '\'\'' %}
 {% set jupyterhub_ssl_key = '\'\'' %}
-jupyterhub-event_cn:
-  event.send:
-    - name: 'fqdn/updated/jupyter'
-    - data:
-      ssl: False
-      old_cn: {{ old_cn }}
-      new_cn: None
 {% endif %}
 
 jupyterhub-create_configuration:
@@ -85,7 +73,7 @@ jupyterhub-create_configuration:
     - template: jinja
     - context:
       virtual_env_dir: {{ virtual_env_dir }}
-      jupyterhub_ssl_cert: {{ jupyterhub_ssl_cert }}
+      jupyterhub_ssl_cert: {{ jupyterhub_ssl_chain }}
       jupyterhub_ssl_key: {{ jupyterhub_ssl_key }}
     - require:
       - file: jupyterhub-create_config_dir

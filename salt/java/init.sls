@@ -94,3 +94,17 @@ java-jar_alternatives-force-alternative:
     - path: {{ java.java_real_home }}/bin/jar
     - require:
       - alternatives: java-jar_alternatives
+
+java-keytool_alternatives:
+  alternatives.install:
+    - name: keytool
+    - link: /usr/bin/keytool
+    - path: {{ java.java_real_home }}/bin/keytool
+    - priority: 100
+
+java-keytool_alternatives-force-alternative:
+  alternatives.set:
+    - name: keytool
+    - path: {{ java.java_real_home }}/bin/keytool
+    - require:
+      - alternatives: java-keytool_alternatives
