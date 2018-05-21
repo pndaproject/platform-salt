@@ -1,0 +1,44 @@
+[Unit]
+Description=The Hadoop httpfs daemon
+After=network.target network-online.target
+Requires=network.target network-online.target
+
+[Service]
+Type=forking
+User=httpfs
+Group=hadoop
+Restart=on-failure
+WorkingDirectory=-/var/run/hadoop-httpfs
+
+Environment=SERVICE_NAME=httpfs
+Environment=HTTPFS_RUN=/var/run/hadoop-httpfs/httpfs
+Environment=HTTPFS_LOG=/var/log/hadoop-httpfs/httpfs
+Environment=CONF_DIR=/usr/hdp/current/hadoop-httpfs/../hadoop/conf
+
+Environment=HTTPFS_USER=httpfs
+Environment=HTTPFS_CONFIG=/usr/hdp/current/hadoop-httpfs/../hadoop/conf
+Environment=HTTPFS_TEMP=/var/run/hadoop-httpfs/httpfs
+Environment=HTTPFS_SLEEP_TIME=5
+
+Environment=CATALINA_BASE=/etc/hadoop-httpfs/tomcat-deployment
+Environment=CATALINA_PID=/var/run/hadoop-httpfs/httpfs/hadoop-httpfs-httpfs.pid
+Environment=CATALINA_TMPDIR=/var/run/hadoop-httpfs/httpfs
+
+PermissionsStartOnly=true
+
+ExecStartPre=/bin/sh -c 'test -d $HTTPFS_RUN || mkdir -p $HTTPFS_RUN ; chown -R httpfs:hadoop $HTTPFS_RUN; chmod -R 755 $HTTPFS_RUN'
+ExecStartPre=/bin/sh -c 'test -d $HTTPFS_LOG || mkdir -p $HTTPFS_LOG ; chown -R httpfs:hadoop $HTTPFS_LOG; chmod -R 755 $HTTPFS_LOG'
+
+ExecStartPre=/bin/sh -c 'test -d $CATALINA_BASE || mkdir $CATALINA_BASE ; rm -rf $CATALINA_BASE/webapp ; ln -sf /usr/hdp/current/hadoop-httpfs/webapps $CATALINA_BASE ; chown -R httpfs:hadoop $CATALINA_BASE ; chmod -R 755 $CATALINA_BASE'
+
+#Detect JAVA_HOME
+ExecStartPre=/bin/sh -c ' [ -e /etc/profile.d/jdk.sh ] && . /etc/profile.d/jdk.sh; ( [ $JAVA_HOME ] && echo "JAVA_HOME=$JAVA_HOME" || echo "JAVA_HOME=$(dirname $(dirname $(readlink -f  /usr/bin/java)))") > /var/run/hadoop-httpfs/httpfs/%n.env'
+EnvironmentFile=-/var/run/hadoop-httpfs/httpfs/%n.env
+
+ExecStart=/usr/hdp/current/hadoop-httpfs/sbin/httpfs.sh start $SERVICE_NAME httpfs
+ExecStop=/usr/hdp/current/hadoop-httpfs/sbin/httpfs.sh stop $SERVICE_NAME httpfs
+
+PIDFile=/var/run/hadoop-httpfs/httpfs/hadoop-httpfs-httpfs.pid
+
+[Install]
+WantedBy=multi-user.target
