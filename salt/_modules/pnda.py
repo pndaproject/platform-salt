@@ -1,5 +1,7 @@
 import requests
 import socket
+import logging
+log = logging.getLogger(__name__)
 
 def get_fqdn():
     """ Return FQDN based on getaddrinfo or None otherwise (getfqdn not reliable - bugs.python.org/issue5004) """
@@ -129,13 +131,13 @@ def generate_http_link(role, suffix):
         return ''
 
 def generate_external_link(role, suffix):
-    try:
-        cert = __salt__['pillar.get'](role+':cert')
-        cert_string = __salt__['cmd.shell']("echo '"+ cert +"' | sed -e '/-----END CERTIFICATE-----/q'")
-        fqdn = __salt__['x509.read_certificate'](cert_string)['Subject']['CN']
+    cert = __salt__['pillar.get'](role+':cert')
+    fqdn = __salt__['pillar.get'](role+':fqdn')
+    log.info('generate_external_link: cert=%s' % cert)
+    log.info('generate_external_link: fqdn=%s' % fqdn)
+    if cert and fqdn:
         return 'https://%s%s' % (fqdn, suffix)
-    except:
-        return generate_http_link(role, suffix)
+    return generate_http_link(role, suffix)
 
 def cloudera_get_hosts_by_role(service, role_type):
     user = hadoop_manager_username()
