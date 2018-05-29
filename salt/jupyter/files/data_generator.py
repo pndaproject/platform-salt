@@ -17,11 +17,15 @@ from avro.io import DatumWriter
 from argparse import RawTextHelpFormatter
 
 def generate_sample_datasets (host_ips, metric_ids, year, month, day, hour):
-    avro_schema = ''
-    #load data from hdfs
-    cat = subprocess.Popen(['sudo', '-u', 'hdfs', 'hadoop', 'fs', '-cat', '/user/pnda/PNDA_datasets/datasets/.metadata/schema.avsc'], stdout=subprocess.PIPE)
-    for line in cat.stdout:
-        avro_schema = avro_schema + line
+    avro_schema = '''
+            {"namespace": "pnda.entity",
+             "type": "record",
+             "name": "event",
+             "fields": [
+                {"name": "timestamp", "type": "long"},
+                {"name": "source",    "type": "string"},
+                {"name": "rawdata",   "type": "bytes"}
+            ]}'''
     schema = avro.schema.parse(avro_schema)
     bytes_writer = io.BytesIO()
     encoder = avro.io.BinaryEncoder(bytes_writer)
@@ -30,9 +34,7 @@ def generate_sample_datasets (host_ips, metric_ids, year, month, day, hour):
     filename = str(uuid.uuid4()) + '.avro'
     filepath = dir + filename
     tmp_file = '/tmp/' + filename
-    
     writer = DataFileWriter(open(tmp_file, "w"), DatumWriter(), schema)
-    
     start_dt = datetime.datetime(year, month, day, hour, 0, 0) 
     start_ts = int(time.mktime(start_dt.timetuple()))
     end_dt = start_dt.replace(hour=hour+1)
@@ -43,27 +45,23 @@ def generate_sample_datasets (host_ips, metric_ids, year, month, day, hour):
         for host_ip in host_ips:
            record = {}
            record['timestamp'] = (ts * 1000)
-           record['src'] = 'test'
-           record['host_ip'] = host_ip
-           record['rawdata'] = generate_random_metrics(metric_ids)
+           record['source'] = 'samples'
+           record['rawdata'] = generate_random_metrics(host_ip, metric_ids)
            #encode avro
            writer.append(record)
     writer.close()
-    subprocess.Popen(['sudo', '-u', 'hdfs', 'hadoop', 'fs', '-copyFromLocal', tmp_file, dir])
+    subprocess.Popen(['hadoop', 'fs', '-copyFromLocal', tmp_file, dir])
     return filepath
 
-def generate_random_metrics (metric_ids):
-    '''
-        generate random raw_data elementTon
-    '''
-    raw_data = {}
+def generate_random_metrics (host_ip, metric_ids):
+    raw_data = {'host': host_ip}
     for id in metric_ids:
         raw_data[id] = str(randint(0, 100))
     return json.dumps(raw_data).encode('utf-8')
 
 def create_hdfs_dirs (year, month, day, hour):
-    dir = "/user/pnda/PNDA_datasets/datasets/source=test/year=%0d/month=%02d/day=%02d/hour=%02d/" % (year, month, day, hour)
-    subprocess.Popen(['sudo', '-u', 'hdfs', 'hadoop', 'fs', '-mkdir', '-p', dir])
+    dir = "/user/pnda/PNDA_datasets/datasets/source=samples/year=%0d/month=%02d/day=%02d/hour=%02d/" % (year, month, day, hour)
+    subprocess.Popen(['hadoop', 'fs', '-mkdir', '-p', dir])
     return dir    
 
 def get_args():
