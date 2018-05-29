@@ -15,6 +15,7 @@
 {% set conf_directory = knox_home_directory + '/conf' %}
 {% set knox_log_directory = '/var/log/pnda/knox' %}
 {% set knox_deployment_dir = knox_home_directory + '/data/deployments/' %}
+{% set gateway = knox_home_directory + '/data/security/keystores/gateway.jks' %}
 
 include:
   - java
@@ -158,6 +159,59 @@ knox-set-configuration:
       pnda_domain: {{ pnda_domain }}
     - require:
       - cmd: knox-init-authentication
+
+{% if pillar['knox'] is defined and pillar['knox']['cert'] is defined and pillar['knox']['key'] is defined and pillar['CA'] is defined and pillar['CA']['cert'] is defined %}
+
+knox-create_ssl_cert:
+  file.managed:
+    - name: {{ conf_directory }}/knox.crt
+    - contents_pillar: knox:cert
+    - user: knox
+    - group: knox
+    - mode: 640
+
+knox-create_ssl_key:
+  file.managed:
+    - name: {{ conf_directory }}/knox.key
+    - contents_pillar: knox:key
+    - user: knox
+    - group: knox
+    - mode: 640
+
+knox-create_ssl_ca_cert:
+  file.managed:
+    - name: {{ conf_directory }}/CA.crt
+    - contents_pillar: CA:cert
+    - user: knox
+    - group: knox
+    - mode: 640
+
+knox-export_pkcs12:
+  cmd.run:
+    - name: openssl pkcs12 -export -in {{ conf_directory }}/knox.crt -inkey {{ conf_directory }}/knox.key -passout pass:{{ knox_master_secret }} > {{ conf_directory }}/server.p12
+    - runas: knox
+knox-import_pkcs12:
+  cmd.run:
+    - name: keytool -importkeystore -srcstorepass {{ knox_master_secret }} -deststorepass {{ knox_master_secret }} -srckeystore {{ conf_directory }}/server.p12 -destkeystore {{ gateway }} -srcstoretype pkcs12
+    - runas: knox
+knox-unset_alias:
+  cmd.run:
+    - name: keytool -delete -alias "gateway-identity" -keystore {{ gateway }} -storepass {{ knox_master_secret }} || true
+    - runas: knox
+knox-set_alias:
+  cmd.run:
+    - name: keytool -changealias -alias "1" -destalias "gateway-identity" -keystore {{ gateway }} -storepass {{ knox_master_secret }}
+    - runas: knox
+knox-delete_CA:
+  cmd.run:
+    - name: keytool -noprompt -keystore {{ gateway }} -storepass {{ knox_master_secret }} -alias pnda-CA -delete || true
+    - runas: knox
+knox-import_CA:
+  cmd.run:
+    - name: keytool -noprompt -keystore {{ gateway }} -storepass {{ knox_master_secret }} -alias pnda-CA -import -file {{ conf_directory }}/CA.crt
+    - runas: knox
+
+{% endif %}
 
 {% set knox_dm_dir = knox_home_directory + '/data/services/pnda-deployment-manager/1.0.0/' %}
 
