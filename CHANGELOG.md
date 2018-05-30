@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4553: Remove experimental flag on PNDARegistryBasedConverter and add default topic config
 - PNDA-4537: Graphite metrics retention set per-flavor
 - PNDA-4503: Change jupyter data generation for using user permissions
+- PNDA-4560: Remove admin_user setting from deployment-manager config
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
