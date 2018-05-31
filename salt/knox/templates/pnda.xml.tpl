@@ -46,38 +46,18 @@
     </gateway>
 
     <service>
-        <role>NAMENODE</role>
-        <url>hdfs://{{ namenode_host }}:8020</url>
-    </service>
-
-    <service>
-        <role>JOBTRACKER</role>
-        <url>rpc://{{ namenode_host }}:8050</url>
-    </service>
-
-    <service>
         <role>WEBHDFS</role>
-        <url>http://{{ namenode_host }}:50070/webhdfs</url>
-    </service>
-
-    <service>
-        <role>OOZIE</role>
-        <url>http://{{ oozie_node }}:11000/oozie</url>
+        <url>http://{{ webhdfs_host }}:14000/webhdfs</url>
     </service>
 
     <service>
         <role>WEBHBASE</role>
-        <url>http://{{ namenode_host }}:8080</url>
+        <url>http://{{ hbase_rest_host }}:20550</url>
     </service>
 
     <service>
         <role>HIVE</role>
-        <url>http://{{ hive_node }}:10001/cliservice</url>
-    </service>
-
-    <service>
-        <role>RESOURCEMANAGER</role>
-        <url>http://{{ namenode_host }}:8088/ws</url>
+        <url>http://{{ hive_host }}:10001/cliservice</url>
     </service>
 
     <service>
@@ -88,6 +68,16 @@
     <service>
         <role>pnda-package-repository</role>
         <url>http://package-repository-internal.service.{{ pnda_domain }}:8888</url>
+    </service>
+
+    <service>
+        <role>YARN</role>
+        <url>http://{{ yarn_rm_host }}:8088</url>
+    </service>
+
+    <service>
+        <role>YARNUI</role>
+        <url>http://{{ yarn_rm_host }}:8088</url>
     </service>
 
 </topology>

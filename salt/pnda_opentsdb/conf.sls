@@ -8,7 +8,7 @@
 {% endif %}
 
 {% set hadoop_zk = [] %}
-{% for ip in salt['pnda.get_hosts_by_role'](zk_service, zk_role) %}
+{% for ip in salt['pnda.get_hosts_by_hadoop_role'](zk_service, zk_role) %}
 {% do hadoop_zk.append(ip+':2181') %}
 {% endfor %}
 

@@ -70,7 +70,7 @@ def hadoop_namenode():
         if name_service:
             namenode_host = name_service
         else:
-            namenode_host = cloudera_get_hosts_by_role('hdfs01', 'NAMENODE')[0]
+            namenode_host = cloudera_get_hosts_by_hadoop_role('hdfs01', 'NAMENODE')[0]
         return 'hdfs://%s:8020' % namenode_host
     else:
         return get_namenode_from_ambari()
@@ -123,6 +123,14 @@ def get_hosts_for_role(role):
     result = [host_name for host_name in result]
     return result if len(result) > 0 else None
 
+def get_hosts_by_hadoop_node(role):
+    """Returns ip addresses of minions having a specific role"""
+    query = "G@pnda_cluster:{} and G@hadoop:role:{}".format(cluster_name(), role)
+    result = __salt__['mine.get'](query, 'network.ip_addrs', 'compound').keys()
+    # Add on the domain set in the pillar
+    result = [host_name for host_name in result]
+    return result if len(result) > 0 else None
+
 def generate_http_link(role, suffix):
     nodes = get_hosts_for_role(role)
     if nodes is not None and len(nodes) > 0:
@@ -139,7 +147,7 @@ def generate_external_link(role, suffix):
         return 'https://%s%s' % (fqdn, suffix)
     return generate_http_link(role, suffix)
 
-def cloudera_get_hosts_by_role(service, role_type):
+def cloudera_get_hosts_by_hadoop_role(service, role_type):
     user = hadoop_manager_username()
     password = hadoop_manager_password()
     endpoint = hadoop_manager_ip() + ':7180'
@@ -164,14 +172,14 @@ def cloudera_get_hosts_by_role(service, role_type):
 
     return hosts_ips
 
-def ambari_get_hosts_by_role(service, role_type):
+def ambari_get_hosts_by_hadoop_role(service, role_type):
     return [socket.getfqdn(host['HostRoles']['host_name']) for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
 
-def get_hosts_by_role(service, role_type):
+def get_hosts_by_hadoop_role(service, role_type):
     if hadoop_distro() == 'CDH':
-        return cloudera_get_hosts_by_role(service, role_type)
+        return cloudera_get_hosts_by_hadoop_role(service, role_type)
     else:
-        return ambari_get_hosts_by_role(service, role_type)
+        return ambari_get_hosts_by_hadoop_role(service, role_type)
 
 def cloudera_get_service_status(service):
     user = hadoop_manager_username()

@@ -5,9 +5,11 @@
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
-{% set namenode_host = salt['pnda.get_hosts_by_role']('HDFS', 'NAMENODE')[0] %}
-{% set oozie_node = salt['pnda.get_hosts_by_role']('OOZIE', 'OOZIE_SERVER')[0] %}
-{% set hive_node = salt['pnda.get_hosts_by_role']('HIVE', 'HIVE_SERVER')[0] %}
+{% set namenode_host = salt['pnda.get_hosts_by_hadoop_role']('HDFS', 'NAMENODE')[0] %}
+{% set hive_host = salt['pnda.get_hosts_by_hadoop_role']('HIVE', 'HIVE_SERVER')[0] %}
+{% set webhdfs_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
+{% set hbase_rest_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
+{% set yarn_rm_host = salt['pnda.get_hosts_by_hadoop_role']('YARN', 'RESOURCEMANAGER')[0] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 {% set knox_home_directory = release_directory + '/knox' %}
@@ -154,8 +156,10 @@ knox-set-configuration:
     - context:
       knox_authentication: {{ knox_authentication }}
       namenode_host: {{ namenode_host }}
-      oozie_node: {{ oozie_node }}
-      hive_node: {{ hive_node }}
+      webhdfs_host: {{ webhdfs_host }}
+      hbase_rest_host: {{ hbase_rest_host }} 
+      yarn_rm_host: {{ yarn_rm_host }}
+      hive_host: {{ hive_host }}
       pnda_domain: {{ pnda_domain }}
     - require:
       - cmd: knox-init-authentication
