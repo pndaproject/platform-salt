@@ -85,4 +85,9 @@
         <url>http://deployment-manager-internal.service.{{ pnda_domain }}:5000</url>
     </service>
 
+    <service>
+        <role>pnda-package-repository</role>
+        <url>http://package-repository-internal.service.{{ pnda_domain }}:8888</url>
+    </service>
+
 </topology>

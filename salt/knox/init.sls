@@ -213,28 +213,35 @@ knox-import_CA:
 
 {% endif %}
 
-{% set knox_dm_dir = knox_home_directory + '/data/services/pnda-deployment-manager/1.0.0/' %}
 
-knox-dm_dir:
+{% set knox_proxy_services = {
+  'dm': knox_home_directory + '/data/services/pnda-deployment-manager/1.0.0/',
+  'pr': knox_home_directory + '/data/services/pnda-package-repository/1.0.0/'
+  } %}
+
+{% for service_name in knox_proxy_services %}
+{% set knox_service_dir = knox_proxy_services[service_name] %}
+knox-service_dir_{{ service_name }}:
   file.directory:
-    - name: {{ knox_dm_dir }}
+    - name: {{ knox_service_dir }}
     - makedirs: True
     - require:
       - file: knox-link_release
 
-knox-dm_service:
+knox-service_service_{{ service_name }}:
   file.managed:
-    - name: {{ knox_dm_dir }}/service.xml
-    - source: salt://knox/files/dm_service.xml
+    - name: {{ knox_service_dir }}/service.xml
+    - source: salt://knox/files/{{ service_name }}_service.xml
     - require:
-      - file: knox-dm_dir
+      - file: knox-service_dir_{{ service_name }}
 
-knox-dm_rewrite:
+knox-service_rewrite_{{ service_name }}:
   file.managed:
-    - name: {{ knox_dm_dir }}/rewrite.xml
-    - source: salt://knox/files/dm_rewrite.xml
+    - name: {{ knox_service_dir }}/rewrite.xml
+    - source: salt://knox/files/{{ service_name }}_rewrite.xml
     - require:
-      - file: knox-dm_dir
+      - file: knox-service_dir_{{ service_name }}
+{% endfor %}
 
 knox-service-script:
   file.managed:
@@ -258,5 +265,8 @@ knox-start_service:
     - name: 'service knox stop || echo already stopped; service knox start'
     - require:
       - cmd: knox-init-authentication
-      - file: knox-dm_service
-      - file: knox-dm_rewrite
+{% for service_name in knox_proxy_services %}
+      - file: knox-service_service_{{ service_name }}
+      - file: knox-service_rewrite_{{ service_name }}
+{% endfor %}
+
