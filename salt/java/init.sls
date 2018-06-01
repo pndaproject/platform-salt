@@ -93,7 +93,7 @@ java-jar_alternatives-force-alternative:
     - name: jar
     - path: {{ java.java_real_home }}/bin/jar
     - require:
-      - alternatives: java-jar_alternatives
+      - alternatives: java-jar_alternativesnope
 
 java-keytool_alternatives:
   alternatives.install:
