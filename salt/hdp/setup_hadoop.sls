@@ -1,4 +1,5 @@
 {% set flavor_cfg = pillar['pnda_flavor']['states'][sls] %}
+{% set data_volumes_count = pillar['datanode']['data_volume_count'] %}
 
 {% set pnda_home = pillar['pnda']['homedir'] %}
 {% set app_packages_dir = pnda_home + "/app-packages" %}
@@ -21,8 +22,8 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 
 {%- set data_volume_list = [] %}
-{%- for n in range(flavor_cfg.data_volumes_count) -%}
-  {%- if flavor_cfg.data_volumes_count > 10 and n < 10 -%}
+{%- for n in range(data_volumes_count) -%}
+  {%- if data_volumes_count > 10 and n < 10 -%}
     {%- set prefix = '/data0' -%}
   {%- else -%}
     {%- set prefix = '/data' -%}
