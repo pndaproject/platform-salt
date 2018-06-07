@@ -153,6 +153,18 @@ ambari-server-setup_mysql:
   cmd.run:
     - name: 'ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar; ambari-server setup --jdbc-db=bdb --jdbc-driver=/opt/pnda/jdbc-driver/{{ jdbc_package }}'
 
+ambari-server-pid-dir_permission_service_script:
+  file.managed:
+    - name: /etc/init.d/ambari-server-permission
+    - source: salt://ambari/files/ambari-server-permission
+    - mode: 755
+
+ambari-server-pid-dir_permission_service_add:
+  cmd.run:
+    - name: |
+        chkconfig --add  ambari-server-permission
+        chkconfig --level 2345 ambari-server-permission on
+
 ambari-server-start_service:
   cmd.run:
     - name: 'service ambari-server stop || echo already stopped; service ambari-server start'
