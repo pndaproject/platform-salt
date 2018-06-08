@@ -384,7 +384,8 @@ BLUEPRINT = r'''{
                     "javax.jdo.option.ConnectionDriverName" : "com.mysql.jdbc.Driver",
                     "javax.jdo.option.ConnectionPassword" : "hive",
                     "javax.jdo.option.ConnectionURL" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-4%(domain_name)s/hive?createDatabaseIfNotExist=true",
-                    "javax.jdo.option.ConnectionUserName" : "hive"
+                    "javax.jdo.option.ConnectionUserName" : "hive",
+                    "hive.server2.transport.mode": "http"
                 }
             }
         },
