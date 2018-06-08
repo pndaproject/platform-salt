@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4559: Add deployment-manager to knox topology
 - PNDA-4588: Enable TLS on Knox if certificate is supplied
 - PNDA-4563: Proxy package repository service via knox
+- PNDA-4583: Configure knox to proxy hadoop services
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
