@@ -112,7 +112,8 @@ cloudera:
 
 hdp:
   hadoop_version: "2.7.3.2.6.4.0-91"
-
+  version: "2.6.4.0-91"
+  
 hadoop_manager:
   cmdb:
     user: scm
