@@ -1,7 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [4.0.1] 2018-06-11
+### Fixed
+- PNDA-4443: Fix infinite loop in the wrapper for centos
 
 ## [4.0.0] 2018-02-10
 ### Added
