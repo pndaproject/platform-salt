@@ -1,47 +1,39 @@
 <topology>
     <gateway>
-{% if knox_authentication == 'internal' %}
+{% if knox_authentication == 'pam' %}
         <provider>
-            <role>authentication</role>
-                <name>ShiroProvider</name>
-                <enabled>true</enabled>
-                <param>
-                    <name>sessionTimeout</name>
-                    <value>30</value>
-                </param>
-                <param>
-                    <name>main.ldapRealm</name>
-                    <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>
-                </param>
-                <param>
-                    <name>main.ldapRealm.userDnTemplate</name>
-                    <value>uid={0},ou=people,dc=hadoop,dc=apache,dc=org</value>
-                </param>
-                <param>
-                    <name>main.ldapRealm.contextFactory.url</name>
-                    <value>ldap://localhost:33389</value>
-                </param>
-                <param>
-                    <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
-                    <value>simple</value>
-                </param>
-                <param>
-                    <name>urls./**</name>
-                    <value>authcBasic</value>
-                </param>
-            </provider>
+            <role>authentication</role> 
+            <name>ShiroProvider</name> 
+            <enabled>true</enabled> 
+            <param> 
+                <name>sessionTimeout</name> 
+                <value>30</value>
+            </param>                                              
+            <param>
+                <name>main.pamRealm</name> 
+                <value>org.apache.hadoop.gateway.shirorealm.KnoxPamRealm</value>
+            </param> 
+            <param>                                                    
+               <name>main.pamRealm.service</name> 
+               <value>login</value> 
+            </param>
+            <param>                                                    
+               <name>urls./**</name> 
+               <value>authcBasic</value> 
+            </param>
+        </provider>
 
-            <provider>
-                <role>identity-assertion</role>
-                <name>Default</name>
-                <enabled>true</enabled>
-            </provider>
+        <provider>
+            <role>identity-assertion</role>
+            <name>Default</name>
+            <enabled>true</enabled>
+        </provider>
 
-            <provider>
-                <role>authorization</role>
-                <name>AclsAuthz</name>
-                <enabled>true</enabled>
-            </provider>
+        <provider>
+            <role>authorization</role>
+            <name>AclsAuthz</name>
+            <enabled>true</enabled>
+        </provider>
 {% endif %}
     </gateway>
 

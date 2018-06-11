@@ -128,5 +128,5 @@ nodejs:
 
 knox:
   release_version: "1.0.0"
-  authentication: "internal"
+  authentication: "pam"
   master_secret: "secret"
