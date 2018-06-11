@@ -1,18 +1,7 @@
 #!/usr/bin/env bash
 
 # Find which script to call
-CALLER_DIR="$(cd "`dirname "$0"`"; pwd)"
 CLI=`basename "$0"`
-if [ "$CALLER_DIR" == "/usr/bin" ] || [ "$CALLER_DIR" == "/bin" ] || [ "$CALLER_DIR" == "{{ resource_manager_path }}" ]; then
-  # The wrapper (or master alternative) is the caller, so we can now call the original script.
-  EXECUTABLE="$(update-alternatives --display "$CLI" | egrep -v '^/bin' | egrep -v '^/usr/bin' | egrep -v '^{{ resource_manager_path }}' | egrep -o ^/.*"$CLI" | head -n 1)"
-  if [ "X$EXECUTABLE" == "X" ]; then
-    echo "There is no alternative for $CLI"
-    exit 1
-  fi
-else
-  EXECUTABLE="/usr/bin/$CLI"
-fi
 
 if [ $CLI == "hive" ] || [ $CLI == "beeline" ]; then
 #--hiveconf tez.queue.name=dev
@@ -74,5 +63,9 @@ set -- "${KEEP[@]}"
 
 # Call the script with all the arguments.
 [[ "X$WRAPPED_SPARK_HOME" != 'X' ]] && export SPARK_HOME=$WRAPPED_SPARK_HOME
-echo "Executing: $EXECUTABLE $@"
-exec "$EXECUTABLE" "$@"
+REM={{ resource_manager_path }}/bin
+REM=${REM//\//\\/}
+PATH=${PATH/$REM:/}
+echo "Setting PATH=$PATH"
+echo "Executing: $CLI $@"
+exec "$CLI" "$@"

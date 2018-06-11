@@ -5,7 +5,7 @@
 {% set app_packages_home = pnda_home_directory + '/app-packages' %}
 {% set jupyter_extension_venv = pnda_home_directory + '/jupyter-extensions' %}
 {% set pnda_user  = pillar['pnda']['user'] %}
-{% set wrapper_spark_home = '/usr/' %}
+{% set wrapper_spark_home = pillar['resource_manager']['path'] %}
 {% set features = salt['pillar.get']('features', []) %}
 {% if grains['hadoop.distro'] == 'HDP' %}
 {% set anaconda_home = '/opt/pnda/anaconda' %}

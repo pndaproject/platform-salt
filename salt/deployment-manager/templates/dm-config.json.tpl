@@ -49,6 +49,9 @@
 
 {% set policy_file_link = pillar['resource_manager']['path'] + pillar['resource_manager']['policy_file'] %}
 
+{% set resource_manager_path = pillar['resource_manager']['path'] %}
+
+
 {
     "environment": {
         "hadoop_distro":"{{ hadoop_distro }}",
@@ -66,7 +69,8 @@
         "jupyter_host": "{{ jupyter_host }}",
         "jupyter_notebook_directory": "jupyter_notebooks",
         "app_packages_hdfs_path":"{{ app_packages_hdfs_path }}",
-        "queue_policy": "{{ policy_file_link }}"
+        "queue_policy": "{{ policy_file_link }}",
+        "spark_submit": "{{ resource_manager_path }}/bin/spark-submit"
     },
     "config": {
         "stage_root": "stage",
