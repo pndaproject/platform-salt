@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [4.0.1] 2018-06-11
 ### Fixed
 - PNDA-4443: Fix infinite loop in the wrapper for centos
+- PNDA-4511: Refactor the yarn client cli wrappers to manipulate the PATH env
 
 ## [4.0.0] 2018-02-10
 ### Added
