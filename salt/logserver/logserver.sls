@@ -47,6 +47,12 @@ logserver-copy_logrotate:
     - name: /etc/logrotate.d/pnda
     - source: salt://logserver/logserver_files/logrotate.conf
 
+logserver-copy_compress_logs_script:
+  file.managed:
+    - name: /opt/pnda/utils/compress_yarn_logs.sh
+    - source: salt://logserver/logserver_templates/compress_yarn_logs.sh.tpl
+    - mode: 755
+
 logserver-update-crontab:
   cron.present:
     - identifier: LOGROTATE
@@ -63,10 +69,10 @@ logserver-add_crontab_entry1:
 
 logserver-add_crontab_entry2:
   cron.present:
-    - identifier: DELETE-YARN-APP-ZERO
-    - name: /usr/bin/find /var/log/pnda -name 'yarn-application*' -type f -size 0 -delete
+    - identifier: COMPRESS-YARN-APP-LOGS
+    - name: /usr/bin/sh /opt/pnda/utils/compress_yarn_logs.sh
     - user: root
-    - minute: 15
+    - minute: '*/5'
 
 logserver-add_crontab_entry3:
   cron.present:
