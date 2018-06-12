@@ -104,30 +104,6 @@ knox-logsh-configuration_{{ sh_file }}:
       - file: knox-create_log_folder
 {% endfor %}
 
-{% if knox_authentication == 'internal' %}
-knox-embedded-ldap-service-script:
-  file.managed:
-    - name: /usr/lib/systemd/system/knoxldap.service
-    - source: salt://{{ sls }}/templates/knox.service.tpl
-    - mode: 0644
-    - template: jinja
-    - context:
-        knox_bin_dir: {{ bin_directory }}
-        user: knox
-        group: knox
-        service: ldap
-        service_name: "Knox Embedded LDAP"
-
-knox-embedded-ldap-systemctl_reload:
-  cmd.run:
-    - name: /bin/systemctl daemon-reload; /bin/systemctl enable knoxldap
-
-knox-embedded-ldap-start_service:
-  cmd.run:
-    - name: 'service knoxldap stop || echo already stopped; service knoxldap start'
-
-{% endif %}
-
 knox-master-secret-script:
   file.managed:
     - name: {{ bin_directory }}/create-secret.sh
@@ -163,6 +139,17 @@ knox-set-configuration:
       pnda_domain: {{ pnda_domain }}
     - require:
       - cmd: knox-init-authentication
+
+{% if knox_authentication == 'pam' %}
+
+knox-enable_pam_login:
+  file.managed:
+    - name: /etc/shadow
+    - group: knox
+    - mode: 040
+
+{% endif %}
+
 
 {% if pillar['knox'] is defined and pillar['knox']['cert'] is defined and pillar['knox']['key'] is defined and pillar['CA'] is defined and pillar['CA']['cert'] is defined %}
 
