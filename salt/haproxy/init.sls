@@ -60,6 +60,22 @@ haproxy-create_empty_stats_file:
   cmd.run:
     - name: 'touch {{ haproxy_lib_dir }}/stats'
 
+{% set bind_options = '' %}
+{% if pillar.haproxy is defined and pillar.haproxy.cert is defined and pillar.haproxy.key is defined and pillar.CA is defined and pillar.CA.cert is defined %}
+{% set haproxy_tls_concat = haproxy_config_dir + '/haproxy.chain.pem' %}
+haproxy-create_tls_join:
+  file.managed:
+    - name: {{ haproxy_tls_concat }}
+    - user: haproxy
+    - group: haproxy
+    - mode: 600
+    - contents: |
+        {{ pillar['haproxy']['cert']|indent(8) }}
+        {{ pillar['haproxy']['key']|indent(8) }}
+        {{ pillar['CA']['cert']|indent(8) }}
+{% set bind_options = 'ssl crt ' + haproxy_tls_concat %}
+{% endif %}
+
 # create configuration using template
 haproxy-create_config:
   file.managed:
@@ -70,6 +86,7 @@ haproxy-create_config:
         grafana_server_node: {{ grafana_server_node }}
         jupyter_server_node: {{ jupyter_server_node }}
         pnda_domain: {{ pnda_domain }}
+        bind_options: {{ bind_options }}
 
 # create softlink to haproxy manual
 haproxy-install_man:

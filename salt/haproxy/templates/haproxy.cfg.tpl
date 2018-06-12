@@ -17,13 +17,12 @@ defaults
    timeout server 50000
 
 frontend http_front
-   bind *:8444
-   stats uri /haproxy?stats
+   bind *:8444 {{ bind_options }}
 
-   use_backend http_grafana if { path /grafana } or { path_beg /grafana/ }
+   use_backend grafana if { path /grafana } or { path_beg /grafana/ }
    use_backend jupyter if { path /jupyter } or { path_beg /jupyter/ }
 
-backend http_grafana
+backend grafana
    http-request set-path %[path,regsub(^/grafana/?,/)]
    server {{ grafana_server_node }} grafana-internal.service.{{ pnda_domain }}:3000
 
