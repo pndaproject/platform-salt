@@ -15,7 +15,7 @@ pnda-create_{{ user }}_user:
   user.present:
     - name: {{ user }}
     - password: {{ password }}
-    - createhome: True
+    - createhome: False
     - gid: {{ group }}
     - groups:
       - {{ pnda_group }}

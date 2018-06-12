@@ -94,3 +94,11 @@
   'roles:deployment_manager':
     - match: grain
     - deployment-manager.generate_keys
+
+  'roles:knox':
+    - match: grain
+    - login
+
+  'roles:jupyter':
+    - match: grain
+    - login
