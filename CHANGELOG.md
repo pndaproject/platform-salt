@@ -38,6 +38,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4386: Add option for services to register their own DNS entry
 - PNDA-4075: Load the number of disks to use for hadoop datanodes from env-parameters.sls instead of being fixed per flavour
 - PNDA-4673: Use HTTP transport instead of TCP transport for PyHive and use JDBC to query Hive because PyHive does not support HTTP transport
+- PNDA-4693: Alter Knox to use PAM rather than LDAP
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
