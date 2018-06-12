@@ -53,6 +53,16 @@
     </service>
 
     <service>
+        <role>YARN</role>
+        <url>http://{{ yarn_rm_host }}:8088</url>
+    </service>
+
+    <service>
+        <role>YARNUI</role>
+        <url>http://{{ yarn_rm_host }}:8088</url>
+    </service>
+    
+    <service>
         <role>pnda-deployment-manager</role>
         <url>http://deployment-manager-internal.service.{{ pnda_domain }}:5000</url>
     </service>
@@ -63,13 +73,8 @@
     </service>
 
     <service>
-        <role>YARN</role>
-        <url>http://{{ yarn_rm_host }}:8088</url>
-    </service>
-
-    <service>
-        <role>YARNUI</role>
-        <url>http://{{ yarn_rm_host }}:8088</url>
+        <role>opentsdb</role>
+        <url>http://opentsdb-internal.service.{{ pnda_domain }}:{{ opentsdb_port }}</url>
     </service>
 
 </topology>

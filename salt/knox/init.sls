@@ -18,6 +18,8 @@
 {% set knox_log_directory = '/var/log/pnda/knox' %}
 {% set knox_deployment_dir = knox_home_directory + '/data/deployments/' %}
 {% set gateway = knox_home_directory + '/data/security/keystores/gateway.jks' %}
+{% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
+{% set opentsdb_version = pillar['opentsdb']['version'] %}
 
 include:
   - java
@@ -137,6 +139,7 @@ knox-set-configuration:
       yarn_rm_host: {{ yarn_rm_host }}
       hive_host: {{ hive_host }}
       pnda_domain: {{ pnda_domain }}
+      opentsdb_port: {{ opentsdb_port }}
     - require:
       - cmd: knox-init-authentication
 
@@ -206,12 +209,13 @@ knox-import_CA:
 
 
 {% set knox_proxy_services = {
-  'dm': knox_home_directory + '/data/services/pnda-deployment-manager/1.0.0/',
-  'pr': knox_home_directory + '/data/services/pnda-package-repository/1.0.0/'
+  'dm': 'pnda-deployment-manager/1.0.0/',
+  'pr':  'pnda-package-repository/1.0.0/',
+  'tsdb': 'opentsdb/' + opentsdb_version + '/'
   } %}
 
 {% for service_name in knox_proxy_services %}
-{% set knox_service_dir = knox_proxy_services[service_name] %}
+{% set knox_service_dir = knox_home_directory + '/data/services/' + knox_proxy_services[service_name] %}
 knox-service_dir_{{ service_name }}:
   file.directory:
     - name: {{ knox_service_dir }}
