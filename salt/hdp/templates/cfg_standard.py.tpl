@@ -763,6 +763,9 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "SPARK2_CLIENT"
+                },
+                {
+                "name" : "HIVE_CLIENT"
                 }
             ],
             "cardinality" : "1"
