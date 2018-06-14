@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4588: Enable TLS on Knox if certificate is supplied
 - PNDA-4563: Proxy package repository service via knox
 - PNDA-4583: Configure knox to proxy hadoop services
+- PNDA-4585: Proxy opentsdb query api through knox
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
