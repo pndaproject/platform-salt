@@ -11,7 +11,7 @@
 {% set console_port = '3001' %}
 {% set zookeeper_port = '2181' %}
 {% set dm_port = '5000' %}
-{% set opentsdb_port = '4242' %}
+{% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
 {% set flink_history_server_port = '8082' %}
 
 {% set pnda_cluster = salt['pnda.cluster_name']() %}
@@ -28,7 +28,7 @@
 
 {%- set opentsdb_hosts = [] -%}
 {%- for ip in salt['pnda.opentsdb_hosts']() -%}
-{%- do opentsdb_hosts.append(ip + ':' + opentsdb_port) -%}
+{%- do opentsdb_hosts.append(ip + ':' + opentsdb_port|string) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}

@@ -14,7 +14,7 @@
 
 {% set km_port = salt['pillar.get']('kafkamanager:bind_port', 10900) %}
 
-{%- set opentsdb_port = salt['pillar.get']('opentsdb:bind_port', 4242) -%}
+{%- set opentsdb_port = pillar['opentsdb']['bind_port'] -%}
 {%- set opentsdb_nodes = salt['pnda.get_hosts_for_role']('opentsdb') -%}
 {%- set opentsdb_host = '' -%}
 {%- if opentsdb_nodes is not none and opentsdb_nodes|length > 0 -%}

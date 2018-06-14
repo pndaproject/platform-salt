@@ -14,6 +14,7 @@
 {% set data_manager_host = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
+{% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
 
 # edge node IP
 {% set edge_nodes = salt['pnda.get_hosts_for_role']('hadoop_edge') %}
@@ -32,7 +33,7 @@
 # Set links
 {% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager', cm_port) %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
-{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':4242') %}
+{% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':' + opentsdb_port|string) %}
 {% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
 {% set jupyter_link = salt['pnda.generate_external_link']('jupyter',':8000') %}
