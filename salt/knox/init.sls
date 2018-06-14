@@ -144,6 +144,11 @@ knox-set-configuration:
     - require:
       - cmd: knox-init-authentication
 
+knox-configure-gateway-site:
+  file.managed:
+    - name: {{ conf_directory }}/gateway-site.xml
+    - source: salt://knox/files/gateway-site.xml
+
 knox-enable_pam_login:
   file.managed:
     - name: /etc/shadow
@@ -207,7 +212,8 @@ knox-import_CA:
 {% set knox_proxy_services = {
   'dm': 'pnda-deployment-manager/1.0.0/',
   'pr':  'pnda-package-repository/1.0.0/',
-  'tsdb': 'opentsdb/' + opentsdb_version + '/'
+  'tsdb': 'opentsdb/' + opentsdb_version + '/',
+  'console': 'pnda-console/1.0.0'
   } %}
 
 {% for service_name in knox_proxy_services %}

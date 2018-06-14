@@ -1,0 +1,73 @@
+<rules>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/rootnoslash" pattern="*://*:*/**/console">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/"/>
+    </rule>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/root" pattern="*://*:*/**/console/">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/"/>
+    </rule>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/socket" pattern="*://*:*/**/console/updates/socket.io/?{**}">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/updates/socket.io/?{**}"/>
+    </rule>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/pathquery" pattern="*://*:*/**/console/{**}?{**}">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/{**}?{**}"/>
+    </rule>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/path" pattern="*://*:*/**/console/{**}">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/{**}"/>
+    </rule>
+    <rule dir="IN" name="PNDACONSOLE/console/inbound/metrics" pattern="*://*:*/**/console/api/dm/metrics/?{**}">
+        <rewrite template="{$serviceUrl[PNDACONSOLE]}/api/dm/metrics/?{**}"/>
+    </rule>
+
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/css" pattern="/css/{**}">
+        <rewrite template="{$frontend[path]}/console/css/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/js" pattern="/js/{**}">
+        <rewrite template="{$frontend[path]}/console/js/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/nodemodules" pattern="/node_modules/{**}">
+        <rewrite template="{$frontend[path]}/console/node_modules/{**}"/>
+    </rule>
+
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/help">
+        <match pattern="help/{**}"/>
+        <rewrite template="{$frontend[path]}/console/help/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/partials">
+        <match pattern="partials/{**}"/>
+        <rewrite template="{$frontend[path]}/console/partials/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/config">
+        <match pattern="conf/{**}"/>
+        <rewrite template="{$frontend[path]}/console/conf/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/pam">
+        <match pattern="pam/{**}"/>
+        <rewrite template="{$frontend[path]}/console/pam/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/metrics">
+        <rewrite template="{$frontend[path]}/console/api/dm/metrics/:metricId?values=y"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/api">
+        <match pattern="api/dm/{**}"/>
+        <rewrite template="{$frontend[path]}/console/api/dm/{**}"/>
+    </rule>
+    <rule dir="OUT" name="PNDACONSOLE/console/outbound/socket">
+        <rewrite template="{$frontend[path]}/console/updates/socket.io"/>
+    </rule>
+
+    <filter name="PNDACONSOLE/console/outbound/app">
+        <content type="application/javascript">
+            <apply path="help\/.*.json" rule="PNDACONSOLE/console/outbound/help"/>
+            <apply path="\/?partials\/.*.html" rule="PNDACONSOLE/console/outbound/partials"/>
+            <apply path="\/?conf\/.*.json" rule="PNDACONSOLE/console/outbound/config"/>
+            <apply path="\/pam\/login" rule="PNDACONSOLE/console/outbound/pam"/>
+            <apply path="\/pam\/logout" rule="PNDACONSOLE/console/outbound/pam"/>
+            <apply path="\/api\/dm\/metrics\/:metricId\?values=y" rule="PNDACONSOLE/console/outbound/metrics"/>
+            <apply path="\/api\/dm\/endpoints" rule="PNDACONSOLE/console/outbound/api"/>
+            <apply path="\/api\/dm\/applications" rule="PNDACONSOLE/console/outbound/api"/>
+            <apply path="\/api\/dm\/packages" rule="PNDACONSOLE/console/outbound/api"/>
+            <apply path="\/api\/dm\/datasets" rule="PNDACONSOLE/console/outbound/api"/>
+            <apply path="\/updates\/socket\.io" rule="PNDACONSOLE/console/outbound/socket"/>
+       </content>
+    </filter>
+</rules>
