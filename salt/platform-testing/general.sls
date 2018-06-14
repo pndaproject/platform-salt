@@ -28,7 +28,7 @@
 
 {%- set opentsdb_hosts = [] -%}
 {%- for ip in salt['pnda.opentsdb_hosts']() -%}
-{%- do opentsdb_hosts.append(ip + ':' + str(opentsdb_port)) -%}
+{%- do opentsdb_hosts.append('{}:{}'.format(ip, opentsdb_port)) -%}
 {%- endfor -%}
 
 {%- set console_hosts = [] -%}
