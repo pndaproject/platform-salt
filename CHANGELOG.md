@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4563: Proxy package repository service via knox
 - PNDA-4583: Configure knox to proxy hadoop services
 - PNDA-4585: Proxy opentsdb query api through knox
+- PNDA-4426: Added a config to control the log level for the dataset service
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
