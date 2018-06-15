@@ -75,7 +75,7 @@ console_backend_utils:
   release_version: 1.0.0
 
 deployment_manager:
-  release_version: 1.0.1-rc.0
+  release_version: 1.0.1
   keys_directory: /opt/pnda/dm_keys
 
 package_repository:
