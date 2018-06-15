@@ -11,6 +11,7 @@
     - java
     - java.env
     - ntp
+    - ldap-client
     - logserver.logshipper
 
   'roles:zookeeper':

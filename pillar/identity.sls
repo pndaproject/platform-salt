@@ -1,5 +1,4 @@
 identity:
-  pam_module: 'pam_unix'
   users:
     - dev:
       user: 'dev1'

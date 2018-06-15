@@ -1,5 +1,5 @@
-{% if pillar['identity']['pam_module'] == 'pam_unix' %}
-
+{% set ldap_server = pillar['security']['ldap_server'] %}
+{% if not ldap_server %}
 {% for usr in pillar['identity']['users'] %}
 
 {% set user = usr['user'] %}
