@@ -20,6 +20,7 @@
 {% set gateway = knox_home_directory + '/data/security/keystores/gateway.jks' %}
 {% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
 {% set opentsdb_version = pillar['opentsdb']['version'] %}
+{% set helper_directory = knox_home_directory + '/helper' %}
 
 include:
   - java
@@ -143,16 +144,11 @@ knox-set-configuration:
     - require:
       - cmd: knox-init-authentication
 
-{% if knox_authentication == 'pam' %}
-
 knox-enable_pam_login:
   file.managed:
     - name: /etc/shadow
     - group: knox
     - mode: 040
-
-{% endif %}
-
 
 {% if pillar['knox'] is defined and pillar['knox']['cert'] is defined and pillar['knox']['key'] is defined and pillar['CA'] is defined and pillar['CA']['cert'] is defined %}
 
