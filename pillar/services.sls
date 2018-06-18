@@ -130,3 +130,6 @@ knox:
   release_version: "1.0.0"
   authentication: "pam"
   master_secret: "secret"
+
+haproxy:
+  release_version: "1.8.9"
