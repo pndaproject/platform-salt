@@ -6,12 +6,12 @@ After=network-online.target
 
 [Service]
 EnvironmentFile=/etc/sysconfig/grafana-server
-User=grafana
-Group=grafana
+User={{ user }}
+Group={{ group }}
 Type=simple
 Restart=on-failure
 WorkingDirectory=/usr/share/grafana
-ExecStartPre=/opt/pnda/utils/register-service.sh grafana-internal {{ grafana_bind_port }}
+ExecStartPre=sudo /opt/pnda/utils/register-service.sh grafana-internal {{ grafana_bind_port }}
 ExecStart=/usr/sbin/grafana-server                                \
                             --config=${CONF_FILE}                 \
                             --pidfile=${PID_FILE}                 \

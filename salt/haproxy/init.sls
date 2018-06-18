@@ -1,6 +1,6 @@
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set grafana_server_node = salt['pnda.get_hosts_for_role']('grafana')[0] + '.' +pillar['consul']['node'] + '.' + pnda_domain %}
-{% set jupyter_server_node = salt['pnda.get_hosts_for_role']('jupyter')[0] + '.' +pillar['consul']['node'] + '.' + pnda_domain %}:q:
+{% set jupyter_server_node = salt['pnda.get_hosts_for_role']('jupyter')[0] + '.' +pillar['consul']['node'] + '.' + pnda_domain %}
 {% set pnda_home_dir = pillar['pnda']['homedir'] %}
 {% set haproxy_config_dir = pnda_home_dir+'/haproxy/conf' %}
 {% set haproxy_lib_dir = '/var/lib/haproxy' %}

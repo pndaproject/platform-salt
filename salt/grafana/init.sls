@@ -28,14 +28,6 @@ grafana-server_pkg:
     - sources:
       - grafana: {{ mirror_location + settings['package-source'] }}
 
-# register grafana as an internal service
-grafana-service_registration:
-  cmd.script:
-    - name: salt://service-self-registration/files/register-service.sh
-    - args: |
-        grafana-internal {{ grafana_bind_port }}
-    - shell: /bin/bash
-
 grafana-server_start:
   service.running:
     - name: grafana-server
@@ -105,6 +97,8 @@ grafana-systemd:
     - template: jinja
     - context:
       grafana_bind_port: {{ grafana_bind_port }}
+      user: grafana
+      group: grafana
 
 grafana-systemctl_reload:
   cmd.run:
