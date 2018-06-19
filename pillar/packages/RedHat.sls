@@ -82,10 +82,16 @@ nginx:
 nmap-ncat:
   package-name: nmap-ncat
   version: ""
+nss-pam-ldapd:
+  package-name: nss-pam-ldapd
+  version: ""
 ntp:
   package-name: ntp
   version: ""
   service_name: ntpd
+openldap-clients:
+  package-name: openldap-clients
+  version: ""
 opentsdb:
   package-source: 'opentsdb-2.3.0.rpm'
   bind_port: 4242
