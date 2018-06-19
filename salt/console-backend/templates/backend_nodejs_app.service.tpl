@@ -1,5 +1,6 @@
 [Unit]
 Description=concole backend app
+After=redis.service
 
 [Service]
 Type=simple
