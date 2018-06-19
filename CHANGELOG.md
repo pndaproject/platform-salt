@@ -54,6 +54,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4510: Logrotate fixed for /var/log/pnda
 - PNDA-4604: Ensure re-runnability of Knox state
 - PNDA-4422: Fix selinux SLS so that it's successful regardless of initial selinux state
+- PNDA-4664: Start redis service before console backend services on system boot
 
 ## [4.0.0] 2018-02-10
 ### Added
