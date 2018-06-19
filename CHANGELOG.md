@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-4585: Proxy opentsdb query api through knox
 - PNDA-4426: Added a config to control the log level for the dataset service
 - PNDA-4697: Provision required elements for new users after a successful log in
+- PNDA-4598: Configure PAM to use LDAP if an LDAP server is provided in the pillar
+
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
