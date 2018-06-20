@@ -1,7 +1,7 @@
 service-self-registration-dir:
   file.directory:
     - name: /opt/pnda/utils
-    - mode: 644
+    - mode: 751
     - makedirs: True
 
 service-self-registration-script:
