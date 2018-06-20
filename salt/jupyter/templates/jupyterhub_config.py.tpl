@@ -57,7 +57,7 @@
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
 
 ## The base URL of the entire application
-#c.JupyterHub.base_url = '/'
+c.JupyterHub.base_url = '/jupyter'
 
 ## Whether to shutdown the proxy when the Hub shuts down.
 #  

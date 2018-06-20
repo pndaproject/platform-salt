@@ -4,7 +4,7 @@
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set proxy_version = pillar['jupyterproxy']['release_version'] %}
 {% set proxy_package = 'jupyterproxy-' + proxy_version + '.tar.gz' %}
-
+{% set jupyter_port = salt['pillar.get']('jupyter:bind_port', '8000') %}
 {% set jupyterhub_config_dir = '/etc/jupyterhub' %}
 
 include:
@@ -114,6 +114,7 @@ jupyterhub-copy_service:
     - mode: 644
     - template: jinja
     - context:
+      jupyter_port: {{ jupyter_port }}
       jupyterhub_config_dir: {{ jupyterhub_config_dir }}
       virtual_env_dir: {{ virtual_env_dir }}
 
