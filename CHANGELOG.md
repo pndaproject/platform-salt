@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4697: Provision required elements for new users after a successful log in
 - PNDA-4598: Configure PAM to use LDAP if an LDAP server is provided in the pillar
 - PNDA-4578: Reverse proxy Jupyter & Grafana through gateway node
+- PNDA-4569: Proxy PNDA console through knox
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
