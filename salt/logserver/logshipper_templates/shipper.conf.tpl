@@ -137,6 +137,9 @@ filter {
        else if [_systemd_unit] == "deployment-manager.service" {
            mutate {add_field => {"source" => "deployment-manager"}}
        }
+       else if [_systemd_unit] == "dataservice.service" {
+           mutate {add_field => {"source" => "dataservice"}}
+       }
        else if [_systemd_unit] == "package-repository.service" {
            mutate {add_field => {"source" => "package-repository"}}
        }
