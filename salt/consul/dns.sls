@@ -8,11 +8,20 @@ consul_dns-add-nameserver:
         nameserver {{ ip }}
 {%- endfor %}
 
-consul_dns-add-domain:
+{% if salt['cmd.run']('grep -i -w ^search[[:space:]].*" ~ domain_name ~ ".*" ~ " /etc/resolv.conf') %}
+{% elif salt['cmd.run']('grep -i -w ^search[[:space:]].* /etc/resolv.conf') %}
+consul_dns-replace-domain:
   file.replace:
     - name: /etc/resolv.conf
-    - pattern: 'search(.*)'
+    - pattern: '^search(.*)'
     - repl: 'search {{ domain_name }} \1'
+{% else %}
+consul_dns-append-domain:
+  file.append:
+    - name: /etc/resolv.conf
+    - text: 'search {{ domain_name }}'
+    - ignore_whitespace: False
+{% endif %}
 
 {% for cfg_file in salt['cmd.shell']('ls -1 /etc/sysconfig/network-scripts/ifcfg-*').split('\n') %}
 consul_turn-off-peer-dns-{{ cfg_file }}:
