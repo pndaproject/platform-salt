@@ -1,3 +1,4 @@
+{% set ldap_server = pillar['security']['ldap_server'] %}
 login-copy_event_login:
   file.managed:
     - source: salt://login/files/event-login.sh.tpl
@@ -25,5 +26,9 @@ login-create_pam_login_rule:
   file.append:
     - name: /etc/pam.d/login
     - text: |
-        auth [auth_err=1 user_unknown=1 default=ignore]	pam_unix.so  	nullok try_first_pass
+        auth [auth_err=1 user_unknown=1 default=ignore]	pam_unix.so try_first_pass
         auth 	optional 	pam_exec.so    	debug log=/var/log/pnda/login.log /usr/sbin/event-login.sh
+{% if ldap_server %}
+        auth [auth_err=1 user_unknown=1 default=ignore] pam_ldap.so use_first_pass
+        auth 	optional 	pam_exec.so    	debug log=/var/log/pnda/login.log /usr/sbin/event-login.sh
+{% endif %}
