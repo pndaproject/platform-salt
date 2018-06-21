@@ -30,6 +30,10 @@
     {
       "name": "Flink",
       "link": "{{ flink_link }}"
+    },
+    {
+      "name": "YARN Resource Manager",
+      "link": "{{ yarn_link }}"
     }
   ],
   "frontend": {

@@ -77,4 +77,9 @@
         <url>http://opentsdb-internal.service.{{ pnda_domain }}:{{ opentsdb_port }}</url>
     </service>
 
+    <service>
+        <role>PNDACONSOLE</role>
+        <url>http://console-internal.service.{{ pnda_domain }}</url>
+    </service>
+
 </topology>

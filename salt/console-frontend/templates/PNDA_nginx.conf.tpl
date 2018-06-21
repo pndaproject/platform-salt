@@ -19,7 +19,7 @@ server {
 		# include /etc/nginx/naxsi.rules
 	}
 
-	location /socket.io/ {
+	location /updates/socket.io/ {
     		proxy_http_version 1.1;
     		proxy_set_header Upgrade $http_upgrade;
     		proxy_set_header Connection "upgrade";

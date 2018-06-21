@@ -143,9 +143,7 @@ def generate_external_link(role, suffix):
     fqdn = __salt__['pillar.get'](role+':fqdn')
     log.info('generate_external_link: cert=%s' % cert)
     log.info('generate_external_link: fqdn=%s' % fqdn)
-    if cert and fqdn:
-        return 'https://%s%s' % (fqdn, suffix)
-    return generate_http_link(role, suffix)
+    return 'http%s://%s%s' % ('s' if cert else '', fqdn, suffix) if fqdn else ''
 
 def cloudera_get_hosts_by_hadoop_role(service, role_type):
     user = hadoop_manager_username()

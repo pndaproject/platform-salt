@@ -30,14 +30,18 @@
 {% set cm_port = ':8080' %}
 {%- endif -%}
 
-# Set links
+# Set direct links
 {% set hadoop_manager_link = salt['pnda.generate_http_link']('hadoop_manager', cm_port) %}
 {% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
 {% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':' + opentsdb_port|string) %}
-{% set grafana_link = salt['pnda.generate_http_link']('grafana',':3000') %}
 {% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
-{% set jupyter_link = salt['pnda.generate_external_link']('jupyter',':8000') %}
-{% set flink_link = salt['pnda.generate_external_link']('flink',':8082') %}
+{% set flink_link = salt['pnda.generate_http_link']('flink',':8082') %}
+
+# Set links through gateway roles
+{% set yarn_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/yarn') %}
+{% set jupyter_link = salt['pnda.generate_external_link']('haproxy',':8444/jupyter') %}
+{% set grafana_link = salt['pnda.generate_external_link']('haproxy',':8444/grafana') %}
+
 {% set login_mode = 'PAM' %}
 
 include:
@@ -101,6 +105,7 @@ console-frontend-create_pnda_console_config:
         kibana_link: "{{ kibana_link }}"
         jupyter_link: "{{ jupyter_link }}"
         flink_link: "{{ flink_link }}"
+        yarn_link: "{{ yarn_link }}"
         login_mode: "{{ login_mode }}"
 
 # Create a configuration file for nginx and specify where the PNDA console file are

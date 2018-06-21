@@ -56,7 +56,8 @@ platform_gobblin_modules:
 
 console_frontend:
   release_version: develop
-
+  bind_port: 80
+  
 console_backend_data_logger:
   release_version: develop
   bind_port: 3001
