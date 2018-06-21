@@ -7,6 +7,13 @@
 {% set pnda_graphite_port = 8013 %}
 {% set pnda_graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
 
+{% set ldap_server = pillar['security']['ldap_server'] %}
+{% if ldap_server %}
+{% set ldap_enable = true %}
+{% set ldap_base_dn = pillar['security']['ldap_base_dn'] %}
+{% else %}
+{% set ldap_enable = false %}
+{% endif %}
 {% set grafana_login = pillar['pnda']['user'] %}
 # Because grafana is checking for password length, we need a password of at least 8 characters
 # So, we double the password (if the pnda password is 'pnda' then the grafana password will be 'pndapnda'
@@ -86,8 +93,20 @@ grafana-add_config:
     - source: salt://grafana/templates/grafana.ini.tpl
     - name: {{ grafana_config_dir }}/grafana.ini
     - template: jinja
-    - defaults:
+    - context:
         haproxy_service: {{ haproxy_service }}
+        ldap_enable: {{ ldap_enable }}
+
+{% if ldap_enable %}
+grafana-ldap_config:
+  file.managed:
+    - source: salt://grafana/templates/ldap.toml.tpl
+    - name: {{ grafana_config_dir }}/ldap.toml
+    - template: jinja
+    - context:
+        ldap_host: "{{ ldap_server }}"
+        ldap_search_base_dns: "{{ ldap_base_dn }}"
+{% endif %}
 
 grafana-systemd:
   file.managed:
