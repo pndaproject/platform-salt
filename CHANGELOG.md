@@ -61,6 +61,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4664: Start redis service before console backend services on system boot
 - PNDA-4053: Ensure that /var/run/ambari-server is owned by ambari by setting the owner on reboot
 - PNDA-4606: Append domain name if "search" string doesn't exist
+- PNDA-4548: Flink Metric reporting for Graphite not working
 
 ## [4.0.0] 2018-02-10
 ### Added
