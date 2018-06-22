@@ -33,6 +33,7 @@
 # Graphite host and default port
 {% set graphite_host = salt['pnda.get_hosts_for_role']('graphite')[0] %}
 {% set graphite_default_port = '2003' %}
+{% set graphite_dep_jar = 'flink-metrics-graphite-' + flink_version + '.jar' %}
 
 #Flink's options
 {% set execs = [ 'flink', 'pyflink.sh', 'start-scala-shell.sh', 'yarn-session.sh' ] %}
@@ -130,14 +131,10 @@ flink-history_server_start_service:
     - enable: True
     - reload: True
 
-{% set dep_jars = salt['file.find']('%s/opt/' %flink_real_dir, name="*graphite*") %}
-{% for file in dep_jars %}
-{%- set filename = salt['file.basename'](file) %}
-flink-copy_dependency_jar-{{ filename }}:
+flink-copy_metrics_reporting_dep_jar:
   file.managed:
-    - name: {{ flink_real_dir }}/lib/{{ filename }}
-    - source: {{ file }}
-{% endfor %}
+    - name: {{ flink_real_dir }}/lib/{{ graphite_dep_jar }}
+    - source: {{ flink_real_dir }}/opt/{{ graphite_dep_jar }}
 
 {% for exec in execs %}
 flink_symlink_{{ exec }}:
@@ -145,5 +142,4 @@ flink_symlink_{{ exec }}:
     - name: /usr/bin/{{ exec }}
     - target: {{ flink_link_dir }}/bin/{{ exec }}
     - mode: 755
-
 {% endfor %}
