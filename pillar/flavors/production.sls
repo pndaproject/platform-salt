@@ -19,7 +19,6 @@
             "days_to_keep": 6
         },
         "kafka.server": {
-            "data_dirs": ["/mnt/kafka-logs"],
             "kafka_log_retention_bytes": 1073741824,
             "kafka_heapsize": 17179869184
         },
