@@ -78,7 +78,7 @@
     </service>
 
     <service>
-        <role>PNDACONSOLE</role>
+        <role>PNDA-CONSOLE</role>
         <url>http://console-internal.service.{{ pnda_domain }}</url>
     </service>
 

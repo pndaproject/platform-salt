@@ -1,4 +1,4 @@
-<service role="PNDACONSOLE" name="console" version="1.0.0">
+<service role="PNDA-CONSOLE" name="pnda-console" version="1.0.0">
     <policies>
         <policy role="webappsec"/>
         <policy role="authentication" name="Anonymous"/>
@@ -8,25 +8,25 @@
     <routes>
 
     <route path="/console/updates/socket.io">
-      <rewrite apply="PNDACONSOLE/console/inbound/socket" to="request.url"/>
+      <rewrite apply="PNDA-CONSOLE/console/inbound/socket" to="request.url"/>
     </route>
 
     <route path="/console/api/dm/metrics">
-      <rewrite apply="PNDACONSOLE/console/inbound/metrics" to="request.url"/>
+      <rewrite apply="PNDA-CONSOLE/console/inbound/metrics" to="request.url"/>
     </route>
 
     <route path="/console/">
-      <rewrite apply="PNDACONSOLE/console/inbound/root" to="request.url"/>
+      <rewrite apply="PNDA-CONSOLE/console/inbound/root" to="request.url"/>
     </route>
 
     <route path="/console/**">
-      <rewrite apply="PNDACONSOLE/console/inbound/path" to="request.url"/>
-      <rewrite apply="PNDACONSOLE/console/outbound/app" to="response.body"/>
+      <rewrite apply="PNDA-CONSOLE/console/inbound/path" to="request.url"/>
+      <rewrite apply="PNDA-CONSOLE/console/outbound/app" to="response.body"/>
     </route>
 
     <route path="/console/**?**">
-      <rewrite apply="PNDACONSOLE/console/inbound/pathquery" to="request.url"/>
-      <rewrite apply="PNDACONSOLE/console/outbound/app" to="response.body"/>
+      <rewrite apply="PNDA-CONSOLE/console/inbound/pathquery" to="request.url"/>
+      <rewrite apply="PNDA-CONSOLE/console/outbound/app" to="response.body"/>
     </route>
 
    </routes>
