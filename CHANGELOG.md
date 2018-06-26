@@ -63,6 +63,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4606: Append domain name if "search" string doesn't exist
 - PNDA-4548: Flink Metric reporting for Graphite not working
 - PNDA-4726: Make knox service name for console consistent everywhere
+- PNDA-4722: Fix Knox rewrite rules for YARNUI and JOBHISTORYUI
 
 ## [4.0.0] 2018-02-10
 ### Added
