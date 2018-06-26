@@ -63,6 +63,11 @@
     </service>
     
     <service>
+        <role>JOBHISTORYUI</role>
+        <url>http://{{ yarn_rm_host }}:19888</url>
+    </service>
+
+    <service>
         <role>pnda-deployment-manager</role>
         <url>http://deployment-manager-internal.service.{{ pnda_domain }}:5000</url>
     </service>
