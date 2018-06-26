@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4693: Alter Knox to use PAM rather than LDAP
 - PNDA-4544: Upgrade Flink to 1.4.2
 - PNDA-4541: Compress yarn application logs into a tar.gz to prevent the number of files growing too large
+- PNDA-4730: Create a base-services sls that encapsulates consul and ldap
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
