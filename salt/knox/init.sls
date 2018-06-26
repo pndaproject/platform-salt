@@ -240,6 +240,17 @@ knox-service_rewrite_{{ service_name }}:
       - file: knox-service_dir_{{ service_name }}
 {% endfor %}
 
+# knox known issue fixes - jobhistoryui and yarnui rewrite rules overwrites
+knox-service_rewrite_yarnui:
+  file.managed:
+    - name: {{ knox_home_directory }}/data/services/yarnui/2.7.0/rewrite.xml
+    - source: salt://knox/files/yarnui_rewrite.xml
+
+knox-service_rewrite_jobhistoryui:
+  file.managed:
+    - name: {{ knox_home_directory }}/data/services/jobhistoryui/2.7.0/rewrite.xml
+    - source: salt://knox/files/jobhistoryui_rewrite.xml
+
 knox-service-script:
   file.managed:
     - name: /usr/lib/systemd/system/knox.service
