@@ -49,6 +49,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4544: Upgrade Flink to 1.4.2
 - PNDA-4541: Compress yarn application logs into a tar.gz to prevent the number of files growing too large
 - PNDA-4730: Create a base-services sls that encapsulates consul and ldap
+- PNDA-4440: Upgrade Kafka from 0.11.0.2 to 1.1.0
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
