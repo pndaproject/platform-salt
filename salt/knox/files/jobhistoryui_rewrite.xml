@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- 
-   Source: from https://issues.apache.org/jira/browse/KNOX-1023
-   Target Fix Version/s: 1.2.0
-   Current release version: 1.0.0
--->
 
 <!--
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,6 +16,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
+
+<!-- 
+   This file based on Knox 1.0.0
+   https://github.com/apache/knox/blob/v1.0.0/gateway-service-definitions/src/main/resources/services/jobhistoryui/2.7.0/rewrite.xml
+   Patch applied from https://issues.apache.org/jira/browse/KNOX-1023 (Target Fix Version/s: 1.2.0)
+   https://patch-diff.githubusercontent.com/raw/apache/knox/pull/11.patch
+-->
+
 <rules>
   <rule dir="IN" name="JOBHISTORYUI/jobhistory/inbound/root" pattern="*://*:*/**/jobhistory/">
     <rewrite template="{$serviceUrl[JOBHISTORYUI]}/jobhistory"/>
