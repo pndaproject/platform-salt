@@ -64,7 +64,12 @@
     
     <service>
         <role>JOBHISTORYUI</role>
-        <url>http://{{ yarn_rm_host }}:19888</url>
+        <url>http://{{ mr2_history_server_host }}:19888</url>
+    </service>
+
+    <service>
+        <role>SPARKHISTORYUI</role>
+        <url>http://{{ spark_history_server_host }}:18080</url>
     </service>
 
     <service>
