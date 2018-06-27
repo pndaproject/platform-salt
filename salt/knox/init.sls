@@ -10,6 +10,8 @@
 {% set webhdfs_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
 {% set hbase_rest_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
 {% set yarn_rm_host = salt['pnda.get_hosts_by_hadoop_role']('YARN', 'RESOURCEMANAGER')[0] %}
+{% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('MAPREDUCE2', 'HISTORYSERVER')[0] %}
+{% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK', 'SPARK_JOBHISTORYSERVER')[0] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 {% set knox_home_directory = release_directory + '/knox' %}
@@ -141,6 +143,8 @@ knox-set-configuration:
       hive_host: {{ hive_host }}
       pnda_domain: {{ pnda_domain }}
       opentsdb_port: {{ opentsdb_port }}
+      spark_history_server_host: {{ spark_history_server_host }}
+      mr2_history_server_host: {{ mr2_history_server_host }}
     - require:
       - cmd: knox-init-authentication
 
