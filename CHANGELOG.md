@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4578: Reverse proxy Jupyter & Grafana through gateway node
 - PNDA-4569: Proxy PNDA console through knox
 - PNDA-4643: Add TLS support for haproxy
+- PNDA-4712: Use LDAP for Grafana authentication
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
