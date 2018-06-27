@@ -16,7 +16,7 @@ zookeeper:
   version: 3.4.11
 
 kafka:
-  version: 0.11.0.2
+  version: 1.1.0
   internal_port: 9092
   replication_port: 9093
   ingest_port: 9094
