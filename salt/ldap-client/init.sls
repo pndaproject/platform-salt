@@ -15,7 +15,7 @@ ldap-client-openldap-clients:
 
 ldap-client-link-server:
   cmd.run:
-    - name: authconfig --enableldap --enableldapauth --ldapserver={{ ldap_server }} --ldapbasedn="dc={{ ldap_base_dn }}" --enablemkhomedir --update
+    - name: authconfig --enableldap --enableldapauth --ldapserver={{ ldap_server }} --ldapbasedn="{{ ldap_base_dn }}" --enablemkhomedir --update
     - require:
       - pkg: ldap-client-nss-pam-ldapd
       - pkg: ldap-client-openldap-clients
