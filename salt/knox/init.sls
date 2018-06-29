@@ -1,3 +1,4 @@
+{% set cfg_flavor = pillar['pnda_flavor']['name'] %}
 {% set knox_version = salt['pillar.get']('knox:release_version', '') %}
 {% set knox_authentication = salt['pillar.get']('knox:authentication', '') %}
 {% set knox_master_secret = salt['pillar.get']('knox:master_secret', '') %}
@@ -9,7 +10,8 @@
 {% set hive_host = salt['pnda.get_hosts_by_hadoop_role']('HIVE', 'HIVE_SERVER')[0] %}
 {% set webhdfs_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
 {% set hbase_rest_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
-{% set yarn_rm_host = salt['pnda.get_hosts_by_hadoop_role']('YARN', 'RESOURCEMANAGER')[0] %}
+{% set yarn_rm_hosts = salt['pnda.get_hosts_by_hadoop_role']('YARN', 'RESOURCEMANAGER') %}
+{% set yarn_ha_enabled = (yarn_rm_hosts is not none and yarn_rm_hosts|length>1) %}
 {% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('MAPREDUCE2', 'HISTORYSERVER')[0] %}
 {% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK', 'SPARK_JOBHISTORYSERVER')[0] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
@@ -139,10 +141,11 @@ knox-set-configuration:
       namenode_host: {{ namenode_host }}
       webhdfs_host: {{ webhdfs_host }}
       hbase_rest_host: {{ hbase_rest_host }} 
-      yarn_rm_host: {{ yarn_rm_host }}
+      yarn_rm_hosts: {{ yarn_rm_hosts }}
       hive_host: {{ hive_host }}
       pnda_domain: {{ pnda_domain }}
       opentsdb_port: {{ opentsdb_port }}
+      ha_enabled: {{ yarn_ha_enabled }}
       spark_history_server_host: {{ spark_history_server_host }}
       mr2_history_server_host: {{ mr2_history_server_host }}
     - require:
