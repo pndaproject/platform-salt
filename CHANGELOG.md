@@ -68,6 +68,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4726: Make knox service name for console consistent everywhere
 - PNDA-4722: Fix Knox rewrite rules for YARNUI and JOBHISTORYUI
 - PNDA-4742: Knox failed to match yarn spark job history
+- PNDA-4762: Support YARN resource manager HA mode
 
 ## [4.0.0] 2018-02-10
 ### Added
