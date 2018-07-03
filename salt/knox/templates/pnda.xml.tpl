@@ -35,8 +35,18 @@
             <enabled>true</enabled>
         </provider>
 {% endif %}
+{% if ha_enabled %}
+        <provider>
+            <role>ha</role>
+            <name>HaProvider</name>
+            <enabled>true</enabled>
+            <param>
+               <name>YARNUI</name>
+               <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+            </param>
+        </provider>
+{% endif %}
     </gateway>
-
     <service>
         <role>WEBHDFS</role>
         <url>http://{{ webhdfs_host }}:14000/webhdfs</url>
@@ -54,12 +64,17 @@
 
     <service>
         <role>YARN</role>
-        <url>http://{{ yarn_rm_host }}:8088</url>
+        {% for item in yarn_rm_hosts %}
+            <url>http://{{ item }}:8088</url>
+        {% endfor %}
+        
     </service>
 
     <service>
         <role>YARNUI</role>
-        <url>http://{{ yarn_rm_host }}:8088</url>
+        {% for item in yarn_rm_hosts %}
+            <url>http://{{ item }}:8088</url>
+        {% endfor %}
     </service>
     
     <service>
