@@ -10,7 +10,6 @@
             "max_mappers": 5
         },
         "kafka.server": {
-            "data_dirs": ["/var/kafka-logs"],
             "kafka_log_retention_bytes": 314572800,
             "kafka_heapsize": 2147483648
         },
