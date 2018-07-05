@@ -50,6 +50,7 @@ ssl_verify_cert=0
 credential_lib_dir=/var/lib/ambari-agent/cred/lib
 credential_conf_dir=/var/lib/ambari-agent/cred/conf
 credential_shell_cmd=org.apache.hadoop.security.alias.CredentialShell
+force_https_protocol=PROTOCOL_TLSv1_2
 
 [network]
 ; this option apply only for Agent communication
