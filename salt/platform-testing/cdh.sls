@@ -20,23 +20,9 @@
 {%- if grains['hadoop.distro'] == 'CDH' -%}
 {% set hive_node = salt['pnda.get_hosts_by_hadoop_role']('hive01', 'HIVESERVER2')[0] %}
 {% set hive_http_port = '10000' %}
-{% set cloudera_cdh_version = pillar['cloudera']['parcel_version'] %}
-{% set hadoop_path = "/opt/cloudera/parcels/CDH-"+cloudera_cdh_version %}
-{% set jdbc_driver_jar = hadoop_path+"/lib/hive/lib/hive-jdbc-1.1.0-cdh5.12.1-standalone.jar" %}
-{% set hive_service_jar = hadoop_path+"/lib/hive/lib/hive-service-1.1.0-cdh5.12.1.jar" %}
-{% set http_core_jar = hadoop_path+"/lib/hadoop/lib/httpcore-4.2.5.jar" %}
-{% set libthrift_jar = hadoop_path+"/lib/hive/lib/libthrift-0.9.3.jar" %}
-{% set httpclient_jar = hadoop_path+"/lib/hive/lib/httpclient-4.2.5.jar" %}
 {%- else -%}
 {% set hive_node = salt['pnda.get_hosts_by_hadoop_role']('HIVE', 'HIVE_SERVER')[0] %}
 {% set hive_http_port = '10001' %}
-{% set hdp_version = salt['pillar.get']('hdp:version', '') %}
-{% set hadoop_path = "/usr/hdp/"+hdp_version %}
-{% set jdbc_driver_jar = hadoop_path+"/hive/jdbc/hive-jdbc-1.2.1000.2.6.4.0-91-standalone.jar" %}
-{% set hive_service_jar = hadoop_path+"/hive2/lib/hive-service-2.1.0.2.6.4.0-91.jar" %}
-{% set http_core_jar = hadoop_path+"/hadoop/lib/httpcore-4.4.4.jar" %}
-{% set libthrift_jar = hadoop_path+"/hive2/lib/libthrift-0.9.3.jar" %}
-{% set httpclient_jar = hadoop_path+"/hadoop/lib/httpclient-4.5.2.jar" %}
 {%- endif -%}
 
 {% set cm_hoststring = salt['pnda.hadoop_manager_ip']()  %}
@@ -162,11 +148,6 @@ platform-testing-cdh-blackbox_service:
       hadoop_distro: {{ hadoop_distro }}
       hive_node: {{ hive_node }}
       hive_http_port: {{ hive_http_port }}
-      jdbc_driver_jar: {{ jdbc_driver_jar }}
-      hive_service_jar: {{ hive_service_jar }}
-      http_core_jar: {{ http_core_jar }}
-      libthrift_jar: {{ libthrift_jar }}
-      httpclient_jar: {{ httpclient_jar }}
 
 platform-testing-cdh-crontab-cdh_blackbox:
   cron.present:
