@@ -52,6 +52,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4730: Create a base-services sls that encapsulates consul and ldap
 - PNDA-4440: Upgrade Kafka from 0.11.0.2 to 1.1.0
 - PNDA-4536: Make data directories used by Kafka configurable in env-parameters.sls instead of fixed per flavor
+- PNDA-4779: Use TLS 1.2 between agents and server
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
@@ -70,7 +71,6 @@ All notable changes to this project will be documented in this file.
 - PNDA-4722: Fix Knox rewrite rules for YARNUI and JOBHISTORYUI
 - PNDA-4742: Knox failed to match yarn spark job history
 - PNDA-4762: Support YARN resource manager HA mode
-
 ## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
