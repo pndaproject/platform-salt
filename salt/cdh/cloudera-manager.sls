@@ -8,7 +8,7 @@
 include:
   - java
   - mysql.connector
-  - mysql
+  - mysql.client
 
 cloudera-manager-install_daemons:
   pkg.installed:

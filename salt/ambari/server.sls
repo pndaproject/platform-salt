@@ -12,7 +12,7 @@
 include:
   - java
   - mysql.connector
-  - mysql
+  - mysql.client
 
 ambari-server-user:
   user.present:
