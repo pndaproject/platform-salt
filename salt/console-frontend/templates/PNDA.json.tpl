@@ -34,6 +34,10 @@
     {
       "name": "YARN Resource Manager",
       "link": "{{ yarn_link }}"
+    },
+    {
+      "name": "HTTPFS",
+      "link": "{{ httpfs_link }}"
     }
   ],
   "frontend": {
