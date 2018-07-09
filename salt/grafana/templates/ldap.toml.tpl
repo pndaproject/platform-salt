@@ -61,7 +61,7 @@ search_base_dns = ["{{ ldap_search_base_dns }}"]
 # group_search_base_dns = ["ou=groups,dc=grafana,dc=org"]
 
 # Specify names of the ldap attributes your ldap uses
-#[servers.attributes]
+[servers.attributes]
 #name = "givenName"
 #surname = "sn"
 username = "cn"
