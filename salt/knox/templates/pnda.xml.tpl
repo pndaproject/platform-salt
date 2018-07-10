@@ -107,4 +107,13 @@
         <url>http://console-internal.service.{{ pnda_domain }}</url>
     </service>
 
+    <service>
+        <role>AMBARI</role>
+        <url>http://{{ ambari_server_host }}:8080</url>
+    </service>
+
+    <service>
+        <role>AMBARIUI</role>
+        <url>http://{{ ambari_server_host }}:8080</url>
+    </service>
 </topology>
