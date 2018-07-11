@@ -41,6 +41,7 @@
 {% set yarn_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/yarn') %}
 {% set jupyter_link = salt['pnda.generate_external_link']('haproxy',':8444/jupyter') %}
 {% set grafana_link = salt['pnda.generate_external_link']('haproxy',':8444/grafana') %}
+{% set httpfs_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/webhdfs') %}
 
 {% set login_mode = 'PAM' %}
 
@@ -106,6 +107,7 @@ console-frontend-create_pnda_console_config:
         jupyter_link: "{{ jupyter_link }}"
         flink_link: "{{ flink_link }}"
         yarn_link: "{{ yarn_link }}"
+        httpfs_link: "{{ httpfs_link }}"
         login_mode: "{{ login_mode }}"
 
 # Create a configuration file for nginx and specify where the PNDA console file are
