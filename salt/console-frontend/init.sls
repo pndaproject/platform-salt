@@ -31,17 +31,17 @@
 {%- endif -%}
 
 # Set direct links
-{% set km_link = salt['pnda.generate_http_link']('kafka_manager',':'+km_port|string+'/clusters/'+clustername) %}
 {% set opentsdb_link = salt['pnda.generate_http_link']('opentsdb',':' + opentsdb_port|string) %}
-{% set kibana_link = salt['pnda.generate_http_link']('logserver',':5601') %}
 
 # Set links through gateway roles
-{% set yarn_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/yarn') %}
-{% set hadoop_manager_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/ambari') %}
-{% set jupyter_link = salt['pnda.generate_external_link']('haproxy',':8444/jupyter') %}
-{% set grafana_link = salt['pnda.generate_external_link']('haproxy',':8444/grafana') %}
-{% set httpfs_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/webhdfs') %}
-{% set flink_link = salt['pnda.generate_external_link']('knox',':8443/gateway/pnda/flinkhistory/') %}
+{% set yarn_link = salt['pnda.get_gateway_link']('yarn') %}
+{% set hadoop_manager_link = salt['pnda.get_gateway_link']('ambari') %}
+{% set jupyter_link = salt['pnda.get_gateway_link']('jupyter') %}
+{% set grafana_link = salt['pnda.get_gateway_link']('grafana') %}
+{% set httpfs_link = salt['pnda.get_gateway_link']('httpfs') %}
+{% set km_link = salt['pnda.get_gateway_link']('kafka-manager') + '/clusters/' + clustername %}
+{% set kibana_link = salt['pnda.get_gateway_link']('kibana') %}
+{% set flink_link = salt['pnda.get_gateway_link']('flink') %}
 
 {% set login_mode = 'PAM' %}
 

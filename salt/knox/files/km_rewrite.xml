@@ -1,0 +1,8 @@
+<rules>
+    <rule dir="IN" name="KAFKA-MANAGER/kafkamanager/root" pattern="*://*:*/{path=**}/kafkamanager">
+        <rewrite template="{$serviceUrl[KAFKA-MANAGER]}/{path=**}/kafkamanager"/>
+    </rule>
+    <rule dir="IN" name="KAFKA-MANAGER/kafkamanager/inbound" pattern="*://*:*/{path=**}/kafkamanager/{**}">
+        <rewrite template="{$serviceUrl[KAFKA-MANAGER]}/{path=**}/kafkamanager/{**}"/>
+    </rule>
+</rules>

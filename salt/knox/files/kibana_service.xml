@@ -1,0 +1,23 @@
+<service role="KIBANA" name="kibana" version="6.2.1">
+    <routes>
+        <route path="/kibana">
+            <rewrite apply="KIBANA/kibana/inbound/root" to="request.url"/>
+        </route>
+        <route path="/kibana/">
+            <rewrite apply="KIBANA/kibana/inbound/rootslash" to="request.url"/>
+        </route>
+        <route path="/kibana/api/saved_objects">
+            <rewrite apply="KIBANA/kibana/inbound/objects" to="request.url"/>
+        </route>
+        <route path="/kibana/api/kibana/**">
+            <rewrite apply="KIBANA/kibana/inbound/kibana" to="request.url"/>
+        </route>
+        <route path="/kibana/plugins/kibana/assets/**">
+            <rewrite apply="KIBANA/kibana/inbound/assets" to="request.url"/>
+        </route>
+         <route path="/kibana/**?**">
+            <rewrite apply="KIBANA/kibana/inbound/query" to="request.url"/>
+        </route>
+    </routes>
+    <dispatch classname="org.apache.hadoop.gateway.dispatch.PassAllHeadersDispatch"/>
+</service>

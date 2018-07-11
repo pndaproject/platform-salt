@@ -1,0 +1,20 @@
+<rules>
+    <rule dir="IN" name="KIBANA/kibana/inbound/root" pattern="*://*:*/**/kibana">
+        <rewrite template="{$serviceUrl[KIBANA]}/"/>
+    </rule>
+    <rule dir="IN" name="KIBANA/kibana/inbound/rootslash" pattern="*://*:*/**/kibana/">
+        <rewrite template="{$serviceUrl[KIBANA]}/"/>
+    </rule>
+    <rule dir="IN" name="KIBANA/kibana/inbound/objects" pattern="*://*:*/**/kibana/api/saved_objects/?{**}">
+        <rewrite template="{$serviceUrl[KIBANA]}/api/saved_objects/?{**}"/>
+    </rule>
+    <rule dir="IN" name="KIBANA/kibana/inbound/kibana" pattern="*://*:*/**/kibana/api/kibana/{**}">
+        <rewrite template="{$serviceUrl[KIBANA]}/api/kibana/{**}"/>
+    </rule>
+    <rule dir="IN" name="KIBANA/kibana/inbound/query" pattern="*://*:*/**/kibana/{**}?{**}">
+        <rewrite template="{$serviceUrl[KIBANA]}/{**}?{**}"/>
+    </rule>
+    <rule dir="IN" name="KIBANA/kibana/inbound/assets" pattern="*://*:*/**/kibana/plugins/kibana/assets/{**}">
+        <rewrite template="{$serviceUrl[KIBANA]}/plugins/kibana/assets/{**}"/>
+    </rule>
+</rules>

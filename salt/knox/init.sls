@@ -16,7 +16,9 @@
 {% set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] %}
 {% set flink_history_server_host = salt['pnda.get_hosts_for_role']("FLINK")[0] %}
 {% set flink_history_server_port = pillar['flink']['historyserver_web_port'] %}
-{% set flink_version = pillar['flink']['release_version'] %}
+# See PNDA-4797 - 'logserver' currently safer role to use than 'elk'
+{% set kibana_host = salt['pnda.get_hosts_for_role']('logserver')[0] %}
+{% set kafka_manager_host = salt['pnda.get_hosts_for_role']('kafka_manager')[0] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 {% set knox_home_directory = release_directory + '/knox' %}
@@ -26,7 +28,6 @@
 {% set knox_deployment_dir = knox_home_directory + '/data/deployments/' %}
 {% set gateway = knox_home_directory + '/data/security/keystores/gateway.jks' %}
 {% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
-{% set opentsdb_version = pillar['opentsdb']['version'] %}
 {% set helper_directory = knox_home_directory + '/helper' %}
 
 include:
@@ -134,7 +135,7 @@ knox-init-authentication:
     - require:
       - file: knox-master-secret-script
 
-knox-set-configuration:
+knox-create-pnda-topology:
   file.managed:
     - name: {{ conf_directory }}/topologies/pnda.xml
     - source: salt://knox/templates/pnda.xml.tpl
@@ -154,6 +155,18 @@ knox-set-configuration:
       ambari_server_host: {{ ambari_server_host }}
       flink_history_server_host: {{ flink_history_server_host }}
       flink_history_server_port: {{ flink_history_server_port }}
+    - require:
+      - cmd: knox-init-authentication
+
+knox-create-pndaops-topology:
+  file.managed:
+    - name: {{ conf_directory }}/topologies/pndaops.xml
+    - source: salt://knox/templates/pndaops.xml.tpl
+    - template: jinja
+    - context:
+      knox_authentication: {{ knox_authentication }}
+      kafka_manager_host: {{ kafka_manager_host }}
+      kibana_host: {{ kibana_host }}
     - require:
       - cmd: knox-init-authentication
 
@@ -221,13 +234,14 @@ knox-import_CA:
 
 {% endif %}
 
-
 {% set knox_proxy_services = {
-  'dm': 'pnda-deployment-manager/1.0.0/',
-  'pr':  'pnda-package-repository/1.0.0/',
-  'tsdb': 'opentsdb/' + opentsdb_version + '/',
+  'dm': 'pnda-deployment-manager/1.0.0',
+  'pr':  'pnda-package-repository/1.0.0',
+  'tsdb': 'opentsdb/2.3.0',
   'console': 'pnda-console/1.0.0',
-  'flinkhistoryui': 'flinkhistoryui/' + flink_version + '/' 
+  'km': 'kafka-manager/1.3.3',
+  'kibana': 'kibana/6.2.1',
+  'flinkhistoryui': 'flinkhistoryui/1.4.2'
   } %}
 
 {% for service_name in knox_proxy_services %}

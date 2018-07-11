@@ -145,6 +145,36 @@ def generate_external_link(role, suffix):
     log.info('generate_external_link: fqdn=%s' % fqdn)
     return 'http%s://%s%s' % ('s' if cert else '', fqdn, suffix) if fqdn else ''
 
+def get_gateway_proxy_detail(role):
+    gateway = __salt__['pillar.get']('gateway')
+    found = None
+    for proxy_role, proxy, in gateway.iteritems():
+        for topology in proxy['topologies']:
+            if role in topology['services']:
+                found = {'role':proxy_role,
+                         'port':proxy['port'],
+                         'base':proxy['base'],
+                         'topology':topology['name'],
+                         'context':topology['services'][role]['context']}
+                break
+    assert(found is not None)
+    return found
+
+def make_path_from_segments(segments):
+    path = ""
+    for segment in segments:
+        if segment != "": path += "/%s" % segment
+    return path
+
+def get_gateway_context_path(role):
+    detail = get_gateway_proxy_detail(role)
+    return make_path_from_segments([detail['base'], detail['topology'], detail['context']])
+    
+def get_gateway_link(role):
+    detail = get_gateway_proxy_detail(role)
+    return generate_external_link(detail['role'], ":%s%s" % (detail['port'], 
+                                  make_path_from_segments([detail['base'], detail['topology'], detail['context']])))
+
 def cloudera_get_hosts_by_hadoop_role(service, role_type):
     user = hadoop_manager_username()
     password = hadoop_manager_password()
