@@ -1,4 +1,3 @@
-{% set cfg_flavor = pillar['pnda_flavor']['name'] %}
 {% set knox_version = salt['pillar.get']('knox:release_version', '') %}
 {% set knox_authentication = salt['pillar.get']('knox:authentication', '') %}
 {% set knox_master_secret = salt['pillar.get']('knox:master_secret', '') %}
@@ -14,6 +13,7 @@
 {% set yarn_ha_enabled = (yarn_rm_hosts is not none and yarn_rm_hosts|length>1) %}
 {% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('MAPREDUCE2', 'HISTORYSERVER')[0] %}
 {% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK', 'SPARK_JOBHISTORYSERVER')[0] %}
+{% set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 {% set knox_home_directory = release_directory + '/knox' %}
@@ -148,6 +148,7 @@ knox-set-configuration:
       ha_enabled: {{ yarn_ha_enabled }}
       spark_history_server_host: {{ spark_history_server_host }}
       mr2_history_server_host: {{ mr2_history_server_host }}
+      ambari_server_host: {{ ambari_server_host }}
     - require:
       - cmd: knox-init-authentication
 
