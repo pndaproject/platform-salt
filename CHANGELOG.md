@@ -72,6 +72,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-4722: Fix Knox rewrite rules for YARNUI and JOBHISTORYUI
 - PNDA-4742: Knox failed to match yarn spark job history
 - PNDA-4762: Support YARN resource manager HA mode
+- PNDA-4766: Enable access to Ambari through Knox
+
 ## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
