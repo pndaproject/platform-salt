@@ -15,6 +15,10 @@
 {%- endfor -%}
 {% endif %}
 
+{%- for ip in pillar['nameserver']['servers'] -%}
+{%- do consul.config.recursors.append(ip) -%}
+{%- endfor -%}
+
 consul-config:
   file.serialize:
     - name: /etc/consul.d/config.json
