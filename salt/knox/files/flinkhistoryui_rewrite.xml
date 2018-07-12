@@ -1,0 +1,24 @@
+<rules>
+    <rule dir="IN" name="FLINKHISTORYUI/flinkhistory/inbound/root" pattern="*://*:*/**/flinkhistory/">
+        <rewrite template="{$serviceUrl[FLINKHISTORYUI]}/" />
+    </rule>
+    <rule dir="IN" name="FLINKHISTORYUI/flinkhistory/inbound/path" pattern="*://*:*/**/flinkhistory/{**}">
+        <rewrite template="{$serviceUrl[FLINKHISTORYUI]}/{**}" />
+    </rule>    
+    <rule dir="IN" name="FLINKHISTORYUI/flinkhistory/inbound/query" pattern="*://*:*/**/flinkhistory/{**}?{**}">
+        <rewrite template="{$serviceUrl[FLINKHISTORYUI]}/{**}?{**}" />
+    </rule>
+    <rule dir="OUT" name="FLINKHISTORYUI/flinkhistory/outbound/css" pattern="/css/{**}">
+        <rewrite template="{$frontend[path]}/flinkhistory/css/{**}"/>
+    </rule>
+    <rule dir="OUT" name="FLINKHISTORYUI/flinkhistory/outbound/js" pattern="/js/{**}">
+        <rewrite template="{$frontend[path]}/flinkhistory/js/{**}"/>
+    </rule>
+    <rule dir="OUT" name="FLINKHISTORYUI/flinkhistory/outbound/images" pattern="/images/{**}">
+        <rewrite template="{$frontend[path]/flinkhistory/images/{**}" />
+    </rule>
+    <rule dir="OUT" name="FLINKHISTORYUI/flinkhistory/outbound/partials">
+        <match pattern="partials/{**}"/>
+        <rewrite template="{$frontend[path]}/flinkhistory/partials/{**}"/>
+    </rule>
+</rules>

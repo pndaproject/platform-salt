@@ -1,0 +1,8 @@
+<service role="FLINKHISTORYUI" name="flinkhistoryui" version="1.4.2">
+    <routes>
+        <route path="/flinkhistory/" />
+        <route path="/flinkhistory/**" />
+        <route path="/flinkhistory/**?**" />
+    </routes>
+    <dispatch classname="org.apache.hadoop.gateway.dispatch.PassAllHeadersDispatch"/>
+</service>

@@ -116,4 +116,10 @@
         <role>AMBARIUI</role>
         <url>http://{{ ambari_server_host }}:8080</url>
     </service>
+
+    <service>
+        <role>FLINKHISTORYUI</role>
+        <url>http://{{ flink_history_server_host }}:{{ flink_history_server_port }}</url>
+    </service>
+
 </topology>
