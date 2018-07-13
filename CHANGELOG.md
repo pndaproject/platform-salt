@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4569: Proxy PNDA console through knox
 - PNDA-4643: Add TLS support for haproxy
 - PNDA-4712: Use LDAP for Grafana authentication
+- PNDA-4794: Flink reverse proxy via Knox
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
