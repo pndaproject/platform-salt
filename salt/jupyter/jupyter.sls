@@ -59,11 +59,10 @@ jupyter-copy_initial_notebooks:
   file.recurse:
     - source: 'salt://jupyter/files/notebooks'
     - name: '{{ pnda_home_directory }}/jupyter_notebooks'
-# BEGIN EXPERIMENTAL
-{% if 'EXPERIMENTAL' not in features %}
+# Exclude minimal notebook if SPARKMAGIC not in features
+{% if 'SPARKMAGIC' not in features %}
     - exclude_pat: "PNDA minimal Spark notebook*"
 {% endif %}
-# END EXPERIMENTAL
     - require:
       - file: jupyter-create_notebooks_directory
 
@@ -124,8 +123,8 @@ jupyter-copy_pyspark2_kernel:
         jupyter_extension_venv: {{ jupyter_extension_venv }}
 {% endif %}
 
-# BEGIN EXPERIMENTAL
-{% if 'EXPERIMENTAL' in features %}
+# Add SPARKMAGIC if available in features
+{% if 'SPARKMAGIC' in features %}
 
 # Add sparkmagic to the supported kernel and install livy server
 livy-create_logs_dir:
@@ -191,7 +190,6 @@ livy-server-start_service:
     - reload: True
 
 {% endif %}
-# END EXPERIMENTAL
 
 {% if grains['hadoop.distro'] == 'CDH' %}
 dependency-configurations-python2:
