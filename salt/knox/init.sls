@@ -14,6 +14,9 @@
 {% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('MAPREDUCE2', 'HISTORYSERVER')[0] %}
 {% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK', 'SPARK_JOBHISTORYSERVER')[0] %}
 {% set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] %}
+{% set flink_history_server_host = salt['pnda.get_hosts_for_role']("FLINK")[0] %}
+{% set flink_history_server_port = pillar['flink']['historyserver_web_port'] %}
+{% set flink_version = pillar['flink']['release_version'] %}
 {% set pnda_domain = pillar['consul']['data_center'] + '.' + pillar['consul']['domain'] %}
 {% set release_directory = pillar['pnda']['homedir'] %}
 {% set knox_home_directory = release_directory + '/knox' %}
@@ -149,6 +152,8 @@ knox-set-configuration:
       spark_history_server_host: {{ spark_history_server_host }}
       mr2_history_server_host: {{ mr2_history_server_host }}
       ambari_server_host: {{ ambari_server_host }}
+      flink_history_server_host: {{ flink_history_server_host }}
+      flink_history_server_port: {{ flink_history_server_port }}
     - require:
       - cmd: knox-init-authentication
 
@@ -221,7 +226,8 @@ knox-import_CA:
   'dm': 'pnda-deployment-manager/1.0.0/',
   'pr':  'pnda-package-repository/1.0.0/',
   'tsdb': 'opentsdb/' + opentsdb_version + '/',
-  'console': 'pnda-console/1.0.0'
+  'console': 'pnda-console/1.0.0',
+  'flinkhistoryui': 'flinkhistoryui/' + flink_version + '/' 
   } %}
 
 {% for service_name in knox_proxy_services %}
