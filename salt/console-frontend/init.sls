@@ -41,7 +41,7 @@
 {% set httpfs_link = salt['pnda.get_gateway_link']('httpfs') %}
 {% set km_link = salt['pnda.get_gateway_link']('kafka-manager') + '/clusters/' + clustername %}
 {% set kibana_link = salt['pnda.get_gateway_link']('kibana') %}
-{% set flink_link = salt['pnda.get_gateway_link']('flink') %}
+{% set flink_link = salt['pnda.get_gateway_link']('flink') + '/' %}
 
 {% set login_mode = 'PAM' %}
 
