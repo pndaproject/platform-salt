@@ -55,6 +55,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4536: Make data directories used by Kafka configurable in env-parameters.sls instead of fixed per flavor
 - PNDA-4779: Use TLS 1.2 between agents and server
 - PNDA-4768: Set HTTPFS link from config similar to other links
+- PNDA-4791: Enable links in console through knox to KM and ELK
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
