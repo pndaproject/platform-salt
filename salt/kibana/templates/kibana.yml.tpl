@@ -1,3 +1,6 @@
+# Context path for access through gateway
+server.basePath: {{ gateway_path }}
+
 # Kibana is served by a back end server. This controls which port to use.
 server.port: 5601
 

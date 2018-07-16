@@ -1,0 +1,11 @@
+<service role="KAFKA-MANAGER" name="kafka-manager" version="1.3.3">
+    <routes>
+        <route path="/kafkamanager">
+            <rewrite apply="KAFKA-MANAGER/kafkamanager/root" to="request.url"/>
+        </route>
+        <route path="/kafkamanager/**">
+            <rewrite apply="KAFKA-MANAGER/kafkamanager/inbound" to="request.url"/>
+        </route>
+    </routes>
+    <dispatch classname="org.apache.hadoop.gateway.dispatch.PassAllHeadersDispatch"/>
+</service>

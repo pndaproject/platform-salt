@@ -9,6 +9,7 @@
 {%-   do zk_servers.append(ip + ':2181') -%}
 {%- endfor -%}
 
+{% set gateway_path = salt['pnda.get_gateway_context_path']('kafka-manager') %}
 
 kafka-manager-install_unzip:
   pkg.installed:
@@ -37,6 +38,7 @@ kafka-manager-set-configuration-file:
     - context:
       application_secret: {{ salt['random.get_str']('128') }}
       zk_servers: {{ zk_servers }}
+      gateway_path: {{ gateway_path }}
 
 kafka-manager-install-application_configuration:
   file.managed:

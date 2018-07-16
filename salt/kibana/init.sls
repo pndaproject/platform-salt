@@ -8,6 +8,8 @@
 {% set kibana_package = 'kibana-' + kibana_version + '.tar.gz' %}
 {% set kibana_url = mirror_location + kibana_package %}
 
+{% set gateway_path = salt['pnda.get_gateway_context_path']('kibana') %}
+
 kibana-kibana:
   group.present:
     - name: kibana
@@ -31,9 +33,12 @@ kibana-dl_and_extract_kibana:
 kibana-copy_configuration_kibana:
   file.managed:
     - name: {{ kibana_directory }}/config/kibana.yml
-    - source: salt://kibana/files/kibana.yml
+    - source: salt://kibana/templates/kibana.yml.tpl
     - user: kibana
     - group: kibana
+    - template: jinja
+    - context:
+      gateway_path: {{ gateway_path }}
 
 kibana-copy_kibana_service:
   file.managed:

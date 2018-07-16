@@ -8,13 +8,15 @@
 {%-   do zk_servers.append(ip + ':2181') -%}
 {%- endfor -%}
 
+{% set context_path = salt['pnda.get_gateway_context_path']('kafka-manager') %}
+
 pnda-create-cluster-start_service:
   cmd.run:
     - name: 'service kafka-manager start && sleep 10 || echo already started;'
 
 pnda-create-cluster-create_cluster:
   http.query:
-    - name: 'http://localhost:{{ km_port }}/clusters'
+    - name: 'http://localhost:{{ km_port }}{{ context_path }}/clusters'
     - method: 'POST'
     - status: 200
     - text: False

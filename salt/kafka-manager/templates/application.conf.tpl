@@ -4,6 +4,7 @@
 #
 # Some parts Copyright (c) 2016 Cisco and/or its affiliates.
 
+play.http.context = "{{ gateway_path }}"
 play.crypto.secret="{{ application_secret }}"
 play.i18n.langs=["en"]
 play.http.requestHandler = "play.http.DefaultHttpRequestHandler"
