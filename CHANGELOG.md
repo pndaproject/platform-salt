@@ -75,6 +75,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4742: Knox failed to match yarn spark job history
 - PNDA-4762: Support YARN resource manager HA mode
 - PNDA-4766: Enable access to Ambari through Knox
+- PNDA-4804: Fixed flink history service infinite 404 loop
 
 ## [4.0.0] 2018-02-10
 ### Added
