@@ -135,6 +135,12 @@ knox-init-authentication:
     - require:
       - file: knox-master-secret-script
 
+# clean up default topologies
+knox-remove-default-topologies:
+  file.directory:
+    - name: {{ conf_directory }}/topologies/
+    - clean: True
+
 knox-create-pnda-topology:
   file.managed:
     - name: {{ conf_directory }}/topologies/pnda.xml
