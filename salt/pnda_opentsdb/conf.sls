@@ -41,6 +41,13 @@ pnda_opentsdb-pnda-opentsdb-configuration-cors:
     - pattern: '.*tsd.http.request.cors_domains =.*'
     - repl: 'tsd.http.request.cors_domains = *'
 
+pnda_opentsdb-pnda-opentsdb-configuration-ui:
+  file.replace:
+    - name: /etc/opentsdb/opentsdb.conf
+    - append_if_not_found: True
+    - pattern: '.*tsd.core.enable_ui =.*'
+    - repl: 'tsd.core.enable_ui = false'
+
 {% if grains['hadoop.distro'] == 'HDP' %}
 pnda_opentsdb-pnda-opentsdb-hbase-zk-root:
   file.replace:
