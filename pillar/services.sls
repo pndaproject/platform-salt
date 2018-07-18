@@ -55,19 +55,19 @@ platform_gobblin_modules:
   release_version: develop
 
 console_frontend:
-  release_version: develop
+  release_version: PNDA-4761
   bind_port: 80
   
 console_backend_data_logger:
-  release_version: develop
+  release_version: PNDA-4761
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: develop
+  release_version: PNDA-4761
   bind_port: 3123
 
 console_backend_utils:
-  release_version: develop
+  release_version: PNDA-4761
 
 deployment_manager:
   release_version: develop
