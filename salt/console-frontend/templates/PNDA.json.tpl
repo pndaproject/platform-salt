@@ -12,10 +12,6 @@
       "link": "{{ kafka_manager_link }}"
     },
     {
-      "name": "OpenTSDB",
-      "link": "{{ opentsdb_link }}"
-    },
-    {
       "name": "Grafana",
       "link": "{{ grafana_link }}"
     },
