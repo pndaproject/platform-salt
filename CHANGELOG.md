@@ -79,6 +79,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4804: Fixed flink history service infinite 404 loop
 - PNDA-4787: Remove unnecessary knox topologies that come by default
 - PNDA-4809: Fix opentsdb/dm cog redirect to logserver via knox
+- PNDA-4805: Reduce verbosity of routes through gateway
 
 ## [4.0.0] 2018-02-10
 ### Added
