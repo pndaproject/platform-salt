@@ -1,6 +1,6 @@
 <service role="pnda-package-repository" name="pnda-package-repository" version="1.0.0">
     <routes>
-        <route path="/pnda-package-repository/**">
+        <route path="/repository/**">
             <rewrite apply="pnda-package-repository" to="request.url"/>
         </route>
     </routes>

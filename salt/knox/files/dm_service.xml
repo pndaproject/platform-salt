@@ -1,6 +1,6 @@
 <service role="pnda-deployment-manager" name="pnda-deployment-manager" version="1.0.0">
     <routes>
-        <route path="/pnda-deployment-manager/**">
+        <route path="/deployment/**">
             <rewrite apply="pnda-deployment-manager" to="request.url"/>
         </route>
     </routes>
