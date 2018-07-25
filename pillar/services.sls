@@ -70,7 +70,7 @@ console_backend_utils:
   release_version: develop
 
 deployment_manager:
-  release_version: develop
+  release_version: PNDA-4500
   keys_directory: /opt/pnda/dm_keys
 
 package_repository:
