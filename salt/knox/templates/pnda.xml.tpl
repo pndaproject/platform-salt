@@ -58,6 +58,11 @@
     </service>
 
     <service>
+        <role>HBASEUI</role>
+        <url>http://{{ hbase_rest_host }}:16010</url>
+    </service>
+
+    <service>
         <role>HIVE</role>
         <url>http://{{ hive_host }}:10001/cliservice</url>
     </service>
@@ -85,6 +90,11 @@
     <service>
         <role>SPARKHISTORYUI</role>
         <url>http://{{ spark_history_server_host }}:18080</url>
+    </service>
+
+    <service>
+        <role>SPARK2HISTORYUI</role>
+        <url>http://{{ spark2_history_server_host }}:18081</url>
     </service>
 
     <service>
@@ -120,6 +130,11 @@
     <service>
         <role>FLINKHISTORYUI</role>
         <url>http://{{ flink_history_server_host }}:{{ flink_history_server_port }}</url>
+    </service>
+
+    <service>
+        <role>HDFSUI</role>
+        <url>http://{{ webhdfs_host }}:50070</url>
     </service>
 
 </topology>
