@@ -15,6 +15,16 @@ gateway:
             context: yarn
           flink:
             context: flinkhistory
+          spark:
+            context: sparkhistory
+          spark2:
+            context: spark2history
+          hbase:
+            context: hbase/webui
+          jobhistory:
+            context: jobhistory
+          hdfs:
+            context: hdfs
       - name: pndaops
         services:
           kibana:

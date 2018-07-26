@@ -1,0 +1,16 @@
+<service role="SPARK2HISTORYUI" name="spark2history" version="2.2.0">
+    <routes>
+        <route path="/spark2history/"/>
+        <route path="/spark2history/**"/>
+        <route path="/spark2history/**?**"/>
+        <route path="/spark2history/history/**?**">
+            <rewrite apply="SPARK2HISTORYUI/spark2history/outbound/headers" to="response.headers"/>
+        </route>
+        <route path="/spark2history/history/**/?**">
+            <rewrite apply="SPARK2HISTORYUI/spark2history/outbound/headers/jobs" to="response.headers"/>
+        </route>
+        <route path="/spark2history/history/**/jobs/**?**">
+            <rewrite apply="SPARK2HISTORYUI/spark2history/outbound/headers/jobs" to="response.headers"/>
+        </route>
+    </routes>
+</service>
