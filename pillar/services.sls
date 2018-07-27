@@ -112,8 +112,8 @@ cloudera:
   parcel_version: "5.12.1-1.cdh5.12.1.p0.3"
 
 hdp:
-  hadoop_version: "2.7.3.2.6.4.0-91"
-  version: "2.6.4.0-91"
+  hadoop_version: "2.7.3.2.6.5.0-292"
+  version: "2.6.5.0-292"
   
 hadoop_manager:
   cmdb:
