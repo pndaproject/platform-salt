@@ -20,7 +20,8 @@ def get_name_service():
     """ Returns name service for HA Cluster """
     user_name = hadoop_manager_username()
     password = hadoop_manager_password()
-    request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (hadoop_manager_ip(), cluster_name(), 'hdfs01')
+    service = __salt__['pillar.get']('hadoop_services:%s:service' % ("hdfs_namenode"))
+    request_url = 'http://%s:7180/api/v11/clusters/%s/services/%s/nameservices' % (hadoop_manager_ip(), cluster_name(), service)
     r = requests.get(request_url, auth=(user_name, password))
     name_service = ""
     if r.status_code == 200:
@@ -70,7 +71,7 @@ def hadoop_namenode():
         if name_service:
             namenode_host = name_service
         else:
-            namenode_host = cloudera_get_hosts_by_hadoop_role('hdfs01', 'NAMENODE')[0]
+            namenode_host = get_hosts_by_hadoop_role("hdfs_namenode")[0]
         return 'hdfs://%s:8020' % namenode_host
     else:
         return get_namenode_from_ambari()
@@ -190,20 +191,22 @@ def cloudera_get_hosts_by_hadoop_role(service, role_type):
     hosts_ids = [item['hostRef']['hostId'] for item in roles['items'] if item['type'] == role_type]
 
     # Get ip addresses
-    hosts_ips = []
+    hosts_names = []
     for host_id in hosts_ids:
         request_host_url = 'http://{}/api/v14/hosts/{}'.format(endpoint, host_id)
         r = requests.get(request_host_url, auth=(user, password))
         r.raise_for_status()
-        ip_address = r.json()['ipAddress']
-        hosts_ips.append(ip_address)
+        hostname = r.json()['hostname']
+        hosts_names.append(hostname)
 
-    return hosts_ips
+    return hosts_names
 
 def ambari_get_hosts_by_hadoop_role(service, role_type):
     return [socket.getfqdn(host['HostRoles']['host_name']) for host in ambari_request('/clusters/%s/services/%s/components/%s' % (cluster_name(),service,role_type))['host_components']]
 
-def get_hosts_by_hadoop_role(service, role_type):
+def get_hosts_by_hadoop_role(hadoop_service_name):
+    service = __salt__['pillar.get']('hadoop_services:%s:service' % (hadoop_service_name))
+    role_type = __salt__['pillar.get']('hadoop_services:%s:component' % (hadoop_service_name))
     if hadoop_distro() == 'CDH':
         return cloudera_get_hosts_by_hadoop_role(service, role_type)
     else:

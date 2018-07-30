@@ -1,14 +1,6 @@
 
-{% if grains['hadoop.distro'] == 'CDH' %}
-{% set zk_service = 'zk01' %}
-{% set zk_role = 'SERVER' %}
-{% else %}
-{% set zk_service = 'ZOOKEEPER' %}
-{% set zk_role = 'ZOOKEEPER_SERVER' %}
-{% endif %}
-
 {% set hadoop_zk = [] %}
-{% for ip in salt['pnda.get_hosts_by_hadoop_role'](zk_service, zk_role) %}
+{% for ip in salt['pnda.get_hosts_by_hadoop_role']('zookeeper_server') %}
 {% do hadoop_zk.append(ip+':2181') %}
 {% endfor %}
 

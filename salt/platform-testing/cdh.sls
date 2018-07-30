@@ -17,11 +17,10 @@
 
 {% set console_port = '3001' %}
 
+{% set hive_node = salt['pnda.get_hosts_by_hadoop_role']('hive_server')[0] %}
 {%- if grains['hadoop.distro'] == 'CDH' -%}
-{% set hive_node = salt['pnda.get_hosts_by_hadoop_role']('hive01', 'HIVESERVER2')[0] %}
 {% set hive_http_port = '10000' %}
 {%- else -%}
-{% set hive_node = salt['pnda.get_hosts_by_hadoop_role']('HIVE', 'HIVE_SERVER')[0] %}
 {% set hive_http_port = '10001' %}
 {%- endif -%}
 
