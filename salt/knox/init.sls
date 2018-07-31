@@ -52,7 +52,7 @@ knox-dl-and-extract:
   archive.extracted:
     - name: {{ release_directory }}
     - source: {{ mirror_location }}/{{ knox_zip }}
-    - source_hash: {{ mirror_location }}/{{ knox_zip }}.sha
+    - source_hash: {{ mirror_location }}/{{ knox_zip }}.sha1
     - user: knox
     - group: knox
     - archive_format: zip
