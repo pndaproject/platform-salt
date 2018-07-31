@@ -128,7 +128,7 @@ nodejs:
   version: 'node-v6.10.2-linux-x64'
 
 knox:
-  release_version: "1.0.0"
+  release_version: "1.1.0"
   authentication: "pam"
   master_secret: "secret"
 
