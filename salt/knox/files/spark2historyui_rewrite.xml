@@ -1,0 +1,111 @@
+<rules>
+  <rule dir="IN" name="SPARK2HISTORYUI/spark2history/inbound/root" pattern="*://*:*/**/spark2history/">
+    <rewrite template="{$serviceUrl[SPARK2HISTORYUI]}/"/>
+  </rule>
+  <rule dir="IN" name="SPARK2HISTORYUI/spark2history/inbound/path" pattern="*://*:*/**/spark2history/{**}">
+    <rewrite template="{$serviceUrl[SPARK2HISTORYUI]}/{**}"/>
+  </rule>
+  <rule dir="IN" name="SPARK2HISTORYUI/spark2history/inbound/query" pattern="*://*:*/**/spark2history/{**}?{**}">
+    <rewrite template="{$serviceUrl[SPARK2HISTORYUI]}/{**}?{**}"/>
+  </rule>
+  <rule dir="IN" name="SPARKHISTORYUI/spark2history/inbound/history" pattern="*://*:*/**/spark2history/history/{**}/?{**}">
+    <rewrite template="{$serviceUrl[SPARK2HISTORYUI]}/history/{**}/?{**}"/>
+  </rule>
+  <rule dir="IN" name="SPARK2HISTORYUI/spark2history/inbound/apps" pattern="*://*:*/**/spark2history/?{page}?{showIncomplete}">
+    <rewrite template="{$serviceUrl[SPARK2HISTORYUI]}/?{page}?{showIncomplete}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/history" pattern="/history/{**}">
+    <rewrite template="{$frontend[url]}/spark2history/history/{**}"/>
+  </rule>
+  <rule dir="OUT" name="SPARKHISTORYUI/spark2history/outbound/history/job" pattern="/history/{**}?{**}">
+    <rewrite template="{$frontend[url]}/spark2history/history/{**}?{**}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/bootstrap" pattern="/static/{bootstrap=bootstrap*}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{bootstrap}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/vis" pattern="/static/{vis=vis.min.*}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{vis}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/hiscommon" pattern="/static/historypage-common.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/historypage-common.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/webuistyle" pattern="/static/webui.css">
+    <rewrite template="{$frontend[url]}/spark2history/static/webui.css"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/webui" pattern="/static/webui.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/webui.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/timeline" pattern="/static/{timeline=timeline-view*}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{timeline}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/sorttable" pattern="/static/sorttable.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/sorttable.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/jquery" pattern="/static/{jquery=jquery*.min.js}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{jquery}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/jmustache" pattern="/static/jquery.mustache.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/jquery.mustache.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/datatablescss" pattern="/static/dataTables.bootstrap.css">
+    <rewrite template="{$frontend[url]}/spark2history/static/dataTables.bootstrap.css"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/datatables" pattern="/static/dataTables.bootstrap.min.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/dataTables.bootstrap.min.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/jquerycss" pattern="/static/{jquerycss=jquery.dataTables.*.min.css}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{jquerycss}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/josnformattercss" pattern="/static/jsonFormatter.min.css">
+    <rewrite template="{$frontend[url]}/spark2history/static/jsonFormatter.min.css"/>
+  </rule>
+   <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/josnformatter" pattern="/static/jsonFormatter.min.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/jsonFormatter.min.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/initialize" pattern="/static/initialize-tooltips.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/initialize-tooltips.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/table" pattern="/static/table.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/table.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/logview" pattern="/static/log-view.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/log-view.js"/>
+  </rule>  
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/additional" pattern="/static/additional-metrics.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/additional-metrics.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/spark" pattern="/static/{spark=spark*}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{spark}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/d3" pattern="/static/{d3=*d3.min.js}">
+    <rewrite template="{$frontend[url]}/spark2history/static/{d3}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/static/graphlib" pattern="/static/graphlib-dot.min.js">
+    <rewrite template="{$frontend[url]}/spark2history/static/graphlib-dot.min.js"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/apps" pattern="/?{showIncomplete}">
+    <rewrite template="{$frontend[url]}/spark2history/?{showIncomplete}"/>
+  </rule>
+  <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/headers/location">
+    <match pattern="*://*:*/history/{**}/?{**}"/>
+    <rewrite template="{$frontend[url]}/spark2history/history/{**}/?{**}"/>
+  </rule>
+  <rule flow="OR" dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/headers/jobs/location">
+    <match pattern="*://*:*/history/{**}/jobs">
+      <rewrite template="{$frontend[url]}/spark2history/history/{**}/jobs"/>
+    </match>
+    <match pattern="*://*:*/history/{**}/jobs/">
+      <rewrite template="{$frontend[url]}/spark2history/history/{**}/jobs/"/>
+    </match>
+  </rule>
+  <filter name="SPARK2HISTORYUI/spark2history/outbound/headers">
+    <content type="application/x-http-headers">
+      <apply path="Location" rule="SPARK2HISTORYUI/spark2history/outbound/headers/location"/>
+    </content>
+  </filter>
+  <filter name="SPARK2HISTORYUI/spark2history/outbound/headers/jobs">
+    <content type="application/x-http-headers">
+      <apply path="Location" rule="SPARK2HISTORYUI/spark2history/outbound/headers/jobs/location"/>
+    </content>
+  </filter>
+</rules>

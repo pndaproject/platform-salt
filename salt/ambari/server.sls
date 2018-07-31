@@ -8,6 +8,8 @@
 {% set cmdb_password = pillar['hadoop_manager']['cmdb']['password'] %}
 {%- set cmdb_host = salt['pnda.get_hosts_for_role']('oozie_database')[0] -%}
 {% set mysql_root_password = salt['pillar.get']('mysql:root_pw', 'mysqldefault') %}
+{% set hdp26_service_conf_dir = '/var/lib/ambari-server/resources/stacks/HDP/2.6/services' %}
+{% set knox_service = salt['pnda.generate_external_link']('knox',':8443') %}
 
 include:
   - java
@@ -164,6 +166,57 @@ ambari-server-pid-dir_permission_service_add:
     - name: |
         chkconfig --add  ambari-server-permission
         chkconfig --level 2345 ambari-server-permission on
+
+{%- set hdp_services = {
+  'hbase': '/HBASE',
+  'spark': '/SPARK',
+  'spark2': '/SPARK2',
+  'hdfs': '/HDFS',
+  'yarn': '/YARN'
+  } 
+-%}
+
+{% for service_name in hdp_services %}
+{% set quicklinks_dir = hdp26_service_conf_dir + hdp_services[service_name] + '/quicklinks' %}
+{% set metoinfo_file = hdp26_service_conf_dir + hdp_services[service_name] + '/metainfo.xml' %}
+{% set service_proxy_url = salt['pnda.get_gateway_link'](service_name) %}
+# create quicklinks directory
+ambari-server-create_quicklinks_dir_{{ service_name }}:
+  file.directory:
+    - name: {{ quicklinks_dir }}
+    - makedirs: True
+
+# create quicklink configuration
+ambari-server-create_quicklinks_config_{{ service_name }}:
+  file.managed:
+    - name: {{ quicklinks_dir }}/quicklinks.json
+    - source: salt://ambari/templates/{{service_name}}_quicklinks.json.tpl
+    - mode: 755
+    - template: jinja
+    - context:
+        service_proxy_url : {{ service_proxy_url }}
+
+# update metainfo
+ambari-server-update_metainfo_{{ service_name }}:
+  cmd.script:
+    - name: salt://ambari/files/update_metainfo.sh
+    - args: {{ metoinfo_file }}
+{% endfor %}
+
+ambari-server-create_quicklinks_dir_mr2:
+  file.directory:
+    - name: {{ hdp26_service_conf_dir }}/YARN/quicklinks-mapred
+    - makedirs: True
+
+{% set service_proxy_url = salt['pnda.get_gateway_link']('jobhistory') %}
+ambari-server-create_quicklinks_config_mr2:
+    file.managed:
+    - name: {{ hdp26_service_conf_dir }}/YARN/quicklinks-mapred/quicklinks.json
+    - source: salt://ambari/templates/yarn_mr2_quicklinks.json.tpl
+    - mode: 755
+    - template: jinja
+    - context:
+        service_proxy_url: {{ service_proxy_url }}
 
 ambari-server-start_service:
   cmd.run:
