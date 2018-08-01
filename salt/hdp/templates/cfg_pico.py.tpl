@@ -351,7 +351,6 @@ BLUEPRINT = r'''{
                     "javax.jdo.option.ConnectionUserName" : "hive",
                     "hive_log_dir" : "/var/log/pnda/hive",
                     "hive.heapsize" : "512",
-                    "hcat_log_dir" : "/var/log/pnda/webhcat",
                     "hive.metastore.heapsize" : "1024"
                 }
             }
@@ -460,8 +459,6 @@ BLUEPRINT = r'''{
                     "ha.failover-controller.active-standby-elector.zk.op.retries" : "120",
                     "hadoop.http.authentication.simple.anonymous.allowed" : "true",
                     "hadoop.http.staticuser.user": "{{ pnda_user }}",
-                    "hadoop.proxyuser.hcat.groups" : "users",
-                    "hadoop.proxyuser.hcat.hosts" : "%(cluster_name)s-hadoop-mgr-1%(domain_name)s",
                     "hadoop.proxyuser.hdfs.groups" : "*",
                     "hadoop.proxyuser.hdfs.hosts" : "*",
                     "hadoop.proxyuser.hive.groups" : "*",
@@ -504,6 +501,9 @@ BLUEPRINT = r'''{
         {
             "name" : "MGR01",
             "components" : [
+                {
+                "name" : "TIMELINE_READER"
+                },
                 {
                 "name" : "METRICS_MONITOR"
                 },
