@@ -536,9 +536,6 @@ BLUEPRINT = r'''{
                 "name" : "HISTORYSERVER"
                 },
                 {
-                "name" : "SPARK_JOBHISTORYSERVER"
-                },
-                {
                 "name" : "SPARK2_JOBHISTORYSERVER"
                 },
                 {
@@ -576,9 +573,6 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "OOZIE_CLIENT"
-                },
-                {
-                "name" : "SPARK_CLIENT"
                 },
                 {
                 "name" : "SPARK2_CLIENT"
@@ -642,12 +636,6 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "TEZ_CLIENT"
-                },
-                {
-                "name" : "SPARK_CLIENT"
-                },
-                {
-                "name" : "SLIDER"
                 },
                 {
                 "name" : "SQOOP"
