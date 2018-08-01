@@ -6,7 +6,7 @@ CLI=`basename "$0"`
 if [ $CLI == "hive" ] || [ $CLI == "beeline" ]; then
 #--hiveconf tez.queue.name=dev
   PROP=('--hiveconf' 'tez.queue.name')
-elif [ $CLI == "flink" ] || [ $CLI == "pyflink.sh" ]; then 
+elif [ $CLI == "flink" ] && [ "$1" == "run" ] || [ $CLI == "pyflink.sh" ]; then
   PROP=('-yqu' '')
 else
   PROP=('--queue' '')
