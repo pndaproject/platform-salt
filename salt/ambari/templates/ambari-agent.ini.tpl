@@ -61,7 +61,7 @@ pidLookupPath=/var/run/
 
 [heartbeat]
 state_interval_seconds=60
-dirs=/etc/hadoop,/etc/hadoop/conf,/etc/hbase,/etc/hcatalog,/etc/hive,/etc/oozie,
+dirs=/etc/hadoop,/etc/hadoop/conf,/etc/hbase,/etc/hive,/etc/oozie,
   /etc/sqoop,
   /var/run/hadoop,/var/run/zookeeper,/var/run/hbase,/var/run/templeton,/var/run/oozie,
   /var/log/hadoop,/var/log/zookeeper,/var/log/hbase,/var/run/templeton,/var/log/hive

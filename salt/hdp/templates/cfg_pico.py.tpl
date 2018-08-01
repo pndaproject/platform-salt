@@ -538,9 +538,6 @@ BLUEPRINT = r'''{
                 "name" : "HIVE_METASTORE"
                 },
                 {
-                "name" : "WEBHCAT_SERVER"
-                },
-                {
                 "name" : "OOZIE_SERVER"
                 },
                 {
@@ -620,9 +617,6 @@ BLUEPRINT = r'''{
                 },
                 {
                 "name" : "HBASE_CLIENT"
-                },
-                {
-                "name" : "HCAT"
                 },
                 {
                 "name" : "TEZ_CLIENT"
