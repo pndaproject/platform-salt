@@ -7,18 +7,10 @@ hdp-httpfs_pkg:
 hdp-httpfs_create_link:
   file.symlink:
     - name: /etc/init.d/hadoop-httpfs
-    - target: /usr/hdp/current/hadoop-httpfs/etc/init.d/hadoop-httpfs
-
-hdp-httpfs_java_home:
-  file.append:
-    - name: /etc/hadoop-httpfs/conf/httpfs-env.sh
-    - text:
-      - "export JAVA_HOME=/usr/lib/jvm/java-8-oracle/"
+    - target: /usr/hdp/current/hadoop-httpfs/etc/rc.d/init.d/hadoop-httpfs
 
 hdp-httpfs_service_started:
   service.running:
     - name: hadoop-httpfs
     - enable: True
     - reload: True
-
-
