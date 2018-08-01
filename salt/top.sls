@@ -34,14 +34,11 @@
     - jmxproxy
     - platform-testing.general
 
-  'roles:elk':
+  'roles:logserver':
     - match: grain
     - curator
     - elasticsearch
     - kibana
-
-  'roles:logserver':
-    - match: grain
     - logserver.logserver
 
   'roles:kibana_dashboard':
