@@ -174,21 +174,21 @@ def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hd
     repo_definition = {
         "RepositoryVersions" : {
             "display_name" : "HDP",
-            "repository_version" : "2.6"
+            "repository_version" : "3.0"
         },
         "operating_systems" : [
             {
                 "OperatingSystems" : {
                     "os_type" : hdp_os_type,
                     "stack_name" : "HDP",
-                    "stack_version" : "2.6"
+                    "stack_version" : "3.0"
                 },
                 "repositories" : [
                     {
                         "Repositories" : {
                             "base_url" : hdp_core_stack_repo,
                             "os_type" : hdp_os_type,
-                            "repo_id" : "HDP-2.6",
+                            "repo_id" : "HDP-3.0",
                             "repo_name" : "HDP",
                             "unique" : False
                         }
@@ -197,7 +197,7 @@ def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hd
                         "Repositories" : {
                             "base_url" : hdp_utils_stack_repo,
                             "os_type" : hdp_os_type,
-                            "repo_id" : "HDP-UTILS-1.1.0.21",
+                            "repo_id" : "HDP-UTILS-1.1.0.22",
                             "repo_name" : "HDP-UTILS",
                             "unique" : False
                         }
@@ -207,7 +207,7 @@ def create_new_cluster(nodes, cluster_name, domain_name, hdp_core_stack_repo, hd
         ]
     }
     logging.info("Registering repos: %s", repo_definition)
-    repo_response = requests.post('%s/stacks/HDP/versions/2.6/repository_versions' % ambari_api, json.dumps(repo_definition), auth=auth, headers=headers)
+    repo_response = requests.post('%s/stacks/HDP/versions/3.0/repository_versions' % ambari_api, json.dumps(repo_definition), auth=auth, headers=headers)
     if repo_response.status_code != 201:
         exit_setup(repo_response.text)
     logging.debug("Registered repos")

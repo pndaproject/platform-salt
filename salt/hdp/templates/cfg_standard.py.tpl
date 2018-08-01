@@ -774,6 +774,6 @@ BLUEPRINT = r'''{
     "Blueprints" : {
         "blueprint_name" : "pnda-blueprint",
         "stack_name" : "HDP",
-        "stack_version" : "2.6"
+        "stack_version" : "3.0"
     }
 }'''
