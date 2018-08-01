@@ -47,7 +47,7 @@ gnuplot:
   package-name: gnuplot
   version: ""
 grafana:
-  package-source: 'grafana-4.2.0-1.x86_64.rpm'
+  package-source: 'grafana-5.1.3-1.x86_64.rpm'
 krb5-devel:
   package-name: krb5-devel
   version: ""
