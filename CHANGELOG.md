@@ -84,6 +84,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4805: Reduce verbosity of routes through gateway
 - PNDA-4813: Fix Ambari service quicklinks via knox proxy
 - PNDA-4810 Introduced knox rewrite rules for KM parameterised URL
+- PNDA-4797: ELK deployed twice in PICO Setup
 
 ## [4.0.0] 2018-02-10
 ### Added
