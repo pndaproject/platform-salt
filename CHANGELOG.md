@@ -58,6 +58,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4791: Enable links in console through knox to KM and ELK
 - PNDA-4586: Disable default opentsdb ui
 - PNDA-4818: Update Ambari to 2.7.0.0 and HDP to 2.6.5.0
+- PNDA-4500: Redesigned application detailed summary and added flink application detailed summary
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
