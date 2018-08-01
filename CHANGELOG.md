@@ -81,6 +81,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4787: Remove unnecessary knox topologies that come by default
 - PNDA-4809: Fix opentsdb/dm cog redirect to logserver via knox
 - PNDA-4805: Reduce verbosity of routes through gateway
+- PNDA-4813: Fix Ambari service quicklinks via knox proxy
 
 ## [4.0.0] 2018-02-10
 ### Added
