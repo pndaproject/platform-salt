@@ -4,7 +4,10 @@
             <rewrite apply="KAFKA-MANAGER/kafkamanager/root" to="request.url"/>
         </route>
         <route path="/kafkamanager/**">
-            <rewrite apply="KAFKA-MANAGER/kafkamanager/inbound" to="request.url"/>
+            <rewrite apply="KAFKA-MANAGER/kafkamanager/inbound/path" to="request.url"/>
+        </route>
+        <route path="/kafkamanager/**?**">
+            <rewrite apply="KAFKA-MANAGER/kafkamanager/inbound/parameter" to="request.url"/>
         </route>
     </routes>
     <dispatch classname="org.apache.hadoop.gateway.dispatch.PassAllHeadersDispatch"/>
