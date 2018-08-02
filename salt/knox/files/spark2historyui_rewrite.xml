@@ -84,7 +84,7 @@
     <rewrite template="{$frontend[url]}/spark2history/static/graphlib-dot.min.js"/>
   </rule>
   <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/apps" pattern="/?{showIncomplete}">
-    <rewrite template="{$frontend[url]}/spark2history/?{showIncomplete}"/>
+    <rewrite template="{$frontend[url]}/spark2history/?page?{showIncomplete}"/>
   </rule>
   <rule dir="OUT" name="SPARK2HISTORYUI/spark2history/outbound/headers/location">
     <match pattern="*://*:*/history/{**}/?{**}"/>
