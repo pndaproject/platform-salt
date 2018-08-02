@@ -3,14 +3,8 @@
 {% set oozie_node = salt['pnda.get_hosts_by_hadoop_role']('OOZIE', 'OOZIE_SERVER')[0] %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set oozie_spark_version = salt['pillar.get']('hdp:oozie_spark_version', '1') %}
-
-{% if oozie_spark_version == '1' %}
-{% set spark_examples_jar = '/usr/hdp/current/spark-client/lib/spark-examples.jar' %}
-{% set spark_examples_jar_src = '/usr/hdp/current/spark-client/lib/spark-examples*.jar' %}
-{% else %}
 {% set spark_examples_jar = '/usr/hdp/current/spark2-client/examples/jars/spark-examples.jar' %}
 {% set spark_examples_jar_src = '/usr/hdp/current/spark2-client/examples/jars/spark-examples_*.jar' %}
-{% endif %}
 
 include:
   - python-pip
