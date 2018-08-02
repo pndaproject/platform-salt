@@ -32,6 +32,10 @@ retentions = 60:43200
 pattern = ^spark\..*
 retentions = {{ retentions }}
 
+[flink]
+pattern = ^flink\..*
+retentions = 60:10080
+
 [default]
 pattern = .*
 retentions = 60:1440
