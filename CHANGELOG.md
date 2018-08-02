@@ -87,6 +87,8 @@ All notable changes to this project will be documented in this file.
 - PNDA-4810 Introduced knox rewrite rules for KM parameterised URL
 - PNDA-4797: ELK deployed twice in PICO Setup
 - PNDA-4774: Remove MySQL server from ambari/cloudera-manager
+- PNDA-4826: Spark2 history server (show incomplete applications)
+
 ## [4.0.0] 2018-02-10
 ### Added
 - PNDA-3127: Post ingress compaction for Kafka datasets
