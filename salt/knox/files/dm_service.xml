@@ -1,7 +1,7 @@
-<service role="pnda-deployment-manager" name="pnda-deployment-manager" version="1.0.0">
+<service role="PNDA-DEPLOYMENT-MANAGER" name="pnda-deployment-manager" version="1.0.0">
     <routes>
         <route path="/deployment/**">
-            <rewrite apply="pnda-deployment-manager" to="request.url"/>
+            <rewrite apply="PNDA-DEPLOYMENT-MANAGER/pnda-deployment-manager/inbound" to="request.url"/>
         </route>
     </routes>
 </service>

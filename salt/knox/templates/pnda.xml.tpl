@@ -98,17 +98,17 @@
     </service>
 
     <service>
-        <role>pnda-deployment-manager</role>
+        <role>PNDA-DEPLOYMENT-MANAGER</role>
         <url>http://deployment-manager-internal.service.{{ pnda_domain }}:5000</url>
     </service>
 
     <service>
-        <role>pnda-package-repository</role>
+        <role>PNDA-PACKAGE-REPOSITORY</role>
         <url>http://package-repository-internal.service.{{ pnda_domain }}:8888</url>
     </service>
 
     <service>
-        <role>opentsdb</role>
+        <role>OPENTSDB</role>
         <url>http://opentsdb-internal.service.{{ pnda_domain }}:{{ opentsdb_port }}</url>
     </service>
 
