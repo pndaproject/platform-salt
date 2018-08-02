@@ -76,6 +76,9 @@ mysql-server:
   version: "5.5.54-2.el7"
   configuration_file: /etc/my.cnf
   service_name: mysqld
+mysql-client:
+  package-name: mysql-community-client
+  version: "5.5.60-2.el7"
 nginx:
   package-name: nginx
   version: ""
