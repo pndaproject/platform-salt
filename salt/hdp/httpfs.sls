@@ -20,7 +20,7 @@ hdp-httpfs_pnda_log_directory:
     - group: httpfs
     - mode: 755
 
-hdp-httpfs_pnda_log_directory:
+hdp-httpfs_pnda_run_directory:
   file.directory:
     - name: /var/run/hadoop/httpfs
     - makedirs: True
