@@ -114,6 +114,9 @@
 <rule dir="IN" name="YARNUI/yarn/inbound/jobhistory/params" pattern="*://*:*/**/jobstory/jobhistory/{**}?{**}">
     <rewrite template="{$serviceUrl[JOBSTORYUI]}/jobhistory/{**}?{**}"/>
 </rule>
+<rule dir="IN" name="YARNUI/yarn/inbound/proxy" pattern="*://*:*/**/yarn/proxy/{**}?{**}">
+    <rewrite template="{$serviceUrl[YARNUI]}/proxy/{**}?{**}"/>
+</rule>
 <!--
   This rewrites a META refresh in web page so it will re-direct to jobstory.
 -->
@@ -272,8 +275,8 @@
     <rewrite template="{$frontend[url]}/yarn/proxy/{**}/"/>
 </rule>
 <rule dir="OUT" name="YARNUI/yarn/outbound/apps/history1">
-    <match pattern="/proxy/{**}"/>
-    <rewrite template="{$frontend[url]}/yarn/proxy/{**}"/>
+    <match pattern="/proxy/{**}?{**}"/>
+    <rewrite template="{$frontend[url]}/yarn/proxy/{**}?{**}"/>
 </rule>
 
 <rule dir="OUT" name="YARNUI/yarn/outbound/cluster/container">
