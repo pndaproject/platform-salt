@@ -20,6 +20,14 @@ hdp-httpfs_pnda_log_directory:
     - group: httpfs
     - mode: 755
 
+hdp-httpfs_pnda_log_directory:
+  file.directory:
+    - name: /var/run/hadoop/httpfs
+    - makedirs: True
+    - user: httpfs
+    - group: httpfs
+    - mode: 755
+
 /etc/hadoop-httpfs/conf/httpfs-signature.secret:
   file.touch
 
