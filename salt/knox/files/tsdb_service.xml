@@ -1,10 +1,10 @@
-<service role="opentsdb" name="opentsdb" version="1.0.0">
+<service role="OPENTSDB" name="opentsdb" version="1.0.0">
     <routes>
         <route path="/opentsdb/api/query?**">
-            <rewrite apply="opentsdbq" to="request.url"/>
+            <rewrite apply="OPENTSDB/opentsdb/inbound/query" to="request.url"/>
         </route>
         <route path="/opentsdb/api/search?**">
-            <rewrite apply="opentsdbs" to="request.url"/>
+            <rewrite apply="OPENTSDB/opentsdb/inbound/search" to="request.url"/>
         </route>
     </routes>
 </service>

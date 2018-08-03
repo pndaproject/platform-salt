@@ -1,8 +1,8 @@
 <rules>
-    <rule dir="IN" name="opentsdbq" pattern="*://*:*/**/opentsdb/api/query?{**}">
-        <rewrite template="{$serviceUrl[opentsdb]}/api/query?{**}"/>
+    <rule dir="IN" name="OPENTSDB/opentsdb/inbound/query" pattern="*://*:*/**/opentsdb/api/query?{**}">
+        <rewrite template="{$serviceUrl[OPENTSDB]}/api/query?{**}"/>
     </rule>
-    <rule dir="IN" name="opentsdbs" pattern="*://*:*/**/opentsdb/api/search?{**}">
-        <rewrite template="{$serviceUrl[opentsdb]}/api/search?{**}"/>
+    <rule dir="IN" name="OPENTSDB/opentsdb/inbound/search" pattern="*://*:*/**/opentsdb/api/search?{**}">
+        <rewrite template="{$serviceUrl[OPENTSDB]}/api/search?{**}"/>
     </rule>
 </rules>
