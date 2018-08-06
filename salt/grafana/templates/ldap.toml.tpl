@@ -23,7 +23,7 @@ use_ssl = false
 #bind_password = 'admin'
 
 # User search filter, for example "(cn=%s)" or "(sAMAccountName=%s)" or "(uid=%s)"
-search_filter = "(cn=%s)"
+search_filter = "(&(objectClass=posixAccount)(cn=%s))"
 
 # An array of base dns to search through
 search_base_dns = ["{{ ldap_search_base_dns }}"]
