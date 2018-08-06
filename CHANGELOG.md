@@ -88,6 +88,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4797: ELK deployed twice in PICO Setup
 - PNDA-4774: Remove MySQL server from ambari/cloudera-manager
 - PNDA-4826: Spark2 history server (show incomplete applications)
+- PNDA-4838: Fix Spark job description access through knox
 
 ## [4.0.0] 2018-02-10
 ### Added
