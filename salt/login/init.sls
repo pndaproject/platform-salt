@@ -1,12 +1,16 @@
 {% set ldap_server = pillar['security']['ldap_server'] %}
+{% set pnda_user = pillar['pnda']['user'] %}
 login-copy_event_login:
   file.managed:
-    - source: salt://login/files/event-login.sh.tpl
+    - source: salt://login/templates/event-login.sh.tpl
     - name: /usr/sbin/event-login.sh
     - user: root
     - group: root
     - mode: 755
     - makedirs: True
+    - template: jinja
+    - context:
+        pnda_user: pnda_user
 
 login-sudo_salt_event:
   file.managed:

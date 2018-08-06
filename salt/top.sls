@@ -57,6 +57,7 @@
   'roles:console_backend_data_manager':
     - match: grain
     - console-backend.data-manager
+    - login
 
   'roles:graphite':
     - match: grain
