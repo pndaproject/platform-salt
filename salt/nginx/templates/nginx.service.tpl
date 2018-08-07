@@ -17,6 +17,8 @@ KillSignal=SIGQUIT
 TimeoutStopSec=5
 KillMode=process
 PrivateTmp=true
+Restart=always
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target
