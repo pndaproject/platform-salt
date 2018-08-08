@@ -7,7 +7,8 @@
     - pnda.user
     - identity.users
     - hostsfile
-    - service-self-registration
+    - self-registration.node
+    - self-registration.service
     - java
     - java.env
     - ntp

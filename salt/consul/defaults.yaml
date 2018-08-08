@@ -20,6 +20,8 @@ consul:
     retry_interval: 30s
     datacenter: "{{ pillar['consul']['data_center'] }}"
     enable_script_checks: true
+    leave_on_terminate: false
+    skip_leave_on_interrupt: true
     ports:
       - dns: 53
     domain: "{{ pillar['consul']['domain'] }}"
