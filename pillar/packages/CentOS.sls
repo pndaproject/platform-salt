@@ -7,6 +7,12 @@ ambari-agent:
 ambari-server:
   package-name: ambari-server
   version: "2.7.0.0-897"
+ambari-legacy-metrics-hadoop-sink:
+  package-name: ambari-metrics-hadoop-sink
+  version: "2.6.1.0-143"
+ambari-metrics-hadoop-sink:
+  package-name: ambari-metrics-hadoop-sink
+  version: "2.7.0.0-897"
 at:
   package-name: at
   version: ""

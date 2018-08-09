@@ -27,6 +27,14 @@ orchestrate-expand-install_hadoop:
 {% endif %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
+orchestrate-pnda-install_ambari_metrics_sink:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:* and G@pnda:is_new_node'
+    - tgt_type: compound
+    - sls: ambari.metrics_sink
+    - timeout: 120
+    - queue: True
+
 orchestrate-expand-install_ambari_agents:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:* and G@pnda:is_new_node'

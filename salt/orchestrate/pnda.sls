@@ -51,6 +51,14 @@ orchestrate-pnda-hue_setup:
 {% endif %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
+orchestrate-pnda-install_ambari_metrics_sink:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:*'
+    - tgt_type: compound
+    - sls: ambari.metrics_sink
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-install_ambari_server:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:hadoop_manager'
