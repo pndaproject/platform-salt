@@ -12,6 +12,8 @@
 {% set spark_home = '/usr/hdp/current/spark-client' %}
 {% set spark2_home = '/usr/hdp/current/spark2-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}
+{% set py4j_src = spark2_home + '/python/lib/py4j-*.zip' %}
+{% set spark_examples_jar_src = spark2_home + '/examples/jars/spark-examples_*.jar' %}
 {% else %}
 {% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
@@ -118,6 +120,18 @@ jupyter-copy_pyspark2_kernel:
         hadoop_conf_dir: {{ hadoop_conf_dir }}
         app_packages_home: {{ app_packages_home }}
         jupyter_extension_venv: {{ jupyter_extension_venv }}
+
+# create soft link to py4j
+jupyter-symlink_py4j:
+  cmd.run:
+    - name: 'ln -s {{ py4j_src }} {{ spark2_home }}/python/lib/py4j.zip'
+    - unless: ls {{ spark2_home }}/python/lib/py4j.zip
+
+# create soft link to spark2 examples jar
+jupyter-symlink_spark2_examples_jar:
+  cmd.run:
+    - name: 'ln -s {{ spark_examples_jar_src }} {{ spark2_home }}/examples/jars/spark2_examples.jar'
+    - unless: ls {{ spark2_home }}/examples/jars/spark2_examples.jar
 {% endif %}
 
 {% if grains['hadoop.distro'] == 'CDH' %}
