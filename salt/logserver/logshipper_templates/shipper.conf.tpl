@@ -11,7 +11,7 @@ input {
           add_field => {"source" => "knox"}
           sincedb_path => "{{ install_dir }}/logstash/sincedb/db"
           codec => multiline {
-            pattern => "^%{TIMESTAMP_ISO8601}"
+            pattern => "^%{YEAR}[-/]%{MONTHNUM}[-/]%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?%{ISO8601_TIMEZONE}?"
             negate => true
             what => "previous"
           }
