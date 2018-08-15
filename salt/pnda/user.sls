@@ -20,18 +20,18 @@ permissive:
     - show_changes: True
 {% endif %}
 
+pnda-create_pnda_group:
+  group.present:
+    - name: {{ pnda_group }}
+
 pnda-create_pnda_user:
   user.present:
     - name: {{ pnda_user }}
     - password: {{ pnda_password }}
     - home: {{ pnda_home_directory }}
     - createhome: True
-
-pnda-create_pnda_group:
-  group.present:
-    - name: {{ pnda_group }}
-    - addusers:
-      - {{ pnda_user }}
+    - groups:
+      - {{ pnda_group }}
 
 pnda-set_home_dir_perms:
   file.directory:
