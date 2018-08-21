@@ -62,6 +62,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4818: Update Ambari to 2.7.0.0 and HDP to 2.6.5.0
 - PNDA-4500: Redesigned application detailed summary and added flink application detailed summary
 - PNDA-4837: Upgrade Grafana version to 5.1.3
+- PNDA-4892: Remove kafkat
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
