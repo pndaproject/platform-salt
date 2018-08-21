@@ -270,6 +270,14 @@ orchestrate-pnda-app-packages-hdfs:
     - timeout: 120
     - queue: True
 
+orchestrate-pnda-oozie-ssh-install-keys:
+  salt.state:
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@roles:oozie_server'
+    - tgt_type: compound
+    - sls: oozie_ssh_auth
+    - timeout: 120
+    - queue: True
+
 orchestrate-pnda-knox:
   salt.state:
     - tgt: 'G@pnda_cluster:{{pnda_cluster}} and ( G@roles:knox )'
