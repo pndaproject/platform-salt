@@ -14,6 +14,22 @@
 {% set data_manager_host = salt['pnda.get_hosts_for_role']('console_backend_data_manager')[0] %}
 {% set data_manager_port = salt['pillar.get']('console_backend_data_manager:bind_port', '3123') %}
 {% set data_manager_version = salt['pillar.get']('console_backend_data_manager:release_version', 'unknown') %}
+{% if salt['grains.get']('hadoop.distro') == 'HDP' %}
+  {% set hive_version = salt['pillar.get']('hadoop_components_version:hive') %}
+  {% set hbase_version = salt['pillar.get']('hadoop_components_version:hbase') %}
+  {% set hdfs_version =  salt['pillar.get']('hadoop_components_version:hdfs') %}
+  {% set spark_version = salt['pillar.get']('hadoop_components_version:spark') %}
+  {% set spark2_version = salt['pillar.get']('hadoop_components_version:spark2') %}
+  {% set oozie_version =  salt['pillar.get']('hadoop_components_version:oozie') %}
+  {% set yarn_version = salt['pillar.get']('hadoop_components_version:yarn') %}
+  {% set flink_version = salt['pillar.get']('flink:release_version') %}
+  {% set kafka_version = salt['pillar.get']('kafka:version') %}
+  {% set zookeeper_version = salt['pillar.get']('zookeeper:version') %}
+  {% set opentsdb_version = salt['pillar.get']('opentsdb:version') %}
+{% else %}
+  {% set hive_version, hbase_version, hdfs_version, spark_version, spark2_version,
+  oozie_version, flink_version, yarn_version, zookeeper_version, kafka_version, opentsdb_version = '', '', '', '', '', '', '', '', '', '', '' %}
+{% endif %}
 
 # edge node IP
 {% set edge_nodes = salt['pnda.get_hosts_for_role']('hadoop_edge') %}
@@ -104,6 +120,25 @@ console-frontend-create_pnda_console_config:
         yarn_link: "{{ yarn_link }}"
         httpfs_link: "{{ httpfs_link }}"
         login_mode: "{{ login_mode }}"
+
+console-frontend-create_pnda_console_topics:
+  file.managed:
+    - source: salt://console-frontend/templates/topics.json.tpl
+    - name: {{console_dir}}/help/topics.json
+    - template: jinja
+    - makedirs: True
+    - mode: 664
+    - defaults:
+        spark_version: "{{ spark_version }},{{ spark2_version }}"
+        kafka_version: "{{ kafka_version }}"
+        zookeeper_version: "{{ zookeeper_version }}"
+        oozie_version: "{{ oozie_version }}"
+        yarn_version: "{{ yarn_version }}"
+        hdfs_version: "{{ hdfs_version }}"
+        hive_version: "{{ hive_version }}"
+        hbase_version: "{{ hbase_version }}"
+        opentsdb_version: "{{ opentsdb_version }}"
+        flink_version: "{{ flink_version }}"
 
 # Create a configuration file for nginx and specify where the PNDA console file are
 console-frontend-create_pnda_nginx_config:
