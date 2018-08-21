@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4712: Use LDAP for Grafana authentication
 - PNDA-4794: Flink reverse proxy via Knox
 - PNDA-4853: Register nodes using Consul Catalog API so that they are not removed if the node fails
+- PNDA-4517: Oozie ssh action support for flink batch jobs
 
 ### Changed
 - Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
