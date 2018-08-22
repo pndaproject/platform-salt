@@ -17,6 +17,7 @@ consul:
     log_level: info
     encrypt: ""
     retry_join: []
+    recursors: []
     retry_interval: 30s
     datacenter: "{{ pillar['consul']['data_center'] }}"
     enable_script_checks: true
