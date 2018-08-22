@@ -121,9 +121,6 @@ hadoop_manager:
     password: scm
     database: scm
 
-livy:
-  release_version: "0.3.0"
-
 nodejs:
   version: 'node-v6.10.2-linux-x64'
 

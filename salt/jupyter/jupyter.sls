@@ -12,14 +12,10 @@
 {% set spark_home = '/usr/hdp/current/spark-client' %}
 {% set spark2_home = '/usr/hdp/current/spark2-client' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf' %}
-{% set livy_dir = '/usr/hdp/current/livy-server' %}
 {% else %}
 {% set spark_home = '/opt/cloudera/parcels/CDH/lib/spark' %}
 {% set hadoop_conf_dir = '/etc/hadoop/conf.cloudera.yarn01' %}
 {% set packages_server = pillar['packages_server']['base_uri'] %}
-{% set livy_version = pillar['livy']['release_version'] %}
-{% set livy_package = 'livy-' + livy_version + '.tar.gz' %}
-{% set livy_dir = pnda_home_directory + '/livy-' + livy_version %}
 {% endif %}
 {% set anaconda_python_lib = anaconda_home + '/lib/python2.7/site-packages/' %}
 {% set jupyter_python_lib = virtual_env_dir + '/lib/python3.4/site-packages/' %}
@@ -123,75 +119,6 @@ jupyter-copy_pyspark2_kernel:
         app_packages_home: {{ app_packages_home }}
         jupyter_extension_venv: {{ jupyter_extension_venv }}
 {% endif %}
-
-# BEGIN EXPERIMENTAL
-{% if 'EXPERIMENTAL' in features %}
-
-# Add sparkmagic to the supported kernel and install livy server
-livy-create_logs_dir:
-  file.directory:
-    - name: {{ livy_dir }}/logs
-    - user: pnda
-    - group: pnda
-    - mode: 766
-    - makedirs: True
-
-{% if grains['hadoop.distro'] == 'HDP' %}
-livy-update_configuration_hdp:
-  file.append:
-    - name: {{ livy_dir }}/conf/livy.conf
-    - text: livy.spark.master = yarn-client
-
-{% else %}
-livy-download:
-  cmd.run:
-    - cwd: {{ pnda_home_directory }}
-    - name: wget {{ packages_server }}/{{ livy_package }} && tar xvf {{ livy_package }} && rm {{ livy_package }}
-
-livy-update_configuration_cdh:
-  file.append:
-    - name: {{ livy_dir }}/conf/livy.conf
-    - text: livy.spark.master = yarn-client
-{% endif %}
-
-jupyter-scala_extension_spark:
-  cmd.run:
-    - name: |
-        {{ virtual_env_dir }}/bin/jupyter nbextension enable --py widgetsnbextension --system &&
-        {{ virtual_env_dir }}/bin/jupyter-kernelspec install  {{ jupyter_python_lib }}/sparkmagic/kernels/sparkkernel &&
-        {{ virtual_env_dir }}/bin/jupyter serverextension enable --py sparkmagic
-
-jupyter-copy_scala_spark_kernel:
-  file.managed:
-    - source: salt://jupyter/templates/scala_spark_kernel.json.tpl
-    - name: {{ jupyter_kernels_dir }}/sparkkernel/kernel.json
-    - template: jinja
-    - defaults:
-        virtual_env_dir: {{ virtual_env_dir }}
-
-livy-conf_service:
-  file.managed:
-    - name: /usr/lib/systemd/system/livy.service
-    - source: salt://jupyter/templates/livy.service.tpl
-    - template: jinja
-    - mode: 644
-    - defaults:
-        install_dir: {{ livy_dir }}
-        spark_home: {{ spark_home }}
-        hadoop_conf_dir: {{ hadoop_conf_dir }}
-
-livy-systemctl_reload:
-  cmd.run:
-    - name: /bin/systemctl daemon-reload; /bin/systemctl enable livy
-
-livy-server-start_service:
-  service.running:
-    - name: livy
-    - enable: True
-    - reload: True
-
-{% endif %}
-# END EXPERIMENTAL
 
 {% if grains['hadoop.distro'] == 'CDH' %}
 dependency-configurations-python2:
