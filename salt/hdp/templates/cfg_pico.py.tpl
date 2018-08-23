@@ -327,7 +327,8 @@ BLUEPRINT = r'''{
                     "oozie.service.JPAService.jdbc.url" : "jdbc:mysql://%(cluster_name)s-hadoop-mgr-1%(domain_name)s/oozie",
                     "oozie.service.JPAService.jdbc.driver" : "com.mysql.jdbc.Driver",
                     "oozie.authentication.type" : "simple",
-                    "oozie.db.schema.name" : "oozie"
+                    "oozie.db.schema.name" : "oozie",
+                    "oozie.servlet.CallbackServlet.max.data.len" : "16000"
                 }
             }
         },
