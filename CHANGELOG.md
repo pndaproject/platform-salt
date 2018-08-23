@@ -94,6 +94,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4826: Spark2 history server (show incomplete applications)
 - PNDA-4838: Fix Spark job description access through knox
 - PNDA-4775: Internet not reached from deployed online cluster
+- PNDA-4889: Modified user.sls to create group before user
 
 ## [4.0.0] 2018-02-10
 ### Added
