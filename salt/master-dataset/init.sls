@@ -3,16 +3,10 @@
 
 {% set namenode = salt['pnda.hadoop_namenode']() %}
 
-{% set pnda_master_dataset_location = pillar['pnda']['master_dataset']['directory'] %}
-{% set pnda_kite_dataset_uri = "dataset:" + namenode + pnda_master_dataset_location %}
-
 {% set pnda_master_bulk_location = pillar['pnda']['master_dataset']['bulk_directory'] %}
 
 {% set pnda_quarantine_dataset_location = pillar['pnda']['master_dataset']['quarantine_directory'] %}
 {% set pnda_quarantine_kite_dataset_uri = "dataset:" + namenode + pnda_quarantine_dataset_location %}
-
-{% set pnda_compacted_dataset_location = pillar['pnda']['master_dataset']['compaction_directory'] %}
-{% set pnda_kite_compacted_dataset_uri = "dataset:" + namenode + pnda_compacted_dataset_location %}
 
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
@@ -23,16 +17,6 @@
 
 include:
   - .pnda_hdfs_user
-
-master-dataset_copy_pnda_avro_schema:
-  file.managed:
-    - name: /tmp/pnda.avsc
-    - source: salt://master-dataset/files/pnda.avsc
-
-master-dataset_copy_kite_parition_conf:
-  file.managed:
-    - name: /tmp/pnda_kite_partition.json
-    - source: salt://master-dataset/files/pnda_kite_partition.json
 
 {% if grains['hadoop.distro'] == 'HDP' %}
 master-dataset-kitesdk_dir:
@@ -56,40 +40,6 @@ master-dataset-kitesdk_perms:
     - name: {{ kite_tool_wrapper }}
     - mode: 755
     - replace: False
-{% endif %}
-
-master-dataset-create_PNDA_master_kite_dataset:
-  cmd.run:
-    - name: kite-dataset create --schema /tmp/pnda.avsc {{ pnda_kite_dataset_uri }} --partition-by /tmp/pnda_kite_partition.json
-    - user: {{ pnda_user }}
-    - unless: kite-dataset info {{ pnda_kite_dataset_uri }}
-    - requires:
-      - file: master-dataset_copy_pnda_avro_schema
-      - file: master-dataset_copy_kite_parition_conf
-
-master-dataset-update_PNDA_master_kite_dataset_perms:
-  cmd.run:
-    - name: hdfs dfs -chmod 770 {{ pnda_master_dataset_location }}
-    - user: hdfs
-    - onchanges:
-      - cmd: master-dataset-create_PNDA_master_kite_dataset
-
-{%if salt['pillar.get']('dataset_compaction:compaction', False) %}
-master-dataset-create_PNDA_compacted_kite_dataset:
-  cmd.run:
-    - name: kite-dataset create --schema /tmp/pnda.avsc {{ pnda_kite_compacted_dataset_uri }} --partition-by /tmp/pnda_kite_partition.json
-    - user: {{ pnda_user }}
-    - unless: kite-dataset info {{ pnda_kite_compacted_dataset_uri }}
-    - requires:
-      - file: master-dataset_copy_pnda_avro_schema
-      - file: master-dataset_copy_kite_parition_conf
-
-master-dataset-update_PNDA_compacted_kite_dataset_perms:
-  cmd.run:
-    - name: hdfs dfs -chmod 770 {{ pnda_compacted_dataset_location }}
-    - user: hdfs
-    - onchanges:
-      - cmd: master-dataset-create_PNDA_compacted_kite_dataset
 {% endif %}
 
 master-dataset-quarantine_dataset_copy_avro_schema:
