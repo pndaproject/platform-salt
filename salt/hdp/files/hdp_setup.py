@@ -536,7 +536,7 @@ def setup_hadoop(
     auth = (ambari_username, ambari_password)
 
     new_nodes = get_new_nodes(nodes, cluster_name, ambari_api, auth, headers)
-    if len(new_nodes) == 0:
+    if not new_nodes:
         # no new nodes, reapply config to existing ones
         update_cluster_config(nodes, cluster_name, domain_name, ambari_api, auth, headers)
     elif len(new_nodes) == len([node for node in nodes if node['type'] == 'DATANODE']):
