@@ -44,6 +44,10 @@
                <name>YARNUI</name>
                <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
             </param>
+            <param>
+               <name>RESOURCEMANAGER</name>
+               <value>maxFailoverAttempts=3;failoverSleep=1000;enabled=true</value>
+            </param>
         </provider>
 {% endif %}
     </gateway>
@@ -68,9 +72,9 @@
     </service>
 
     <service>
-        <role>YARN</role>
+        <role>RESOURCEMANAGER</role>
         {% for item in yarn_rm_hosts %}
-            <url>http://{{ item }}:8088</url>
+            <url>http://{{ item }}:8088/ws</url>
         {% endfor %}
         
     </service>
