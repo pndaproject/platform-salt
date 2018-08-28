@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4517: Oozie ssh action support for flink batch jobs
 
 ### Changed
-- Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
+- PNDA-4929: Rename folder used to stage application dependencies before syncing to HDFS from apps-packages to app-packages-hdfs-stage
 - PNDA-4400: Update Anaconda to 5.1.0, remove Anaconda CDH parcel mirror and install Anaconda on CDH from a bundle in the same way as already done for HDP
 - PNDA-4394: Add various libraries to app-packages so they are available 'out of the box' to PNDA users
 - PNDA-4396: Update Kibana, Logstash and ElasticSearch to 6.2.1 for Log Server
@@ -89,7 +89,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4809: Fix opentsdb/dm cog redirect to logserver via knox
 - PNDA-4805: Reduce verbosity of routes through gateway
 - PNDA-4813: Fix Ambari service quicklinks via knox proxy
-- PNDA-4810 Introduced knox rewrite rules for KM parameterised URL
+- PNDA-4810: Introduced knox rewrite rules for KM parameterised URL
 - PNDA-4797: ELK deployed twice in PICO Setup
 - PNDA-4774: Remove MySQL server from ambari/cloudera-manager
 - PNDA-4826: Spark2 history server (show incomplete applications)
@@ -97,7 +97,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4775: Internet not reached from deployed online cluster
 - PNDA-4889: Modified user.sls to create group before user
 - PNDA-4409: Correctly configure systemd supervisor for httpfs
-- PNDA-4917 Permission denied to access Hbase rest and thrift logs
+- PNDA-4917: Permission denied to access Hbase rest and thrift logs
 - PNDA-4860: Some logs coming into Kibana are big aggregated blob rather than time series
 
 ## [4.0.0] 2018-02-10
