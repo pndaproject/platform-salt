@@ -98,6 +98,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4889: Modified user.sls to create group before user
 - PNDA-4409: Correctly configure systemd supervisor for httpfs
 - PNDA-4917 Permission denied to access Hbase rest and thrift logs
+- PNDA-4860: Some logs coming into Kibana are big aggregated blob rather than time series
 
 ## [4.0.0] 2018-02-10
 ### Added
