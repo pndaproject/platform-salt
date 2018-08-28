@@ -97,6 +97,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4775: Internet not reached from deployed online cluster
 - PNDA-4889: Modified user.sls to create group before user
 - PNDA-4409: Correctly configure systemd supervisor for httpfs
+- PNDA-4917 Permission denied to access Hbase rest and thrift logs
 
 ## [4.0.0] 2018-02-10
 ### Added
