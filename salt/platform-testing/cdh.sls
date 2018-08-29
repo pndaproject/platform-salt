@@ -2,12 +2,13 @@
 {% set platform_testing_version = salt['pillar.get']('platform_testing:release_version', '0.1.1') %}
 {% set platform_testing_directory = salt['pillar.get']('platform_testing:release_directory', '/opt/pnda') %}
 
-{% set platform_testing_package = 'platform-testing-cdh' %}
 
 {%- if grains['hadoop.distro'] == 'CDH' -%}
 {% set platform_testing_service = 'cdh' %}
+{% set platform_testing_package = 'platform-testing-CDH' %}
 {% set cm_port = '7180' %}
 {%- else -%}
+{% set platform_testing_package = 'platform-testing-HDP' %}
 {% set platform_testing_service = 'hdp' %}
 {% set cm_port = '8080' %}
 {%- endif -%}
@@ -84,7 +85,6 @@ platform-testing-cdh-create-venv:
       - pip: python-pip-install_python_pip
       - archive: platform-testing-cdh-dl-and-extract
 
-
 platform-testing-cdh-create-link:
   file.symlink:
     - name: {{ platform_testing_directory }}/{{ platform_testing_package }}
@@ -93,15 +93,17 @@ platform-testing-cdh-create-link:
 platform-testing-cdh-install-requirements-cdh:
   pip.installed:
     - bin_env: {{ virtual_env_dir }}
-    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/cdh/requirements.txt
+    - requirements: {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/{{ platform_testing_service }}/requirements.txt
     - index_url: {{ pip_index_url }}
     - require:
       - virtualenv: platform-testing-cdh-create-venv
+    - onlyif:
+      - test -f {{ platform_testing_directory }}/{{platform_testing_package}}-{{ platform_testing_version }}/plugins/{{ platform_testing_service }}/requirements.txt
 
 platform-testing-cdh_service:
   file.managed:
     - source: salt://platform-testing/templates/platform-testing-{{ platform_testing_service }}.service.tpl
-    - name: /usr/lib/systemd/system/platform-testing-cdh.service
+    - name: /usr/lib/systemd/system/platform-testing-{{ platform_testing_service }}.service
     - mode: 644
     - template: jinja
     - context:
@@ -118,7 +120,7 @@ platform-testing-cdh-crontab-cdh:
   cron.present:
     - identifier: PLATFORM-TESTING-CDH
     - user: root
-    - name: /bin/systemctl start platform-testing-cdh
+    - name: /bin/systemctl start platform-testing-{{ platform_testing_service }}
     - require:
       - pip: platform-testing-cdh-install-requirements-cdh
       - file: platform-testing-cdh_service
