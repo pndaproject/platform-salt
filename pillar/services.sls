@@ -52,42 +52,42 @@ flink:
   jobmanager_web_port: 8083
 
 platform_gobblin_modules:
-  release_version: develop
+  release_version: 1.0.0rc0
 
 console_frontend:
-  release_version: develop
+  release_version: 2.0.0rc0
   bind_port: 80
   
 console_backend_data_logger:
-  release_version: develop
+  release_version: 2.0.0rc0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: develop
+  release_version: 2.0.0rc0
   bind_port: 3123
 
 console_backend_utils:
-  release_version: develop
+  release_version: 2.0.0rc0
 
 deployment_manager:
-  release_version: develop
+  release_version: 2.0.0rc0
   keys_directory: /opt/pnda/dm_keys
 
 package_repository:
-  release_version: develop
+  release_version: 1.0.0rc0
 
 data-service:
-  release_version: develop
+  release_version: 0.3.0rc0
 
 hdfs_cleaner:
-  release_version: develop
+  release_version: 0.3.0rc0
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: develop
+  release_version: 1.0.0rc0
 
 platformlib:
-  release_version: develop
+  release_version: 0.2.0rc0
   target_directory: "/opt/pnda"
 
 resource_manager:
