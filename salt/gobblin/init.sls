@@ -4,9 +4,11 @@
 {% set gobblin_version = pillar['gobblin']['release_version'] %}
 
 {% if grains['hadoop.distro'] == 'HDP' %}
-{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-HDP.tar.gz' %}
+{% set hadoop_version = pillar['hdp']['hadoop_version'] %}
+{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-HDP-' + hadoop_version + '.tar.gz' %}
 {% else %}
-{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-CDH.tar.gz' %}
+{% set hadoop_version = pillar['cloudera']['hadoop_version'] %}
+{% set gobblin_package = 'gobblin-distribution-' + gobblin_version + '-CDH-' + hadoop_version + '.tar.gz' %}
 {% endif %}
 
 {% set pnda_modules_version = pillar['platform_gobblin_modules']['release_version'] %}
