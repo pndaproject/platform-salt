@@ -77,14 +77,14 @@ package_repository:
   release_version: 1.0.0rc0
 
 data-service:
-  release_version: 0.3.0rc0
+  release_version: 0.3.0rc1
 
 hdfs_cleaner:
-  release_version: 0.3.0rc0
+  release_version: 0.3.0rc1
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 1.0.0rc0
+  release_version: 1.0.0rc1
 
 platformlib:
   release_version: 0.2.0rc0
