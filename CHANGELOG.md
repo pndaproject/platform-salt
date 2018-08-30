@@ -67,6 +67,7 @@ All notable changes to this project will be documented in this file.
 - PNDA-4892: Remove kafkat
 - PNDA-4909: Remove livy & sparkmagic
 - PNDA-4858: Remove redundant Hive view code
+- PNDA-4899: Introduce conditionality to produce build/mirror with only artefacts required
 
 ### Fixed
 - PNDA-4200: Fix missing matplotlib and dependencies for Jupyter python3 kernel
