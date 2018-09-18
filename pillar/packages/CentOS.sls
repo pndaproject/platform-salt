@@ -94,10 +94,6 @@ nmap-ncat:
 nss-pam-ldapd:
   package-name: nss-pam-ldapd
   version: ""
-ntp:
-  package-name: ntp
-  version: ""
-  service_name: ntpd
 openldap-clients:
   package-name: openldap-clients
   version: ""

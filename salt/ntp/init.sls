@@ -1,6 +1,5 @@
 {% set ntp_servers = salt['pillar.get']('ntp:servers', []) %}
 {% set timezone = salt['pillar.get']('ntp:timezone', 'UTC') %}
-{% set ntp_service = pillar['ntp']['service_name'] %}
 
 ntp-set_timezone:
   timezone.system:
@@ -8,33 +7,21 @@ ntp-set_timezone:
 
 ntp-install_ntp_package:
   pkg.installed:
-    - name: {{ pillar['ntp']['package-name'] }}
-    - version: {{ pillar['ntp']['version'] }}
+    - name: chrony
     - ignore_epoch: True
 
 ntp-install_conf:
   file.managed:
-    - name: /etc/ntp.conf
-    - source: salt://ntp/templates/ntp.conf.tpl
+    - name: /etc/chrony.conf
+    - source: salt://ntp/templates/chrony.conf.tpl
     - template: jinja
     - context:
       ntp_servers: {{ ntp_servers }}
 
-ntp-ntpdate_sync_on_boot_script:
-  file.managed:
-    - name: /etc/ntpdate.sh
-    - source: salt://ntp/files/ntpdate.sh
-    - mode: 0755
-    - template: jinja
-    - context:
-      ntp_service: {{ ntp_service }}
-      ntp_servers: {{ ntp_servers }}
-
-ntp-systemctl_reload:
-  cmd.run:
-    - name: /bin/systemctl daemon-reload; /bin/systemctl enable {{ ntp_service }}; /bin/systemctl stop chronyd; /bin/systemctl disable chronyd; /bin/systemctl enable ntpdate;
-
-ntp-ntpdate-sync:
-  cmd.run:
-    - name: '/etc/ntpdate.sh'
-
+ntp-enable_chronyd:
+  service.running:
+    - name: chronyd
+    - enable: True
+    - watch:
+      - pkg: ntp-install_ntp_package
+      - file: ntp-install_conf
