@@ -79,12 +79,12 @@ libzmq:
   package-name: czmq-devel
 mysql-server:
   package-name: mysql-community-server
-  version: "5.5.54-2.el7"
+  version: ""
   configuration_file: /etc/my.cnf
   service_name: mysqld
 mysql-client:
   package-name: mysql-community-client
-  version: "5.5.60-2.el7"
+  version: ""
 nginx:
   package-name: nginx
   version: ""
@@ -124,10 +124,10 @@ python3-dev:
   version: ""
 python-mysqldb:
   package-name: MySQL-python
-  version: "1.2.5-1.el7"
+  version: ""
 redis-server:
   package-name: redis
-  version: "3.2.12-1.el7"
+  version: ""
   configuration_filename: "/etc/redis.conf"
 ruby-devel:
   package-name: ruby-devel
