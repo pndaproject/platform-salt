@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [5.0.0] 2018-08-28
+## [5.0.0] 2018-10-02
 ### Added
 - PNDA-3673: Add consul service and agents
 - PNDA-4428: Deploy & configure Flink
