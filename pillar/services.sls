@@ -52,42 +52,42 @@ flink:
   jobmanager_web_port: 8083
 
 platform_gobblin_modules:
-  release_version: 1.0.0rc0
+  release_version: 1.0.0
 
 console_frontend:
-  release_version: 2.0.0rc0
+  release_version: 2.0.0
   bind_port: 80
-  
+
 console_backend_data_logger:
-  release_version: 2.0.0rc0
+  release_version: 2.0.0
   bind_port: 3001
 
 console_backend_data_manager:
-  release_version: 2.0.0rc0
+  release_version: 2.0.0
   bind_port: 3123
 
 console_backend_utils:
-  release_version: 2.0.0rc0
+  release_version: 2.0.0
 
 deployment_manager:
-  release_version: 2.0.0rc0
+  release_version: 2.0.0
   keys_directory: /opt/pnda/dm_keys
 
 package_repository:
-  release_version: 1.0.0rc0
+  release_version: 1.0.0
 
 data-service:
-  release_version: 0.3.0rc1
+  release_version: 0.3.0
 
 hdfs_cleaner:
-  release_version: 0.3.0rc1
+  release_version: 0.3.0
 
 platform_testing:
   release_directory: /opt/pnda
-  release_version: 1.0.0rc1
+  release_version: 1.0.0
 
 platformlib:
-  release_version: 0.2.0rc0
+  release_version: 0.2.0
   target_directory: "/opt/pnda"
 
 resource_manager:
@@ -114,7 +114,7 @@ cloudera:
 hdp:
   hadoop_version: "2.7.3.2.6.5.0-292"
   version: "2.6.5.0-292"
-  
+
 hadoop_manager:
   cmdb:
     user: scm
