@@ -24,6 +24,10 @@ haproxy-user:
     - require:
       - group: haproxy-group
 
+haproxy-install-openssl:
+  pkg.installed:
+    - name: openssl-libs
+
 # download haproxy binary from mirror and extract
 haproxy-install:
   archive.extracted:
