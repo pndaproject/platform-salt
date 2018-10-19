@@ -25,7 +25,7 @@ haproxy-user:
       - group: haproxy-group
 
 haproxy-install-openssl:
-  pkg.installed:
+  pkg.latest:
     - name: openssl-libs
 
 # download haproxy binary from mirror and extract
