@@ -9,4 +9,4 @@ cdh-hue_script_copy:
 
 cdh-hue_script_run:
   cmd.run:
-    - name: if [ "`hostname -s`" = "{{ hue_server }}" ]; then /tmp/hue-user-setup.sh; fi
+    - name: if [ "`hostname -f`" = "{{ hue_server }}" ]; then /tmp/hue-user-setup.sh; fi

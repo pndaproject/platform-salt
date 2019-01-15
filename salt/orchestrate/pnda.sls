@@ -43,7 +43,7 @@ orchestrate-pnda-impala_wrapper:
 
 orchestrate-pnda-hue_setup:
   salt.state:
-    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:MGR*'
+    - tgt: 'G@pnda_cluster:{{pnda_cluster}} and G@hadoop:role:MGR*'
     - tgt_type: compound
     - sls: cdh.hue-login
     - timeout: 120
