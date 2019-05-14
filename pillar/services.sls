@@ -122,7 +122,7 @@ hadoop_manager:
     database: scm
 
 nodejs:
-  version: 'node-v6.10.2-linux-x64'
+  version: 'node-v6.17.1-linux-x64'
 
 knox:
   release_version: "1.2.0"
