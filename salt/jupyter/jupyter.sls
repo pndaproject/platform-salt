@@ -42,7 +42,7 @@ dependency-install_gcc:
 jupyter-create-venv:
   virtualenv.managed:
     - name: {{ virtual_env_dir }}
-    - python: python3
+    - python: python3.4
     - requirements: salt://jupyter/files/requirements-jupyter.txt
     - index_url: {{ pip_index_url }}
     - require:

@@ -20,7 +20,7 @@ python-pip-install_python_pip3:
     - pkgs:
       - pip == 9.0.1
       - virtualenv == 15.1.0
-    - bin_env: /usr/bin/pip3
+    - bin_env: /usr/bin/pip3.4
     - upgrade: True
     - reload_modules: True
     - index_url: {{ pip_index_url }}
