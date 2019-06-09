@@ -68,7 +68,7 @@
 
     <service>
         <role>HIVE</role>
-        <url>http://{{ hive_host }}:10001/cliservice</url>
+        <url>http://{{ hive_host }}:{{ hive_port }}/cliservice</url>
     </service>
 
     <service>
@@ -76,7 +76,6 @@
         {% for item in yarn_rm_hosts %}
             <url>http://{{ item }}:8088/ws</url>
         {% endfor %}
-        
     </service>
 
     <service>
@@ -93,12 +92,7 @@
 
     <service>
         <role>SPARKHISTORYUI</role>
-        <url>http://{{ spark_history_server_host }}:18080</url>
-    </service>
-
-    <service>
-        <role>SPARK2HISTORYUI</role>
-        <url>http://{{ spark2_history_server_host }}:18081</url>
+        <url>http://{{ spark_history_server_host }}:{{ spark_history_server_port }}</url>
     </service>
 
     <service>
@@ -121,6 +115,14 @@
         <url>http://console-internal.service.{{ pnda_domain }}</url>
     </service>
 
+    
+{% if hadoop_distro == 'HDP' %}
+
+    <service>
+        <role>SPARK2HISTORYUI</role>
+        <url>http://{{ spark2_history_server_host }}:18081</url>
+    </service>
+
     <service>
         <role>AMBARI</role>
         <url>http://{{ ambari_server_host }}:8080</url>
@@ -130,6 +132,8 @@
         <role>AMBARIUI</role>
         <url>http://{{ ambari_server_host }}:8080</url>
     </service>
+
+{% endif %}
 
     <service>
         <role>AMBARIWS</role>

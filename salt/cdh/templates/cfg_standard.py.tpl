@@ -50,9 +50,9 @@ CMS_CFG = {
 }
 
 OOZIE_CFG = {"service": "OOZIE",
-             "name": "oozie01",
-             "config": {'mapreduce_yarn_service': 'yarn01',
-                        'zookeeper_service': 'zk01'},
+             "name": '{{ pillar['hadoop_services']['oozie_server']['service'] }}',
+             "config": {'mapreduce_yarn_service': '{{ pillar['hadoop_services']['yarn_resource_manager']['service'] }}',
+                        'zookeeper_service': '{{ pillar['hadoop_services']['zookeeper_server']['service'] }}'},
              "roles": [{"name": "oozie-s",
                         "type": "OOZIE_SERVER",
                         "target": "MGR04"}],
@@ -66,7 +66,7 @@ OOZIE_CFG = {"service": "OOZIE",
                                       'log_directory_free_space_absolute_thresholds': '{"warning": "1050000000","critical": "900000000"}'}}]}
 
 ZK_CFG = {"service": "ZOOKEEPER",
-          "name": "zk01",
+          "name": '{{ pillar['hadoop_services']['zookeeper_server']['service'] }}',
           "config": {'zookeeper_datadir_autocreate': 'true'},
           "roles": [{"name": "zk-s",
                      "type": "SERVER",
@@ -85,8 +85,8 @@ ZK_CFG = {"service": "ZOOKEEPER",
 
 MAPRED_CFG = {
     "service": "YARN",
-    "name": "yarn01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01', 'yarn_log_aggregation_retain_seconds': '265000', 'yarn_log_aggregation_enable': 'false'},
+    "name": '{{ pillar['hadoop_services']['yarn_resource_manager']['service'] }}',
+    "config": {'hdfs_service': '{{ pillar['hadoop_services']['hdfs_namenode']['service'] }}', 'zookeeper_service': '{{ pillar['hadoop_services']['zookeeper_server']['service'] }}', 'yarn_log_aggregation_retain_seconds': '265000', 'yarn_log_aggregation_enable': 'false'},
     "roles": [
         {
             "name": "yarn-jh",
@@ -167,7 +167,7 @@ S3_CONFIG = """\r\n<property><name>fs.s3a.access.key</name><value>{{ aws_key }}<
 
 HDFS_CFG = {
     "service": "HDFS",
-    "name": "hdfs01",
+    "name": '{{ pillar['hadoop_services']['hdfs_namenode']['service'] }}',
     "config":
         {
             'dfs_replication': 2,
@@ -267,8 +267,8 @@ HDFS_CFG = {
 
 HBASE_CFG = {
     "service": "HBASE",
-    "name": "hbase01",
-    "config": {'hdfs_service': 'hdfs01', 'zookeeper_service': 'zk01'},
+    "name": '{{ pillar['hadoop_services']['hbase_master']['service'] }}',
+    "config": {'hdfs_service': '{{ pillar['hadoop_services']['hdfs_namenode']['service'] }}', 'zookeeper_service': '{{ pillar['hadoop_services']['zookeeper_server']['service'] }}'},
     "roles":
         [
             {
@@ -333,7 +333,7 @@ HBASE_CFG = {
 
 HIVE_CFG = {
     "service": "HIVE",
-    "name": "hive01",
+    "name": '{{ pillar['hadoop_services']['hive_server']['service'] }}',
     "config":
         {
             'hive_metastore_database_type': 'mysql',
@@ -382,7 +382,7 @@ HIVE_CFG = {
 
 IMPALA_CFG = {
     "service": "IMPALA",
-    "name": "impala01",
+    "name": '{{ pillar['hadoop_services']['impala_catalog_server']['service'] }}',
     "config": {
         'hbase_service': HBASE_CFG['name'],
         'hive_service': HIVE_CFG['name'],
@@ -406,7 +406,7 @@ IMPALA_CFG = {
 
 HUE_CFG = {
     "service": "HUE",
-    "name": "hue01",
+    "name": '{{ pillar['hadoop_services']['hue_server']['service'] }}',
     "config":
         {
             'hbase_service': HBASE_CFG['name'],
@@ -443,7 +443,7 @@ HUE_CFG = {
 
 SPARK_CFG = {
     'service': 'SPARK_ON_YARN',
-    'name': 'spark_on_yarn',
+    'name': '{{ pillar['hadoop_services']['spark_job_histroy_server']['service'] }}',
     'config': {
         'yarn_service': MAPRED_CFG['name'],
         'spark-conf/spark-env.sh_service_safety_valve':"SPARK_PYTHON_PATH={{ app_packages_dir }}/lib/python2.7/site-packages\nexport PYSPARK_DRIVER_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYSPARK_PYTHON=/opt/pnda/anaconda/bin/python\nexport PYTHONPATH=\"$PYTHONPATH:$SPARK_PYTHON_PATH\""

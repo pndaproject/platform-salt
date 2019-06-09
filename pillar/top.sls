@@ -7,6 +7,7 @@
     - env_parameters
     - packages.{{ grains['os'] }}
     - hadoop.{{ salt['grains.get']('hadoop.distro', 'HDP') }}
+    - hadoop.service_{{ salt['grains.get']('hadoop.distro', 'HDP') }}
     - gateway
 {% set certs = 'certs' %}
 {% if salt.file.file_exists('/srv/salt/platform-salt/pillar/'+certs+'.sls') %}

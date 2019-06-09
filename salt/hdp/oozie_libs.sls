@@ -1,6 +1,6 @@
 {% set scripts_location = '/tmp/pnda-install/' + sls %}
-{% set httpfs_node = salt['pnda.get_hosts_by_hadoop_role']('HDFS', 'NAMENODE')[0] %}
-{% set oozie_node = salt['pnda.get_hosts_by_hadoop_role']('OOZIE', 'OOZIE_SERVER')[0] %}
+{% set httpfs_node = salt['pnda.get_hosts_by_hadoop_role']('hdfs_namenode')[0] %}
+{% set oozie_node = salt['pnda.get_hosts_by_hadoop_role']('oozie_server')[0] %}
 {% set pip_index_url = pillar['pip']['index_url'] %}
 {% set oozie_spark_version = salt['pillar.get']('hdp:oozie_spark_version', '1') %}
 

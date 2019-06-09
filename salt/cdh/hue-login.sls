@@ -1,4 +1,4 @@
-{% set hue_server = salt['pnda.get_hosts_by_hadoop_role']('HUE', 'HUE_SERVER')[0] %}
+{% set hue_server = salt['pnda.get_hosts_by_hadoop_role']('hue_server')[0] %}
 
 cdh-hue_script_copy:
   file.managed:

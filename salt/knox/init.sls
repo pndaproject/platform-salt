@@ -5,15 +5,17 @@
 {% set pnda_mirror = pillar['pnda_mirror']['base_url'] %}
 {% set misc_packages_path = pillar['pnda_mirror']['misc_packages_path'] %}
 {% set mirror_location = pnda_mirror + misc_packages_path %}
-{% set namenode_host = salt['pnda.get_hosts_by_hadoop_role']('HDFS', 'NAMENODE')[0] %}
-{% set hive_host = salt['pnda.get_hosts_by_hadoop_role']('HIVE', 'HIVE_SERVER')[0] %}
+{% set namenode_host = salt['pnda.get_hosts_by_hadoop_role']('hdfs_namenode')[0] %}
+{% set hive_host = salt['pnda.get_hosts_by_hadoop_role']('hive_server')[0] %}
+{% set hive_port = pillar['hadoop_services']['hive_server']['port'] %}
 {% set webhdfs_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
 {% set hbase_rest_host = salt['pnda.get_hosts_by_hadoop_node']('MGR01')[0] %}
-{% set yarn_rm_hosts = salt['pnda.get_hosts_by_hadoop_role']('YARN', 'RESOURCEMANAGER') %}
+{% set yarn_rm_hosts = salt['pnda.get_hosts_by_hadoop_role']('yarn_resource_manager') %}
 {% set yarn_ha_enabled = (yarn_rm_hosts is not none and yarn_rm_hosts|length>1) %}
-{% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('MAPREDUCE2', 'HISTORYSERVER')[0] %}
-{% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK', 'SPARK_JOBHISTORYSERVER')[0] %}
-{% set spark2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('SPARK2', 'SPARK2_JOBHISTORYSERVER')[0] %}
+{% set mr2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('yarn_job_histroy_server')[0] %}
+{% set spark_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('spark_job_histroy_server')[0] %}
+{% set spark_history_server_port =  pillar['hadoop_services']['spark_job_histroy_server']['port'] %} 
+{% set spark2_history_server_host = salt['pnda.get_hosts_by_hadoop_role']('spark2_job_histroy_server')[0] %}
 {% set ambari_server_host = salt['pnda.get_hosts_for_role']('hadoop_manager')[0] %}
 {% set flink_history_server_host = salt['pnda.get_hosts_for_role']("FLINK")[0] %}
 {% set flink_history_server_port = pillar['flink']['historyserver_web_port'] %}
@@ -30,6 +32,7 @@
 {% set gateway = knox_home_directory + '/data/security/keystores/gateway.jks' %}
 {% set opentsdb_port = pillar['opentsdb']['bind_port'] %}
 {% set helper_directory = knox_home_directory + '/helper' %}
+{% set hadoop_distro = salt['grains.get']('hadoop.distro', 'HDP') %}
 
 include:
   - java
@@ -148,16 +151,19 @@ knox-create-pnda-topology:
     - source: salt://knox/templates/pnda.xml.tpl
     - template: jinja
     - context:
+      hadoop_distro: {{ hadoop_distro }}
       knox_authentication: {{ knox_authentication }}
       namenode_host: {{ namenode_host }}
       webhdfs_host: {{ webhdfs_host }}
       hbase_rest_host: {{ hbase_rest_host }} 
-      yarn_rm_hosts: {{ yarn_rm_hosts }}
+      yarn_rm_hosts: ["{{yarn_rm_hosts|join('", "')|string()}}"]
       hive_host: {{ hive_host }}
+      hive_port: {{ hive_port }}
       pnda_domain: {{ pnda_domain }}
       opentsdb_port: {{ opentsdb_port }}
       ha_enabled: {{ yarn_ha_enabled }}
       spark_history_server_host: {{ spark_history_server_host }}
+      spark_history_server_port: {{ spark_history_server_port }}
       spark2_history_server_host: {{ spark2_history_server_host }}
       mr2_history_server_host: {{ mr2_history_server_host }}
       ambari_server_host: {{ ambari_server_host }}
@@ -249,9 +255,12 @@ knox-import_CA:
   'console': 'pnda-console/1.0.0',
   'km': 'kafka-manager/1.3.3',
   'kibana': 'kibana/6.2.1',
-  'flinkhistoryui': 'flinkhistoryui/1.4.2',
-  'spark2historyui': 'spark2historyui/2.2.0'
+  'flinkhistoryui': 'flinkhistoryui/1.4.2'
   } %}
+
+{% if hadoop_distro == 'HDP' %}
+  {% do knox_proxy_services.update({'spark2historyui': 'spark2historyui/2.2.0'}) %}
+{% endif %}
 
 {% for service_name in knox_proxy_services %}
 {% set knox_service_dir = knox_home_directory + '/data/services/' + knox_proxy_services[service_name] %}
