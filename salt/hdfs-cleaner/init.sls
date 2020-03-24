@@ -2,7 +2,7 @@
 {% set app_version = salt['pillar.get']('hdfs_cleaner:release_version', '1.0.0') %}
 {% set app_directory_name = 'hdfs-cleaner-' + app_version %}
 {% set app_package = 'hdfs-cleaner-' + app_version + '.tar.gz' %}
-{% set pnda_cluster = salt['pnda.cluster_name']() %}
+{% set repo_path = salt['pillar.get']('pnda.archive_repo_path') %}
 {% set archive_container = salt['pillar.get']('pnda.archive_container', 'archive') %}
 {% set archive_type = salt['pillar.get']('pnda.archive_type', 'swift') %}
 {% set archive_service = salt['pillar.get']('pnda.archive_service', '.pnda') %}
@@ -62,7 +62,7 @@ hdfs-cleaner-copy_config:
     - defaults:
         hadoop_distro: {{ hadoop_distro }}
         container: {{ archive_container }}
-        repo_path: {{ pnda_cluster }}
+        repo_path: {{ repo_path }}
         archive_type: '{{ archive_type }}'
         archive_service: '{{ archive_service }}'
         gobblin_work_dir: {{ gobblin_work_dir }}
