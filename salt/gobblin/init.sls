@@ -76,7 +76,7 @@ pnda_modules-dl-and-extract:
 
 pnda_modules-copy-to-gobblin-lib:
   cmd.run:
-    - name: cp {{ pnda_modules_dir }}/* {{ gobblin_real_dir }}/gobblin-dist/lib
+    - name: cp {{ pnda_modules_dir }}/{{ pnda_modules_package|replace('.tar.gz', '') }}/* {{ gobblin_real_dir }}/gobblin-dist/lib
 
 gobblin-create_link:
   file.symlink:
