@@ -2,7 +2,7 @@ alembic==0.8.9
 backports-abc==0.5
 decorator==4.0.10
 ipython-genutils==0.1.0
-Jinja2==2.8
+Jinja2==2.11.3
 jupyterhub==0.7.0
 Mako==1.0.6
 MarkupSafe==0.23
