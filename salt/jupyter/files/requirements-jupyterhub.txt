@@ -3,7 +3,7 @@ backports-abc==0.5
 decorator==4.0.10
 ipython-genutils==0.1.0
 Jinja2==2.8
-jupyterhub==0.7.0
+jupyterhub==1.5.0
 Mako==1.0.6
 MarkupSafe==0.23
 pamela==0.3.0
